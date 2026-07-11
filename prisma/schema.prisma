@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Hero {
+  id                String   @id @default(cuid())
+  name              String
+  location          String
+  niche             String
+  headlinePlain     String
+  headlineEmphasis  String
+  photoUrl          String?
+  ctaPrimaryLabel   String
+  ctaPrimaryHref    String
+  ctaSecondaryLabel String
+  ctaSecondaryHref  String
+  updatedAt         DateTime @updatedAt
+}
+
+model Stat {
+  id        String   @id @default(cuid())
+  label     String
+  value     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model ContentCard {
+  id            String   @id @default(cuid())
+  type          String // "video" | "photo"
+  platform      String // "tiktok" | "instagram" | "facebook"
+  postUrl       String
+  caption       String
+  category      String
+  statPrimary   String?
+  statSecondary String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+}
+
+model PricingPackage {
+  id           String   @id @default(cuid())
+  name         String
+  price        String
+  unit         String
+  deliverables String[]
+  featured     Boolean  @default(false)
+  order        Int      @default(0)
+}
+
+model Brand {
+  id      String @id @default(cuid())
+  name    String
+  logoUrl String?
+  order   Int    @default(0)
+}
+
+model FaqItem {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+  order    Int    @default(0)
+}
+
+model ContactMessage {
+  id                String   @id @default(cuid())
+  name              String
+  brand             String
+  email             String
+  collaborationType String
+  message           String
+  read              Boolean  @default(false)
+  createdAt         DateTime @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model SiteSettings {
+  id              String   @id @default(cuid())
+  whyMeText       String
+  contactEmail    String
+  instagramHandle String
+  tiktokHandle    String
+  facebookHandle  String?
+  updatedAt       DateTime @updatedAt
+}

@@ -1,0 +1,170 @@
+"use client";
+
+import { useState } from "react";
+import type { HeroModel as Hero } from "@/lib/generated/prisma/models";
+import { useToast } from "@/components/admin/ToastContext";
+import ImageUploadField from "@/components/admin/ImageUploadField";
+import { inputClass, labelClass, primaryButtonClass } from "@/lib/admin-ui";
+
+type HeroFormValues = Omit<Hero, "id" | "updatedAt" | "photoUrl"> & { photoUrl: string };
+
+const EMPTY: HeroFormValues = {
+  name: "",
+  location: "",
+  niche: "",
+  headlinePlain: "",
+  headlineEmphasis: "",
+  photoUrl: "",
+  ctaPrimaryLabel: "",
+  ctaPrimaryHref: "",
+  ctaSecondaryLabel: "",
+  ctaSecondaryHref: "",
+};
+
+export default function HeroForm({ initialHero }: { initialHero: Hero | null }) {
+  const { showToast } = useToast();
+  const [form, setForm] = useState(
+    initialHero
+      ? {
+          name: initialHero.name,
+          location: initialHero.location,
+          niche: initialHero.niche,
+          headlinePlain: initialHero.headlinePlain,
+          headlineEmphasis: initialHero.headlineEmphasis,
+          photoUrl: initialHero.photoUrl ?? "",
+          ctaPrimaryLabel: initialHero.ctaPrimaryLabel,
+          ctaPrimaryHref: initialHero.ctaPrimaryHref,
+          ctaSecondaryLabel: initialHero.ctaSecondaryLabel,
+          ctaSecondaryHref: initialHero.ctaSecondaryHref,
+        }
+      : EMPTY
+  );
+  const [saving, setSaving] = useState(false);
+
+  function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
+    setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    setSaving(true);
+    const response = await fetch("/api/admin/hero", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    setSaving(false);
+
+    if (response.ok) {
+      showToast("success", "Hero actualizado");
+    } else {
+      const data = await response.json().catch(() => ({}));
+      showToast("error", data.error ?? "No se pudo guardar");
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-2xl flex flex-col gap-sp-5">
+      <div className="grid gap-sp-4 sm:grid-cols-2">
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">Nombre</span>
+          <input
+            required
+            value={form.name}
+            onChange={(e) => set("name", e.target.value)}
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">Ubicación</span>
+          <input
+            required
+            value={form.location}
+            onChange={(e) => set("location", e.target.value)}
+            className={inputClass}
+          />
+        </label>
+      </div>
+
+      <label className={labelClass}>
+        <span className="text-sm font-medium text-ink">Nicho</span>
+        <input
+          required
+          value={form.niche}
+          onChange={(e) => set("niche", e.target.value)}
+          className={inputClass}
+        />
+      </label>
+
+      <div className="grid gap-sp-4 sm:grid-cols-2">
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">Headline — texto normal</span>
+          <input
+            required
+            value={form.headlinePlain}
+            onChange={(e) => set("headlinePlain", e.target.value)}
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">Headline — texto en itálica</span>
+          <input
+            required
+            value={form.headlineEmphasis}
+            onChange={(e) => set("headlineEmphasis", e.target.value)}
+            className={inputClass}
+          />
+        </label>
+      </div>
+
+      <ImageUploadField
+        label="Foto"
+        value={form.photoUrl}
+        onChange={(url) => set("photoUrl", url)}
+      />
+
+      <div className="grid gap-sp-4 sm:grid-cols-2">
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">CTA primario — texto</span>
+          <input
+            required
+            value={form.ctaPrimaryLabel}
+            onChange={(e) => set("ctaPrimaryLabel", e.target.value)}
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">CTA primario — link</span>
+          <input
+            required
+            value={form.ctaPrimaryHref}
+            onChange={(e) => set("ctaPrimaryHref", e.target.value)}
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">CTA secundario — texto</span>
+          <input
+            required
+            value={form.ctaSecondaryLabel}
+            onChange={(e) => set("ctaSecondaryLabel", e.target.value)}
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">CTA secundario — link</span>
+          <input
+            required
+            value={form.ctaSecondaryHref}
+            onChange={(e) => set("ctaSecondaryHref", e.target.value)}
+            className={inputClass}
+          />
+        </label>
+      </div>
+
+      <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
+        {saving ? "Guardando..." : "Guardar cambios"}
+      </button>
+    </form>
+  );
+}

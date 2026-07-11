@@ -1,101 +1,195 @@
-import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import type { Platform, ContentType } from "@/lib/embeds";
+import StatCard from "@/components/StatCard";
+import ContentFeed from "@/components/ContentFeed";
+import BrandChip from "@/components/BrandChip";
+import PricingCard from "@/components/PricingCard";
+import FaqAccordion from "@/components/FaqAccordion";
+import ContactForm from "@/components/ContactForm";
+import { PackageSelectionProvider } from "@/components/PackageSelectionContext";
+import type { ContentCardProps } from "@/components/ContentCard";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const NAV_LINKS = [
+  { href: "#about", label: "About me" },
+  { href: "#contenido", label: "Contents" },
+  { href: "#why", label: "Why me?" },
+  { href: "#contacto", label: "Contact" },
+];
+
+export default async function HomePage() {
+  const [hero, stats, contentCards, brands, pricingPackages, faqItems, settings] =
+    await Promise.all([
+      prisma.hero.findFirst(),
+      prisma.stat.findMany({ orderBy: { order: "asc" } }),
+      prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
+      prisma.brand.findMany({ orderBy: { order: "asc" } }),
+      prisma.pricingPackage.findMany({ orderBy: { order: "asc" } }),
+      prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
+      prisma.siteSettings.findFirst(),
+    ]);
+
+  const feedCards: ContentCardProps[] = contentCards.map((card) => ({
+    type: card.type as ContentType,
+    platform: card.platform as Platform,
+    postUrl: card.postUrl,
+    caption: card.caption,
+    category: card.category,
+    statPrimary: card.statPrimary,
+    statSecondary: card.statSecondary,
+  }));
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <PackageSelectionProvider>
+      <nav className="sticky top-0 z-40 bg-cobalt text-cream">
+        <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3 px-sp-5 py-sp-4">
+          <span className="w-[92px] shrink-0 truncate font-bodoni italic font-bold uppercase text-xs sm:w-auto sm:text-sm">
+            {hero?.name ?? "Crislia"}
+          </span>
+          <ul className="flex gap-sp-2 font-mono text-[10px] uppercase tracking-wide sm:gap-sp-5 sm:text-xs">
+            {NAV_LINKS.map((link) => (
+              <li key={link.href}>
+                <a href={link.href} className="hover:text-lime transition">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
+      </nav>
+
+      <main>
+        {/* HERO */}
+        <section id="about" className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <div className="grid gap-sp-8 md:grid-cols-[1.2fr,0.8fr] md:items-center">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-widest text-moss">
+                {hero?.location ?? "Santo Domingo, DR"} · {hero?.niche ?? "UGC"}
+              </p>
+              <h1 className="mt-sp-3 font-fraunces text-[clamp(2.8rem,6.4vw,5.6rem)] font-semibold leading-[1.06] tracking-[-0.01em] text-ink">
+                {hero?.headlinePlain ?? "Contenido real,"}{" "}
+                <em className="font-fraunces italic text-coral">
+                  {hero?.headlineEmphasis ?? "filmado a mano."}
+                </em>
+              </h1>
+              <div className="mt-sp-6 flex flex-wrap gap-sp-4">
+                <a
+                  href={hero?.ctaPrimaryHref ?? "#contacto"}
+                  className="rounded-sm bg-coral px-sp-6 py-sp-3 font-medium text-white hover:opacity-90 transition"
+                >
+                  {hero?.ctaPrimaryLabel ?? "Trabajemos juntos"}
+                </a>
+                <a
+                  href={hero?.ctaSecondaryHref ?? "#media-kit"}
+                  className="rounded-sm border border-cobalt px-sp-6 py-sp-3 font-medium text-cobalt hover:bg-cobalt hover:text-cream transition"
+                >
+                  {hero?.ctaSecondaryLabel ?? "Ver media kit"}
+                </a>
+              </div>
+            </div>
+
+            {hero?.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={hero.photoUrl}
+                alt={hero.name}
+                className="aspect-[4/5] w-full rounded-lg object-cover"
+              />
+            ) : (
+              <div className="aspect-[4/5] w-full rounded-lg bg-gradient-to-br from-cobalt to-cobalt-ink" />
+            )}
+          </div>
+        </section>
+
+        {/* MEDIA KIT */}
+        <section id="media-kit" className="mx-auto max-w-content px-sp-5 pb-sp-9">
+          <div className="grid gap-sp-4 [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
+            {stats.map((stat) => (
+              <StatCard key={stat.id} value={stat.value} label={stat.label} />
+            ))}
+          </div>
+        </section>
+
+        {/* FEED */}
+        <section id="contenido" className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
+            Contenido
+          </h2>
+          <ContentFeed cards={feedCards} />
+        </section>
+
+        {/* BRANDS */}
+        {brands.length > 0 && (
+          <section className="mx-auto max-w-content px-sp-5 pb-sp-9">
+            <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-4">
+              Brands that trust on me
+            </p>
+            <div className="flex flex-wrap gap-sp-3">
+              {brands.map((brand) => (
+                <BrandChip key={brand.id} name={brand.name} logoUrl={brand.logoUrl} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* WHY ME */}
+        <section id="why" className="bg-cobalt text-cream">
+          <div className="mx-auto max-w-content px-sp-5 py-sp-9">
+            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] mb-sp-5">
+              Why me?
+            </h2>
+            <p className="max-w-2xl text-cream/85 leading-relaxed whitespace-pre-line">
+              {settings?.whyMeText ??
+                "Creo contenido auténtico, cuidado en el detalle y con comunicación responsable en cada colaboración."}
+            </p>
+          </div>
+        </section>
+
+        {/* PRICING */}
+        <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
+            Paquetes
+          </h2>
+          <div className="grid gap-sp-5 md:grid-cols-3">
+            {pricingPackages.map((pkg) => (
+              <PricingCard
+                key={pkg.id}
+                name={pkg.name}
+                price={pkg.price}
+                unit={pkg.unit}
+                deliverables={pkg.deliverables}
+                featured={pkg.featured}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ */}
+        {faqItems.length > 0 && (
+          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
+              FAQ
+            </h2>
+            <FaqAccordion items={faqItems} />
+          </section>
+        )}
+
+        {/* CONTACT */}
+        <section id="contacto" className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
+            Contacto
+          </h2>
+          <div className="grid gap-sp-8 md:grid-cols-[1fr,1fr]">
+            <ContactForm />
+            <div className="flex flex-col gap-sp-3 font-mono text-sm text-moss">
+              {settings?.instagramHandle && <p>Instagram: {settings.instagramHandle}</p>}
+              {settings?.tiktokHandle && <p>TikTok: {settings.tiktokHandle}</p>}
+              {settings?.contactEmail && <p>Email: {settings.contactEmail}</p>}
+            </div>
+          </div>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    </PackageSelectionProvider>
   );
 }

@@ -7,6 +7,11 @@
   --foreground: #241227;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 64px;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

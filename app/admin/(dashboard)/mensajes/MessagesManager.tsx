@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ContactMessageModel as ContactMessage } from "@/lib/generated/prisma/models";
+import type { ContactMessage } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 
 const API_BASE = "/api/admin/messages";

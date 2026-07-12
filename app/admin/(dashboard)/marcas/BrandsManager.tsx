@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { BrandModel as Brand } from "@/lib/generated/prisma/models";
+import type { Brand } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";

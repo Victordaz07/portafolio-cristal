@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { ContentCardModel as ContentCard } from "@/lib/generated/prisma/models";
+import type { ContentCard } from "@prisma/client";
 import type { ContentType, Platform } from "@/lib/embeds";
 import { platformLabel } from "@/lib/embeds";
 import { useToast } from "@/components/admin/ToastContext";

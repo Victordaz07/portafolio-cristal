@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { StatModel as Stat } from "@/lib/generated/prisma/models";
+import type { Stat } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { PricingPackageModel as PricingPackage } from "@/lib/generated/prisma/models";
+import type { PricingPackage } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import PricingPackageForm, { type PricingPackageFormValues } from "./PricingPackageForm";

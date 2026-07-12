@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { SiteSettingsModel as SiteSettings } from "@/lib/generated/prisma/models";
+import type { SiteSettings } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
 

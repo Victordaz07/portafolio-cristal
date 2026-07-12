@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { HeroModel as Hero } from "@/lib/generated/prisma/models";
+import type { Hero } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import { inputClass, labelClass, primaryButtonClass } from "@/lib/admin-ui";

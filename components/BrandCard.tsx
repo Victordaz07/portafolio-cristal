@@ -5,12 +5,12 @@ export interface BrandCardProps {
 }
 
 const cardClass =
-  "flex h-36 w-44 shrink-0 items-center justify-center rounded-2xl border border-line bg-white p-sp-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-lime/60 hover:shadow-md";
+  "flex h-24 w-32 shrink-0 items-center justify-center rounded-2xl border border-line bg-white p-sp-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-lime/60 hover:shadow-md";
 
 export default function BrandCard({ name, logoUrl, websiteUrl }: BrandCardProps) {
   const content = logoUrl ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={logoUrl} alt={name} className="max-h-14 w-auto object-contain" />
+    <img src={logoUrl} alt={name} className="max-h-10 w-auto object-contain" />
   ) : (
     <span className="text-center text-sm font-medium text-ink">{name}</span>
   );

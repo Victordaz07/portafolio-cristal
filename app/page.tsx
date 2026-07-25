@@ -305,7 +305,7 @@ export default async function HomePage() {
             <img
               src="/images/brands-banner.png"
               alt={hero?.name ?? "Crislia"}
-              className="aspect-[3/1] w-full object-cover object-top"
+              className="aspect-[5/2] w-full object-cover object-top"
             />
 
             <div className="relative overflow-hidden bg-white py-sp-6">

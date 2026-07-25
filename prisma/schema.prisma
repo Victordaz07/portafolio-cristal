@@ -12,8 +12,11 @@ model Hero {
   name              String
   location          String
   niche             String
+  badgeLabel        String   @default("UGC Creator / Brand Reviews")
   headlinePlain     String
   headlineEmphasis  String
+  headlineSuffix    String   @default("")
+  description       String   @default("")
   photoUrl          String?
   ctaPrimaryLabel   String
   ctaPrimaryHref    String
@@ -26,6 +29,7 @@ model Stat {
   id        String   @id @default(cuid())
   label     String
   value     String
+  icon      String   @default("star")
   order     Int      @default(0)
   createdAt DateTime @default(now())
 }

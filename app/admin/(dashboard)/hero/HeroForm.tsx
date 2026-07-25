@@ -12,8 +12,11 @@ const EMPTY: HeroFormValues = {
   name: "",
   location: "",
   niche: "",
+  badgeLabel: "",
   headlinePlain: "",
   headlineEmphasis: "",
+  headlineSuffix: "",
+  description: "",
   photoUrl: "",
   ctaPrimaryLabel: "",
   ctaPrimaryHref: "",
@@ -29,8 +32,11 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           name: initialHero.name,
           location: initialHero.location,
           niche: initialHero.niche,
+          badgeLabel: initialHero.badgeLabel,
           headlinePlain: initialHero.headlinePlain,
           headlineEmphasis: initialHero.headlineEmphasis,
+          headlineSuffix: initialHero.headlineSuffix,
+          description: initialHero.description,
           photoUrl: initialHero.photoUrl ?? "",
           ctaPrimaryLabel: initialHero.ctaPrimaryLabel,
           ctaPrimaryHref: initialHero.ctaPrimaryHref,
@@ -96,26 +102,62 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
         />
       </label>
 
-      <div className="grid gap-sp-4 sm:grid-cols-2">
+      <label className={labelClass}>
+        <span className="text-sm font-medium text-ink">Badge (pill arriba del título)</span>
+        <input
+          required
+          value={form.badgeLabel}
+          onChange={(e) => set("badgeLabel", e.target.value)}
+          className={inputClass}
+          placeholder="UGC Creator / Brand Reviews"
+        />
+      </label>
+
+      <div className="grid gap-sp-4 sm:grid-cols-3">
         <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">Headline — texto normal</span>
+          <span className="text-sm font-medium text-ink">Título — línea 1</span>
           <input
             required
             value={form.headlinePlain}
             onChange={(e) => set("headlinePlain", e.target.value)}
             className={inputClass}
+            placeholder="Reseñas que"
           />
         </label>
         <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">Headline — texto en itálica</span>
+          <span className="text-sm font-medium text-ink">Título — palabra en color</span>
           <input
             required
             value={form.headlineEmphasis}
             onChange={(e) => set("headlineEmphasis", e.target.value)}
             className={inputClass}
+            placeholder="inspiran"
+          />
+        </label>
+        <label className={labelClass}>
+          <span className="text-sm font-medium text-ink">Título — resto de la línea 2</span>
+          <input
+            value={form.headlineSuffix}
+            onChange={(e) => set("headlineSuffix", e.target.value)}
+            className={inputClass}
+            placeholder="confianza."
           />
         </label>
       </div>
+
+      <label className={labelClass}>
+        <span className="text-sm font-medium text-ink">Descripción</span>
+        <textarea
+          rows={3}
+          value={form.description}
+          onChange={(e) => set("description", e.target.value)}
+          className={inputClass}
+          placeholder="Creo reseñas **auténticas y contenido UGC** que conecta..."
+        />
+        <span className="text-xs text-ink/50">
+          Usa **texto** para negrita oscura y __texto__ para negrita en color de acento.
+        </span>
+      </label>
 
       <ImageUploadField
         label="Foto"

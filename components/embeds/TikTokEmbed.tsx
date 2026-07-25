@@ -19,12 +19,14 @@ export default function TikTokEmbed({ url }: { url: string }) {
     reloadScript();
   }, [url]);
 
+  const videoId = url.match(/\/video\/(\d+)/)?.[1] ?? "";
+
   return (
     <div className="w-full flex justify-center">
       <blockquote
         className="tiktok-embed"
         cite={url}
-        data-video-id=""
+        data-video-id={videoId}
         style={{ maxWidth: 605, minWidth: 325 }}
       >
         <section>

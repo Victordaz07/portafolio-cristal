@@ -16,8 +16,10 @@ import {
   YouTubeIcon,
   FacebookIcon,
   PinterestIcon,
+  QuoteIcon,
 } from "@/components/icons";
 import { renderHighlightedText } from "@/lib/highlight";
+import { getThumbnailUrl } from "@/lib/oembed";
 import ContentFeed from "@/components/ContentFeed";
 import BrandCard from "@/components/BrandCard";
 import FaqAccordion from "@/components/FaqAccordion";
@@ -60,7 +62,11 @@ export default async function HomePage() {
     prisma.testimonial.findMany({ orderBy: { order: "asc" } }),
   ]);
 
-  const feedCards: ContentCardProps[] = contentCards.map((card) => ({
+  const feedThumbnails = await Promise.all(
+    contentCards.map((card) => getThumbnailUrl(card.platform as Platform, card.postUrl))
+  );
+
+  const feedCards: ContentCardProps[] = contentCards.map((card, index) => ({
     type: card.type as ContentType,
     platform: card.platform as Platform,
     postUrl: card.postUrl,
@@ -68,6 +74,7 @@ export default async function HomePage() {
     category: card.category,
     statPrimary: card.statPrimary,
     statSecondary: card.statSecondary,
+    thumbnailUrl: feedThumbnails[index],
   }));
 
   const hablamosRows = (
@@ -166,7 +173,7 @@ export default async function HomePage() {
                 alt={hero?.name ?? "Crislia"}
                 className="aspect-square w-full object-cover object-bottom"
               />
-              <div className="relative -mt-10 rounded-t-3xl bg-cream px-sp-5 pb-sp-8 pt-sp-7 text-center">
+              <div className="relative -mt-10 rounded-t-3xl bg-cream px-sp-5 pb-sp-3 pt-sp-7 text-center">
                 <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">
                   <SparkleIcon className="h-3.5 w-3.5 text-lime" />
                   {hero?.badgeLabel ?? "UGC Creator • Brand Reviews"}
@@ -285,7 +292,7 @@ export default async function HomePage() {
         </section>
 
         {/* FEED */}
-        <section id="contenido" className="mx-auto max-w-content px-sp-5 py-sp-9">
+        <section id="contenido" className="mx-auto max-w-content px-sp-5 pt-sp-5 pb-sp-9">
           <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
             Contenido
           </h2>
@@ -294,7 +301,7 @@ export default async function HomePage() {
 
         {/* BRANDS */}
         {brands.length > 0 && (
-          <section id="marcas" className="pb-sp-9">
+          <section id="marcas" className="pb-sp-3">
             <p className="mx-auto max-w-content px-sp-5 font-mono text-xs uppercase tracking-widest text-moss mb-sp-4">
               Marcas y colaboraciones
             </p>
@@ -326,7 +333,7 @@ export default async function HomePage() {
 
         {/* REVIEWS */}
         {reviews.length > 0 && (
-          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <section className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-3">
             <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
               Reseñas recientes
             </p>
@@ -355,7 +362,7 @@ export default async function HomePage() {
         {/* SERVICES */}
         {services.length > 0 && (
           <section className="bg-white">
-            <div className="mx-auto max-w-content px-sp-5 py-sp-9 text-center">
+            <div className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-3 text-center">
               <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
                 Lo que hago
               </p>
@@ -379,7 +386,7 @@ export default async function HomePage() {
 
         {/* TESTIMONIALS */}
         {testimonials.length > 0 && (
-          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <section className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-9">
             <div className="text-center">
               <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
                 Lo que dicen las marcas
@@ -404,31 +411,41 @@ export default async function HomePage() {
         )}
 
         {/* WHY ME */}
-        <section id="why" className="bg-cobalt text-cream">
-          <div className="mx-auto max-w-content px-sp-5 py-sp-9">
-            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] mb-sp-5">
-              Why me?
+        <section id="why" className="relative overflow-hidden bg-cobalt text-cream">
+          <QuoteIcon className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 text-cream/[0.06]" />
+          <div className="relative mx-auto max-w-content px-sp-5 py-sp-9">
+            <p className="font-mono text-xs uppercase tracking-widest text-lime mb-sp-2">
+              Por qué trabajar conmigo
+            </p>
+            <h2 className="max-w-2xl font-bodoni italic font-bold uppercase text-[clamp(2rem,4vw,3.2rem)] leading-[1.1] mb-sp-5">
+              Contenido real que <span className="text-lime">conecta y convierte</span>
             </h2>
-            <p className="max-w-2xl text-cream/85 leading-relaxed whitespace-pre-line">
+            <p className="max-w-2xl text-lg text-cream/85 leading-relaxed whitespace-pre-line">
               {settings?.whyMeText ??
-                "Creo contenido auténtico, cuidado en el detalle y con comunicación responsable en cada colaboración."}
+                "No vendo humo: cada video que grabo es contenido real, pensado para conectar y convertir. Cuido cada detalle —guion, luz, edición— como si fuera para mi propia marca, cumplo los plazos que prometo y mantengo una comunicación clara en cada etapa. Cuando trabajas conmigo, tu marca no es un cliente más: es una colaboración de la que ambas salimos ganando."}
             </p>
           </div>
         </section>
 
         {/* FAQ */}
         {faqItems.length > 0 && (
-          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
-            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
-              FAQ
+          <section className="mx-auto max-w-content px-sp-5 pt-sp-9 pb-sp-3">
+            <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+              Preguntas frecuentes
+            </p>
+            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-2">
+              ¿Tienes <span className="text-coral">dudas?</span>
             </h2>
+            <p className="max-w-md text-ink/70 mb-sp-6">
+              Esto es lo que más me preguntan las marcas antes de trabajar juntas.
+            </p>
             <FaqAccordion items={faqItems} />
           </section>
         )}
 
         {/* CONTACT / FOOTER */}
         <section id="contacto" className="bg-cream">
-          <div className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <div className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-9">
             <div className="mx-auto max-w-2xl text-center">
               <SparkleIcon className="mx-auto h-5 w-5 text-lime" />
               <h2 className="mt-sp-3 font-fraunces italic text-[clamp(2rem,5vw,2.8rem)] text-ink">

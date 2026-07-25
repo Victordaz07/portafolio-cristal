@@ -16,10 +16,10 @@ export default function PlatformEmbed({
 }) {
   switch (platform) {
     case "tiktok":
-      return <TikTokEmbed url={url} />;
+      return <TikTokEmbed key={url} url={url} />;
     case "instagram":
-      return <InstagramEmbed url={url} />;
+      return <InstagramEmbed key={url} url={url} />;
     case "facebook":
-      return <FacebookEmbed url={url} isVideo={type === "video"} />;
+      return <FacebookEmbed key={url} url={url} isVideo={type === "video"} />;
   }
 }

@@ -332,7 +332,7 @@ export default async function HomePage() {
 
         {/* REVIEWS */}
         {reviews.length > 0 && (
-          <section className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-9">
+          <section className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-3">
             <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
               Reseñas recientes
             </p>
@@ -361,7 +361,7 @@ export default async function HomePage() {
         {/* SERVICES */}
         {services.length > 0 && (
           <section className="bg-white">
-            <div className="mx-auto max-w-content px-sp-5 py-sp-9 text-center">
+            <div className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-3 text-center">
               <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
                 Lo que hago
               </p>
@@ -385,7 +385,7 @@ export default async function HomePage() {
 
         {/* TESTIMONIALS */}
         {testimonials.length > 0 && (
-          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <section className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-9">
             <div className="text-center">
               <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
                 Lo que dicen las marcas
@@ -424,7 +424,7 @@ export default async function HomePage() {
 
         {/* FAQ */}
         {faqItems.length > 0 && (
-          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <section className="mx-auto max-w-content px-sp-5 pt-sp-9 pb-sp-3">
             <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
               FAQ
             </h2>
@@ -434,7 +434,7 @@ export default async function HomePage() {
 
         {/* CONTACT / FOOTER */}
         <section id="contacto" className="bg-cream">
-          <div className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <div className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-9">
             <div className="mx-auto max-w-2xl text-center">
               <SparkleIcon className="mx-auto h-5 w-5 text-lime" />
               <h2 className="mt-sp-3 font-fraunces italic text-[clamp(2rem,5vw,2.8rem)] text-ink">

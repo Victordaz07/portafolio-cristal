@@ -6,7 +6,10 @@ import { useToast } from "@/components/admin/ToastContext";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import { inputClass, labelClass, primaryButtonClass } from "@/lib/admin-ui";
 
-type HeroFormValues = Omit<Hero, "id" | "updatedAt" | "photoUrl"> & { photoUrl: string };
+type HeroFormValues = Omit<Hero, "id" | "updatedAt" | "photoUrl" | "photoUrlMobile"> & {
+  photoUrl: string;
+  photoUrlMobile: string;
+};
 
 const EMPTY: HeroFormValues = {
   name: "",
@@ -18,6 +21,7 @@ const EMPTY: HeroFormValues = {
   headlineSuffix: "",
   description: "",
   photoUrl: "",
+  photoUrlMobile: "",
   ctaPrimaryLabel: "",
   ctaPrimaryHref: "",
   ctaSecondaryLabel: "",
@@ -38,6 +42,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           headlineSuffix: initialHero.headlineSuffix,
           description: initialHero.description,
           photoUrl: initialHero.photoUrl ?? "",
+          photoUrlMobile: initialHero.photoUrlMobile ?? "",
           ctaPrimaryLabel: initialHero.ctaPrimaryLabel,
           ctaPrimaryHref: initialHero.ctaPrimaryHref,
           ctaSecondaryLabel: initialHero.ctaSecondaryLabel,
@@ -109,7 +114,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           value={form.badgeLabel}
           onChange={(e) => set("badgeLabel", e.target.value)}
           className={inputClass}
-          placeholder="UGC Creator / Brand Reviews"
+          placeholder="UGC Creator • Brand Reviews"
         />
       </label>
 
@@ -160,10 +165,20 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
       </label>
 
       <ImageUploadField
-        label="Foto"
+        label="Foto (escritorio)"
         value={form.photoUrl}
         onChange={(url) => set("photoUrl", url)}
       />
+
+      <ImageUploadField
+        label="Foto (mobile)"
+        value={form.photoUrlMobile}
+        onChange={(url) => set("photoUrlMobile", url)}
+      />
+      <p className="-mt-sp-4 text-xs text-ink/50">
+        Se usa aparte para pantallas de teléfono — puede ser un recorte o composición distinta a la
+        de escritorio.
+      </p>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className={labelClass}>

@@ -42,7 +42,13 @@ export default function ContentCard({
     // no mostrar un reproductor que parece funcionar pero no hace nada.
     const isTouchViewport = typeof window !== "undefined" && window.innerWidth < 768;
     if (platform === "tiktok" && isTouchViewport) {
-      window.open(postUrl, "_blank", "noopener,noreferrer");
+      // La URL canónica (/@usuario/video/id) está registrada como universal link
+      // y el sistema operativo la intercepta para abrir la app. La página del
+      // reproductor dedicado (/embed/v2/) no está en esa lista, así que se queda
+      // en el navegador y reproduce ahí.
+      const videoId = postUrl.match(/\/video\/(\d+)/)?.[1];
+      const playerUrl = videoId ? `https://www.tiktok.com/embed/v2/${videoId}` : postUrl;
+      window.open(playerUrl, "_blank", "noopener,noreferrer");
       return;
     }
     setOpen(true);

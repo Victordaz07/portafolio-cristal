@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import type { Platform, ContentType } from "@/lib/embeds";
-import StatCard from "@/components/StatCard";
+import HeroStat from "@/components/HeroStat";
+import { SparkleIcon, ArrowRightIcon } from "@/components/icons";
+import { renderHighlightedText } from "@/lib/highlight";
 import ContentFeed from "@/components/ContentFeed";
 import BrandChip from "@/components/BrandChip";
 import PricingCard from "@/components/PricingCard";
@@ -61,53 +63,73 @@ export default async function HomePage() {
 
       <main>
         {/* HERO */}
-        <section id="about" className="mx-auto max-w-content px-sp-5 py-sp-9">
-          <div className="grid gap-sp-8 md:grid-cols-[1.2fr,0.8fr] md:items-center">
+        <section id="about" className="relative overflow-hidden">
+          <div className="mx-auto grid max-w-content gap-sp-8 px-sp-5 py-sp-9 md:grid-cols-[1.1fr,0.9fr] md:items-center">
             <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-moss">
-                {hero?.location ?? "Santo Domingo, DR"} · {hero?.niche ?? "UGC"}
-              </p>
-              <h1 className="mt-sp-3 font-fraunces text-[clamp(2.8rem,6.4vw,5.6rem)] font-semibold leading-[1.06] tracking-[-0.01em] text-ink">
-                {hero?.headlinePlain ?? "Contenido real,"}{" "}
-                <em className="font-fraunces italic text-coral">
-                  {hero?.headlineEmphasis ?? "filmado a mano."}
-                </em>
+              <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">
+                <SparkleIcon className="h-3.5 w-3.5 text-coral" />
+                {hero?.badgeLabel ?? "UGC Creator / Brand Reviews"}
+              </span>
+
+              <h1 className="mt-sp-5 font-fraunces text-[clamp(2.6rem,6vw,4.8rem)] font-semibold leading-[1.08] tracking-[-0.01em] text-ink">
+                {hero?.headlinePlain ?? "Reseñas que"}
+                <br />
+                <em className="font-fraunces not-italic text-coral">
+                  {hero?.headlineEmphasis ?? "inspiran"}
+                </em>{" "}
+                {hero?.headlineSuffix ?? "confianza."}
               </h1>
+
+              <div className="mt-sp-5 h-px w-40 bg-gradient-to-r from-coral to-transparent" />
+
+              <p className="mt-sp-5 max-w-xl font-sans leading-relaxed text-ink/75">
+                {renderHighlightedText(
+                  hero?.description ??
+                    "Creo reseñas **auténticas y contenido UGC** que conecta productos con personas a través de historias __reales__, __honestas y con estilo__."
+                )}
+              </p>
+
               <div className="mt-sp-6 flex flex-wrap gap-sp-4">
                 <a
-                  href={hero?.ctaPrimaryHref ?? "#contacto"}
-                  className="rounded-sm bg-coral px-sp-6 py-sp-3 font-medium text-white hover:opacity-90 transition"
+                  href={hero?.ctaPrimaryHref ?? "#contenido"}
+                  className="inline-flex items-center gap-sp-2 rounded-sm bg-cobalt px-sp-6 py-sp-3 font-medium text-cream hover:opacity-90 transition"
                 >
-                  {hero?.ctaPrimaryLabel ?? "Trabajemos juntos"}
+                  {hero?.ctaPrimaryLabel ?? "Ver portafolio"}
+                  <ArrowRightIcon className="h-4 w-4" />
                 </a>
                 <a
-                  href={hero?.ctaSecondaryHref ?? "#media-kit"}
-                  className="rounded-sm border border-cobalt px-sp-6 py-sp-3 font-medium text-cobalt hover:bg-cobalt hover:text-cream transition"
+                  href={hero?.ctaSecondaryHref ?? "#contacto"}
+                  className="inline-flex items-center gap-sp-2 rounded-sm border border-cobalt px-sp-6 py-sp-3 font-medium text-cobalt hover:bg-cobalt hover:text-cream transition"
                 >
-                  {hero?.ctaSecondaryLabel ?? "Ver media kit"}
+                  {hero?.ctaSecondaryLabel ?? "Trabajemos juntos"}
+                  <ArrowRightIcon className="h-4 w-4" />
                 </a>
               </div>
+
+              {stats.length > 0 && (
+                <div
+                  id="media-kit"
+                  className="mt-sp-8 grid max-w-lg grid-cols-2 gap-sp-5 border-t border-line pt-sp-6 sm:grid-cols-3"
+                >
+                  {stats.map((stat) => (
+                    <HeroStat key={stat.id} value={stat.value} label={stat.label} icon={stat.icon} />
+                  ))}
+                </div>
+              )}
             </div>
 
-            {hero?.photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={hero.photoUrl}
-                alt={hero.name}
-                className="aspect-[4/5] w-full rounded-lg object-cover"
+            <div className="relative">
+              <div
+                aria-hidden
+                className="absolute -inset-4 rounded-[45%_55%_60%_40%/50%_45%_55%_50%] bg-gradient-to-br from-coral/25 via-sage/20 to-cobalt/20"
               />
-            ) : (
-              <div className="aspect-[4/5] w-full rounded-lg bg-gradient-to-br from-cobalt to-cobalt-ink" />
-            )}
-          </div>
-        </section>
-
-        {/* MEDIA KIT */}
-        <section id="media-kit" className="mx-auto max-w-content px-sp-5 pb-sp-9">
-          <div className="grid gap-sp-4 [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
-            {stats.map((stat) => (
-              <StatCard key={stat.id} value={stat.value} label={stat.label} />
-            ))}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
+                alt={hero?.name ?? "Crislia"}
+                className="relative aspect-[4/5] w-full rounded-[45%_55%_60%_40%/50%_45%_55%_50%] object-cover shadow-xl"
+              />
+            </div>
           </div>
         </section>
 

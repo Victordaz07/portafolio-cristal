@@ -7,6 +7,7 @@ import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import { STAT_ICONS, STAT_ICON_OPTIONS, StarIcon, type StatIconKey } from "@/components/icons";
 
 const API_BASE = "/api/admin/stats";
 
@@ -15,6 +16,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
   const [stats, setStats] = useState(initialStats);
   const [label, setLabel] = useState("");
   const [value, setValue] = useState("");
+  const [icon, setIcon] = useState<StatIconKey>("star");
   const [saving, setSaving] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<Stat | null>(null);
 
@@ -24,7 +26,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
     const response = await fetch(API_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ label, value }),
+      body: JSON.stringify({ label, value, icon }),
     });
     setSaving(false);
 
@@ -38,7 +40,20 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
     setStats((current) => [...current, created]);
     setLabel("");
     setValue("");
+    setIcon("star");
     showToast("success", "Stat agregado");
+  }
+
+  async function handleIconChange(stat: Stat, nextIcon: StatIconKey) {
+    setStats((current) => current.map((s) => (s.id === stat.id ? { ...s, icon: nextIcon } : s)));
+    const response = await fetch(`${API_BASE}/${stat.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ icon: nextIcon }),
+    });
+    if (!response.ok) {
+      showToast("error", "No se pudo actualizar el ícono");
+    }
   }
 
   async function handleDelete(stat: Stat) {
@@ -71,10 +86,27 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
               disableUp={index === 0}
               disableDown={index === stats.length - 1}
             />
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-coral/15 text-coral">
+              {(() => {
+                const Icon = STAT_ICONS[stat.icon as StatIconKey] ?? StarIcon;
+                return <Icon className="h-4 w-4" />;
+              })()}
+            </span>
             <div className="flex-1">
               <p className="font-mono font-bold text-lg text-moss">{stat.value}</p>
               <p className="text-xs uppercase tracking-wide text-ink/60">{stat.label}</p>
             </div>
+            <select
+              value={stat.icon}
+              onChange={(e) => handleIconChange(stat, e.target.value as StatIconKey)}
+              className="rounded-sm border border-line px-sp-2 py-sp-1 text-sm text-ink"
+            >
+              {STAT_ICON_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
             <button
               type="button"
               onClick={() => setPendingDelete(stat)}
@@ -106,6 +138,20 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
             className={inputClass}
             placeholder="Seguidores"
           />
+        </label>
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">Ícono</span>
+          <select
+            value={icon}
+            onChange={(e) => setIcon(e.target.value as StatIconKey)}
+            className={inputClass}
+          >
+            {STAT_ICON_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </label>
         <button type="submit" disabled={saving} className={primaryButtonClass}>
           {saving ? "Agregando..." : "+ agregar stat"}

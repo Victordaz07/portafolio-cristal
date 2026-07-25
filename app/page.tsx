@@ -300,7 +300,7 @@ export default async function HomePage() {
 
         {/* BRANDS */}
         {brands.length > 0 && (
-          <section id="marcas" className="pb-sp-9">
+          <section id="marcas" className="pb-sp-3">
             <p className="mx-auto max-w-content px-sp-5 font-mono text-xs uppercase tracking-widest text-moss mb-sp-4">
               Marcas y colaboraciones
             </p>
@@ -332,7 +332,7 @@ export default async function HomePage() {
 
         {/* REVIEWS */}
         {reviews.length > 0 && (
-          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+          <section className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-9">
             <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
               Reseñas recientes
             </p>

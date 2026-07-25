@@ -216,25 +216,16 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Desktop: foto en bleed a la derecha + columna de texto a la izquierda */}
-          <div className="hidden md:block">
-            <div className="absolute inset-y-0 right-0 w-[46%]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
-                alt={hero?.name ?? "Crislia"}
-                className="h-full w-full object-cover object-right"
-              />
-            </div>
-
-            <div className="relative mx-auto max-w-content px-sp-5 py-sp-9">
-              <div className="max-w-xl md:pr-sp-6">
+          {/* Desktop: grid de 2 columnas — texto a la izquierda, foto en bleed a la derecha */}
+          <div className="hidden md:grid md:grid-cols-2 md:items-stretch">
+            <div className="flex items-center py-sp-9">
+              <div className="mx-auto w-full max-w-xl px-sp-5 lg:pl-sp-8 lg:pr-sp-6">
                 <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">
                   <SparkleIcon className="h-3.5 w-3.5 text-lime" />
                   {hero?.badgeLabel ?? "UGC Creator • Brand Reviews"}
                 </span>
 
-                <h1 className="mt-sp-5 font-fraunces text-[clamp(2.6rem,6vw,4.8rem)] font-semibold leading-[1.08] tracking-[-0.01em] text-ink">
+                <h1 className="mt-sp-5 font-fraunces text-[clamp(2.2rem,4.4vw,3.6rem)] font-semibold leading-[1.08] tracking-[-0.01em] text-ink">
                   {hero?.headlinePlain ?? "Reseñas que"}
                   <br />
                   <em className="font-fraunces not-italic text-lime">
@@ -280,6 +271,15 @@ export default async function HomePage() {
                   </div>
                 )}
               </div>
+            </div>
+
+            <div className="relative min-h-[560px] lg:min-h-[640px]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
+                alt={hero?.name ?? "Crislia"}
+                className="absolute inset-0 h-full w-full object-cover object-right"
+              />
             </div>
           </div>
         </section>

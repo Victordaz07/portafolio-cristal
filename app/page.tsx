@@ -216,25 +216,16 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Desktop: foto en bleed a la derecha + columna de texto a la izquierda */}
-          <div className="hidden md:block">
-            <div className="absolute inset-y-0 right-0 w-[46%]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
-                alt={hero?.name ?? "Crislia"}
-                className="h-full w-full object-cover object-right"
-              />
-            </div>
-
-            <div className="relative mx-auto max-w-content px-sp-5 py-sp-9">
-              <div className="max-w-xl md:pr-sp-6">
+          {/* Desktop: grid de 2 columnas — texto a la izquierda, foto en bleed a la derecha */}
+          <div className="hidden md:grid md:grid-cols-2 md:items-stretch">
+            <div className="flex items-center py-sp-9">
+              <div className="mx-auto w-full max-w-xl px-sp-5 lg:pl-sp-8 lg:pr-sp-6">
                 <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">
                   <SparkleIcon className="h-3.5 w-3.5 text-lime" />
                   {hero?.badgeLabel ?? "UGC Creator • Brand Reviews"}
                 </span>
 
-                <h1 className="mt-sp-5 font-fraunces text-[clamp(2.6rem,6vw,4.8rem)] font-semibold leading-[1.08] tracking-[-0.01em] text-ink">
+                <h1 className="mt-sp-5 font-fraunces text-[clamp(2.2rem,4.4vw,3.6rem)] font-semibold leading-[1.08] tracking-[-0.01em] text-ink">
                   {hero?.headlinePlain ?? "Reseñas que"}
                   <br />
                   <em className="font-fraunces not-italic text-lime">
@@ -280,6 +271,15 @@ export default async function HomePage() {
                   </div>
                 )}
               </div>
+            </div>
+
+            <div className="relative min-h-[560px] lg:min-h-[640px]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
+                alt={hero?.name ?? "Crislia"}
+                className="absolute inset-0 h-full w-full object-cover object-right"
+              />
             </div>
           </div>
         </section>
@@ -440,31 +440,34 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <div className="mt-sp-9 grid gap-sp-8 md:grid-cols-[1fr,1fr]">
+            <div className="mt-sp-8 grid gap-sp-8 md:grid-cols-[1fr,1fr] md:items-start">
               <ContactForm />
-              <div className="flex flex-col gap-sp-6">
-                <ContactInfoCard title="¿Hablamos?" rows={hablamosRows} />
-                <ContactInfoCard title="Sígueme" rows={siguemeRows} />
-              </div>
-            </div>
 
-            <div className="mx-auto mt-sp-9 max-w-xl">
-              <div className="overflow-hidden rounded-lg">
-                <img
-                  src="/images/contact-photo.webp"
-                  alt={`${hero?.name ?? "Crislia"} preparando un envío para su comunidad`}
-                  className="aspect-[2/3] w-full object-cover"
-                />
-              </div>
-              <div className="relative z-10 mx-sp-5 -mt-sp-7 flex flex-col items-center gap-sp-3 rounded-md border border-line bg-cream p-sp-6 text-center shadow-lg">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime/25 text-coral">
-                  <HeartIcon className="h-5 w-5" />
-                </span>
-                <p className="font-fraunces italic text-xl text-ink">Tu apoyo significa todo</p>
-                <p className="max-w-md text-sm text-ink/70">
-                  {settings?.supportMessage ??
-                    "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!"}
-                </p>
+              <div>
+                <div className="relative overflow-hidden rounded-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/contact-photo.webp"
+                    alt={`${hero?.name ?? "Crislia"} preparando un envío para su comunidad`}
+                    className="w-full"
+                  />
+
+                  <div className="absolute inset-x-sp-4 top-sp-5 flex flex-col gap-sp-4 sm:inset-x-sp-6">
+                    <ContactInfoCard title="¿Hablamos?" rows={hablamosRows} />
+                    <ContactInfoCard title="Sígueme" rows={siguemeRows} />
+                  </div>
+                </div>
+
+                <div className="relative z-10 mx-sp-5 -mt-sp-7 flex flex-col items-center gap-sp-2 rounded-md border border-line bg-cream p-sp-5 text-center shadow-lg">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-lime/25 text-coral">
+                    <HeartIcon className="h-4 w-4" />
+                  </span>
+                  <p className="font-fraunces italic text-lg text-ink">Tu apoyo significa todo</p>
+                  <p className="max-w-md text-xs text-ink/70">
+                    {settings?.supportMessage ??
+                      "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

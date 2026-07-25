@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { Platform, ContentType } from "@/lib/embeds";
 import HeroStat from "@/components/HeroStat";
 import HeroStatCard from "@/components/HeroStatCard";
+import MobileHeroNav from "@/components/MobileHeroNav";
 import {
   SparkleIcon,
   ArrowRightIcon,
@@ -139,7 +140,7 @@ export default async function HomePage() {
 
   return (
     <PackageSelectionProvider>
-      <nav className="sticky top-0 z-40 bg-cobalt text-cream">
+      <nav className="sticky top-0 z-40 hidden bg-cobalt text-cream md:block">
         <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3 px-sp-5 py-sp-4">
           <span className="w-[92px] shrink-0 truncate font-bodoni italic font-bold uppercase text-xs sm:w-auto sm:text-sm">
             {hero?.name ?? "Crislia"}
@@ -162,11 +163,17 @@ export default async function HomePage() {
           {/* Mobile: foto vertical full-bleed arriba + tarjeta que se monta encima */}
           <div className="md:hidden">
             <div className="relative">
+              <MobileHeroNav
+                name={hero?.name ?? "Cristal"}
+                ctaLabel={hero?.ctaSecondaryLabel ?? "Trabajemos juntas"}
+                ctaHref={hero?.ctaSecondaryHref ?? "#contacto"}
+                links={NAV_LINKS}
+              />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={hero?.photoUrlMobile ?? "/images/hero-placeholder-mobile.png"}
                 alt={hero?.name ?? "Crislia"}
-                className="aspect-[3/4] w-full object-cover object-top"
+                className="aspect-[5/6] w-full object-cover object-bottom"
               />
               <div className="relative -mt-10 rounded-t-3xl bg-cream px-sp-5 pb-sp-8 pt-sp-7 text-center">
                 <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">

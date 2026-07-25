@@ -2,13 +2,27 @@ import { prisma } from "@/lib/prisma";
 import type { Platform, ContentType } from "@/lib/embeds";
 import HeroStat from "@/components/HeroStat";
 import HeroStatCard from "@/components/HeroStatCard";
-import { SparkleIcon, ArrowRightIcon } from "@/components/icons";
+import {
+  SparkleIcon,
+  ArrowRightIcon,
+  HeartIcon,
+  MailIcon,
+  SendIcon,
+  GlobeIcon,
+  WhatsAppIcon,
+  InstagramIcon,
+  TikTokIcon,
+  YouTubeIcon,
+  FacebookIcon,
+  PinterestIcon,
+} from "@/components/icons";
 import { renderHighlightedText } from "@/lib/highlight";
 import ContentFeed from "@/components/ContentFeed";
 import BrandCard from "@/components/BrandCard";
 import PricingCard from "@/components/PricingCard";
 import FaqAccordion from "@/components/FaqAccordion";
 import ContactForm from "@/components/ContactForm";
+import ContactInfoCard, { type ContactInfoRow } from "@/components/ContactInfoCard";
 import { PackageSelectionProvider } from "@/components/PackageSelectionContext";
 import type { ContentCardProps } from "@/components/ContentCard";
 
@@ -42,6 +56,70 @@ export default async function HomePage() {
     statPrimary: card.statPrimary,
     statSecondary: card.statSecondary,
   }));
+
+  const hablamosRows = (
+    [
+      settings?.contactEmail && {
+        icon: <MailIcon className="h-4 w-4" />,
+        label: "Correo",
+        value: settings.contactEmail,
+        href: `mailto:${settings.contactEmail}`,
+      },
+      settings?.whatsapp && {
+        icon: <WhatsAppIcon className="h-4 w-4" />,
+        label: "WhatsApp",
+        value: settings.whatsapp,
+        href: `https://wa.me/${settings.whatsapp.replace(/[^\d]/g, "")}`,
+      },
+      settings?.collabsEmail && {
+        icon: <SendIcon className="h-4 w-4" />,
+        label: "Colaboraciones",
+        value: settings.collabsEmail,
+        href: `mailto:${settings.collabsEmail}`,
+      },
+      settings?.websiteUrl && {
+        icon: <GlobeIcon className="h-4 w-4" />,
+        label: "Sitio web",
+        value: settings.websiteUrl.replace(/^https?:\/\//, ""),
+        href: settings.websiteUrl,
+      },
+    ] as Array<ContactInfoRow | false | undefined>
+  ).filter((row): row is ContactInfoRow => Boolean(row));
+
+  const siguemeRows = (
+    [
+      settings?.instagramHandle && {
+        icon: <InstagramIcon className="h-4 w-4" />,
+        label: "Instagram",
+        value: settings.instagramHandle,
+        href: `https://instagram.com/${settings.instagramHandle.replace(/^@/, "")}`,
+      },
+      settings?.tiktokHandle && {
+        icon: <TikTokIcon className="h-4 w-4" />,
+        label: "TikTok",
+        value: settings.tiktokHandle,
+        href: `https://tiktok.com/@${settings.tiktokHandle.replace(/^@/, "")}`,
+      },
+      settings?.youtubeHandle && {
+        icon: <YouTubeIcon className="h-4 w-4" />,
+        label: "YouTube",
+        value: settings.youtubeHandle,
+        href: `https://youtube.com/${settings.youtubeHandle.replace(/^\//, "")}`,
+      },
+      settings?.facebookHandle && {
+        icon: <FacebookIcon className="h-4 w-4" />,
+        label: "Facebook",
+        value: settings.facebookHandle,
+        href: `https://facebook.com/${settings.facebookHandle.replace(/^\//, "")}`,
+      },
+      settings?.pinterestHandle && {
+        icon: <PinterestIcon className="h-4 w-4" />,
+        label: "Pinterest",
+        value: settings.pinterestHandle,
+        href: `https://pinterest.com/${settings.pinterestHandle.replace(/^\//, "")}`,
+      },
+    ] as Array<ContactInfoRow | false | undefined>
+  ).filter((row): row is ContactInfoRow => Boolean(row));
 
   return (
     <PackageSelectionProvider>
@@ -274,17 +352,37 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* CONTACT */}
-        <section id="contacto" className="mx-auto max-w-content px-sp-5 py-sp-9">
-          <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
-            Contacto
-          </h2>
-          <div className="grid gap-sp-8 md:grid-cols-[1fr,1fr]">
-            <ContactForm />
-            <div className="flex flex-col gap-sp-3 font-mono text-sm text-moss">
-              {settings?.instagramHandle && <p>Instagram: {settings.instagramHandle}</p>}
-              {settings?.tiktokHandle && <p>TikTok: {settings.tiktokHandle}</p>}
-              {settings?.contactEmail && <p>Email: {settings.contactEmail}</p>}
+        {/* CONTACT / FOOTER */}
+        <section id="contacto" className="bg-cream">
+          <div className="mx-auto max-w-content px-sp-5 py-sp-9">
+            <div className="mx-auto max-w-2xl text-center">
+              <SparkleIcon className="mx-auto h-5 w-5 text-lime" />
+              <h2 className="mt-sp-3 font-fraunces italic text-[clamp(2rem,5vw,2.8rem)] text-ink">
+                Conéctate con {hero?.name?.split(" ")[0] ?? "Crislia"}
+              </h2>
+              <p className="mt-sp-3 text-ink/75 leading-relaxed whitespace-pre-line">
+                {settings?.footerIntro ??
+                  "Gracias por ser parte de este espacio. Me encanta compartir contigo lo que uso, me funciona y puede hacer tu vida más fácil y bonita."}
+              </p>
+            </div>
+
+            <div className="mt-sp-9 grid gap-sp-8 md:grid-cols-[1fr,1fr]">
+              <ContactForm />
+              <div className="flex flex-col gap-sp-6">
+                <ContactInfoCard title="¿Hablamos?" rows={hablamosRows} />
+                <ContactInfoCard title="Sígueme" rows={siguemeRows} />
+              </div>
+            </div>
+
+            <div className="mt-sp-8 flex flex-col items-center gap-sp-3 rounded-md border border-line bg-white p-sp-6 text-center">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime/25 text-coral">
+                <HeartIcon className="h-5 w-5" />
+              </span>
+              <p className="font-fraunces italic text-xl text-ink">Tu apoyo significa todo</p>
+              <p className="max-w-md text-sm text-ink/70">
+                {settings?.supportMessage ??
+                  "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!"}
+              </p>
             </div>
           </div>
         </section>

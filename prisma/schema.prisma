@@ -101,5 +101,12 @@ model SiteSettings {
   instagramHandle String
   tiktokHandle    String
   facebookHandle  String?
+  whatsapp        String?
+  collabsEmail    String?
+  websiteUrl      String?
+  youtubeHandle   String?
+  pinterestHandle String?
+  footerIntro     String?
+  supportMessage  String?
   updatedAt       DateTime @updatedAt
 }

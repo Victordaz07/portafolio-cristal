@@ -200,8 +200,13 @@ async function main() {
       whyMeText:
         "Trabajo con marcas de beauty, skincare, hair, books y lifestyle creando contenido auténtico: nada de guiones forzados ni presentaciones de venta. Cuido cada detalle de grabación y edición como si fuera para mi propia cuenta, y mantengo comunicación clara y responsable en cada etapa de la colaboración, desde el brief hasta la entrega final.",
       contactEmail: "crisliaflores.24@gmail.com",
+      collabsEmail: "crisliaflores.24@gmail.com",
       instagramHandle: "@crislia.24",
       tiktokHandle: "@crislia.24",
+      footerIntro:
+        "Gracias por ser parte de este espacio. Me encanta compartir contigo lo que uso, me funciona y puede hacer tu vida más fácil y bonita.",
+      supportMessage:
+        "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!",
     },
   });
 

@@ -159,12 +159,7 @@ export default async function HomePage() {
           {/* Mobile: foto vertical full-bleed arriba + tarjeta que se monta encima */}
           <div className="md:hidden">
             <div className="relative">
-              <MobileHeroNav
-                name={hero?.name ?? "Cristal"}
-                ctaLabel={hero?.ctaSecondaryLabel ?? "Trabajemos juntas"}
-                ctaHref={hero?.ctaSecondaryHref ?? "#contacto"}
-                links={NAV_LINKS}
-              />
+              <MobileHeroNav name={hero?.name?.split(" ")[0] ?? "Cristal"} links={NAV_LINKS} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={hero?.photoUrlMobile ?? "/images/hero-placeholder-mobile.png"}

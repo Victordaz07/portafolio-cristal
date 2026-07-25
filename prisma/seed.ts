@@ -148,14 +148,25 @@ async function main() {
   await prisma.brand.deleteMany();
   await prisma.brand.createMany({
     data: [
-      { name: "Charlotte Tilbury", order: 0 },
-      { name: "TEMU", order: 1 },
-      { name: "Ginger Milk", order: 2 },
-      { name: "Dear Hair", order: 3 },
-      { name: "ivoskin", order: 4 },
-      { name: "American Eagle", order: 5 },
-      { name: "Aromatica", order: 6 },
-      { name: "Gimme Beauty Creator Club", order: 7 },
+      { name: "Aromatica", logoUrl: "/images/brands/aromatica.png", order: 0 },
+      { name: "Dear Hair", logoUrl: "/images/brands/dear-hair.png", order: 1 },
+      { name: "Ymak", logoUrl: "/images/brands/ymak.png", order: 2 },
+      { name: "Mary & May", logoUrl: "/images/brands/mary-and-may.jpg", order: 3 },
+      { name: "YesStyle", logoUrl: "/images/brands/yesstyle.png", order: 4 },
+      { name: "ivoskin", logoUrl: "/images/brands/ivoskin.png", order: 5 },
+      { name: "Gimme Beauty Creator Club", logoUrl: "/images/brands/gimme-beauty.png", order: 6 },
+      {
+        name: "American Eagle Outfitters",
+        logoUrl: "/images/brands/american-eagle.jpg",
+        order: 7,
+      },
+      { name: "GroupSocial", logoUrl: "/images/brands/groupsocial.png", order: 8 },
+      { name: "iUNIK", logoUrl: "/images/brands/iunik.png", order: 9 },
+      { name: "milli²", logoUrl: "/images/brands/milli2.png", order: 10 },
+      { name: "TEMU", logoUrl: "/images/brands/temu.jpg", order: 11 },
+      { name: "Juve Look", logoUrl: "/images/brands/juve-look.png", order: 12 },
+      { name: "Cushionaire", logoUrl: "/images/brands/cushionaire.jpg", order: 13 },
+      { name: "Dr. Different", logoUrl: "/images/brands/dr-different.jpg", order: 14 },
     ],
   });
 

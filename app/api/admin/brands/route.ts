@@ -7,6 +7,8 @@ export const dynamic = "force-dynamic";
 const brandSchema = z.object({
   name: z.string().min(1),
   logoUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: z.string().url().optional().or(z.literal("")),
+  active: z.boolean().optional().default(true),
 });
 
 export async function GET() {
@@ -26,6 +28,8 @@ export async function POST(request: Request) {
     data: {
       name: parsed.data.name,
       logoUrl: parsed.data.logoUrl || null,
+      websiteUrl: parsed.data.websiteUrl || null,
+      active: parsed.data.active,
       order: (maxOrder._max.order ?? -1) + 1,
     },
   });

@@ -1,9 +1,6 @@
-import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
-async function main() {
+export async function seedDatabase(prisma: PrismaClient) {
   await prisma.hero.deleteMany();
   await prisma.hero.create({
     data: {
@@ -298,15 +295,4 @@ async function main() {
         "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!",
     },
   });
-
-  console.log("Seed completado.");
 }
-
-main()
-  .catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });

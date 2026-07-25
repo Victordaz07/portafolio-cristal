@@ -13,6 +13,7 @@ export interface ContentCardProps {
   category: string;
   statPrimary?: string | null;
   statSecondary?: string | null;
+  thumbnailUrl?: string | null;
 }
 
 export default function ContentCard({
@@ -23,6 +24,7 @@ export default function ContentCard({
   category,
   statPrimary,
   statSecondary,
+  thumbnailUrl,
 }: ContentCardProps) {
   const [open, setOpen] = useState(false);
   const stat = [statPrimary, statSecondary].filter(Boolean).join(" · ");
@@ -36,6 +38,19 @@ export default function ContentCard({
           type === "video" ? "aspect-[9/16]" : "aspect-[4/5]"
         }`}
       >
+        {thumbnailUrl && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={thumbnailUrl}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105"
+            />
+            <span className="absolute inset-0 bg-ink/15" aria-hidden="true" />
+          </>
+        )}
+
         <span className="absolute left-sp-3 top-sp-3 z-10 rounded-sm bg-lime px-sp-3 py-1 font-mono text-[10px] uppercase tracking-widest text-ink">
           {category}
         </span>
@@ -44,16 +59,16 @@ export default function ContentCard({
           {platformLabel(platform)}
         </span>
 
-        <span className="absolute inset-0 flex items-center justify-center">
+        <span className="absolute inset-0 z-10 flex items-center justify-center">
           {type === "video" ? (
-            <span className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/80 transition group-hover:scale-105">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/80 bg-ink/20 backdrop-blur-sm transition group-hover:scale-105">
               <span
                 className="ml-1 h-0 w-0 border-y-[10px] border-l-[16px] border-y-transparent border-l-white/90"
                 aria-hidden
               />
             </span>
           ) : (
-            <span className="h-14 w-14 rounded-md border-2 border-white/80 transition group-hover:scale-105" />
+            <span className="h-14 w-14 rounded-md border-2 border-white/80 bg-ink/20 backdrop-blur-sm transition group-hover:scale-105" />
           )}
         </span>
 

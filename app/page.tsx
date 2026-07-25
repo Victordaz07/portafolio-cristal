@@ -18,6 +18,7 @@ import {
   PinterestIcon,
 } from "@/components/icons";
 import { renderHighlightedText } from "@/lib/highlight";
+import { getThumbnailUrl } from "@/lib/oembed";
 import ContentFeed from "@/components/ContentFeed";
 import BrandCard from "@/components/BrandCard";
 import FaqAccordion from "@/components/FaqAccordion";
@@ -60,7 +61,11 @@ export default async function HomePage() {
     prisma.testimonial.findMany({ orderBy: { order: "asc" } }),
   ]);
 
-  const feedCards: ContentCardProps[] = contentCards.map((card) => ({
+  const feedThumbnails = await Promise.all(
+    contentCards.map((card) => getThumbnailUrl(card.platform as Platform, card.postUrl))
+  );
+
+  const feedCards: ContentCardProps[] = contentCards.map((card, index) => ({
     type: card.type as ContentType,
     platform: card.platform as Platform,
     postUrl: card.postUrl,
@@ -68,6 +73,7 @@ export default async function HomePage() {
     category: card.category,
     statPrimary: card.statPrimary,
     statSecondary: card.statSecondary,
+    thumbnailUrl: feedThumbnails[index],
   }));
 
   const hablamosRows = (

@@ -53,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${fraunces.variable} ${bodoniModa.variable} ${inter.variable} ${spaceMono.variable} ${parisienne.variable} font-sans bg-cream text-ink antialiased`}
+        className={`${fraunces.variable} ${bodoniModa.variable} ${inter.variable} ${spaceMono.variable} ${parisienne.variable} font-sans bg-cream bg-[url('/images/pattern-bg.webp')] bg-repeat text-ink antialiased`}
       >
         {children}
       </body>

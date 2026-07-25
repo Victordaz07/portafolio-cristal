@@ -36,11 +36,23 @@ export default function ContentCard({
   const stat = [statPrimary, statSecondary].filter(Boolean).join(" · ");
   const PlatformIcon = PLATFORM_ICONS[platform];
 
+  function handleClick() {
+    // En TikTok, la reproducción embebida no funciona en móvil/tablet: su propio
+    // script bloquea el video y obliga a abrir la app/sitio. Abrimos directo para
+    // no mostrar un reproductor que parece funcionar pero no hace nada.
+    const isTouchViewport = typeof window !== "undefined" && window.innerWidth < 768;
+    if (platform === "tiktok" && isTouchViewport) {
+      window.open(postUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    setOpen(true);
+  }
+
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={handleClick}
         className={`group relative w-full overflow-hidden rounded-[28px] text-left bg-gradient-to-br from-cobalt to-cobalt-ink ring-1 ring-ink/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-coral ${
           type === "video" ? "aspect-[9/16]" : "aspect-[4/5]"
         }`}

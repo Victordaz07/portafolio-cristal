@@ -16,6 +16,7 @@ import {
   YouTubeIcon,
   FacebookIcon,
   PinterestIcon,
+  QuoteIcon,
 } from "@/components/icons";
 import { renderHighlightedText } from "@/lib/highlight";
 import { getThumbnailUrl } from "@/lib/oembed";
@@ -410,15 +411,32 @@ export default async function HomePage() {
         )}
 
         {/* WHY ME */}
-        <section id="why" className="bg-cobalt text-cream">
-          <div className="mx-auto max-w-content px-sp-5 py-sp-9">
-            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] mb-sp-5">
-              Why me?
-            </h2>
-            <p className="max-w-2xl text-cream/85 leading-relaxed whitespace-pre-line">
-              {settings?.whyMeText ??
-                "Creo contenido auténtico, cuidado en el detalle y con comunicación responsable en cada colaboración."}
+        <section id="why" className="relative overflow-hidden bg-cobalt text-cream">
+          <QuoteIcon className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 text-cream/[0.06]" />
+          <div className="relative mx-auto max-w-content px-sp-5 py-sp-9">
+            <p className="font-mono text-xs uppercase tracking-widest text-lime mb-sp-2">
+              Por qué trabajar conmigo
             </p>
+            <h2 className="max-w-2xl font-bodoni italic font-bold uppercase text-[clamp(2rem,4vw,3.2rem)] leading-[1.1] mb-sp-5">
+              Contenido real que <span className="text-lime">conecta y convierte</span>
+            </h2>
+            <p className="max-w-2xl text-lg text-cream/85 leading-relaxed whitespace-pre-line">
+              {settings?.whyMeText ??
+                "No vendo humo: cada video que grabo es contenido real, pensado para conectar y convertir. Cuido cada detalle —guion, luz, edición— como si fuera para mi propia marca, cumplo los plazos que prometo y mantengo una comunicación clara en cada etapa. Cuando trabajas conmigo, tu marca no es un cliente más: es una colaboración de la que ambas salimos ganando."}
+            </p>
+
+            {stats.length > 0 && (
+              <div className="mt-sp-7 flex flex-wrap gap-sp-8 border-t border-cream/20 pt-sp-6">
+                {stats.slice(0, 3).map((stat) => (
+                  <div key={stat.id}>
+                    <p className="font-fraunces text-3xl text-lime">{stat.value}</p>
+                    <p className="font-mono text-[11px] uppercase tracking-wide text-cream/60">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

@@ -164,7 +164,7 @@ export default async function HomePage() {
               <img
                 src={hero?.photoUrlMobile ?? "/images/hero-placeholder-mobile.png"}
                 alt={hero?.name ?? "Crislia"}
-                className="aspect-[5/6] w-full object-cover object-bottom"
+                className="aspect-square w-full object-cover object-bottom"
               />
               <div className="relative -mt-10 rounded-t-3xl bg-cream px-sp-5 pb-sp-8 pt-sp-7 text-center">
                 <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">

@@ -424,28 +424,21 @@ export default async function HomePage() {
               {settings?.whyMeText ??
                 "No vendo humo: cada video que grabo es contenido real, pensado para conectar y convertir. Cuido cada detalle —guion, luz, edición— como si fuera para mi propia marca, cumplo los plazos que prometo y mantengo una comunicación clara en cada etapa. Cuando trabajas conmigo, tu marca no es un cliente más: es una colaboración de la que ambas salimos ganando."}
             </p>
-
-            {stats.length > 0 && (
-              <div className="mt-sp-7 flex flex-wrap gap-sp-8 border-t border-cream/20 pt-sp-6">
-                {stats.slice(0, 3).map((stat) => (
-                  <div key={stat.id}>
-                    <p className="font-fraunces text-3xl text-lime">{stat.value}</p>
-                    <p className="font-mono text-[11px] uppercase tracking-wide text-cream/60">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </section>
 
         {/* FAQ */}
         {faqItems.length > 0 && (
           <section className="mx-auto max-w-content px-sp-5 pt-sp-9 pb-sp-3">
-            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
-              FAQ
+            <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+              Preguntas frecuentes
+            </p>
+            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-2">
+              ¿Tienes <span className="text-coral">dudas?</span>
             </h2>
+            <p className="max-w-md text-ink/70 mb-sp-6">
+              Esto es lo que más me preguntan las marcas antes de trabajar juntas.
+            </p>
             <FaqAccordion items={faqItems} />
           </section>
         )}

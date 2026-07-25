@@ -469,15 +469,24 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="mt-sp-8 flex flex-col items-center gap-sp-3 rounded-md border border-line bg-white p-sp-6 text-center">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime/25 text-coral">
-                <HeartIcon className="h-5 w-5" />
-              </span>
-              <p className="font-fraunces italic text-xl text-ink">Tu apoyo significa todo</p>
-              <p className="max-w-md text-sm text-ink/70">
-                {settings?.supportMessage ??
-                  "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!"}
-              </p>
+            <div className="mx-auto mt-sp-9 max-w-xl">
+              <div className="overflow-hidden rounded-lg">
+                <img
+                  src="/images/contact-photo.webp"
+                  alt={`${hero?.name ?? "Crislia"} preparando un envío para su comunidad`}
+                  className="aspect-[2/3] w-full object-cover"
+                />
+              </div>
+              <div className="relative z-10 mx-sp-5 -mt-sp-7 flex flex-col items-center gap-sp-3 rounded-md border border-line bg-cream p-sp-6 text-center shadow-lg">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime/25 text-coral">
+                  <HeartIcon className="h-5 w-5" />
+                </span>
+                <p className="font-fraunces italic text-xl text-ink">Tu apoyo significa todo</p>
+                <p className="max-w-md text-sm text-ink/70">
+                  {settings?.supportMessage ??
+                    "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!"}
+                </p>
+              </div>
             </div>
           </div>
         </section>

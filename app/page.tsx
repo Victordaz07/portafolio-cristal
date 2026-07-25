@@ -63,26 +63,35 @@ export default async function HomePage() {
 
       <main>
         {/* HERO */}
-        <section id="about" className="relative overflow-hidden">
-          <div className="mx-auto grid max-w-content gap-sp-8 px-sp-5 py-sp-9 md:grid-cols-[1.1fr,0.9fr] md:items-center">
-            <div>
+        <section id="about" className="relative overflow-hidden bg-cream">
+          <div className="absolute inset-y-0 right-0 hidden w-[46%] md:block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
+              alt={hero?.name ?? "Crislia"}
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          <div className="relative mx-auto max-w-content px-sp-5 py-sp-9">
+            <div className="max-w-xl md:pr-sp-6">
               <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">
-                <SparkleIcon className="h-3.5 w-3.5 text-coral" />
+                <SparkleIcon className="h-3.5 w-3.5 text-lime" />
                 {hero?.badgeLabel ?? "UGC Creator / Brand Reviews"}
               </span>
 
               <h1 className="mt-sp-5 font-fraunces text-[clamp(2.6rem,6vw,4.8rem)] font-semibold leading-[1.08] tracking-[-0.01em] text-ink">
                 {hero?.headlinePlain ?? "Reseñas que"}
                 <br />
-                <em className="font-fraunces not-italic text-coral">
+                <em className="font-fraunces not-italic text-lime">
                   {hero?.headlineEmphasis ?? "inspiran"}
                 </em>{" "}
                 {hero?.headlineSuffix ?? "confianza."}
               </h1>
 
-              <div className="mt-sp-5 h-px w-40 bg-gradient-to-r from-coral to-transparent" />
+              <div className="mt-sp-5 h-px w-40 bg-gradient-to-r from-lime to-transparent" />
 
-              <p className="mt-sp-5 max-w-xl font-sans leading-relaxed text-ink/75">
+              <p className="mt-sp-5 font-sans leading-relaxed text-ink/75">
                 {renderHighlightedText(
                   hero?.description ??
                     "Creo reseñas **auténticas y contenido UGC** que conecta productos con personas a través de historias __reales__, __honestas y con estilo__."
@@ -109,7 +118,7 @@ export default async function HomePage() {
               {stats.length > 0 && (
                 <div
                   id="media-kit"
-                  className="mt-sp-8 grid max-w-lg grid-cols-2 gap-sp-5 border-t border-line pt-sp-6 sm:grid-cols-3"
+                  className="mt-sp-8 grid grid-cols-2 gap-sp-5 border-t border-line pt-sp-6 sm:grid-cols-3"
                 >
                   {stats.map((stat) => (
                     <HeroStat key={stat.id} value={stat.value} label={stat.label} icon={stat.icon} />
@@ -118,18 +127,13 @@ export default async function HomePage() {
               )}
             </div>
 
-            <div className="relative">
-              <div
-                aria-hidden
-                className="absolute -inset-4 rounded-[45%_55%_60%_40%/50%_45%_55%_50%] bg-gradient-to-br from-coral/25 via-sage/20 to-cobalt/20"
-              />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
-                alt={hero?.name ?? "Crislia"}
-                className="relative aspect-[4/5] w-full rounded-[45%_55%_60%_40%/50%_45%_55%_50%] object-cover shadow-xl"
-              />
-            </div>
+            {/* Foto en mobile — el bleed absoluto de arriba solo se ve desde md en adelante */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
+              alt={hero?.name ?? "Crislia"}
+              className="mt-sp-7 aspect-[4/5] w-full rounded-md object-cover md:hidden"
+            />
           </div>
         </section>
 

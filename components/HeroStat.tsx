@@ -11,7 +11,7 @@ export default function HeroStat({ value, label, icon }: HeroStatProps) {
 
   return (
     <div className="flex items-start gap-sp-3">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-coral/15 text-coral">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-lime/30 text-coral">
         <Icon className="h-4 w-4" />
       </span>
       <div>

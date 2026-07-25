@@ -86,7 +86,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
               disableUp={index === 0}
               disableDown={index === stats.length - 1}
             />
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-coral/15 text-coral">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-lime/30 text-coral">
               {(() => {
                 const Icon = STAT_ICONS[stat.icon as StatIconKey] ?? StarIcon;
                 return <Icon className="h-4 w-4" />;

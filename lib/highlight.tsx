@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 /**
  * Convención simple para el admin: `**texto**` resalta en negrita color ink,
- * `__texto__` resalta en negrita color coral (acento de marca).
+ * `__texto__` resalta en negrita color lime (acento de marca).
  */
 export function renderHighlightedText(text: string): ReactNode[] {
   const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__)/g).filter(Boolean);
@@ -17,7 +17,7 @@ export function renderHighlightedText(text: string): ReactNode[] {
     }
     if (part.startsWith("__") && part.endsWith("__")) {
       return (
-        <strong key={index} className="font-semibold text-coral">
+        <strong key={index} className="font-semibold text-lime">
           {part.slice(2, -2)}
         </strong>
       );

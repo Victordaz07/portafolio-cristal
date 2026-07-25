@@ -27,6 +27,7 @@ import ContactForm from "@/components/ContactForm";
 import ContactInfoCard, { type ContactInfoRow } from "@/components/ContactInfoCard";
 import ReviewCard from "@/components/ReviewCard";
 import ServiceCard from "@/components/ServiceCard";
+import PackageCard from "@/components/PackageCard";
 import TestimonialCard from "@/components/TestimonialCard";
 import type { ContentCardProps } from "@/components/ContentCard";
 
@@ -50,6 +51,7 @@ export default async function HomePage() {
     reviews,
     services,
     testimonials,
+    packages,
   ] = await Promise.all([
     prisma.hero.findFirst(),
     prisma.stat.findMany({ orderBy: { order: "asc" } }),
@@ -60,6 +62,7 @@ export default async function HomePage() {
     prisma.review.findMany({ orderBy: { order: "asc" } }),
     prisma.service.findMany({ orderBy: { order: "asc" } }),
     prisma.testimonial.findMany({ orderBy: { order: "asc" } }),
+    prisma.package.findMany({ orderBy: { order: "asc" } }),
   ]);
 
   const feedThumbnails = await Promise.all(
@@ -380,6 +383,27 @@ export default async function HomePage() {
                   />
                 ))}
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* PACKAGES */}
+        {packages.length > 0 && (
+          <section className="mx-auto max-w-content px-sp-5 pt-sp-6 pb-sp-3 text-center">
+            <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+              Paquetes
+            </p>
+            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink">
+              Elige lo que <span className="text-coral">necesitas</span>
+            </h2>
+            <p className="mt-sp-3 mx-auto max-w-md text-ink/70">
+              Trabajar conmigo es muy fácil: elige el paquete que mejor se ajuste a lo que tu marca necesita.
+            </p>
+
+            <div className="mt-sp-7 grid gap-sp-5 text-left [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
+              {packages.map((pkg) => (
+                <PackageCard key={pkg.id} emoji={pkg.emoji} name={pkg.name} items={pkg.items} />
+              ))}
             </div>
           </section>
         )}

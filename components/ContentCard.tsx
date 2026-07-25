@@ -36,29 +36,11 @@ export default function ContentCard({
   const stat = [statPrimary, statSecondary].filter(Boolean).join(" · ");
   const PlatformIcon = PLATFORM_ICONS[platform];
 
-  function handleClick() {
-    // En TikTok, la reproducción embebida no funciona en móvil/tablet: su propio
-    // script bloquea el video y obliga a abrir la app/sitio. Abrimos directo para
-    // no mostrar un reproductor que parece funcionar pero no hace nada.
-    const isTouchViewport = typeof window !== "undefined" && window.innerWidth < 768;
-    if (platform === "tiktok" && isTouchViewport) {
-      // La URL canónica (/@usuario/video/id) está registrada como universal link
-      // y el sistema operativo la intercepta para abrir la app. La página del
-      // reproductor dedicado (/embed/v2/) no está en esa lista, así que se queda
-      // en el navegador y reproduce ahí.
-      const videoId = postUrl.match(/\/video\/(\d+)/)?.[1];
-      const playerUrl = videoId ? `https://www.tiktok.com/embed/v2/${videoId}` : postUrl;
-      window.open(playerUrl, "_blank", "noopener,noreferrer");
-      return;
-    }
-    setOpen(true);
-  }
-
   return (
     <>
       <button
         type="button"
-        onClick={handleClick}
+        onClick={() => setOpen(true)}
         className={`group relative w-full overflow-hidden rounded-[28px] text-left bg-gradient-to-br from-cobalt to-cobalt-ink ring-1 ring-ink/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-coral ${
           type === "video" ? "aspect-[9/16]" : "aspect-[4/5]"
         }`}

@@ -69,7 +69,7 @@ export default async function HomePage() {
             <img
               src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
               alt={hero?.name ?? "Crislia"}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-right"
             />
           </div>
 
@@ -127,12 +127,13 @@ export default async function HomePage() {
               )}
             </div>
 
-            {/* Foto en mobile — el bleed absoluto de arriba solo se ve desde md en adelante */}
+            {/* Foto en mobile — el bleed absoluto de arriba solo se ve desde md en adelante.
+                Usa el aspect ratio real de la foto (~16/9) para no recortarla de más. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
               alt={hero?.name ?? "Crislia"}
-              className="mt-sp-7 aspect-[4/5] w-full rounded-md object-cover md:hidden"
+              className="mt-sp-7 aspect-[16/9] w-full rounded-md object-cover object-right md:hidden"
             />
           </div>
         </section>

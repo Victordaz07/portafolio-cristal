@@ -306,7 +306,7 @@ export default async function HomePage() {
               className="aspect-[5/2] w-full object-cover object-top"
             />
 
-            <div className="relative overflow-hidden bg-white py-sp-6">
+            <div className="relative overflow-hidden bg-white py-sp-4">
               <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-white to-transparent sm:w-32" />
               <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-white to-transparent sm:w-32" />
 

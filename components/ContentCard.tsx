@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import type { Platform, ContentType } from "@/lib/embeds";
-import { platformLabel } from "@/lib/embeds";
+import { TikTokIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
 import EmbedLightbox from "./EmbedLightbox";
+
+const PLATFORM_ICONS: Record<Platform, (props: { className?: string }) => JSX.Element> = {
+  tiktok: TikTokIcon,
+  instagram: InstagramIcon,
+  facebook: FacebookIcon,
+};
 
 export interface ContentCardProps {
   type: ContentType;
@@ -28,13 +34,14 @@ export default function ContentCard({
 }: ContentCardProps) {
   const [open, setOpen] = useState(false);
   const stat = [statPrimary, statSecondary].filter(Boolean).join(" · ");
+  const PlatformIcon = PLATFORM_ICONS[platform];
 
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`viewfinder group relative w-full overflow-hidden rounded-lg text-left bg-gradient-to-br from-cobalt to-cobalt-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-coral ${
+        className={`group relative w-full overflow-hidden rounded-[28px] text-left bg-gradient-to-br from-cobalt to-cobalt-ink ring-1 ring-ink/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-coral ${
           type === "video" ? "aspect-[9/16]" : "aspect-[4/5]"
         }`}
       >
@@ -55,8 +62,8 @@ export default function ContentCard({
           {category}
         </span>
 
-        <span className="absolute right-sp-3 top-sp-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 font-mono text-[10px] font-bold text-ink">
-          {platformLabel(platform)}
+        <span className="absolute right-sp-3 top-sp-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm text-ink">
+          <PlatformIcon className="h-4 w-4" />
         </span>
 
         <span className="absolute inset-0 z-10 flex items-center justify-center">

@@ -22,16 +22,6 @@ body {
     text-wrap: balance;
   }
 
-  /* Marco "viewfinder" — elemento de firma de las ContentCard */
-  .viewfinder::after {
-    content: "";
-    position: absolute;
-    inset: 14px;
-    border: 1.5px dashed rgba(195, 172, 234, 0.55);
-    border-radius: 20px;
-    pointer-events: none;
-  }
-
   /* Scroll infinito horizontal de la marquesina de marcas */
   @keyframes marquee {
     from {

@@ -14,9 +14,9 @@ export default function TikTokEmbed({ url }: { url: string }) {
   return (
     <div className="flex w-full justify-center">
       <iframe
-        src={`https://www.tiktok.com/embed/v2/${videoId}`}
+        src={`https://www.tiktok.com/embed/v2/${videoId}?autoplay=1`}
         style={{ maxWidth: 605, minWidth: 325, width: "100%", aspectRatio: "9 / 16" }}
-        allow="encrypted-media; picture-in-picture"
+        allow="autoplay; encrypted-media; picture-in-picture"
         allowFullScreen
         className="rounded-md border-0"
       />

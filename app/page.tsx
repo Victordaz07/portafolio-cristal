@@ -23,6 +23,9 @@ import PricingCard from "@/components/PricingCard";
 import FaqAccordion from "@/components/FaqAccordion";
 import ContactForm from "@/components/ContactForm";
 import ContactInfoCard, { type ContactInfoRow } from "@/components/ContactInfoCard";
+import ReviewCard from "@/components/ReviewCard";
+import ServiceCard from "@/components/ServiceCard";
+import TestimonialCard from "@/components/TestimonialCard";
 import { PackageSelectionProvider } from "@/components/PackageSelectionContext";
 import type { ContentCardProps } from "@/components/ContentCard";
 
@@ -36,16 +39,29 @@ const NAV_LINKS = [
 ];
 
 export default async function HomePage() {
-  const [hero, stats, contentCards, brands, pricingPackages, faqItems, settings] =
-    await Promise.all([
-      prisma.hero.findFirst(),
-      prisma.stat.findMany({ orderBy: { order: "asc" } }),
-      prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
-      prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
-      prisma.pricingPackage.findMany({ orderBy: { order: "asc" } }),
-      prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
-      prisma.siteSettings.findFirst(),
-    ]);
+  const [
+    hero,
+    stats,
+    contentCards,
+    brands,
+    pricingPackages,
+    faqItems,
+    settings,
+    reviews,
+    services,
+    testimonials,
+  ] = await Promise.all([
+    prisma.hero.findFirst(),
+    prisma.stat.findMany({ orderBy: { order: "asc" } }),
+    prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
+    prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
+    prisma.pricingPackage.findMany({ orderBy: { order: "asc" } }),
+    prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
+    prisma.siteSettings.findFirst(),
+    prisma.review.findMany({ orderBy: { order: "asc" } }),
+    prisma.service.findMany({ orderBy: { order: "asc" } }),
+    prisma.testimonial.findMany({ orderBy: { order: "asc" } }),
+  ]);
 
   const feedCards: ContentCardProps[] = contentCards.map((card) => ({
     type: card.type as ContentType,
@@ -306,6 +322,85 @@ export default async function HomePage() {
                   />
                 ))}
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* REVIEWS */}
+        {reviews.length > 0 && (
+          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+            <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+              Reseñas recientes
+            </p>
+            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink">
+              Reseñas <span className="text-coral">destacadas</span>
+            </h2>
+            <p className="mt-sp-3 max-w-md text-ink/70">
+              Contenido honesto, detallado y pensado para ayudarte a tomar mejores decisiones.
+            </p>
+
+            <div className="mt-sp-6 flex flex-col gap-sp-4">
+              {reviews.map((review) => (
+                <ReviewCard
+                  key={review.id}
+                  photoUrl={review.photoUrl}
+                  category={review.category}
+                  title={review.title}
+                  description={review.description}
+                  rating={review.rating}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* SERVICES */}
+        {services.length > 0 && (
+          <section className="bg-white">
+            <div className="mx-auto max-w-content px-sp-5 py-sp-9 text-center">
+              <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+                Lo que hago
+              </p>
+              <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink">
+                Cómo trabajo <span className="text-coral">contigo</span>
+              </h2>
+
+              <div className="mt-sp-7 grid gap-sp-4 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
+                {services.map((service) => (
+                  <ServiceCard
+                    key={service.id}
+                    icon={service.icon}
+                    title={service.title}
+                    description={service.description}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* TESTIMONIALS */}
+        {testimonials.length > 0 && (
+          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+            <div className="text-center">
+              <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+                Lo que dicen las marcas
+              </p>
+              <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink">
+                Resultados que <span className="text-coral">hablan</span> por sí solos
+              </h2>
+            </div>
+
+            <div className="mt-sp-7 grid gap-sp-5 [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
+              {testimonials.map((testimonial) => (
+                <TestimonialCard
+                  key={testimonial.id}
+                  quote={testimonial.quote}
+                  name={testimonial.name}
+                  role={testimonial.role}
+                  photoUrl={testimonial.photoUrl}
+                />
+              ))}
             </div>
           </section>
         )}

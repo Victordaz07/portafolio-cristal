@@ -229,6 +229,93 @@ export function PinterestIcon({ className }: { className?: string }) {
   );
 }
 
+export function CameraIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2.1l.9-1.6a1.5 1.5 0 0 1 1.3-.9h4.4c.55 0 1.05.3 1.3.9L16.4 7h2.1A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z" />
+      <circle cx="12" cy="13" r="3.4" />
+    </svg>
+  );
+}
+
+export function BoxIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M4 8.2 12 4l8 4.2v7.6L12 20l-8-4.2Z" />
+      <path d="M4 8.2 12 12l8-4.2" />
+      <path d="M12 12v8" />
+    </svg>
+  );
+}
+
+export function PhoneIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="7" y="3" width="10" height="18" rx="2.5" />
+      <path d="M11 18h2" />
+    </svg>
+  );
+}
+
+export function QuoteIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M9.5 6.5C6.5 8 5 10.3 5 13c0 2.3 1.6 3.9 3.6 3.9 1.8 0 3.2-1.3 3.2-3.1 0-1.7-1.2-2.9-2.8-2.9-.3 0-.6.05-.8.1.2-1.5 1.4-3 3.2-3.9L9.5 6.5Zm9 0C15.5 8 14 10.3 14 13c0 2.3 1.6 3.9 3.6 3.9 1.8 0 3.2-1.3 3.2-3.1 0-1.7-1.2-2.9-2.8-2.9-.3 0-.6.05-.8.1.2-1.5 1.4-3 3.2-3.9L18.5 6.5Z" />
+    </svg>
+  );
+}
+
+export function StarFilledIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="m12 2.5 2.9 6.2 6.6.75-4.9 4.6 1.3 6.65L12 17.6l-5.9 3.1 1.3-6.65-4.9-4.6 6.6-.75Z" />
+    </svg>
+  );
+}
+
+export const SERVICE_ICONS = {
+  camera: CameraIcon,
+  chat: ChatIcon,
+  box: BoxIcon,
+  phone: PhoneIcon,
+} as const;
+
+export type ServiceIconKey = keyof typeof SERVICE_ICONS;
+
+export const SERVICE_ICON_OPTIONS: { value: ServiceIconKey; label: string }[] = [
+  { value: "camera", label: "Cámara" },
+  { value: "chat", label: "Chat" },
+  { value: "box", label: "Caja" },
+  { value: "phone", label: "Teléfono" },
+];
+
 export const STAT_ICONS = {
   heart: HeartIcon,
   star: StarIcon,

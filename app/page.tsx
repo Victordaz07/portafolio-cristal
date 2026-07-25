@@ -443,20 +443,22 @@ export default async function HomePage() {
             <div className="mt-sp-8 grid gap-sp-8 md:grid-cols-[1fr,1fr] md:items-start">
               <ContactForm />
 
-              <div className="relative overflow-hidden rounded-lg">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/contact-photo.webp"
-                  alt={`${hero?.name ?? "Crislia"} preparando un envío para su comunidad`}
-                  className="w-full"
-                />
+              <div>
+                <div className="relative overflow-hidden rounded-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/contact-photo.webp"
+                    alt={`${hero?.name ?? "Crislia"} preparando un envío para su comunidad`}
+                    className="w-full"
+                  />
 
-                <div className="absolute inset-x-sp-4 top-sp-5 flex flex-col gap-sp-4 sm:inset-x-sp-6">
-                  <ContactInfoCard title="¿Hablamos?" rows={hablamosRows} />
-                  <ContactInfoCard title="Sígueme" rows={siguemeRows} />
+                  <div className="absolute inset-x-sp-4 top-sp-5 flex flex-col gap-sp-4 sm:inset-x-sp-6">
+                    <ContactInfoCard title="¿Hablamos?" rows={hablamosRows} />
+                    <ContactInfoCard title="Sígueme" rows={siguemeRows} />
+                  </div>
                 </div>
 
-                <div className="absolute inset-x-sp-5 bottom-sp-5 flex flex-col items-center gap-sp-2 rounded-md border border-line bg-cream/95 p-sp-5 text-center shadow-lg backdrop-blur-sm">
+                <div className="relative z-10 mx-sp-5 -mt-sp-7 flex flex-col items-center gap-sp-2 rounded-md border border-line bg-cream p-sp-5 text-center shadow-lg">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-lime/25 text-coral">
                     <HeartIcon className="h-4 w-4" />
                   </span>

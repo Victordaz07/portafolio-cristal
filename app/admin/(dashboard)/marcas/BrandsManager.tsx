@@ -3,31 +3,33 @@
 import { useState } from "react";
 import type { Brand } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
-import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
-import ImageUploadField from "@/components/admin/ImageUploadField";
 import { swapOrder } from "@/lib/reorder";
-import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import BrandForm, { type BrandFormValues } from "./BrandForm";
 
 const API_BASE = "/api/admin/brands";
+
+function toFormValues(brand: Brand): BrandFormValues {
+  return {
+    name: brand.name,
+    logoUrl: brand.logoUrl ?? "",
+    websiteUrl: brand.websiteUrl ?? "",
+    active: brand.active,
+  };
+}
 
 export default function BrandsManager({ initialBrands }: { initialBrands: Brand[] }) {
   const { showToast } = useToast();
   const [brands, setBrands] = useState(initialBrands);
-  const [name, setName] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [pendingDelete, setPendingDelete] = useState<Brand | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
 
-  async function handleAdd(event: React.FormEvent) {
-    event.preventDefault();
-    setSaving(true);
+  async function handleCreate(values: BrandFormValues) {
     const response = await fetch(API_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, logoUrl }),
+      body: JSON.stringify(values),
     });
-    setSaving(false);
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
@@ -37,20 +39,44 @@ export default function BrandsManager({ initialBrands }: { initialBrands: Brand[
 
     const created: Brand = await response.json();
     setBrands((current) => [...current, created]);
-    setName("");
-    setLogoUrl("");
+    setShowCreate(false);
     showToast("success", "Marca agregada");
   }
 
-  async function handleDelete(brand: Brand) {
-    const response = await fetch(`${API_BASE}/${brand.id}`, { method: "DELETE" });
-    setPendingDelete(null);
+  async function handleUpdate(id: string, values: BrandFormValues) {
+    const response = await fetch(`${API_BASE}/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+
     if (!response.ok) {
-      showToast("error", "No se pudo eliminar");
+      const data = await response.json().catch(() => ({}));
+      showToast("error", data.error ?? "No se pudo actualizar la marca");
       return;
     }
-    setBrands((current) => current.filter((item) => item.id !== brand.id));
-    showToast("success", "Marca eliminada");
+
+    const updated: Brand = await response.json();
+    setBrands((current) => current.map((brand) => (brand.id === id ? updated : brand)));
+    setEditingId(null);
+    showToast("success", "Marca actualizada");
+  }
+
+  async function handleToggleActive(brand: Brand) {
+    const response = await fetch(`${API_BASE}/${brand.id}`, {
+      method: brand.active ? "DELETE" : "PATCH",
+      headers: brand.active ? undefined : { "Content-Type": "application/json" },
+      body: brand.active ? undefined : JSON.stringify({ active: true }),
+    });
+
+    if (!response.ok) {
+      showToast("error", "No se pudo actualizar el estado");
+      return;
+    }
+
+    const updated: Brand = await response.json();
+    setBrands((current) => current.map((item) => (item.id === brand.id ? updated : item)));
+    showToast("success", updated.active ? "Marca activada" : "Marca desactivada");
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -61,57 +87,75 @@ export default function BrandsManager({ initialBrands }: { initialBrands: Brand[
   return (
     <div>
       <ul className="flex flex-col gap-sp-3">
-        {brands.map((brand, index) => (
-          <li
-            key={brand.id}
-            className="flex items-center gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-          >
-            <ReorderButtons
-              onUp={() => handleMove(index, "up")}
-              onDown={() => handleMove(index, "down")}
-              disableUp={index === 0}
-              disableDown={index === brands.length - 1}
-            />
-            {brand.logoUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={brand.logoUrl} alt="" className="h-8 w-8 object-contain" />
-            )}
-            <p className="flex-1 text-ink">{brand.name}</p>
-            <button
-              type="button"
-              onClick={() => setPendingDelete(brand)}
-              className="text-sm text-red-600 hover:underline"
+        {brands.map((brand, index) =>
+          editingId === brand.id ? (
+            <li key={brand.id} className="rounded-md border border-line bg-white p-sp-5">
+              <BrandForm
+                initial={toFormValues(brand)}
+                submitLabel="Guardar cambios"
+                onSubmit={(values) => handleUpdate(brand.id, values)}
+                onCancel={() => setEditingId(null)}
+              />
+            </li>
+          ) : (
+            <li
+              key={brand.id}
+              className="flex items-center gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
             >
-              Eliminar
-            </button>
-          </li>
-        ))}
+              <ReorderButtons
+                onUp={() => handleMove(index, "up")}
+                onDown={() => handleMove(index, "down")}
+                disableUp={index === 0}
+                disableDown={index === brands.length - 1}
+              />
+              {brand.logoUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={brand.logoUrl} alt="" className="h-8 w-8 object-contain" />
+              )}
+              <div className="flex-1">
+                <p className="text-ink">{brand.name}</p>
+                {!brand.active && (
+                  <span className="text-xs uppercase tracking-wide text-ink/50">Inactiva</span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingId(brand.id)}
+                className="text-sm text-coral hover:underline"
+              >
+                Editar
+              </button>
+              <button
+                type="button"
+                onClick={() => handleToggleActive(brand)}
+                className="text-sm text-ink/70 hover:underline"
+              >
+                {brand.active ? "Desactivar" : "Activar"}
+              </button>
+            </li>
+          )
+        )}
       </ul>
 
-      <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-sm">
-        <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Nombre</span>
-          <input
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={inputClass}
-          />
-        </label>
-        <ImageUploadField label="Logo (opcional)" value={logoUrl} onChange={setLogoUrl} />
-        <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-          {saving ? "Agregando..." : "+ agregar marca"}
-        </button>
-      </form>
-
-      {pendingDelete && (
-        <ConfirmDialog
-          title="Eliminar marca"
-          description={`¿Eliminar "${pendingDelete.name}"?`}
-          onConfirm={() => handleDelete(pendingDelete)}
-          onCancel={() => setPendingDelete(null)}
-        />
-      )}
+      <div className="mt-sp-6">
+        {showCreate ? (
+          <div className="rounded-md border border-line bg-white p-sp-5 max-w-sm">
+            <BrandForm
+              submitLabel="Agregar marca"
+              onSubmit={handleCreate}
+              onCancel={() => setShowCreate(false)}
+            />
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowCreate(true)}
+            className="text-sm text-coral hover:underline"
+          >
+            + agregar marca
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import HeroStatCard from "@/components/HeroStatCard";
 import { SparkleIcon, ArrowRightIcon } from "@/components/icons";
 import { renderHighlightedText } from "@/lib/highlight";
 import ContentFeed from "@/components/ContentFeed";
-import BrandChip from "@/components/BrandChip";
+import BrandCard from "@/components/BrandCard";
 import PricingCard from "@/components/PricingCard";
 import FaqAccordion from "@/components/FaqAccordion";
 import ContactForm from "@/components/ContactForm";
@@ -27,7 +27,7 @@ export default async function HomePage() {
       prisma.hero.findFirst(),
       prisma.stat.findMany({ orderBy: { order: "asc" } }),
       prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
-      prisma.brand.findMany({ orderBy: { order: "asc" } }),
+      prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
       prisma.pricingPackage.findMany({ orderBy: { order: "asc" } }),
       prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
       prisma.siteSettings.findFirst(),
@@ -202,14 +202,32 @@ export default async function HomePage() {
 
         {/* BRANDS */}
         {brands.length > 0 && (
-          <section className="mx-auto max-w-content px-sp-5 pb-sp-9">
-            <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-4">
-              Brands that trust on me
+          <section id="marcas" className="pb-sp-9">
+            <p className="mx-auto max-w-content px-sp-5 font-mono text-xs uppercase tracking-widest text-moss mb-sp-4">
+              Marcas y colaboraciones
             </p>
-            <div className="flex flex-wrap gap-sp-3">
-              {brands.map((brand) => (
-                <BrandChip key={brand.id} name={brand.name} logoUrl={brand.logoUrl} />
-              ))}
+
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/brands-banner.png"
+              alt={hero?.name ?? "Crislia"}
+              className="aspect-[7/2] w-full object-cover object-top"
+            />
+
+            <div className="relative overflow-hidden bg-white py-sp-6">
+              <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-white to-transparent sm:w-32" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-white to-transparent sm:w-32" />
+
+              <div className="flex w-max animate-marquee gap-sp-4 px-sp-4">
+                {[...brands, ...brands].map((brand, index) => (
+                  <BrandCard
+                    key={`${brand.id}-${index}`}
+                    name={brand.name}
+                    logoUrl={brand.logoUrl}
+                    websiteUrl={brand.websiteUrl}
+                  />
+                ))}
+              </div>
             </div>
           </section>
         )}

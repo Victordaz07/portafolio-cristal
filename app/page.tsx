@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { Platform, ContentType } from "@/lib/embeds";
 import HeroStat from "@/components/HeroStat";
 import HeroStatCard from "@/components/HeroStatCard";
+import MobileHeroNav from "@/components/MobileHeroNav";
 import {
   SparkleIcon,
   ArrowRightIcon,
@@ -19,14 +20,12 @@ import {
 import { renderHighlightedText } from "@/lib/highlight";
 import ContentFeed from "@/components/ContentFeed";
 import BrandCard from "@/components/BrandCard";
-import PricingCard from "@/components/PricingCard";
 import FaqAccordion from "@/components/FaqAccordion";
 import ContactForm from "@/components/ContactForm";
 import ContactInfoCard, { type ContactInfoRow } from "@/components/ContactInfoCard";
 import ReviewCard from "@/components/ReviewCard";
 import ServiceCard from "@/components/ServiceCard";
 import TestimonialCard from "@/components/TestimonialCard";
-import { PackageSelectionProvider } from "@/components/PackageSelectionContext";
 import type { ContentCardProps } from "@/components/ContentCard";
 
 export const dynamic = "force-dynamic";
@@ -44,7 +43,6 @@ export default async function HomePage() {
     stats,
     contentCards,
     brands,
-    pricingPackages,
     faqItems,
     settings,
     reviews,
@@ -55,7 +53,6 @@ export default async function HomePage() {
     prisma.stat.findMany({ orderBy: { order: "asc" } }),
     prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
     prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
-    prisma.pricingPackage.findMany({ orderBy: { order: "asc" } }),
     prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
     prisma.siteSettings.findFirst(),
     prisma.review.findMany({ orderBy: { order: "asc" } }),
@@ -138,8 +135,8 @@ export default async function HomePage() {
   ).filter((row): row is ContactInfoRow => Boolean(row));
 
   return (
-    <PackageSelectionProvider>
-      <nav className="sticky top-0 z-40 bg-cobalt text-cream">
+    <>
+      <nav className="sticky top-0 z-40 hidden bg-cobalt text-cream md:block">
         <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3 px-sp-5 py-sp-4">
           <span className="w-[92px] shrink-0 truncate font-bodoni italic font-bold uppercase text-xs sm:w-auto sm:text-sm">
             {hero?.name ?? "Crislia"}
@@ -162,11 +159,12 @@ export default async function HomePage() {
           {/* Mobile: foto vertical full-bleed arriba + tarjeta que se monta encima */}
           <div className="md:hidden">
             <div className="relative">
+              <MobileHeroNav name={hero?.name?.split(" ")[0] ?? "Cristal"} links={NAV_LINKS} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={hero?.photoUrlMobile ?? "/images/hero-placeholder-mobile.png"}
                 alt={hero?.name ?? "Crislia"}
-                className="aspect-[3/4] w-full object-cover object-top"
+                className="aspect-square w-full object-cover object-bottom"
               />
               <div className="relative -mt-10 rounded-t-3xl bg-cream px-sp-5 pb-sp-8 pt-sp-7 text-center">
                 <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">
@@ -308,7 +306,7 @@ export default async function HomePage() {
               className="aspect-[5/2] w-full object-cover object-top"
             />
 
-            <div className="relative overflow-hidden bg-white py-sp-6">
+            <div className="relative overflow-hidden bg-white py-sp-4">
               <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-white to-transparent sm:w-32" />
               <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-white to-transparent sm:w-32" />
 
@@ -418,25 +416,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* PRICING */}
-        <section className="mx-auto max-w-content px-sp-5 py-sp-9">
-          <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
-            Paquetes
-          </h2>
-          <div className="grid gap-sp-5 md:grid-cols-3">
-            {pricingPackages.map((pkg) => (
-              <PricingCard
-                key={pkg.id}
-                name={pkg.name}
-                price={pkg.price}
-                unit={pkg.unit}
-                deliverables={pkg.deliverables}
-                featured={pkg.featured}
-              />
-            ))}
-          </div>
-        </section>
-
         {/* FAQ */}
         {faqItems.length > 0 && (
           <section className="mx-auto max-w-content px-sp-5 py-sp-9">
@@ -469,19 +448,28 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="mt-sp-8 flex flex-col items-center gap-sp-3 rounded-md border border-line bg-white p-sp-6 text-center">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime/25 text-coral">
-                <HeartIcon className="h-5 w-5" />
-              </span>
-              <p className="font-fraunces italic text-xl text-ink">Tu apoyo significa todo</p>
-              <p className="max-w-md text-sm text-ink/70">
-                {settings?.supportMessage ??
-                  "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!"}
-              </p>
+            <div className="mx-auto mt-sp-9 max-w-xl">
+              <div className="overflow-hidden rounded-lg">
+                <img
+                  src="/images/contact-photo.webp"
+                  alt={`${hero?.name ?? "Crislia"} preparando un envío para su comunidad`}
+                  className="aspect-[2/3] w-full object-cover"
+                />
+              </div>
+              <div className="relative z-10 mx-sp-5 -mt-sp-7 flex flex-col items-center gap-sp-3 rounded-md border border-line bg-cream p-sp-6 text-center shadow-lg">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime/25 text-coral">
+                  <HeartIcon className="h-5 w-5" />
+                </span>
+                <p className="font-fraunces italic text-xl text-ink">Tu apoyo significa todo</p>
+                <p className="max-w-md text-sm text-ink/70">
+                  {settings?.supportMessage ??
+                    "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!"}
+                </p>
+              </div>
             </div>
           </div>
         </section>
       </main>
-    </PackageSelectionProvider>
+    </>
   );
 }

@@ -48,16 +48,6 @@ model ContentCard {
   createdAt     DateTime @default(now())
 }
 
-model PricingPackage {
-  id           String   @id @default(cuid())
-  name         String
-  price        String
-  unit         String
-  deliverables String[]
-  featured     Boolean  @default(false)
-  order        Int      @default(0)
-}
-
 model Brand {
   id         String   @id @default(cuid())
   name       String

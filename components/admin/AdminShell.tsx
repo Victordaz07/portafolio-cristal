@@ -12,7 +12,6 @@ const NAV_ITEMS = [
   { href: "/admin/resenas", label: "Reseñas destacadas" },
   { href: "/admin/servicios", label: "Cómo trabajo" },
   { href: "/admin/testimonios", label: "Testimonios" },
-  { href: "/admin/paquetes", label: "Paquetes" },
   { href: "/admin/marcas", label: "Marcas" },
   { href: "/admin/faq", label: "FAQ" },
   { href: "/admin/contacto", label: "Contacto" },

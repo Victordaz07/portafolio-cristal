@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePackageSelection } from "./PackageSelectionContext";
+import { useState } from "react";
 
 const COLLABORATION_TYPES = ["Sencillo", "Bundle", "Mensual", "A medida"];
 
 export default function ContactForm() {
-  const { selectedPackage } = usePackageSelection();
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [email, setEmail] = useState("");
@@ -14,12 +12,6 @@ export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    if (selectedPackage && COLLABORATION_TYPES.includes(selectedPackage)) {
-      setCollaborationType(selectedPackage);
-    }
-  }, [selectedPackage]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();

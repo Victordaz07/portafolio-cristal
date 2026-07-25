@@ -25,6 +25,7 @@ const config: Config = {
         bodoni: ["var(--font-bodoni)"],
         sans: ["var(--font-inter)"],
         mono: ["var(--font-space-mono)"],
+        script: ["var(--font-script)"],
       },
       spacing: {
         "sp-1": "4px",

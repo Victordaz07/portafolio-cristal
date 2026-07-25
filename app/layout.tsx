@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Bodoni_Moda, Inter, Space_Mono } from "next/font/google";
+import { Fraunces, Bodoni_Moda, Inter, Space_Mono, Parisienne } from "next/font/google";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -7,6 +7,13 @@ const fraunces = Fraunces({
   weight: ["500", "600"],
   style: ["normal", "italic"],
   variable: "--font-fraunces",
+  display: "swap",
+});
+
+const parisienne = Parisienne({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-script",
   display: "swap",
 });
 
@@ -46,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${fraunces.variable} ${bodoniModa.variable} ${inter.variable} ${spaceMono.variable} font-sans bg-cream text-ink antialiased`}
+        className={`${fraunces.variable} ${bodoniModa.variable} ${inter.variable} ${spaceMono.variable} ${parisienne.variable} font-sans bg-cream text-ink antialiased`}
       >
         {children}
       </body>

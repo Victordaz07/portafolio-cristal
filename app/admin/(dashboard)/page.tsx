@@ -2,11 +2,10 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminHomePage() {
-  const [stats, contentCards, pricingPackages, brands, faqItems, unreadMessages] =
+  const [stats, contentCards, brands, faqItems, unreadMessages] =
     await Promise.all([
       prisma.stat.count(),
       prisma.contentCard.count(),
-      prisma.pricingPackage.count(),
       prisma.brand.count(),
       prisma.faqItem.count(),
       prisma.contactMessage.count({ where: { read: false } }),
@@ -15,7 +14,6 @@ export default async function AdminHomePage() {
   const cards = [
     { label: "Stats en media kit", value: stats, href: "/admin/media-kit" },
     { label: "Tarjetas en el feed", value: contentCards, href: "/admin/feed" },
-    { label: "Paquetes de precio", value: pricingPackages, href: "/admin/paquetes" },
     { label: "Marcas", value: brands, href: "/admin/marcas" },
     { label: "Preguntas FAQ", value: faqItems, href: "/admin/faq" },
     { label: "Mensajes sin leer", value: unreadMessages, href: "/admin/mensajes" },

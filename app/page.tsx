@@ -20,14 +20,12 @@ import {
 import { renderHighlightedText } from "@/lib/highlight";
 import ContentFeed from "@/components/ContentFeed";
 import BrandCard from "@/components/BrandCard";
-import PricingCard from "@/components/PricingCard";
 import FaqAccordion from "@/components/FaqAccordion";
 import ContactForm from "@/components/ContactForm";
 import ContactInfoCard, { type ContactInfoRow } from "@/components/ContactInfoCard";
 import ReviewCard from "@/components/ReviewCard";
 import ServiceCard from "@/components/ServiceCard";
 import TestimonialCard from "@/components/TestimonialCard";
-import { PackageSelectionProvider } from "@/components/PackageSelectionContext";
 import type { ContentCardProps } from "@/components/ContentCard";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +43,6 @@ export default async function HomePage() {
     stats,
     contentCards,
     brands,
-    pricingPackages,
     faqItems,
     settings,
     reviews,
@@ -56,7 +53,6 @@ export default async function HomePage() {
     prisma.stat.findMany({ orderBy: { order: "asc" } }),
     prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
     prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
-    prisma.pricingPackage.findMany({ orderBy: { order: "asc" } }),
     prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
     prisma.siteSettings.findFirst(),
     prisma.review.findMany({ orderBy: { order: "asc" } }),
@@ -139,7 +135,7 @@ export default async function HomePage() {
   ).filter((row): row is ContactInfoRow => Boolean(row));
 
   return (
-    <PackageSelectionProvider>
+    <>
       <nav className="sticky top-0 z-40 hidden bg-cobalt text-cream md:block">
         <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3 px-sp-5 py-sp-4">
           <span className="w-[92px] shrink-0 truncate font-bodoni italic font-bold uppercase text-xs sm:w-auto sm:text-sm">
@@ -425,25 +421,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* PRICING */}
-        <section className="mx-auto max-w-content px-sp-5 py-sp-9">
-          <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
-            Paquetes
-          </h2>
-          <div className="grid gap-sp-5 md:grid-cols-3">
-            {pricingPackages.map((pkg) => (
-              <PricingCard
-                key={pkg.id}
-                name={pkg.name}
-                price={pkg.price}
-                unit={pkg.unit}
-                deliverables={pkg.deliverables}
-                featured={pkg.featured}
-              />
-            ))}
-          </div>
-        </section>
-
         {/* FAQ */}
         {faqItems.length > 0 && (
           <section className="mx-auto max-w-content px-sp-5 py-sp-9">
@@ -498,6 +475,6 @@ export default async function HomePage() {
           </div>
         </section>
       </main>
-    </PackageSelectionProvider>
+    </>
   );
 }

@@ -97,51 +97,6 @@ export async function seedDatabase(prisma: PrismaClient) {
     ],
   });
 
-  await prisma.pricingPackage.deleteMany();
-  await prisma.pricingPackage.createMany({
-    data: [
-      {
-        name: "Sencillo",
-        price: "$45",
-        unit: "/ video",
-        deliverables: [
-          "1 video UGC vertical",
-          "Guion y edición básica",
-          "Entrega en 5 días",
-          "Uso digital por 30 días",
-        ],
-        featured: false,
-        order: 0,
-      },
-      {
-        name: "Bundle",
-        price: "$120",
-        unit: "/ paquete de 3",
-        deliverables: [
-          "3 piezas UGC (video o foto)",
-          "Variedad de hooks y ángulos",
-          "Entrega en 7 días",
-          "Derechos de uso ampliados",
-        ],
-        featured: true,
-        order: 1,
-      },
-      {
-        name: "Mensual",
-        price: "$380",
-        unit: "/ mes",
-        deliverables: [
-          "6 piezas UGC al mes",
-          "Calendario de contenido",
-          "Prioridad en entregas",
-          "Llamada mensual de feedback",
-        ],
-        featured: false,
-        order: 2,
-      },
-    ],
-  });
-
   await prisma.brand.deleteMany();
   await prisma.brand.createMany({
     data: [

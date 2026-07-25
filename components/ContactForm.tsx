@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { HeartIcon } from "@/components/icons";
 
 const COLLABORATION_TYPES = ["Sencillo", "Bundle", "Mensual", "A medida"];
 
@@ -50,79 +51,86 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-sp-4">
-      <div className="grid gap-sp-4 sm:grid-cols-2">
+    <div className="relative rounded-md border border-lime/50 bg-white pt-sp-6 pb-sp-6 shadow-sm">
+      <span className="absolute -top-sp-3 left-sp-5 inline-flex items-center gap-sp-2 rounded-full bg-cobalt px-sp-4 py-sp-1 font-mono text-[11px] uppercase tracking-widest text-cream">
+        <HeartIcon className="h-3 w-3" />
+        Escríbeme
+      </span>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-sp-4 px-sp-5">
+        <div className="grid gap-sp-4 sm:grid-cols-2">
+          <label className="flex flex-col gap-sp-1">
+            <span className="text-sm font-medium text-ink">Nombre</span>
+            <input
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
+            />
+          </label>
+
+          <label className="flex flex-col gap-sp-1">
+            <span className="text-sm font-medium text-ink">Marca / empresa</span>
+            <input
+              required
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
+            />
+          </label>
+        </div>
+
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Nombre</span>
+          <span className="text-sm font-medium text-ink">Email</span>
           <input
+            type="email"
             required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
           />
         </label>
 
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Marca / empresa</span>
-          <input
+          <span className="text-sm font-medium text-ink">Tipo de colaboración</span>
+          <select
+            value={collaborationType}
+            onChange={(e) => setCollaborationType(e.target.value)}
+            className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
+          >
+            {COLLABORATION_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">Mensaje</span>
+          <textarea
             required
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
+            rows={4}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
           />
         </label>
-      </div>
 
-      <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Email</span>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
-        />
-      </label>
+        {status === "error" && (
+          <p role="alert" className="text-sm text-red-600">
+            {errorMessage}
+          </p>
+        )}
 
-      <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Tipo de colaboración</span>
-        <select
-          value={collaborationType}
-          onChange={(e) => setCollaborationType(e.target.value)}
-          className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="mt-sp-2 rounded-full bg-coral text-white font-medium py-sp-3 hover:opacity-90 disabled:opacity-60 transition"
         >
-          {COLLABORATION_TYPES.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Mensaje</span>
-        <textarea
-          required
-          rows={4}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
-        />
-      </label>
-
-      {status === "error" && (
-        <p role="alert" className="text-sm text-red-600">
-          {errorMessage}
-        </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="mt-sp-2 rounded-sm bg-coral text-white font-medium py-sp-3 hover:opacity-90 disabled:opacity-60 transition"
-      >
-        {status === "loading" ? "Enviando..." : "Enviar mensaje"}
-      </button>
-    </form>
+          {status === "loading" ? "Enviando..." : "Enviar mensaje"}
+        </button>
+      </form>
+    </div>
   );
 }

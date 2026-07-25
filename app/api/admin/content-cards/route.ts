@@ -8,6 +8,7 @@ const contentCardSchema = z.object({
   type: z.enum(["video", "photo"]),
   platform: z.enum(["tiktok", "instagram", "facebook"]),
   postUrl: z.string().url(),
+  videoUrl: z.string().url().optional().or(z.literal("")),
   caption: z.string().min(1),
   category: z.string().min(1),
   statPrimary: z.string().optional().or(z.literal("")),
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
   const card = await prisma.contentCard.create({
     data: {
       ...parsed.data,
+      videoUrl: parsed.data.videoUrl || null,
       statPrimary: parsed.data.statPrimary || null,
       statSecondary: parsed.data.statSecondary || null,
       order: (maxOrder._max.order ?? -1) + 1,

@@ -73,6 +73,7 @@ export default async function HomePage() {
     type: card.type as ContentType,
     platform: card.platform as Platform,
     postUrl: card.postUrl,
+    videoUrl: card.videoUrl,
     caption: card.caption,
     category: card.category,
     statPrimary: card.statPrimary,

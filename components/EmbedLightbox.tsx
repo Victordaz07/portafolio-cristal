@@ -7,12 +7,14 @@ import PlatformEmbed from "./embeds/PlatformEmbed";
 export default function EmbedLightbox({
   platform,
   url,
+  videoUrl,
   type,
   caption,
   onClose,
 }: {
   platform: Platform;
   url: string;
+  videoUrl?: string | null;
   type: ContentType;
   caption: string;
   onClose: () => void;
@@ -52,7 +54,18 @@ export default function EmbedLightbox({
         <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-4 pr-sp-8">
           {caption}
         </p>
-        <PlatformEmbed platform={platform} url={url} type={type} />
+        {videoUrl ? (
+          <video
+            src={videoUrl}
+            controls
+            autoPlay
+            muted
+            playsInline
+            className="mx-auto max-h-[75vh] w-full rounded-md"
+          />
+        ) : (
+          <PlatformEmbed platform={platform} url={url} type={type} />
+        )}
       </div>
     </div>
   );

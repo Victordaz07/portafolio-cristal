@@ -172,7 +172,7 @@ export default async function HomePage() {
                 alt={hero?.name ?? "Crislia"}
                 className="aspect-square w-full object-cover object-bottom"
               />
-              <div className="relative -mt-10 rounded-t-3xl bg-cream px-sp-5 pb-sp-8 pt-sp-7 text-center">
+              <div className="relative -mt-10 rounded-t-3xl bg-cream px-sp-5 pb-sp-3 pt-sp-7 text-center">
                 <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">
                   <SparkleIcon className="h-3.5 w-3.5 text-lime" />
                   {hero?.badgeLabel ?? "UGC Creator • Brand Reviews"}
@@ -291,7 +291,7 @@ export default async function HomePage() {
         </section>
 
         {/* FEED */}
-        <section id="contenido" className="mx-auto max-w-content px-sp-5 py-sp-9">
+        <section id="contenido" className="mx-auto max-w-content px-sp-5 pt-sp-5 pb-sp-9">
           <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
             Contenido
           </h2>

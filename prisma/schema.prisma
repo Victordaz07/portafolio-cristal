@@ -87,6 +87,14 @@ model Testimonial {
   order    Int    @default(0)
 }
 
+model Package {
+  id    String   @id @default(cuid())
+  emoji String   @default("✨")
+  name  String
+  items String[]
+  order Int      @default(0)
+}
+
 model FaqItem {
   id       String @id @default(cuid())
   question String

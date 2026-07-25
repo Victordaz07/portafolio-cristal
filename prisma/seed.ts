@@ -185,6 +185,54 @@ export async function seedDatabase(prisma: PrismaClient) {
     ],
   });
 
+  await prisma.package.deleteMany();
+  await prisma.package.createMany({
+    data: [
+      {
+        emoji: "✨",
+        name: "Paquete Inicial",
+        items: [
+          "2-3 videos UGC",
+          "Demostración de producto",
+          "Voz en off o hablando a cámara",
+          "Iluminación natural",
+          "Formato vertical (9:16)",
+          "Edición estilo orgánico",
+        ],
+        order: 0,
+      },
+      {
+        emoji: "🚀",
+        name: "Paquete de Crecimiento",
+        items: [
+          "5-7 videos UGC",
+          "Diferentes ganchos (hooks)",
+          "Múltiples llamados a la acción",
+          "Tomas de estilo de vida + producto",
+          "Metraje B-Roll",
+          "Sugerencias de captions",
+        ],
+        order: 1,
+      },
+      {
+        emoji: "💎",
+        name: "Paquete Premium de Marca",
+        items: [
+          "10+ videos UGC",
+          "Múltiples conceptos",
+          "Diferentes ganchos y ángulos",
+          "Fotografía de producto",
+          "Metraje crudo disponible",
+          "Creativos estilo anuncio",
+          "Versiones orgánicas y para pauta",
+          "Guion incluido",
+          "Sugerencias de miniaturas",
+        ],
+        order: 2,
+      },
+    ],
+  });
+
   await prisma.testimonial.deleteMany();
   await prisma.testimonial.createMany({
     data: [

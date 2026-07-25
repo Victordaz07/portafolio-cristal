@@ -18,6 +18,7 @@ model Hero {
   headlineSuffix    String   @default("")
   description       String   @default("")
   photoUrl          String?
+  photoUrlMobile    String?
   ctaPrimaryLabel   String
   ctaPrimaryHref    String
   ctaSecondaryLabel String

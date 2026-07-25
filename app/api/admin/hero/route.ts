@@ -14,6 +14,7 @@ const heroSchema = z.object({
   headlineSuffix: z.string().optional().default(""),
   description: z.string().optional().default(""),
   photoUrl: z.string().url().optional().or(z.literal("")),
+  photoUrlMobile: z.string().url().optional().or(z.literal("")),
   ctaPrimaryLabel: z.string().min(1),
   ctaPrimaryHref: z.string().min(1),
   ctaSecondaryLabel: z.string().min(1),
@@ -32,7 +33,11 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
-  const data = { ...parsed.data, photoUrl: parsed.data.photoUrl || null };
+  const data = {
+    ...parsed.data,
+    photoUrl: parsed.data.photoUrl || null,
+    photoUrlMobile: parsed.data.photoUrlMobile || null,
+  };
   const existing = await prisma.hero.findFirst();
 
   const hero = existing

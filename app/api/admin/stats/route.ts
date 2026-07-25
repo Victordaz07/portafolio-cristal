@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 const statSchema = z.object({
   label: z.string().min(1),
   value: z.string().min(1),
-  icon: z.enum(["heart", "star", "chat"]).optional().default("star"),
+  icon: z.enum(["heart", "star", "chat", "people"]).optional().default("star"),
 });
 
 export async function GET() {

@@ -75,10 +75,31 @@ export function ChatIcon({ className }: { className?: string }) {
   );
 }
 
+export function PeopleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+      <path d="M3 19.5a6 6 0 0 1 12 0" />
+      <path d="M16 5.2a3 3 0 0 1 0 5.6" />
+      <path d="M18 13.8a6 6 0 0 1 3 5.2" />
+    </svg>
+  );
+}
+
 export const STAT_ICONS = {
   heart: HeartIcon,
   star: StarIcon,
   chat: ChatIcon,
+  people: PeopleIcon,
 } as const;
 
 export type StatIconKey = keyof typeof STAT_ICONS;
@@ -87,4 +108,5 @@ export const STAT_ICON_OPTIONS: { value: StatIconKey; label: string }[] = [
   { value: "heart", label: "Corazón" },
   { value: "star", label: "Estrella" },
   { value: "chat", label: "Chat" },
+  { value: "people", label: "Personas" },
 ];

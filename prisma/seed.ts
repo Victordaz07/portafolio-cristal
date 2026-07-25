@@ -10,16 +10,17 @@ async function main() {
       name: "Cristal Amalia Flores Bello",
       location: "Santo Domingo, DR",
       niche: "UGC Creator",
-      badgeLabel: "UGC Creator / Brand Reviews",
+      badgeLabel: "UGC Creator • Brand Reviews",
       headlinePlain: "Reseñas que",
       headlineEmphasis: "inspiran",
       headlineSuffix: "confianza.",
       description:
-        "Creo reseñas **auténticas y contenido UGC** que conecta productos con personas a través de historias __reales__, __honestas y con estilo__.",
+        "Creo contenido UGC auténtico y reseñas honestas que conectan marcas con personas de verdad.",
       photoUrl: "/images/hero-placeholder.png",
+      photoUrlMobile: "/images/hero-placeholder-mobile.png",
       ctaPrimaryLabel: "Ver portafolio",
       ctaPrimaryHref: "#contenido",
-      ctaSecondaryLabel: "Trabajemos juntos",
+      ctaSecondaryLabel: "Trabajemos juntas",
       ctaSecondaryHref: "#contacto",
     },
   });
@@ -27,9 +28,9 @@ async function main() {
   await prisma.stat.deleteMany();
   await prisma.stat.createMany({
     data: [
-      { label: "Audiencia alcanzada en redes sociales", value: "50K+", icon: "heart", order: 0 },
-      { label: "Colaboraciones con marcas", value: "120+", icon: "star", order: 1 },
-      { label: "Engagement promedio · contenido auténtico", value: "4.9%", icon: "chat", order: 2 },
+      { label: "Audiencia", value: "50K+", icon: "heart", order: 0 },
+      { label: "Colaboraciones", value: "120+", icon: "people", order: 1 },
+      { label: "Valoración", value: "4.9", icon: "star", order: 2 },
     ],
   });
 

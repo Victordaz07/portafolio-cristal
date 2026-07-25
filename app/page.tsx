@@ -2,13 +2,30 @@ import { prisma } from "@/lib/prisma";
 import type { Platform, ContentType } from "@/lib/embeds";
 import HeroStat from "@/components/HeroStat";
 import HeroStatCard from "@/components/HeroStatCard";
-import { SparkleIcon, ArrowRightIcon } from "@/components/icons";
+import {
+  SparkleIcon,
+  ArrowRightIcon,
+  HeartIcon,
+  MailIcon,
+  SendIcon,
+  GlobeIcon,
+  WhatsAppIcon,
+  InstagramIcon,
+  TikTokIcon,
+  YouTubeIcon,
+  FacebookIcon,
+  PinterestIcon,
+} from "@/components/icons";
 import { renderHighlightedText } from "@/lib/highlight";
 import ContentFeed from "@/components/ContentFeed";
 import BrandCard from "@/components/BrandCard";
 import PricingCard from "@/components/PricingCard";
 import FaqAccordion from "@/components/FaqAccordion";
 import ContactForm from "@/components/ContactForm";
+import ContactInfoCard, { type ContactInfoRow } from "@/components/ContactInfoCard";
+import ReviewCard from "@/components/ReviewCard";
+import ServiceCard from "@/components/ServiceCard";
+import TestimonialCard from "@/components/TestimonialCard";
 import { PackageSelectionProvider } from "@/components/PackageSelectionContext";
 import type { ContentCardProps } from "@/components/ContentCard";
 
@@ -22,16 +39,29 @@ const NAV_LINKS = [
 ];
 
 export default async function HomePage() {
-  const [hero, stats, contentCards, brands, pricingPackages, faqItems, settings] =
-    await Promise.all([
-      prisma.hero.findFirst(),
-      prisma.stat.findMany({ orderBy: { order: "asc" } }),
-      prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
-      prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
-      prisma.pricingPackage.findMany({ orderBy: { order: "asc" } }),
-      prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
-      prisma.siteSettings.findFirst(),
-    ]);
+  const [
+    hero,
+    stats,
+    contentCards,
+    brands,
+    pricingPackages,
+    faqItems,
+    settings,
+    reviews,
+    services,
+    testimonials,
+  ] = await Promise.all([
+    prisma.hero.findFirst(),
+    prisma.stat.findMany({ orderBy: { order: "asc" } }),
+    prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
+    prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
+    prisma.pricingPackage.findMany({ orderBy: { order: "asc" } }),
+    prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
+    prisma.siteSettings.findFirst(),
+    prisma.review.findMany({ orderBy: { order: "asc" } }),
+    prisma.service.findMany({ orderBy: { order: "asc" } }),
+    prisma.testimonial.findMany({ orderBy: { order: "asc" } }),
+  ]);
 
   const feedCards: ContentCardProps[] = contentCards.map((card) => ({
     type: card.type as ContentType,
@@ -42,6 +72,70 @@ export default async function HomePage() {
     statPrimary: card.statPrimary,
     statSecondary: card.statSecondary,
   }));
+
+  const hablamosRows = (
+    [
+      settings?.contactEmail && {
+        icon: <MailIcon className="h-4 w-4" />,
+        label: "Correo",
+        value: settings.contactEmail,
+        href: `mailto:${settings.contactEmail}`,
+      },
+      settings?.whatsapp && {
+        icon: <WhatsAppIcon className="h-4 w-4" />,
+        label: "WhatsApp",
+        value: settings.whatsapp,
+        href: `https://wa.me/${settings.whatsapp.replace(/[^\d]/g, "")}`,
+      },
+      settings?.collabsEmail && {
+        icon: <SendIcon className="h-4 w-4" />,
+        label: "Colaboraciones",
+        value: settings.collabsEmail,
+        href: `mailto:${settings.collabsEmail}`,
+      },
+      settings?.websiteUrl && {
+        icon: <GlobeIcon className="h-4 w-4" />,
+        label: "Sitio web",
+        value: settings.websiteUrl.replace(/^https?:\/\//, ""),
+        href: settings.websiteUrl,
+      },
+    ] as Array<ContactInfoRow | false | undefined>
+  ).filter((row): row is ContactInfoRow => Boolean(row));
+
+  const siguemeRows = (
+    [
+      settings?.instagramHandle && {
+        icon: <InstagramIcon className="h-4 w-4" />,
+        label: "Instagram",
+        value: settings.instagramHandle,
+        href: `https://instagram.com/${settings.instagramHandle.replace(/^@/, "")}`,
+      },
+      settings?.tiktokHandle && {
+        icon: <TikTokIcon className="h-4 w-4" />,
+        label: "TikTok",
+        value: settings.tiktokHandle,
+        href: `https://tiktok.com/@${settings.tiktokHandle.replace(/^@/, "")}`,
+      },
+      settings?.youtubeHandle && {
+        icon: <YouTubeIcon className="h-4 w-4" />,
+        label: "YouTube",
+        value: settings.youtubeHandle,
+        href: `https://youtube.com/${settings.youtubeHandle.replace(/^\//, "")}`,
+      },
+      settings?.facebookHandle && {
+        icon: <FacebookIcon className="h-4 w-4" />,
+        label: "Facebook",
+        value: settings.facebookHandle,
+        href: `https://facebook.com/${settings.facebookHandle.replace(/^\//, "")}`,
+      },
+      settings?.pinterestHandle && {
+        icon: <PinterestIcon className="h-4 w-4" />,
+        label: "Pinterest",
+        value: settings.pinterestHandle,
+        href: `https://pinterest.com/${settings.pinterestHandle.replace(/^\//, "")}`,
+      },
+    ] as Array<ContactInfoRow | false | undefined>
+  ).filter((row): row is ContactInfoRow => Boolean(row));
 
   return (
     <PackageSelectionProvider>
@@ -232,6 +326,85 @@ export default async function HomePage() {
           </section>
         )}
 
+        {/* REVIEWS */}
+        {reviews.length > 0 && (
+          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+            <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+              Reseñas recientes
+            </p>
+            <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink">
+              Reseñas <span className="text-coral">destacadas</span>
+            </h2>
+            <p className="mt-sp-3 max-w-md text-ink/70">
+              Contenido honesto, detallado y pensado para ayudarte a tomar mejores decisiones.
+            </p>
+
+            <div className="mt-sp-6 flex flex-col gap-sp-4">
+              {reviews.map((review) => (
+                <ReviewCard
+                  key={review.id}
+                  photoUrl={review.photoUrl}
+                  category={review.category}
+                  title={review.title}
+                  description={review.description}
+                  rating={review.rating}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* SERVICES */}
+        {services.length > 0 && (
+          <section className="bg-white">
+            <div className="mx-auto max-w-content px-sp-5 py-sp-9 text-center">
+              <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+                Lo que hago
+              </p>
+              <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink">
+                Cómo trabajo <span className="text-coral">contigo</span>
+              </h2>
+
+              <div className="mt-sp-7 grid gap-sp-4 [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
+                {services.map((service) => (
+                  <ServiceCard
+                    key={service.id}
+                    icon={service.icon}
+                    title={service.title}
+                    description={service.description}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* TESTIMONIALS */}
+        {testimonials.length > 0 && (
+          <section className="mx-auto max-w-content px-sp-5 py-sp-9">
+            <div className="text-center">
+              <p className="font-mono text-xs uppercase tracking-widest text-moss mb-sp-2">
+                Lo que dicen las marcas
+              </p>
+              <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink">
+                Resultados que <span className="text-coral">hablan</span> por sí solos
+              </h2>
+            </div>
+
+            <div className="mt-sp-7 grid gap-sp-5 [grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
+              {testimonials.map((testimonial) => (
+                <TestimonialCard
+                  key={testimonial.id}
+                  quote={testimonial.quote}
+                  name={testimonial.name}
+                  role={testimonial.role}
+                  photoUrl={testimonial.photoUrl}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* WHY ME */}
         <section id="why" className="bg-cobalt text-cream">
           <div className="mx-auto max-w-content px-sp-5 py-sp-9">
@@ -274,17 +447,37 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* CONTACT */}
-        <section id="contacto" className="mx-auto max-w-content px-sp-5 py-sp-9">
-          <h2 className="font-bodoni italic font-bold uppercase text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink mb-sp-6">
-            Contacto
-          </h2>
-          <div className="grid gap-sp-8 md:grid-cols-[1fr,1fr]">
-            <ContactForm />
-            <div className="flex flex-col gap-sp-3 font-mono text-sm text-moss">
-              {settings?.instagramHandle && <p>Instagram: {settings.instagramHandle}</p>}
-              {settings?.tiktokHandle && <p>TikTok: {settings.tiktokHandle}</p>}
-              {settings?.contactEmail && <p>Email: {settings.contactEmail}</p>}
+        {/* CONTACT / FOOTER */}
+        <section id="contacto" className="bg-cream">
+          <div className="mx-auto max-w-content px-sp-5 py-sp-9">
+            <div className="mx-auto max-w-2xl text-center">
+              <SparkleIcon className="mx-auto h-5 w-5 text-lime" />
+              <h2 className="mt-sp-3 font-fraunces italic text-[clamp(2rem,5vw,2.8rem)] text-ink">
+                Conéctate con {hero?.name?.split(" ")[0] ?? "Crislia"}
+              </h2>
+              <p className="mt-sp-3 text-ink/75 leading-relaxed whitespace-pre-line">
+                {settings?.footerIntro ??
+                  "Gracias por ser parte de este espacio. Me encanta compartir contigo lo que uso, me funciona y puede hacer tu vida más fácil y bonita."}
+              </p>
+            </div>
+
+            <div className="mt-sp-9 grid gap-sp-8 md:grid-cols-[1fr,1fr]">
+              <ContactForm />
+              <div className="flex flex-col gap-sp-6">
+                <ContactInfoCard title="¿Hablamos?" rows={hablamosRows} />
+                <ContactInfoCard title="Sígueme" rows={siguemeRows} />
+              </div>
+            </div>
+
+            <div className="mt-sp-8 flex flex-col items-center gap-sp-3 rounded-md border border-line bg-white p-sp-6 text-center">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime/25 text-coral">
+                <HeartIcon className="h-5 w-5" />
+              </span>
+              <p className="font-fraunces italic text-xl text-ink">Tu apoyo significa todo</p>
+              <p className="max-w-md text-sm text-ink/70">
+                {settings?.supportMessage ??
+                  "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!"}
+              </p>
             </div>
           </div>
         </section>

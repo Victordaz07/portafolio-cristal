@@ -17,6 +17,13 @@ export default function SettingsForm({
     instagramHandle: initialSettings?.instagramHandle ?? "",
     tiktokHandle: initialSettings?.tiktokHandle ?? "",
     facebookHandle: initialSettings?.facebookHandle ?? "",
+    whatsapp: initialSettings?.whatsapp ?? "",
+    collabsEmail: initialSettings?.collabsEmail ?? "",
+    websiteUrl: initialSettings?.websiteUrl ?? "",
+    youtubeHandle: initialSettings?.youtubeHandle ?? "",
+    pinterestHandle: initialSettings?.pinterestHandle ?? "",
+    footerIntro: initialSettings?.footerIntro ?? "",
+    supportMessage: initialSettings?.supportMessage ?? "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -51,16 +58,78 @@ export default function SettingsForm({
         />
       </label>
 
+      <h2 className="font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2">
+        Pie de página — &quot;Conéctate conmigo&quot;
+      </h2>
+
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Email de contacto</span>
-        <input
-          type="email"
-          required
-          value={form.contactEmail}
-          onChange={(e) => setForm((c) => ({ ...c, contactEmail: e.target.value }))}
+        <span className="text-sm font-medium text-ink">Texto de introducción</span>
+        <textarea
+          rows={3}
+          value={form.footerIntro}
+          onChange={(e) => setForm((c) => ({ ...c, footerIntro: e.target.value }))}
           className={inputClass}
+          placeholder="Gracias por ser parte de este espacio..."
         />
       </label>
+
+      <label className="flex flex-col gap-sp-1">
+        <span className="text-sm font-medium text-ink">Mensaje de agradecimiento</span>
+        <textarea
+          rows={2}
+          value={form.supportMessage}
+          onChange={(e) => setForm((c) => ({ ...c, supportMessage: e.target.value }))}
+          className={inputClass}
+          placeholder="Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve."
+        />
+      </label>
+
+      <h2 className="font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2">
+        ¿Hablamos?
+      </h2>
+
+      <div className="grid gap-sp-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">Email de contacto</span>
+          <input
+            type="email"
+            required
+            value={form.contactEmail}
+            onChange={(e) => setForm((c) => ({ ...c, contactEmail: e.target.value }))}
+            className={inputClass}
+          />
+        </label>
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">Email de colaboraciones (opcional)</span>
+          <input
+            type="email"
+            value={form.collabsEmail}
+            onChange={(e) => setForm((c) => ({ ...c, collabsEmail: e.target.value }))}
+            className={inputClass}
+          />
+        </label>
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">WhatsApp (opcional)</span>
+          <input
+            value={form.whatsapp}
+            onChange={(e) => setForm((c) => ({ ...c, whatsapp: e.target.value }))}
+            className={inputClass}
+            placeholder="+1 (809) 000-0000"
+          />
+        </label>
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">Sitio web (opcional)</span>
+          <input
+            type="url"
+            value={form.websiteUrl}
+            onChange={(e) => setForm((c) => ({ ...c, websiteUrl: e.target.value }))}
+            className={inputClass}
+            placeholder="https://..."
+          />
+        </label>
+      </div>
+
+      <h2 className="font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2">Sígueme</h2>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className="flex flex-col gap-sp-1">
@@ -83,16 +152,32 @@ export default function SettingsForm({
             placeholder="@usuario"
           />
         </label>
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">YouTube (opcional)</span>
+          <input
+            value={form.youtubeHandle}
+            onChange={(e) => setForm((c) => ({ ...c, youtubeHandle: e.target.value }))}
+            className={inputClass}
+            placeholder="/canal"
+          />
+        </label>
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">Facebook (opcional)</span>
+          <input
+            value={form.facebookHandle}
+            onChange={(e) => setForm((c) => ({ ...c, facebookHandle: e.target.value }))}
+            className={inputClass}
+          />
+        </label>
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">Pinterest (opcional)</span>
+          <input
+            value={form.pinterestHandle}
+            onChange={(e) => setForm((c) => ({ ...c, pinterestHandle: e.target.value }))}
+            className={inputClass}
+          />
+        </label>
       </div>
-
-      <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Facebook (opcional)</span>
-        <input
-          value={form.facebookHandle}
-          onChange={(e) => setForm((c) => ({ ...c, facebookHandle: e.target.value }))}
-          className={inputClass}
-        />
-      </label>
 
       <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
         {saving ? "Guardando..." : "Guardar cambios"}

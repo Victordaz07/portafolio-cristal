@@ -170,6 +170,95 @@ async function main() {
     ],
   });
 
+  await prisma.review.deleteMany();
+  await prisma.review.createMany({
+    data: [
+      {
+        category: "Skincare",
+        title: "IUNIK – Tea Tree Serum",
+        description: "Calma, hidrata y mejora visiblemente la piel sensible.",
+        rating: 5,
+        order: 0,
+      },
+      {
+        category: "Beauty",
+        title: "Cushionaire",
+        description: "Cobertura ligera con acabado natural, perfecta para el día a día.",
+        rating: 5,
+        order: 1,
+      },
+      {
+        category: "Lifestyle",
+        title: "Mary & May – Wash Off Mask",
+        description: "Textura suave que deja la piel fresca sin resecar.",
+        rating: 4,
+        order: 2,
+      },
+    ],
+  });
+
+  await prisma.service.deleteMany();
+  await prisma.service.createMany({
+    data: [
+      {
+        icon: "camera",
+        title: "Contenido UGC",
+        description: "Videos y fotos auténticas creadas para conectar con tu audiencia.",
+        order: 0,
+      },
+      {
+        icon: "chat",
+        title: "Reseñas honestas",
+        description: "Opiniones reales que generan confianza y aumentan conversiones.",
+        order: 1,
+      },
+      {
+        icon: "box",
+        title: "Unboxings",
+        description: "Experiencias de apertura y primeras impresiones que enamoran.",
+        order: 2,
+      },
+      {
+        icon: "camera",
+        title: "Fotografía de producto",
+        description: "Imágenes limpias, estéticas y alineadas con tu identidad de marca.",
+        order: 3,
+      },
+      {
+        icon: "phone",
+        title: "Contenido para redes",
+        description: "Reels, TikToks y Shorts optimizados para cada plataforma.",
+        order: 4,
+      },
+    ],
+  });
+
+  await prisma.testimonial.deleteMany();
+  await prisma.testimonial.createMany({
+    data: [
+      {
+        quote:
+          "Crislia entiende perfectamente nuestra marca y crea contenido que realmente conecta con nuestra audiencia. ¡Un placer trabajar con ella!",
+        name: "María G.",
+        role: "Gerente de Marketing – IUNIK",
+        order: 0,
+      },
+      {
+        quote:
+          "Sus reseñas son honestas, detalladas y visualmente hermosas. Hemos visto excelente engagement y conversiones.",
+        name: "Laura P.",
+        role: "Fundadora – Mary & May",
+        order: 1,
+      },
+      {
+        quote: "Profesional, creativa y siempre cumple con los tiempos. La recomendamos al 100%.",
+        name: "Javier R.",
+        role: "Brand Manager – Dr. Different",
+        order: 2,
+      },
+    ],
+  });
+
   await prisma.faqItem.deleteMany();
   await prisma.faqItem.createMany({
     data: [
@@ -200,8 +289,13 @@ async function main() {
       whyMeText:
         "Trabajo con marcas de beauty, skincare, hair, books y lifestyle creando contenido auténtico: nada de guiones forzados ni presentaciones de venta. Cuido cada detalle de grabación y edición como si fuera para mi propia cuenta, y mantengo comunicación clara y responsable en cada etapa de la colaboración, desde el brief hasta la entrega final.",
       contactEmail: "crisliaflores.24@gmail.com",
+      collabsEmail: "crisliaflores.24@gmail.com",
       instagramHandle: "@crislia.24",
       tiktokHandle: "@crislia.24",
+      footerIntro:
+        "Gracias por ser parte de este espacio. Me encanta compartir contigo lo que uso, me funciona y puede hacer tu vida más fácil y bonita.",
+      supportMessage:
+        "Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve. ¡Gracias, de corazón!",
     },
   });
 

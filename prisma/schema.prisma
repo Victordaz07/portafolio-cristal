@@ -69,6 +69,34 @@ model Brand {
   updatedAt  DateTime @updatedAt
 }
 
+model Review {
+  id          String   @id @default(cuid())
+  photoUrl    String?
+  category    String
+  title       String
+  description String
+  rating      Int      @default(5)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Service {
+  id          String @id @default(cuid())
+  icon        String @default("camera")
+  title       String
+  description String
+  order       Int    @default(0)
+}
+
+model Testimonial {
+  id       String @id @default(cuid())
+  quote    String
+  name     String
+  role     String
+  photoUrl String?
+  order    Int    @default(0)
+}
+
 model FaqItem {
   id       String @id @default(cuid())
   question String
@@ -101,5 +129,12 @@ model SiteSettings {
   instagramHandle String
   tiktokHandle    String
   facebookHandle  String?
+  whatsapp        String?
+  collabsEmail    String?
+  websiteUrl      String?
+  youtubeHandle   String?
+  pinterestHandle String?
+  footerIntro     String?
+  supportMessage  String?
   updatedAt       DateTime @updatedAt
 }

@@ -10,6 +10,13 @@ const settingsSchema = z.object({
   instagramHandle: z.string().min(1),
   tiktokHandle: z.string().min(1),
   facebookHandle: z.string().optional().or(z.literal("")),
+  whatsapp: z.string().optional().or(z.literal("")),
+  collabsEmail: z.string().email().optional().or(z.literal("")),
+  websiteUrl: z.string().url().optional().or(z.literal("")),
+  youtubeHandle: z.string().optional().or(z.literal("")),
+  pinterestHandle: z.string().optional().or(z.literal("")),
+  footerIntro: z.string().optional().or(z.literal("")),
+  supportMessage: z.string().optional().or(z.literal("")),
 });
 
 export async function GET() {
@@ -24,7 +31,17 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
-  const data = { ...parsed.data, facebookHandle: parsed.data.facebookHandle || null };
+  const data = {
+    ...parsed.data,
+    facebookHandle: parsed.data.facebookHandle || null,
+    whatsapp: parsed.data.whatsapp || null,
+    collabsEmail: parsed.data.collabsEmail || null,
+    websiteUrl: parsed.data.websiteUrl || null,
+    youtubeHandle: parsed.data.youtubeHandle || null,
+    pinterestHandle: parsed.data.pinterestHandle || null,
+    footerIntro: parsed.data.footerIntro || null,
+    supportMessage: parsed.data.supportMessage || null,
+  };
   const existing = await prisma.siteSettings.findFirst();
 
   const settings = existing

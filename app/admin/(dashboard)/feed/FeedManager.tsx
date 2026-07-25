@@ -89,6 +89,7 @@ export default function FeedManager({ initialCards }: { initialCards: ContentCar
                   type: card.type as ContentType,
                   platform: card.platform as Platform,
                   postUrl: card.postUrl,
+                  videoUrl: card.videoUrl ?? "",
                   caption: card.caption,
                   category: card.category,
                   statPrimary: card.statPrimary ?? "",

@@ -8,6 +8,7 @@ const contentCardUpdateSchema = z.object({
   type: z.enum(["video", "photo"]).optional(),
   platform: z.enum(["tiktok", "instagram", "facebook"]).optional(),
   postUrl: z.string().url().optional(),
+  videoUrl: z.string().url().nullable().optional().or(z.literal("")),
   caption: z.string().min(1).optional(),
   category: z.string().min(1).optional(),
   statPrimary: z.string().nullable().optional().or(z.literal("")),
@@ -24,6 +25,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   const data = { ...parsed.data };
+  if (data.videoUrl === "") data.videoUrl = null;
   if (data.statPrimary === "") data.statPrimary = null;
   if (data.statSecondary === "") data.statSecondary = null;
 

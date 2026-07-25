@@ -40,6 +40,7 @@ model ContentCard {
   type          String // "video" | "photo"
   platform      String // "tiktok" | "instagram" | "facebook"
   postUrl       String
+  videoUrl      String?
   caption       String
   category      String
   statPrimary   String?

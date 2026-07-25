@@ -15,6 +15,7 @@ export interface ContentCardProps {
   type: ContentType;
   platform: Platform;
   postUrl: string;
+  videoUrl?: string | null;
   caption: string;
   category: string;
   statPrimary?: string | null;
@@ -26,6 +27,7 @@ export default function ContentCard({
   type,
   platform,
   postUrl,
+  videoUrl,
   caption,
   category,
   statPrimary,
@@ -93,6 +95,7 @@ export default function ContentCard({
         <EmbedLightbox
           platform={platform}
           url={postUrl}
+          videoUrl={videoUrl}
           type={type}
           caption={caption}
           onClose={() => setOpen(false)}

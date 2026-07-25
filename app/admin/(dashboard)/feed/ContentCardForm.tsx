@@ -3,12 +3,14 @@
 import { useState } from "react";
 import type { Platform, ContentType } from "@/lib/embeds";
 import EmbedUrlInput from "@/components/admin/EmbedUrlInput";
+import VideoUploadField from "@/components/admin/VideoUploadField";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 
 export interface ContentCardFormValues {
   type: ContentType;
   platform: Platform;
   postUrl: string;
+  videoUrl: string;
   caption: string;
   category: string;
   statPrimary: string;
@@ -31,6 +33,7 @@ export default function ContentCardForm({
   onCancel?: () => void;
 }) {
   const [postUrl, setPostUrl] = useState(initial?.postUrl ?? "");
+  const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? "");
   const [platform, setPlatform] = useState<Platform | null>(initial?.platform ?? null);
   const [type, setType] = useState<ContentType | null>(initial?.type ?? null);
   const [caption, setCaption] = useState(initial?.caption ?? "");
@@ -46,7 +49,16 @@ export default function ContentCardForm({
     event.preventDefault();
     if (!platform || !type) return;
     setSaving(true);
-    await onSubmit({ type, platform, postUrl, caption, category, statPrimary, statSecondary });
+    await onSubmit({
+      type,
+      platform,
+      postUrl,
+      videoUrl,
+      caption,
+      category,
+      statPrimary,
+      statSecondary,
+    });
     setSaving(false);
   }
 
@@ -81,6 +93,14 @@ export default function ContentCardForm({
             <option value="photo">Foto</option>
           </select>
         </label>
+      )}
+
+      {type === "video" && (
+        <VideoUploadField
+          label="Video propio (opcional): súbelo aquí para que se reproduzca directo en el sitio, sin depender del embed de la plataforma"
+          value={videoUrl}
+          onChange={setVideoUrl}
+        />
       )}
 
       <label className="flex flex-col gap-sp-1">

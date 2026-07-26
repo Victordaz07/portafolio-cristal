@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { MenuIcon } from "@/components/icons";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Panel" },
@@ -61,7 +62,20 @@ export default function AdminShell({ children }: { children: ReactNode }) {
         </button>
       </aside>
 
-      <main className="flex-1 px-sp-5 py-sp-7 md:px-sp-8 md:py-sp-8">{children}</main>
+      <main className="flex-1 px-sp-5 py-sp-7 md:px-sp-8 md:py-sp-8">
+        <div className="mb-sp-6 flex justify-end">
+          <Link
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-sp-2 rounded-full border border-line bg-white px-sp-4 py-sp-2 text-sm font-medium text-ink hover:border-coral hover:text-coral"
+          >
+            <MenuIcon className="h-4 w-4" />
+            Ver sitio
+          </Link>
+        </div>
+        {children}
+      </main>
     </div>
   );
 }

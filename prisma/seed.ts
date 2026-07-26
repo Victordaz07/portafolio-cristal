@@ -126,22 +126,22 @@ export async function seedDatabase(prisma: PrismaClient) {
   await prisma.review.createMany({
     data: [
       {
-        category: "Skincare",
-        title: "IUNIK – Tea Tree Serum",
+        category: "Cuidado de la piel",
+        title: "IUNIK – Sérum de Árbol de Té",
         description: "Calma, hidrata y mejora visiblemente la piel sensible.",
         rating: 5,
         order: 0,
       },
       {
-        category: "Beauty",
+        category: "Belleza",
         title: "Cushionaire",
         description: "Cobertura ligera con acabado natural, perfecta para el día a día.",
         rating: 5,
         order: 1,
       },
       {
-        category: "Lifestyle",
-        title: "Mary & May – Wash Off Mask",
+        category: "Estilo de vida",
+        title: "Mary & May – Mascarilla de Enjuague",
         description: "Textura suave que deja la piel fresca sin resecar.",
         rating: 4,
         order: 2,
@@ -253,7 +253,7 @@ export async function seedDatabase(prisma: PrismaClient) {
       {
         quote: "Profesional, creativa y siempre cumple con los tiempos. La recomendamos al 100%.",
         name: "Javier R.",
-        role: "Brand Manager – Dr. Different",
+        role: "Gerente de Marca – Dr. Different",
         order: 2,
       },
     ],

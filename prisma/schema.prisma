@@ -8,27 +8,36 @@ datasource db {
 }
 
 model Hero {
-  id                String   @id @default(cuid())
-  name              String
-  location          String
-  niche             String
-  badgeLabel        String   @default("UGC Creator / Brand Reviews")
-  headlinePlain     String
-  headlineEmphasis  String
-  headlineSuffix    String   @default("")
-  description       String   @default("")
-  photoUrl          String?
-  photoUrlMobile    String?
-  ctaPrimaryLabel   String
-  ctaPrimaryHref    String
-  ctaSecondaryLabel String
-  ctaSecondaryHref  String
-  updatedAt         DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  name                String
+  location            String
+  niche               String
+  nicheEn             String?
+  badgeLabel          String   @default("UGC Creator / Brand Reviews")
+  badgeLabelEn        String?
+  headlinePlain       String
+  headlinePlainEn     String?
+  headlineEmphasis    String
+  headlineEmphasisEn  String?
+  headlineSuffix      String   @default("")
+  headlineSuffixEn    String?
+  description         String   @default("")
+  descriptionEn       String?
+  photoUrl            String?
+  photoUrlMobile      String?
+  ctaPrimaryLabel     String
+  ctaPrimaryLabelEn   String?
+  ctaPrimaryHref      String
+  ctaSecondaryLabel   String
+  ctaSecondaryLabelEn String?
+  ctaSecondaryHref    String
+  updatedAt           DateTime @updatedAt
 }
 
 model Stat {
   id        String   @id @default(cuid())
   label     String
+  labelEn   String?
   value     String
   icon      String   @default("star")
   order     Int      @default(0)
@@ -36,17 +45,21 @@ model Stat {
 }
 
 model ContentCard {
-  id            String   @id @default(cuid())
-  type          String // "video" | "photo"
-  platform      String // "tiktok" | "instagram" | "facebook"
-  postUrl       String
-  videoUrl      String?
-  caption       String
-  category      String
-  statPrimary   String?
-  statSecondary String?
-  order         Int      @default(0)
-  createdAt     DateTime @default(now())
+  id              String   @id @default(cuid())
+  type            String // "video" | "photo"
+  platform        String // "tiktok" | "instagram" | "facebook"
+  postUrl         String
+  videoUrl        String?
+  caption         String
+  captionEn       String?
+  category        String
+  categoryEn      String?
+  statPrimary     String?
+  statPrimaryEn   String?
+  statSecondary   String?
+  statSecondaryEn String?
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
 }
 
 model Brand {
@@ -61,46 +74,57 @@ model Brand {
 }
 
 model Review {
-  id          String   @id @default(cuid())
-  photoUrl    String?
-  category    String
-  title       String
-  description String
-  rating      Int      @default(5)
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  photoUrl      String?
+  category      String
+  categoryEn    String?
+  title         String
+  titleEn       String?
+  description   String
+  descriptionEn String?
+  rating        Int      @default(5)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
 }
 
 model Service {
-  id          String @id @default(cuid())
-  icon        String @default("camera")
-  title       String
-  description String
-  order       Int    @default(0)
+  id            String  @id @default(cuid())
+  icon          String  @default("camera")
+  title         String
+  titleEn       String?
+  description   String
+  descriptionEn String?
+  order         Int     @default(0)
 }
 
 model Testimonial {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   quote    String
+  quoteEn  String?
   name     String
   role     String
+  roleEn   String?
   photoUrl String?
-  order    Int    @default(0)
+  order    Int     @default(0)
 }
 
 model Package {
-  id    String   @id @default(cuid())
-  emoji String   @default("✨")
-  name  String
-  items String[]
-  order Int      @default(0)
+  id      String   @id @default(cuid())
+  emoji   String   @default("✨")
+  name    String
+  nameEn  String?
+  items   String[]
+  itemsEn String[]
+  order   Int      @default(0)
 }
 
 model FaqItem {
-  id       String @id @default(cuid())
-  question String
-  answer   String
-  order    Int    @default(0)
+  id         String  @id @default(cuid())
+  question   String
+  questionEn String?
+  answer     String
+  answerEn   String?
+  order      Int     @default(0)
 }
 
 model ContactMessage {
@@ -122,18 +146,21 @@ model AdminUser {
 }
 
 model SiteSettings {
-  id              String   @id @default(cuid())
-  whyMeText       String
-  contactEmail    String
-  instagramHandle String
-  tiktokHandle    String
-  facebookHandle  String?
-  whatsapp        String?
-  collabsEmail    String?
-  websiteUrl      String?
-  youtubeHandle   String?
-  pinterestHandle String?
-  footerIntro     String?
-  supportMessage  String?
-  updatedAt       DateTime @updatedAt
+  id               String   @id @default(cuid())
+  whyMeText        String
+  whyMeTextEn      String?
+  contactEmail     String
+  instagramHandle  String
+  tiktokHandle     String
+  facebookHandle   String?
+  whatsapp         String?
+  collabsEmail     String?
+  websiteUrl       String?
+  youtubeHandle    String?
+  pinterestHandle  String?
+  footerIntro      String?
+  footerIntroEn    String?
+  supportMessage   String?
+  supportMessageEn String?
+  updatedAt        DateTime @updatedAt
 }

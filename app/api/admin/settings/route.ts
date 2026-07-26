@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 const settingsSchema = z.object({
   whyMeText: z.string().min(1),
+  whyMeTextEn: z.string().optional().or(z.literal("")),
   contactEmail: z.string().email(),
   instagramHandle: z.string().min(1),
   tiktokHandle: z.string().min(1),
@@ -16,7 +17,9 @@ const settingsSchema = z.object({
   youtubeHandle: z.string().optional().or(z.literal("")),
   pinterestHandle: z.string().optional().or(z.literal("")),
   footerIntro: z.string().optional().or(z.literal("")),
+  footerIntroEn: z.string().optional().or(z.literal("")),
   supportMessage: z.string().optional().or(z.literal("")),
+  supportMessageEn: z.string().optional().or(z.literal("")),
 });
 
 export async function GET() {
@@ -41,6 +44,9 @@ export async function PUT(request: Request) {
     pinterestHandle: parsed.data.pinterestHandle || null,
     footerIntro: parsed.data.footerIntro || null,
     supportMessage: parsed.data.supportMessage || null,
+    whyMeTextEn: parsed.data.whyMeTextEn || null,
+    footerIntroEn: parsed.data.footerIntroEn || null,
+    supportMessageEn: parsed.data.supportMessageEn || null,
   };
   const existing = await prisma.siteSettings.findFirst();
 

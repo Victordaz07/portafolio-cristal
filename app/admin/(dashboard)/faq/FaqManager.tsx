@@ -5,8 +5,9 @@ import type { FaqItem } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
+import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
-import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import { primaryButtonClass } from "@/lib/admin-ui";
 
 const API_BASE = "/api/admin/faq";
 
@@ -14,7 +15,9 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
   const { showToast } = useToast();
   const [items, setItems] = useState(initialFaqItems);
   const [question, setQuestion] = useState("");
+  const [questionEn, setQuestionEn] = useState("");
   const [answer, setAnswer] = useState("");
+  const [answerEn, setAnswerEn] = useState("");
   const [saving, setSaving] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<FaqItem | null>(null);
 
@@ -24,7 +27,7 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
     const response = await fetch(API_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, answer }),
+      body: JSON.stringify({ question, questionEn, answer, answerEn }),
     });
     setSaving(false);
 
@@ -37,7 +40,9 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
     const created: FaqItem = await response.json();
     setItems((current) => [...current, created]);
     setQuestion("");
+    setQuestionEn("");
     setAnswer("");
+    setAnswerEn("");
     showToast("success", "Pregunta agregada");
   }
 
@@ -87,25 +92,24 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
       </ul>
 
       <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-lg">
-        <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Pregunta</span>
-          <input
-            required
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            className={inputClass}
-          />
-        </label>
-        <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Respuesta</span>
-          <textarea
-            required
-            rows={3}
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            className={inputClass}
-          />
-        </label>
+        <BilingualTextField
+          label="Pregunta"
+          es={question}
+          en={questionEn}
+          onEsChange={setQuestion}
+          onEnChange={setQuestionEn}
+          required
+        />
+        <BilingualTextField
+          label="Respuesta"
+          es={answer}
+          en={answerEn}
+          onEsChange={setAnswer}
+          onEnChange={setAnswerEn}
+          multiline
+          rows={3}
+          required
+        />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
           {saving ? "Agregando..." : "+ agregar pregunta"}
         </button>

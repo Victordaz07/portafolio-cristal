@@ -6,8 +6,10 @@ export const dynamic = "force-dynamic";
 
 const testimonialUpdateSchema = z.object({
   quote: z.string().min(1).optional(),
+  quoteEn: z.string().nullable().optional().or(z.literal("")),
   name: z.string().min(1).optional(),
   role: z.string().min(1).optional(),
+  roleEn: z.string().nullable().optional().or(z.literal("")),
   photoUrl: z.string().url().nullable().optional().or(z.literal("")),
   order: z.number().int().optional(),
 });
@@ -22,6 +24,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const data = { ...parsed.data };
   if (data.photoUrl === "") data.photoUrl = null;
+  if (data.quoteEn === "") data.quoteEn = null;
+  if (data.roleEn === "") data.roleEn = null;
 
   const testimonial = await prisma.testimonial.update({ where: { id }, data });
   return NextResponse.json(testimonial);

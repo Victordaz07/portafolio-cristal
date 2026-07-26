@@ -4,27 +4,58 @@ import { useState } from "react";
 import type { Hero } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import BilingualTextField from "@/components/admin/BilingualTextField";
 import { inputClass, labelClass, primaryButtonClass } from "@/lib/admin-ui";
 
-type HeroFormValues = Omit<Hero, "id" | "updatedAt" | "photoUrl" | "photoUrlMobile"> & {
+type HeroFormValues = Omit<
+  Hero,
+  | "id"
+  | "updatedAt"
+  | "photoUrl"
+  | "photoUrlMobile"
+  | "nicheEn"
+  | "badgeLabelEn"
+  | "headlinePlainEn"
+  | "headlineEmphasisEn"
+  | "headlineSuffixEn"
+  | "descriptionEn"
+  | "ctaPrimaryLabelEn"
+  | "ctaSecondaryLabelEn"
+> & {
   photoUrl: string;
   photoUrlMobile: string;
+  nicheEn: string;
+  badgeLabelEn: string;
+  headlinePlainEn: string;
+  headlineEmphasisEn: string;
+  headlineSuffixEn: string;
+  descriptionEn: string;
+  ctaPrimaryLabelEn: string;
+  ctaSecondaryLabelEn: string;
 };
 
 const EMPTY: HeroFormValues = {
   name: "",
   location: "",
   niche: "",
+  nicheEn: "",
   badgeLabel: "",
+  badgeLabelEn: "",
   headlinePlain: "",
+  headlinePlainEn: "",
   headlineEmphasis: "",
+  headlineEmphasisEn: "",
   headlineSuffix: "",
+  headlineSuffixEn: "",
   description: "",
+  descriptionEn: "",
   photoUrl: "",
   photoUrlMobile: "",
   ctaPrimaryLabel: "",
+  ctaPrimaryLabelEn: "",
   ctaPrimaryHref: "",
   ctaSecondaryLabel: "",
+  ctaSecondaryLabelEn: "",
   ctaSecondaryHref: "",
 };
 
@@ -36,16 +67,24 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           name: initialHero.name,
           location: initialHero.location,
           niche: initialHero.niche,
+          nicheEn: initialHero.nicheEn ?? "",
           badgeLabel: initialHero.badgeLabel,
+          badgeLabelEn: initialHero.badgeLabelEn ?? "",
           headlinePlain: initialHero.headlinePlain,
+          headlinePlainEn: initialHero.headlinePlainEn ?? "",
           headlineEmphasis: initialHero.headlineEmphasis,
+          headlineEmphasisEn: initialHero.headlineEmphasisEn ?? "",
           headlineSuffix: initialHero.headlineSuffix,
+          headlineSuffixEn: initialHero.headlineSuffixEn ?? "",
           description: initialHero.description,
+          descriptionEn: initialHero.descriptionEn ?? "",
           photoUrl: initialHero.photoUrl ?? "",
           photoUrlMobile: initialHero.photoUrlMobile ?? "",
           ctaPrimaryLabel: initialHero.ctaPrimaryLabel,
+          ctaPrimaryLabelEn: initialHero.ctaPrimaryLabelEn ?? "",
           ctaPrimaryHref: initialHero.ctaPrimaryHref,
           ctaSecondaryLabel: initialHero.ctaSecondaryLabel,
+          ctaSecondaryLabelEn: initialHero.ctaSecondaryLabelEn ?? "",
           ctaSecondaryHref: initialHero.ctaSecondaryHref,
         }
       : EMPTY
@@ -97,72 +136,64 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
         </label>
       </div>
 
-      <label className={labelClass}>
-        <span className="text-sm font-medium text-ink">Nicho</span>
-        <input
-          required
-          value={form.niche}
-          onChange={(e) => set("niche", e.target.value)}
-          className={inputClass}
-        />
-      </label>
+      <BilingualTextField
+        label="Nicho"
+        es={form.niche}
+        en={form.nicheEn}
+        onEsChange={(v) => set("niche", v)}
+        onEnChange={(v) => set("nicheEn", v)}
+        required
+      />
 
-      <label className={labelClass}>
-        <span className="text-sm font-medium text-ink">Badge (pill arriba del título)</span>
-        <input
-          required
-          value={form.badgeLabel}
-          onChange={(e) => set("badgeLabel", e.target.value)}
-          className={inputClass}
-          placeholder="UGC Creator • Brand Reviews"
-        />
-      </label>
+      <BilingualTextField
+        label="Badge (pill arriba del título)"
+        es={form.badgeLabel}
+        en={form.badgeLabelEn}
+        onEsChange={(v) => set("badgeLabel", v)}
+        onEnChange={(v) => set("badgeLabelEn", v)}
+        required
+      />
 
       <div className="grid gap-sp-4 sm:grid-cols-3">
-        <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">Título — línea 1</span>
-          <input
-            required
-            value={form.headlinePlain}
-            onChange={(e) => set("headlinePlain", e.target.value)}
-            className={inputClass}
-            placeholder="Reseñas que"
-          />
-        </label>
-        <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">Título — palabra en color</span>
-          <input
-            required
-            value={form.headlineEmphasis}
-            onChange={(e) => set("headlineEmphasis", e.target.value)}
-            className={inputClass}
-            placeholder="inspiran"
-          />
-        </label>
-        <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">Título — resto de la línea 2</span>
-          <input
-            value={form.headlineSuffix}
-            onChange={(e) => set("headlineSuffix", e.target.value)}
-            className={inputClass}
-            placeholder="confianza."
-          />
-        </label>
+        <BilingualTextField
+          label="Título — línea 1"
+          es={form.headlinePlain}
+          en={form.headlinePlainEn}
+          onEsChange={(v) => set("headlinePlain", v)}
+          onEnChange={(v) => set("headlinePlainEn", v)}
+          required
+        />
+        <BilingualTextField
+          label="Título — palabra en color"
+          es={form.headlineEmphasis}
+          en={form.headlineEmphasisEn}
+          onEsChange={(v) => set("headlineEmphasis", v)}
+          onEnChange={(v) => set("headlineEmphasisEn", v)}
+          required
+        />
+        <BilingualTextField
+          label="Título — resto de la línea 2"
+          es={form.headlineSuffix}
+          en={form.headlineSuffixEn}
+          onEsChange={(v) => set("headlineSuffix", v)}
+          onEnChange={(v) => set("headlineSuffixEn", v)}
+        />
       </div>
 
-      <label className={labelClass}>
-        <span className="text-sm font-medium text-ink">Descripción</span>
-        <textarea
+      <div>
+        <BilingualTextField
+          label="Descripción"
+          es={form.description}
+          en={form.descriptionEn}
+          onEsChange={(v) => set("description", v)}
+          onEnChange={(v) => set("descriptionEn", v)}
+          multiline
           rows={3}
-          value={form.description}
-          onChange={(e) => set("description", e.target.value)}
-          className={inputClass}
-          placeholder="Creo reseñas **auténticas y contenido UGC** que conecta..."
         />
         <span className="text-xs text-ink/50">
           Usa **texto** para negrita oscura y __texto__ para negrita en color de acento.
         </span>
-      </label>
+      </div>
 
       <ImageUploadField
         label="Foto (escritorio)"
@@ -181,15 +212,14 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
       </p>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
-        <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">CTA primario — texto</span>
-          <input
-            required
-            value={form.ctaPrimaryLabel}
-            onChange={(e) => set("ctaPrimaryLabel", e.target.value)}
-            className={inputClass}
-          />
-        </label>
+        <BilingualTextField
+          label="CTA primario — texto"
+          es={form.ctaPrimaryLabel}
+          en={form.ctaPrimaryLabelEn}
+          onEsChange={(v) => set("ctaPrimaryLabel", v)}
+          onEnChange={(v) => set("ctaPrimaryLabelEn", v)}
+          required
+        />
         <label className={labelClass}>
           <span className="text-sm font-medium text-ink">CTA primario — link</span>
           <input
@@ -199,15 +229,14 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
             className={inputClass}
           />
         </label>
-        <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">CTA secundario — texto</span>
-          <input
-            required
-            value={form.ctaSecondaryLabel}
-            onChange={(e) => set("ctaSecondaryLabel", e.target.value)}
-            className={inputClass}
-          />
-        </label>
+        <BilingualTextField
+          label="CTA secundario — texto"
+          es={form.ctaSecondaryLabel}
+          en={form.ctaSecondaryLabelEn}
+          onEsChange={(v) => set("ctaSecondaryLabel", v)}
+          onEnChange={(v) => set("ctaSecondaryLabelEn", v)}
+          required
+        />
         <label className={labelClass}>
           <span className="text-sm font-medium text-ink">CTA secundario — link</span>
           <input

@@ -2,14 +2,23 @@
 
 import { useState } from "react";
 import { HeartIcon } from "@/components/icons";
+import { t, type Locale } from "@/lib/i18n";
 
-const COLLABORATION_TYPES = ["Sencillo", "Bundle", "Mensual", "A medida"];
+// La clave (key) es lo que se guarda en el mensaje de contacto y siempre queda en
+// español, sin importar el idioma mostrado — así /admin/mensajes se lee consistente.
+const COLLABORATION_TYPES = [
+  { key: "Sencillo", es: "Sencillo", en: "Simple" },
+  { key: "Bundle", es: "Bundle", en: "Bundle" },
+  { key: "Mensual", es: "Mensual", en: "Monthly" },
+  { key: "A medida", es: "A medida", en: "Custom" },
+];
 
-export default function ContactForm() {
+export default function ContactForm({ locale }: { locale: Locale }) {
+  const copy = t(locale).contactForm;
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [email, setEmail] = useState("");
-  const [collaborationType, setCollaborationType] = useState(COLLABORATION_TYPES[0]);
+  const [collaborationType, setCollaborationType] = useState(COLLABORATION_TYPES[0].key);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -36,16 +45,14 @@ export default function ContactForm() {
 
     const data = await response.json().catch(() => ({}));
     setStatus("error");
-    setErrorMessage(data.error ?? "No se pudo enviar el mensaje, intenta de nuevo.");
+    setErrorMessage(data.error ?? copy.errorFallback);
   }
 
   if (status === "success") {
     return (
       <div className="rounded-md border border-sage bg-white p-sp-6 text-center">
-        <p className="font-bodoni italic font-bold text-xl text-ink">¡Gracias por escribir!</p>
-        <p className="mt-sp-2 text-ink/70">
-          Recibí tu mensaje y te voy a responder por correo lo antes posible.
-        </p>
+        <p className="font-bodoni italic font-bold text-xl text-ink">{copy.successTitle}</p>
+        <p className="mt-sp-2 text-ink/70">{copy.successBody}</p>
       </div>
     );
   }
@@ -54,13 +61,13 @@ export default function ContactForm() {
     <div className="relative rounded-md border border-lime/50 bg-white pt-sp-6 pb-sp-6 shadow-sm">
       <span className="absolute -top-sp-3 left-sp-5 inline-flex items-center gap-sp-2 rounded-full bg-cobalt px-sp-4 py-sp-1 font-mono text-[11px] uppercase tracking-widest text-cream">
         <HeartIcon className="h-3 w-3" />
-        Escríbeme
+        {copy.badge}
       </span>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-sp-4 px-sp-5">
         <div className="grid gap-sp-4 sm:grid-cols-2">
           <label className="flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Nombre</span>
+            <span className="text-sm font-medium text-ink">{copy.nombre}</span>
             <input
               required
               value={name}
@@ -70,7 +77,7 @@ export default function ContactForm() {
           </label>
 
           <label className="flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Marca / empresa</span>
+            <span className="text-sm font-medium text-ink">{copy.marca}</span>
             <input
               required
               value={brand}
@@ -81,7 +88,7 @@ export default function ContactForm() {
         </div>
 
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Email</span>
+          <span className="text-sm font-medium text-ink">{copy.email}</span>
           <input
             type="email"
             required
@@ -92,22 +99,22 @@ export default function ContactForm() {
         </label>
 
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Tipo de colaboración</span>
+          <span className="text-sm font-medium text-ink">{copy.tipo}</span>
           <select
             value={collaborationType}
             onChange={(e) => setCollaborationType(e.target.value)}
             className="rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral"
           >
             {COLLABORATION_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type}
+              <option key={type.key} value={type.key}>
+                {locale === "en" ? type.en : type.es}
               </option>
             ))}
           </select>
         </label>
 
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Mensaje</span>
+          <span className="text-sm font-medium text-ink">{copy.mensaje}</span>
           <textarea
             required
             rows={4}
@@ -128,7 +135,7 @@ export default function ContactForm() {
           disabled={status === "loading"}
           className="mt-sp-2 rounded-full bg-coral text-white font-medium py-sp-3 hover:opacity-90 disabled:opacity-60 transition"
         >
-          {status === "loading" ? "Enviando..." : "Enviar mensaje"}
+          {status === "loading" ? copy.enviando : copy.enviar}
         </button>
       </form>
     </div>

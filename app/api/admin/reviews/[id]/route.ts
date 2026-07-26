@@ -7,8 +7,11 @@ export const dynamic = "force-dynamic";
 const reviewUpdateSchema = z.object({
   photoUrl: z.string().url().nullable().optional().or(z.literal("")),
   category: z.string().min(1).optional(),
+  categoryEn: z.string().nullable().optional().or(z.literal("")),
   title: z.string().min(1).optional(),
+  titleEn: z.string().nullable().optional().or(z.literal("")),
   description: z.string().min(1).optional(),
+  descriptionEn: z.string().nullable().optional().or(z.literal("")),
   rating: z.number().int().min(1).max(5).optional(),
   order: z.number().int().optional(),
 });
@@ -23,6 +26,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const data = { ...parsed.data };
   if (data.photoUrl === "") data.photoUrl = null;
+  if (data.categoryEn === "") data.categoryEn = null;
+  if (data.titleEn === "") data.titleEn = null;
+  if (data.descriptionEn === "") data.descriptionEn = null;
 
   const review = await prisma.review.update({ where: { id }, data });
   return NextResponse.json(review);

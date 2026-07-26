@@ -7,7 +7,9 @@ export const dynamic = "force-dynamic";
 const serviceSchema = z.object({
   icon: z.enum(["camera", "chat", "box", "phone"]).optional().default("camera"),
   title: z.string().min(1),
+  titleEn: z.string().optional().or(z.literal("")),
   description: z.string().min(1),
+  descriptionEn: z.string().optional().or(z.literal("")),
 });
 
 export async function GET() {
@@ -24,7 +26,12 @@ export async function POST(request: Request) {
 
   const maxOrder = await prisma.service.aggregate({ _max: { order: true } });
   const service = await prisma.service.create({
-    data: { ...parsed.data, order: (maxOrder._max.order ?? -1) + 1 },
+    data: {
+      ...parsed.data,
+      titleEn: parsed.data.titleEn || null,
+      descriptionEn: parsed.data.descriptionEn || null,
+      order: (maxOrder._max.order ?? -1) + 1,
+    },
   });
 
   return NextResponse.json(service, { status: 201 });

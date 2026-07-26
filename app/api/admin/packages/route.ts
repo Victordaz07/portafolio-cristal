@@ -7,7 +7,9 @@ export const dynamic = "force-dynamic";
 const packageSchema = z.object({
   emoji: z.string().min(1).optional().default("✨"),
   name: z.string().min(1),
+  nameEn: z.string().optional().or(z.literal("")),
   items: z.array(z.string().min(1)).min(1),
+  itemsEn: z.array(z.string().min(1)).optional().default([]),
 });
 
 export async function GET() {
@@ -24,7 +26,11 @@ export async function POST(request: Request) {
 
   const maxOrder = await prisma.package.aggregate({ _max: { order: true } });
   const pkg = await prisma.package.create({
-    data: { ...parsed.data, order: (maxOrder._max.order ?? -1) + 1 },
+    data: {
+      ...parsed.data,
+      nameEn: parsed.data.nameEn || null,
+      order: (maxOrder._max.order ?? -1) + 1,
+    },
   });
 
   return NextResponse.json(pkg, { status: 201 });

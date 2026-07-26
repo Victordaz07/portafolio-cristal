@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { MenuIcon, CloseIcon, SparkleIcon } from "@/components/icons";
 import AdminLoginModal from "@/components/AdminLoginModal";
+import LocaleToggle from "@/components/LocaleToggle";
+import { t, type Locale } from "@/lib/i18n";
 
 const TAP_COUNT_TO_OPEN = 3;
 const TAP_RESET_MS = 1500;
@@ -10,10 +12,13 @@ const TAP_RESET_MS = 1500;
 export default function MobileHeroNav({
   name,
   links,
+  locale,
 }: {
   name: string;
   links: { href: string; label: string }[];
+  locale: Locale;
 }) {
+  const copy = t(locale);
   const [open, setOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const tapCount = useRef(0);
@@ -48,15 +53,21 @@ export default function MobileHeroNav({
             <SparkleIcon className="h-4 w-4 text-ink" />
           </button>
         </span>
-        <button
-          type="button"
-          aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/25 bg-cream/70 text-ink backdrop-blur-sm"
-        >
-          {open ? <CloseIcon className="h-4 w-4" /> : <MenuIcon className="h-4 w-4" />}
-        </button>
+        <div className="flex shrink-0 items-center gap-sp-2">
+          <LocaleToggle
+            locale={locale}
+            className="rounded-full border border-ink/25 bg-cream/70 px-sp-2 py-1 font-mono text-[10px] uppercase tracking-widest text-ink backdrop-blur-sm"
+          />
+          <button
+            type="button"
+            aria-label={open ? copy.mobileNav.closeMenu : copy.mobileNav.openMenu}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/25 bg-cream/70 text-ink backdrop-blur-sm"
+          >
+            {open ? <CloseIcon className="h-4 w-4" /> : <MenuIcon className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
 
       {open && (

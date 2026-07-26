@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -17,6 +18,7 @@ import {
   GearIcon,
   InboxIcon,
   LogoutIcon,
+  CloseIcon,
 } from "@/components/icons";
 
 type NavItem = { href: string; label: string; icon: (props: { className?: string }) => ReactNode };
@@ -66,6 +68,7 @@ export default function AdminShell({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -75,17 +78,40 @@ export default function AdminShell({
 
   return (
     <div className="min-h-screen bg-cream md:flex">
-      <aside className="flex flex-col justify-between bg-cobalt px-sp-5 py-sp-6 text-cream md:w-64 md:shrink-0">
+      <div className="flex items-center justify-between bg-cobalt px-sp-5 py-sp-3 text-cream md:hidden">
+        <Link href="/admin" className="inline-flex items-center gap-sp-1 font-script text-2xl leading-none">
+          Crislia
+          <SparkleIcon className="h-3 w-3 text-lime" />
+        </Link>
+        <button
+          type="button"
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={mobileOpen}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/30"
+        >
+          {mobileOpen ? <CloseIcon className="h-4 w-4" /> : <FeedIcon className="h-4 w-4" />}
+        </button>
+      </div>
+
+      <aside
+        className={`${
+          mobileOpen ? "flex" : "hidden"
+        } flex-col justify-between bg-cobalt px-sp-5 py-sp-6 text-cream md:flex md:w-64 md:shrink-0`}
+      >
         <div>
-          <Link href="/admin" className="inline-flex items-center gap-sp-1 font-script text-3xl leading-none">
+          <Link
+            href="/admin"
+            className="hidden items-center gap-sp-1 font-script text-3xl leading-none md:inline-flex"
+          >
             Crislia
             <SparkleIcon className="h-3.5 w-3.5 text-lime" />
           </Link>
-          <p className="mt-sp-1 font-mono text-[10px] uppercase tracking-widest text-cream/50">
+          <p className="hidden mt-sp-1 font-mono text-[10px] uppercase tracking-widest text-cream/50 md:block">
             Panel privado
           </p>
 
-          <nav className="mt-sp-8 flex flex-col gap-sp-5">
+          <nav className="flex flex-col gap-sp-5 md:mt-sp-8">
             {NAV_GROUPS.map((group, index) => (
               <div key={group.title ?? `group-${index}`}>
                 {group.title && (
@@ -101,6 +127,7 @@ export default function AdminShell({
                       <Link
                         key={item.href}
                         href={item.href}
+                        onClick={() => setMobileOpen(false)}
                         className={`flex items-center gap-sp-3 rounded-md px-sp-3 py-sp-2 text-sm transition ${
                           active
                             ? "bg-cream text-cobalt-ink font-medium shadow-sm"
@@ -122,6 +149,7 @@ export default function AdminShell({
               </p>
               <Link
                 href="/admin/mensajes"
+                onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-sp-3 rounded-md px-sp-3 py-sp-2 text-sm transition ${
                   isActive(pathname, "/admin/mensajes")
                     ? "bg-cream text-cobalt-ink font-medium shadow-sm"

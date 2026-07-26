@@ -7,7 +7,7 @@ import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
-import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import { inputClass, primaryButtonClass, rowCardClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
 import { SERVICE_ICONS, SERVICE_ICON_OPTIONS, CameraIcon, type ServiceIconKey } from "@/components/icons";
 
 const API_BASE = "/api/admin/services";
@@ -71,17 +71,14 @@ export default function ServicesManager({ initialServices }: { initialServices: 
         {services.map((service, index) => {
           const Icon = SERVICE_ICONS[service.icon as ServiceIconKey] ?? CameraIcon;
           return (
-            <li
-              key={service.id}
-              className="flex items-center gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-            >
+            <li key={service.id} className={rowCardClass}>
               <ReorderButtons
                 onUp={() => handleMove(index, "up")}
                 onDown={() => handleMove(index, "down")}
                 disableUp={index === 0}
                 disableDown={index === services.length - 1}
               />
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-lime/25 text-coral">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-lime/25 text-coral">
                 <Icon className="h-4 w-4" />
               </span>
               <div className="flex-1">
@@ -91,7 +88,7 @@ export default function ServicesManager({ initialServices }: { initialServices: 
               <button
                 type="button"
                 onClick={() => setPendingDelete(service)}
-                className="text-sm text-red-600 hover:underline"
+                className={dangerLinkClass}
               >
                 Eliminar
               </button>
@@ -100,7 +97,7 @@ export default function ServicesManager({ initialServices }: { initialServices: 
         })}
       </ul>
 
-      <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-lg">
+      <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <div className="grid gap-sp-4 sm:grid-cols-2">
           <BilingualTextField
             label="Título"

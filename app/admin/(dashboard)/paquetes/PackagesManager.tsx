@@ -7,7 +7,7 @@ import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
-import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import { inputClass, primaryButtonClass, rowCardStartClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
 
 const API_BASE = "/api/admin/packages";
 
@@ -81,10 +81,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
     <div>
       <ul className="flex flex-col gap-sp-3">
         {packages.map((pkg, index) => (
-          <li
-            key={pkg.id}
-            className="flex items-start gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-          >
+          <li key={pkg.id} className={rowCardStartClass}>
             <ReorderButtons
               onUp={() => handleMove(index, "up")}
               onDown={() => handleMove(index, "down")}
@@ -112,7 +109,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
             <button
               type="button"
               onClick={() => setPendingDelete(pkg)}
-              className="text-sm text-red-600 hover:underline"
+              className={dangerLinkClass}
             >
               Eliminar
             </button>
@@ -120,7 +117,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
         ))}
       </ul>
 
-      <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-lg">
+      <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <div className="grid gap-sp-4 sm:grid-cols-[80px_1fr]">
           <label className="flex flex-col gap-sp-1">
             <span className="text-sm font-medium text-ink">Emoji</span>

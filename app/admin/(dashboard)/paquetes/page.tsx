@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/PageHeader";
 import PackagesManager from "./PackagesManager";
 
 export default async function AdminPackagesPage() {
@@ -6,12 +7,11 @@ export default async function AdminPackagesPage() {
 
   return (
     <div>
-      <h1 className="font-bodoni italic font-bold uppercase text-2xl text-ink mb-sp-2">
-        Elige lo que necesitas
-      </h1>
-      <p className="font-mono text-xs uppercase tracking-wide text-moss mb-sp-6">
-        {packages.length} paquetes
-      </p>
+      <PageHeader
+        eyebrow={`${packages.length} paquetes`}
+        title="Elige lo que necesitas"
+        description="Los paquetes de colaboración que ven las marcas antes de escribirte."
+      />
       <PackagesManager initialPackages={packages} />
     </div>
   );

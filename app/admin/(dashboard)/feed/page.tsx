@@ -1,4 +1,7 @@
 import { prisma } from "@/lib/prisma";
+import type { Platform } from "@/lib/embeds";
+import { getThumbnailUrl } from "@/lib/oembed";
+import PageHeader from "@/components/admin/PageHeader";
 import FeedManager from "./FeedManager";
 
 export default async function AdminFeedPage() {
@@ -8,18 +11,30 @@ export default async function AdminFeedPage() {
     return acc;
   }, {});
 
+  const thumbnails = await Promise.all(
+    cards.map((card) => getThumbnailUrl(card.platform as Platform, card.postUrl))
+  );
+  const thumbnailsById = Object.fromEntries(
+    cards.map((card, index) => [card.id, thumbnails[index]])
+  );
+
   return (
     <div>
-      <h1 className="font-bodoni italic font-bold uppercase text-2xl text-ink mb-sp-2">Feed</h1>
-      <p className="font-mono text-xs uppercase tracking-wide text-moss mb-sp-6">
-        {cards.length} tarjetas
-        {Object.entries(categoryCounts).length > 0 &&
-          " — " +
-            Object.entries(categoryCounts)
-              .map(([category, count]) => `${count} en ${category}`)
-              .join(" · ")}
-      </p>
-      <FeedManager initialCards={cards} />
+      <PageHeader
+        eyebrow={
+          cards.length +
+          " tarjetas" +
+          (Object.entries(categoryCounts).length > 0
+            ? " — " +
+              Object.entries(categoryCounts)
+                .map(([category, count]) => `${count} en ${category}`)
+                .join(" · ")
+            : "")
+        }
+        title="Feed"
+        description="El contenido que se muestra en la sección de fotos y videos del sitio."
+      />
+      <FeedManager initialCards={cards} thumbnailsById={thumbnailsById} />
     </div>
   );
 }

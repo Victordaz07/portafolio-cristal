@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { SiteSettings } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import BilingualTextField from "@/components/admin/BilingualTextField";
-import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import { inputClass, primaryButtonClass, cardClass, sectionTitleClass } from "@/lib/admin-ui";
 
 export default function SettingsForm({
   initialSettings,
@@ -50,7 +50,7 @@ export default function SettingsForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl flex flex-col gap-sp-5">
+    <form onSubmit={handleSubmit} className={`${cardClass} max-w-xl flex flex-col gap-sp-5`}>
       <BilingualTextField
         label='Texto "Why me?"'
         es={form.whyMeText}
@@ -62,7 +62,7 @@ export default function SettingsForm({
         required
       />
 
-      <h2 className="font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2">
+      <h2 className={sectionTitleClass}>
         Pie de página — &quot;Conéctate conmigo&quot;
       </h2>
 
@@ -86,9 +86,7 @@ export default function SettingsForm({
         rows={2}
       />
 
-      <h2 className="font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2">
-        ¿Hablamos?
-      </h2>
+      <h2 className={sectionTitleClass}>¿Hablamos?</h2>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className="flex flex-col gap-sp-1">
@@ -131,7 +129,7 @@ export default function SettingsForm({
         </label>
       </div>
 
-      <h2 className="font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2">Sígueme</h2>
+      <h2 className={sectionTitleClass}>Sígueme</h2>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className="flex flex-col gap-sp-1">

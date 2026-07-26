@@ -3,24 +3,67 @@
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { MenuIcon } from "@/components/icons";
+import {
+  DashboardIcon,
+  SparkleIcon,
+  ChartIcon,
+  MenuIcon as FeedIcon,
+  TagIcon,
+  StarIcon,
+  CameraIcon,
+  BoxIcon,
+  QuoteIcon,
+  QuestionIcon,
+  GearIcon,
+  InboxIcon,
+  LogoutIcon,
+} from "@/components/icons";
 
-const NAV_ITEMS = [
-  { href: "/admin", label: "Panel" },
-  { href: "/admin/hero", label: "Hero" },
-  { href: "/admin/media-kit", label: "Media kit" },
-  { href: "/admin/feed", label: "Feed" },
-  { href: "/admin/resenas", label: "Reseñas destacadas" },
-  { href: "/admin/servicios", label: "Cómo trabajo" },
-  { href: "/admin/paquetes", label: "Paquetes" },
-  { href: "/admin/testimonios", label: "Testimonios" },
-  { href: "/admin/marcas", label: "Marcas" },
-  { href: "/admin/faq", label: "FAQ" },
-  { href: "/admin/contacto", label: "Contacto" },
-  { href: "/admin/mensajes", label: "Mensajes recibidos" },
+type NavItem = { href: string; label: string; icon: (props: { className?: string }) => ReactNode };
+
+const NAV_GROUPS: { title: string | null; items: NavItem[] }[] = [
+  {
+    title: null,
+    items: [{ href: "/admin", label: "Panel", icon: DashboardIcon }],
+  },
+  {
+    title: "Contenido",
+    items: [
+      { href: "/admin/hero", label: "Hero", icon: SparkleIcon },
+      { href: "/admin/media-kit", label: "Media kit", icon: ChartIcon },
+      { href: "/admin/feed", label: "Feed", icon: FeedIcon },
+      { href: "/admin/marcas", label: "Marcas", icon: TagIcon },
+    ],
+  },
+  {
+    title: "Confianza",
+    items: [
+      { href: "/admin/resenas", label: "Reseñas destacadas", icon: StarIcon },
+      { href: "/admin/servicios", label: "Cómo trabajo", icon: CameraIcon },
+      { href: "/admin/paquetes", label: "Paquetes", icon: BoxIcon },
+      { href: "/admin/testimonios", label: "Testimonios", icon: QuoteIcon },
+    ],
+  },
+  {
+    title: "Sitio",
+    items: [
+      { href: "/admin/faq", label: "FAQ", icon: QuestionIcon },
+      { href: "/admin/contacto", label: "Contacto", icon: GearIcon },
+    ],
+  },
 ];
 
-export default function AdminShell({ children }: { children: ReactNode }) {
+function isActive(pathname: string, href: string) {
+  return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+}
+
+export default function AdminShell({
+  children,
+  unreadMessages = 0,
+}: {
+  children: ReactNode;
+  unreadMessages?: number;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -34,48 +77,93 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-cream md:flex">
       <aside className="flex flex-col justify-between bg-cobalt px-sp-5 py-sp-6 text-cream md:w-64 md:shrink-0">
         <div>
-          <p className="font-bodoni italic font-bold uppercase text-lg">Crislia — Admin</p>
-          <nav className="mt-sp-8 flex flex-col gap-sp-1">
-            {NAV_ITEMS.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`rounded-sm px-sp-3 py-sp-2 text-sm transition ${
-                    isActive ? "bg-cream text-cobalt font-medium" : "text-cream/85 hover:bg-cobalt-ink"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
+          <Link href="/admin" className="inline-flex items-center gap-sp-1 font-script text-3xl leading-none">
+            Crislia
+            <SparkleIcon className="h-3.5 w-3.5 text-lime" />
+          </Link>
+          <p className="mt-sp-1 font-mono text-[10px] uppercase tracking-widest text-cream/50">
+            Panel privado
+          </p>
+
+          <nav className="mt-sp-8 flex flex-col gap-sp-5">
+            {NAV_GROUPS.map((group, index) => (
+              <div key={group.title ?? `group-${index}`}>
+                {group.title && (
+                  <p className="mb-sp-1 px-sp-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+                    {group.title}
+                  </p>
+                )}
+                <div className="flex flex-col gap-sp-1">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(pathname, item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`flex items-center gap-sp-3 rounded-md px-sp-3 py-sp-2 text-sm transition ${
+                          active
+                            ? "bg-cream text-cobalt-ink font-medium shadow-sm"
+                            : "text-cream/80 hover:bg-cobalt-ink"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <span className="truncate">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+
+            <div>
+              <p className="mb-sp-1 px-sp-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
+                Mensajes
+              </p>
+              <Link
+                href="/admin/mensajes"
+                className={`flex items-center gap-sp-3 rounded-md px-sp-3 py-sp-2 text-sm transition ${
+                  isActive(pathname, "/admin/mensajes")
+                    ? "bg-cream text-cobalt-ink font-medium shadow-sm"
+                    : "text-cream/80 hover:bg-cobalt-ink"
+                }`}
+              >
+                <InboxIcon className="h-4 w-4 shrink-0" />
+                <span className="flex-1 truncate">Mensajes recibidos</span>
+                {unreadMessages > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-coral px-1 font-mono text-[10px] text-white">
+                    {unreadMessages}
+                  </span>
+                )}
+              </Link>
+            </div>
           </nav>
         </div>
 
         <button
           type="button"
           onClick={handleLogout}
-          className="mt-sp-8 rounded-sm border border-cream/30 px-sp-3 py-sp-2 text-left text-sm text-cream/85 hover:bg-cobalt-ink"
+          className="mt-sp-8 flex items-center gap-sp-3 rounded-md border border-cream/25 px-sp-3 py-sp-2 text-left text-sm text-cream/80 hover:bg-cobalt-ink"
         >
+          <LogoutIcon className="h-4 w-4 shrink-0" />
           Cerrar sesión
         </button>
       </aside>
 
-      <main className="flex-1 px-sp-5 py-sp-7 md:px-sp-8 md:py-sp-8">
-        <div className="mb-sp-6 flex justify-end">
+      <div className="flex-1">
+        <div className="flex justify-end border-b border-line bg-white px-sp-5 py-sp-3 md:px-sp-8">
           <Link
             href="/"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-sp-2 rounded-full border border-line bg-white px-sp-4 py-sp-2 text-sm font-medium text-ink hover:border-coral hover:text-coral"
+            className="flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 text-sm font-medium text-ink hover:border-coral hover:text-coral transition"
           >
-            <MenuIcon className="h-4 w-4" />
+            <FeedIcon className="h-4 w-4" />
             Ver sitio
           </Link>
         </div>
-        {children}
-      </main>
+        <main className="px-sp-5 py-sp-7 md:px-sp-8 md:py-sp-8">{children}</main>
+      </div>
     </div>
   );
 }

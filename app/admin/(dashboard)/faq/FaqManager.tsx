@@ -7,7 +7,7 @@ import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
-import { primaryButtonClass } from "@/lib/admin-ui";
+import { primaryButtonClass, rowCardStartClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
 
 const API_BASE = "/api/admin/faq";
 
@@ -66,10 +66,7 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
     <div>
       <ul className="flex flex-col gap-sp-3">
         {items.map((item, index) => (
-          <li
-            key={item.id}
-            className="flex items-start gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-          >
+          <li key={item.id} className={rowCardStartClass}>
             <ReorderButtons
               onUp={() => handleMove(index, "up")}
               onDown={() => handleMove(index, "down")}
@@ -83,7 +80,7 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
             <button
               type="button"
               onClick={() => setPendingDelete(item)}
-              className="text-sm text-red-600 hover:underline"
+              className={dangerLinkClass}
             >
               Eliminar
             </button>
@@ -91,7 +88,7 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
         ))}
       </ul>
 
-      <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-lg">
+      <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <BilingualTextField
           label="Pregunta"
           es={question}

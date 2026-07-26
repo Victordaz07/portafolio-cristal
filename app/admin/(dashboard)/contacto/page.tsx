@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/PageHeader";
 import SettingsForm from "./SettingsForm";
 
 export default async function AdminContactoPage() {
@@ -6,9 +7,11 @@ export default async function AdminContactoPage() {
 
   return (
     <div>
-      <h1 className="font-bodoni italic font-bold uppercase text-2xl text-ink mb-sp-6">
-        Contacto y redes
-      </h1>
+      <PageHeader
+        eyebrow="Configuración"
+        title="Contacto y redes"
+        description="El texto 'por qué yo', el pie de página y tus datos de contacto y redes sociales."
+      />
       <SettingsForm initialSettings={settings} />
     </div>
   );

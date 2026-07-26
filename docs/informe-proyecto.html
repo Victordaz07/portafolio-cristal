@@ -1,0 +1,601 @@
+<title>Informe — Portafolio Crislia</title>
+<style>
+  :root {
+    --bg: #FBF7F5;
+    --surface: #FFFFFF;
+    --ink: #241227;
+    --ink-soft: rgba(36,18,39,0.66);
+    --ink-faint: rgba(36,18,39,0.42);
+    --line: rgba(36,18,39,0.13);
+    --accent: #801F82;
+    --accent-soft: rgba(128,31,130,0.09);
+    --accent2: #A866BE;
+    --lilac: #C3ACEA;
+    --lilac-soft: rgba(195,172,234,0.22);
+    --good: #4B5320;
+    --good-soft: rgba(75,83,32,0.10);
+    --warn: #9A5B12;
+    --warn-soft: rgba(154,91,18,0.10);
+    --code-bg: rgba(36,18,39,0.045);
+    --shadow: 0 1px 2px rgba(36,18,39,0.05), 0 8px 24px rgba(36,18,39,0.04);
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1a0f1d;
+    --surface: #241531;
+    --ink: #f3eaf5;
+    --ink-soft: rgba(243,234,245,0.68);
+    --ink-faint: rgba(243,234,245,0.44);
+    --line: rgba(243,234,245,0.14);
+    --accent: #dba6de;
+    --accent-soft: rgba(219,166,222,0.12);
+    --accent2: #c3aceA;
+    --lilac: #c3acea;
+    --lilac-soft: rgba(195,172,234,0.14);
+    --good: #9fb98e;
+    --good-soft: rgba(159,185,142,0.14);
+    --warn: #e0b378;
+    --warn-soft: rgba(224,179,120,0.14);
+    --code-bg: rgba(243,234,245,0.06);
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a0f1d;
+      --surface: #241531;
+      --ink: #f3eaf5;
+      --ink-soft: rgba(243,234,245,0.68);
+      --ink-faint: rgba(243,234,245,0.44);
+      --line: rgba(243,234,245,0.14);
+      --accent: #dba6de;
+      --accent-soft: rgba(219,166,222,0.12);
+      --accent2: #c3acea;
+      --lilac: #c3acea;
+      --lilac-soft: rgba(195,172,234,0.14);
+      --good: #9fb98e;
+      --good-soft: rgba(159,185,142,0.14);
+      --warn: #e0b378;
+      --warn-soft: rgba(224,179,120,0.14);
+      --code-bg: rgba(243,234,245,0.06);
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .serif {
+    font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  }
+
+  .mono {
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible, select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+    display: grid;
+    grid-template-columns: minmax(0, 700px) 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .page { grid-template-columns: 1fr; }
+    .toc { display: none; }
+  }
+
+  header.masthead {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 8px;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h1.title {
+    font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .masthead-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .masthead-meta span.mono { color: var(--ink-faint); }
+
+  main { min-width: 0; }
+
+  .toc {
+    position: sticky;
+    top: 32px;
+    padding: 20px 0 20px 22px;
+    border-left: 1px solid var(--line);
+    font-size: 13px;
+  }
+
+  .toc p.label {
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 12px;
+  }
+
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .toc a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    display: block;
+  }
+  .toc a:hover { color: var(--accent); }
+
+  section { margin-bottom: 52px; scroll-margin-top: 24px; }
+
+  section > .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  section > .section-head .num {
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  h2 {
+    font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.12rem;
+    margin: 26px 0 10px;
+    color: var(--ink);
+  }
+
+  p { margin: 0 0 14px; max-width: 66ch; color: var(--ink-soft); }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--ink); font-weight: 600; }
+
+  ul.plain, ol.plain { margin: 0 0 14px; padding-left: 22px; color: var(--ink-soft); }
+  ul.plain li, ol.plain li { margin-bottom: 7px; }
+  ul.plain li::marker { color: var(--lilac); }
+
+  code.inline {
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    background: var(--code-bg);
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: var(--ink);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+  }
+
+  .stat-tile {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: var(--surface);
+  }
+  .stat-tile .n {
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-tile .l {
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th {
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+  td { color: var(--ink-soft); }
+  td.k { color: var(--ink); font-weight: 500; white-space: nowrap; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  .table-wrap table { min-width: 480px; }
+  .table-wrap th:first-child, .table-wrap td:first-child { padding-left: 16px; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .chip.good { background: var(--good-soft); color: var(--good); }
+  .chip.warn { background: var(--warn-soft); color: var(--warn); }
+  .chip.accent { background: var(--accent-soft); color: var(--accent); }
+  .chip.lilac { background: var(--lilac-soft); color: var(--ink-soft); }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+  }
+  .tl-item {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 16px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-tag {
+    font-family: ui-monospace, "SF Mono", "Space Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    padding-top: 2px;
+  }
+  .tl-body .h { color: var(--ink); font-weight: 500; font-size: 14.5px; }
+  .tl-body .d { color: var(--ink-soft); font-size: 13.5px; margin-top: 3px; }
+
+  .issue {
+    border-left: 3px solid var(--warn);
+    background: var(--warn-soft);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .issue .t { font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .issue p { color: var(--ink-soft); }
+
+  .flourish {
+    border-left: 3px solid var(--lilac);
+    background: var(--lilac-soft);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .flourish .t { font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+
+  footer.closing {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--line);
+    margin-top: 12px;
+    padding-top: 24px;
+    color: var(--ink-faint);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    section { animation: rise 0.4s ease-out both; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">Informe de proyecto — 26 de julio, 2026</p>
+    <h1 class="title">Portafolio Crislia — estado completo del sitio y del panel</h1>
+    <div class="masthead-meta">
+      <span>Cristal Amalia Flores Bello (Crislia) — creadora UGC</span>
+      <span class="mono">portafolio-cristal.vercel.app</span>
+      <span class="mono">Victordaz07/portafolio-cristal</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Contenido">
+    <p class="label">En este informe</p>
+    <ol>
+      <li><a href="#resumen">01 · Resumen ejecutivo</a></li>
+      <li><a href="#stack">02 · Stack técnico</a></li>
+      <li><a href="#sitio">03 · Sitio público</a></li>
+      <li><a href="#datos">04 · Modelo de datos</a></li>
+      <li><a href="#admin">05 · Panel de administración</a></li>
+      <li><a href="#extras">06 · Detalles ocultos</a></li>
+      <li><a href="#cronologia">07 · Cronología de entregas</a></li>
+      <li><a href="#problemas">08 · Problemas conocidos</a></li>
+      <li><a href="#estado">09 · Estado actual</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <section id="resumen">
+      <div class="section-head"><span class="num">01</span><h2>Resumen ejecutivo</h2></div>
+      <p>
+        El sitio es un portafolio interactivo para <strong>Crislia</strong>, creadora de contenido UGC
+        (belleza, skincare, cabello, libros, lifestyle), dirigido a marcas que buscan contratar
+        colaboraciones. Se compone de dos partes: un <strong>sitio público bilingüe</strong>
+        (español/inglés) que presenta su portafolio, media kit, reseñas, servicios, paquetes y
+        contacto; y un <strong>panel de administración</strong> (<code class="inline">/admin</code>)
+        desde el cual Crislia edita absolutamente todo el contenido sin tocar código.
+      </p>
+      <p>
+        Todo lo descrito en este informe está <strong>mergeado en <code class="inline">main</code> y
+        verificado en producción</strong> al cierre de esta sesión de trabajo.
+      </p>
+      <div class="grid-2" style="margin-top:22px;">
+        <div class="stat-tile"><div class="n">12</div><div class="l">Modelos de datos</div></div>
+        <div class="stat-tile"><div class="n">11</div><div class="l">Migraciones aplicadas</div></div>
+        <div class="stat-tile"><div class="n">11</div><div class="l">Secciones en el admin</div></div>
+        <div class="stat-tile"><div class="n">26</div><div class="l">Pull requests entregados</div></div>
+      </div>
+    </section>
+
+    <section id="stack">
+      <div class="section-head"><span class="num">02</span><h2>Stack técnico</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Capa</th><th>Tecnología</th><th>Para qué</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Framework</td><td>Next.js 14 (App Router) + TypeScript</td><td>Sitio y admin en un solo proyecto, Server Components</td></tr>
+            <tr><td class="k">Estilos</td><td>Tailwind CSS</td><td>Tokens de marca centralizados en <code class="inline">tailwind.config.ts</code></td></tr>
+            <tr><td class="k">Base de datos</td><td>Prisma + Postgres (Neon)</td><td>Todo el contenido editable vive aquí, no hay CMS externo</td></tr>
+            <tr><td class="k">Autenticación</td><td>Cookie firmada (<code class="inline">jose</code>) + <code class="inline">bcryptjs</code></td><td>Sesión de admin, un solo usuario (Crislia)</td></tr>
+            <tr><td class="k">Archivos</td><td>Vercel Blob</td><td>Fotos, logos y video propio subidos desde el admin</td></tr>
+            <tr><td class="k">Correo</td><td>Resend (opcional)</td><td>Notificación por email al recibir un mensaje de contacto</td></tr>
+            <tr><td class="k">Embeds</td><td>oEmbed de TikTok + iframes de Instagram/Facebook</td><td>Miniaturas y reproducción de posts reales en el Feed</td></tr>
+            <tr><td class="k">Hosting</td><td>Vercel</td><td>Deploy automático por push a <code class="inline">main</code>, previews por PR</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="sitio">
+      <div class="section-head"><span class="num">03</span><h2>Sitio público</h2></div>
+      <p>
+        Una sola página (<code class="inline">app/page.tsx</code>) organizada en secciones: Hero,
+        Media kit, Feed de contenido, Marcas, Reseñas destacadas, Cómo trabajo, Paquetes,
+        Testimonios, FAQ y Contacto.
+      </p>
+
+      <h3>Bilingüe sin rutas separadas</h3>
+      <p>
+        Un botón <strong>ES/EN</strong> en el nav (escritorio y mobile) escribe una cookie de
+        preferencia y refresca los Server Components — misma URL, sin <code class="inline">/es</code>
+        ni <code class="inline">/en</code>. Cada campo de texto editable tiene una columna paralela
+        <code class="inline">xxxEn</code> en la base de datos (nullable, con respaldo automático al
+        español si queda vacía); los textos fijos del diseño (nav, botones, labels) viven en un
+        diccionario central (<code class="inline">lib/i18n.ts</code>).
+      </p>
+
+      <h3>Feed de contenido y el caso especial de TikTok</h3>
+      <p>
+        Cada tarjeta del Feed acepta un link de TikTok, Instagram o Facebook, trae una miniatura real
+        cuando la plataforma lo permite, y — clave para las reels — admite subir un
+        <strong>video propio</strong> como alternativa confiable al embed de la plataforma
+        (ver sección 08).
+      </p>
+    </section>
+
+    <section id="datos">
+      <div class="section-head"><span class="num">04</span><h2>Modelo de datos</h2></div>
+      <p>Doce modelos en <code class="inline">prisma/schema.prisma</code>, todos editables desde el admin salvo <code class="inline">AdminUser</code>:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Modelo</th><th>Representa</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Hero</td><td>Portada: nombre, título, descripción, fotos, CTAs (singleton)</td></tr>
+            <tr><td class="k">Stat</td><td>Cifras del media kit</td></tr>
+            <tr><td class="k">ContentCard</td><td>Tarjetas del Feed (fotos y videos)</td></tr>
+            <tr><td class="k">Brand</td><td>Marcas colaboradoras, con estado activo/inactivo</td></tr>
+            <tr><td class="k">Review</td><td>Reseñas de producto con calificación</td></tr>
+            <tr><td class="k">Service</td><td>Servicios ofrecidos ("Cómo trabajo")</td></tr>
+            <tr><td class="k">Testimonial</td><td>Citas de marcas</td></tr>
+            <tr><td class="k">Package</td><td>Paquetes de colaboración, sin precios</td></tr>
+            <tr><td class="k">FaqItem</td><td>Preguntas frecuentes</td></tr>
+            <tr><td class="k">ContactMessage</td><td>Mensajes recibidos del formulario público</td></tr>
+            <tr><td class="k">SiteSettings</td><td>Redes, contacto y textos del pie de página (singleton)</td></tr>
+            <tr><td class="k">AdminUser</td><td>Credenciales de acceso al panel</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px;">
+        11 migraciones documentan la evolución del esquema, desde el <code class="inline">init</code>
+        original hasta la migración bilingüe (<code class="inline">add_bilingual_fields</code>) que
+        agregó la columna <code class="inline">xxxEn</code> a cada campo traducible y tradujo todo el
+        contenido ya sembrado.
+      </p>
+    </section>
+
+    <section id="admin">
+      <div class="section-head"><span class="num">05</span><h2>Panel de administración</h2></div>
+      <p>
+        Rediseñado por completo esta sesión: sidebar agrupado por íconos (colapsable en mobile),
+        badge de mensajes sin leer, tarjetas con sombra suave y tipografía editorial reutilizando la
+        identidad del sitio público — nada de componentes genéricos de librería.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Sección</th><th>Controla</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Hero</td><td>Portada, con panel de <strong>vista previa en vivo</strong> mientras se edita</td></tr>
+            <tr><td class="k">Media kit</td><td>Las cifras junto al Hero</td></tr>
+            <tr><td class="k">Feed</td><td>Fotos y videos, con miniatura real vía oEmbed</td></tr>
+            <tr><td class="k">Marcas</td><td>Logos y estado activo/inactivo</td></tr>
+            <tr><td class="k">Reseñas destacadas</td><td>Reseñas de producto</td></tr>
+            <tr><td class="k">Cómo trabajo</td><td>Servicios con ícono</td></tr>
+            <tr><td class="k">Paquetes</td><td>Paquetes de colaboración</td></tr>
+            <tr><td class="k">Testimonios</td><td>Citas de marcas</td></tr>
+            <tr><td class="k">FAQ</td><td>Preguntas frecuentes</td></tr>
+            <tr><td class="k">Contacto</td><td>Redes, email, WhatsApp, textos del footer</td></tr>
+            <tr><td class="k">Mensajes</td><td>Buzón del formulario de contacto</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Manual de uso (nuevo)</h3>
+      <p>
+        Una sección dedicada (<code class="inline">/admin/ayuda</code>) con selector ES/EN propio y un
+        menú desplegable para navegar entre cuatro guías: <em>Mi primera vez</em> (onboarding),
+        <em>Glosario</em> de términos del panel, <em>Paso a paso: Reels y videos</em>
+        (incluye el problema de TikTok y su solución), y una <em>guía completa</em> sección por
+        sección.
+      </p>
+    </section>
+
+    <section id="extras">
+      <div class="section-head"><span class="num">06</span><h2>Detalles ocultos</h2></div>
+      <div class="flourish">
+        <div class="t">40 frases motivadoras</div>
+        <p>Doble tap en el destello bajo el título del Hero (mobile) o en el corazón de "Tu apoyo
+        significa todo" (footer) revela una frase al azar, en el idioma activo, dentro de una
+        tarjeta con forma de nube.</p>
+      </div>
+      <div class="flourish">
+        <div class="t">Crédito del diseñador</div>
+        <p>Un botón circular discreto (ícono de átomo, ~44px, opacidad 0.65) al final del footer
+        abre una tarjeta con los datos de contacto y la oferta de proyectos personalizados de quien
+        construyó el sitio.</p>
+      </div>
+    </section>
+
+    <section id="cronologia">
+      <div class="section-head"><span class="num">07</span><h2>Cronología de entregas de esta sesión</h2></div>
+      <div class="timeline mono" style="font-family:inherit;">
+        <div class="tl-item"><div class="tl-tag">#18</div><div class="tl-body"><div class="h">Botón "Ver sitio" en el admin</div><div class="d">Acceso directo al sitio público desde el panel.</div></div></div>
+        <div class="tl-item"><div class="tl-tag">#19</div><div class="tl-body"><div class="h">Corrección de contenido en inglés</div><div class="d">Categorías y roles que habían quedado sin traducir al español.</div></div></div>
+        <div class="tl-item"><div class="tl-tag">#20</div><div class="tl-body"><div class="h">Sitio bilingüe ES/EN</div><div class="d">Selector de idioma, columnas <code class="inline">xxxEn</code> en 9 modelos, diccionario de UI.</div></div></div>
+        <div class="tl-item"><div class="tl-tag">#21</div><div class="tl-body"><div class="h">Modal de login traducido</div><div class="d">El acceso oculto al admin ahora respeta el idioma activo del sitio.</div></div></div>
+        <div class="tl-item"><div class="tl-tag">#22</div><div class="tl-body"><div class="h">Rediseño premium del admin</div><div class="d">Sidebar, dashboard, Card/Badge/PageHeader, preview en vivo del Hero.</div></div></div>
+        <div class="tl-item"><div class="tl-tag">#23</div><div class="tl-body"><div class="h">Sidebar colapsable en mobile</div><div class="d">Barra compacta con botón de menú en vez de ocupar toda la pantalla.</div></div></div>
+        <div class="tl-item"><div class="tl-tag">#24</div><div class="tl-body"><div class="h">Easter egg de frases motivadoras</div><div class="d">40 frases bilingües, doble tap en dos puntos del sitio.</div></div></div>
+        <div class="tl-item"><div class="tl-tag">#25</div><div class="tl-body"><div class="h">Crédito del diseñador</div><div class="d">Widget discreto en el footer con contacto y portafolio.</div></div></div>
+        <div class="tl-item"><div class="tl-tag">#26</div><div class="tl-body"><div class="h">Manual de uso + README</div><div class="d">Documentación bilingüe del panel y README actualizado a fondo.</div></div></div>
+      </div>
+    </section>
+
+    <section id="problemas">
+      <div class="section-head"><span class="num">08</span><h2>Problemas conocidos y sus soluciones</h2></div>
+
+      <div class="issue">
+        <div class="t">TikTok bloquea su propio embed de forma inconsistente <span class="chip warn" style="margin-left:6px;">Externo</span></div>
+        <p>
+          El reproductor embebido de TikTok falla de forma intermitente (pantalla negra o error),
+          tanto en mobile como en escritorio — es una restricción de TikTok, no un defecto del sitio.
+          <strong>Solución ya implementada:</strong> el formulario del Feed permite subir el archivo
+          de video directamente; el sitio lo reproduce nativo en vez de depender del embed.
+        </p>
+      </div>
+
+      <div class="issue">
+        <div class="t"><code class="inline" style="background:transparent;">P1002</code> — lock de advisory de Postgres en Neon <span class="chip warn" style="margin-left:6px;">Infra</span></div>
+        <p>
+          El build de Vercel falla intermitentemente esperando el advisory lock que
+          <code class="inline">prisma migrate deploy</code> toma durante el build. No está relacionado
+          con el código del commit. <strong>Solución estándar:</strong> un commit vacío
+          (<code class="inline">git commit --allow-empty</code>) dispara un build nuevo que suele sí
+          adquirir el lock. Documentado en el README para quien continúe el proyecto.
+        </p>
+      </div>
+    </section>
+
+    <section id="estado">
+      <div class="section-head"><span class="num">09</span><h2>Estado actual</h2></div>
+      <p>
+        <span class="chip good">● En producción</span>
+        &nbsp;Los 9 pull requests de esta sesión (#18–#26) están mergeados en
+        <code class="inline">main</code> y desplegados; se verificó cada uno con
+        <code class="inline">HTTP 200</code> sobre <code class="inline">portafolio-cristal.vercel.app</code>
+        después de cada deploy. No quedan cambios pendientes de revisión ni ramas divergentes.
+      </p>
+      <p>
+        Fuera de alcance por decisión explícita: traducir el panel de admin en sí (queda en español,
+        es de uso exclusivo de Crislia) y las rutas <code class="inline">/es</code>/<code class="inline">/en</code>
+        separadas para el sitio público.
+      </p>
+    </section>
+  </main>
+
+  <footer class="closing">
+    <span>Portafolio Crislia UGC · informe generado al cierre de la sesión</span>
+    <span class="mono">Victordaz07/portafolio-cristal @ main</span>
+  </footer>
+</div>

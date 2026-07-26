@@ -88,7 +88,7 @@ export default function MobileHeroNav({
         </div>
       )}
 
-      {loginOpen && <AdminLoginModal onClose={() => setLoginOpen(false)} />}
+      {loginOpen && <AdminLoginModal onClose={() => setLoginOpen(false)} locale={locale} />}
     </div>
   );
 }

@@ -33,6 +33,7 @@ import type { ContentCardProps } from "@/components/ContentCard";
 import { getLocale } from "@/lib/locale";
 import { t, pick, pickArray } from "@/lib/i18n";
 import LocaleToggle from "@/components/LocaleToggle";
+import MotivationTrigger from "@/components/MotivationTrigger";
 
 export const dynamic = "force-dynamic";
 
@@ -205,11 +206,15 @@ export default async function HomePage() {
                   {pick(locale, hero?.headlineSuffix ?? copy.hero.headlineSuffix, hero?.headlineSuffixEn)}
                 </h1>
 
-                <div className="mt-sp-4 flex items-center justify-center gap-sp-3">
+                <MotivationTrigger
+                  locale={locale}
+                  ariaLabel="Decoración"
+                  className="mt-sp-4 flex w-full items-center justify-center gap-sp-3"
+                >
                   <span className="h-px w-14 bg-lime/60" />
                   <SparkleIcon className="h-3 w-3 shrink-0 text-lime" />
                   <span className="h-px w-14 bg-lime/60" />
-                </div>
+                </MotivationTrigger>
 
                 <p className="mt-sp-4 font-sans text-sm leading-relaxed text-ink/75">
                   {pick(locale, hero?.description ?? copy.hero.description, hero?.descriptionEn)}
@@ -537,9 +542,13 @@ export default async function HomePage() {
                 </div>
 
                 <div className="relative z-10 mx-sp-5 -mt-sp-7 flex flex-col items-center gap-sp-2 rounded-md border border-line bg-cream p-sp-5 text-center shadow-lg">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-lime/25 text-coral">
+                  <MotivationTrigger
+                    locale={locale}
+                    ariaLabel="Decoración"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-lime/25 text-coral"
+                  >
                     <HeartIcon className="h-4 w-4" />
-                  </span>
+                  </MotivationTrigger>
                   <p className="font-fraunces italic text-lg text-ink">{copy.contacto.apoyoTitle}</p>
                   <p className="max-w-md text-xs text-ink/70">
                     {pick(locale, settings?.supportMessage ?? copy.contacto.apoyoFallback, settings?.supportMessageEn)}

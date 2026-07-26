@@ -156,27 +156,6 @@ export default async function HomePage() {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 hidden bg-cobalt text-cream md:block">
-        <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3 px-sp-5 py-sp-4">
-          <DesktopBrandMark name={hero?.name?.split(" ")[0] ?? "Cristal"} locale={locale} />
-          <div className="flex items-center gap-sp-5">
-            <ul className="flex gap-sp-2 font-mono text-[10px] uppercase tracking-wide sm:gap-sp-5 sm:text-xs">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <a href={link.href} className="hover:text-lime transition">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <LocaleToggle
-              locale={locale}
-              className="rounded-full border border-cream/30 px-sp-3 py-1 font-mono text-[10px] uppercase tracking-widest text-cream hover:border-lime hover:text-lime transition"
-            />
-          </div>
-        </div>
-      </nav>
-
       <main>
         {/* HERO */}
         <section id="about" className="relative overflow-hidden bg-cream">
@@ -254,8 +233,30 @@ export default async function HomePage() {
           </div>
 
           {/* Desktop: grid de 2 columnas — texto a la izquierda, foto en bleed a la derecha */}
-          <div className="hidden md:grid md:grid-cols-2 md:items-stretch">
-            <div className="flex items-center py-sp-9">
+          <div className="relative hidden md:block">
+            <div className="absolute inset-x-0 top-0 z-20">
+              <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3 px-sp-5 py-sp-5 lg:px-sp-8">
+                <DesktopBrandMark name={hero?.name?.split(" ")[0] ?? "Cristal"} locale={locale} />
+                <div className="flex items-center gap-sp-3">
+                  <ul className="flex gap-sp-5 rounded-full border border-line bg-cream/70 px-sp-5 py-sp-2 font-mono text-[11px] uppercase tracking-wide text-ink/80 backdrop-blur-sm">
+                    {navLinks.map((link) => (
+                      <li key={link.href}>
+                        <a href={link.href} className="hover:text-coral transition">
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <LocaleToggle
+                    locale={locale}
+                    className="rounded-full border border-line bg-cream/70 px-sp-3 py-1 font-mono text-[10px] uppercase tracking-widest text-ink backdrop-blur-sm hover:border-coral hover:text-coral transition"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 md:items-stretch">
+              <div className="flex items-center pb-sp-9 pt-[136px] lg:pt-[128px]">
               <div className="mx-auto w-full max-w-xl px-sp-5 lg:pl-sp-8 lg:pr-sp-6">
                 <span className="inline-flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 font-mono text-[11px] uppercase tracking-widest text-ink/80">
                   <SparkleIcon className="h-3.5 w-3.5 text-lime" />
@@ -329,6 +330,7 @@ export default async function HomePage() {
                 alt={hero?.name ?? "Crislia"}
                 className="absolute inset-0 h-full w-full object-cover object-right"
               />
+            </div>
             </div>
           </div>
         </section>

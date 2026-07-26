@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/PageHeader";
 import ReviewsManager from "./ReviewsManager";
 
 export default async function AdminReviewsPage() {
@@ -6,12 +7,11 @@ export default async function AdminReviewsPage() {
 
   return (
     <div>
-      <h1 className="font-bodoni italic font-bold uppercase text-2xl text-ink mb-sp-2">
-        Reseñas destacadas
-      </h1>
-      <p className="font-mono text-xs uppercase tracking-wide text-moss mb-sp-6">
-        {reviews.length} reseñas
-      </p>
+      <PageHeader
+        eyebrow={`${reviews.length} reseñas`}
+        title="Reseñas destacadas"
+        description="Reseñas de producto que se muestran en la sección pública del mismo nombre."
+      />
       <ReviewsManager initialReviews={reviews} />
     </div>
   );

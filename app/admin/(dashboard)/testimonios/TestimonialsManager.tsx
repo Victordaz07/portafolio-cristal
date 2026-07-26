@@ -8,7 +8,8 @@ import ReorderButtons from "@/components/admin/ReorderButtons";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
-import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import { inputClass, primaryButtonClass, rowCardClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
+import { QuoteIcon } from "@/components/icons";
 
 const API_BASE = "/api/admin/testimonials";
 
@@ -71,23 +72,24 @@ export default function TestimonialsManager({
     <div>
       <ul className="flex flex-col gap-sp-3">
         {testimonials.map((testimonial, index) => (
-          <li
-            key={testimonial.id}
-            className="flex items-center gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-          >
+          <li key={testimonial.id} className={rowCardClass}>
             <ReorderButtons
               onUp={() => handleMove(index, "up")}
               onDown={() => handleMove(index, "down")}
               disableUp={index === 0}
               disableDown={index === testimonials.length - 1}
             />
-            {testimonial.photoUrl && (
+            {testimonial.photoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={testimonial.photoUrl}
                 alt=""
-                className="h-10 w-10 rounded-full object-cover"
+                className="h-11 w-11 shrink-0 rounded-full object-cover"
               />
+            ) : (
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-lime/25 text-coral">
+                <QuoteIcon className="h-4 w-4" />
+              </span>
             )}
             <div className="flex-1">
               <p className="text-sm text-ink/70">&quot;{testimonial.quote}&quot;</p>
@@ -98,7 +100,7 @@ export default function TestimonialsManager({
             <button
               type="button"
               onClick={() => setPendingDelete(testimonial)}
-              className="text-sm text-red-600 hover:underline"
+              className={dangerLinkClass}
             >
               Eliminar
             </button>
@@ -106,7 +108,7 @@ export default function TestimonialsManager({
         ))}
       </ul>
 
-      <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-lg">
+      <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <BilingualTextField
           label="Cita"
           es={form.quote}

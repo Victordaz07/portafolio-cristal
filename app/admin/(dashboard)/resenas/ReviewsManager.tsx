@@ -7,8 +7,9 @@ import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import BilingualTextField from "@/components/admin/BilingualTextField";
+import Badge from "@/components/admin/Badge";
 import { swapOrder } from "@/lib/reorder";
-import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import { inputClass, primaryButtonClass, rowCardClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
 
 const API_BASE = "/api/admin/reviews";
 
@@ -76,30 +77,31 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
     <div>
       <ul className="flex flex-col gap-sp-3">
         {reviews.map((review, index) => (
-          <li
-            key={review.id}
-            className="flex items-center gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-          >
+          <li key={review.id} className={rowCardClass}>
             <ReorderButtons
               onUp={() => handleMove(index, "up")}
               onDown={() => handleMove(index, "down")}
               disableUp={index === 0}
               disableDown={index === reviews.length - 1}
             />
-            {review.photoUrl && (
+            {review.photoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={review.photoUrl} alt="" className="h-12 w-12 rounded object-cover" />
+              <img src={review.photoUrl} alt="" className="h-12 w-12 rounded-md object-cover" />
+            ) : (
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-cream text-ink/40">
+                ★
+              </span>
             )}
             <div className="flex-1">
-              <p className="text-xs uppercase tracking-wide text-moss">{review.category}</p>
-              <p className="font-medium text-ink">{review.title}</p>
+              <Badge>{review.category}</Badge>
+              <p className="mt-1 font-medium text-ink">{review.title}</p>
               <p className="text-sm text-ink/60">{review.description}</p>
             </div>
-            <span className="font-mono text-sm text-ink/60">{review.rating}★</span>
+            <span className="font-mono text-sm text-moss">{review.rating}★</span>
             <button
               type="button"
               onClick={() => setPendingDelete(review)}
-              className="text-sm text-red-600 hover:underline"
+              className={dangerLinkClass}
             >
               Eliminar
             </button>
@@ -107,7 +109,7 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
         ))}
       </ul>
 
-      <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-lg">
+      <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <div className="grid gap-sp-4 sm:grid-cols-2">
           <BilingualTextField
             label="Categoría"

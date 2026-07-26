@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/PageHeader";
 import HeroForm from "./HeroForm";
 
 export default async function AdminHeroPage() {
@@ -6,7 +7,11 @@ export default async function AdminHeroPage() {
 
   return (
     <div>
-      <h1 className="font-bodoni italic font-bold uppercase text-2xl text-ink mb-sp-6">Hero</h1>
+      <PageHeader
+        eyebrow="Portada"
+        title="Hero"
+        description="Lo primero que ve cualquier persona al entrar al sitio — edita y mira el resultado en vivo a la derecha."
+      />
       <HeroForm initialHero={hero} />
     </div>
   );

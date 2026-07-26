@@ -5,7 +5,8 @@ import type { Hero } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import BilingualTextField from "@/components/admin/BilingualTextField";
-import { inputClass, labelClass, primaryButtonClass } from "@/lib/admin-ui";
+import HeroPreview from "@/components/admin/HeroPreview";
+import { inputClass, labelClass, primaryButtonClass, cardClass } from "@/lib/admin-ui";
 
 type HeroFormValues = Omit<
   Hero,
@@ -114,8 +115,9 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl flex flex-col gap-sp-5">
-      <div className="grid gap-sp-4 sm:grid-cols-2">
+    <div className="grid gap-sp-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+      <form onSubmit={handleSubmit} className={`${cardClass} flex flex-col gap-sp-5`}>
+        <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className={labelClass}>
           <span className="text-sm font-medium text-ink">Nombre</span>
           <input
@@ -248,9 +250,30 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
         </label>
       </div>
 
-      <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-        {saving ? "Guardando..." : "Guardar cambios"}
-      </button>
-    </form>
+        <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
+          {saving ? "Guardando..." : "Guardar cambios"}
+        </button>
+      </form>
+
+      <div className="lg:sticky lg:top-sp-6">
+        <p className="mb-sp-2 font-mono text-[10px] uppercase tracking-widest text-moss">
+          Vista previa en vivo
+        </p>
+        <HeroPreview
+          badgeLabel={form.badgeLabel}
+          headlinePlain={form.headlinePlain}
+          headlineEmphasis={form.headlineEmphasis}
+          headlineSuffix={form.headlineSuffix}
+          description={form.description}
+          photoUrl={form.photoUrl}
+          ctaPrimaryLabel={form.ctaPrimaryLabel}
+          ctaSecondaryLabel={form.ctaSecondaryLabel}
+        />
+        <p className="mt-sp-2 text-xs text-ink/50">
+          Aproximación del hero de escritorio — el sitio real puede variar levemente en tamaños y
+          saltos de línea.
+        </p>
+      </div>
+    </div>
   );
 }

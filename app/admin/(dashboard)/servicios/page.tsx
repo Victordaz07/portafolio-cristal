@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/PageHeader";
 import ServicesManager from "./ServicesManager";
 
 export default async function AdminServicesPage() {
@@ -6,12 +7,11 @@ export default async function AdminServicesPage() {
 
   return (
     <div>
-      <h1 className="font-bodoni italic font-bold uppercase text-2xl text-ink mb-sp-2">
-        Cómo trabajo contigo
-      </h1>
-      <p className="font-mono text-xs uppercase tracking-wide text-moss mb-sp-6">
-        {services.length} servicios
-      </p>
+      <PageHeader
+        eyebrow={`${services.length} servicios`}
+        title="Cómo trabajo contigo"
+        description="Los servicios que ofreces, con su ícono, en la sección pública 'Cómo trabajo'."
+      />
       <ServicesManager initialServices={services} />
     </div>
   );

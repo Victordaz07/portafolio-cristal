@@ -6,7 +6,7 @@ import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import { swapOrder } from "@/lib/reorder";
-import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
+import { inputClass, primaryButtonClass, rowCardClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
 import { STAT_ICONS, STAT_ICON_OPTIONS, StarIcon, type StatIconKey } from "@/components/icons";
 
 const API_BASE = "/api/admin/stats";
@@ -78,17 +78,14 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
     <div>
       <ul className="flex flex-col gap-sp-3">
         {stats.map((stat, index) => (
-          <li
-            key={stat.id}
-            className="flex items-center gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-          >
+          <li key={stat.id} className={rowCardClass}>
             <ReorderButtons
               onUp={() => handleMove(index, "up")}
               onDown={() => handleMove(index, "down")}
               disableUp={index === 0}
               disableDown={index === stats.length - 1}
             />
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-lime/30 text-coral">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-lime/30 text-coral">
               {(() => {
                 const Icon = STAT_ICONS[stat.icon as StatIconKey] ?? StarIcon;
                 return <Icon className="h-4 w-4" />;
@@ -104,7 +101,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
             <select
               value={stat.icon}
               onChange={(e) => handleIconChange(stat, e.target.value as StatIconKey)}
-              className="rounded-sm border border-line px-sp-2 py-sp-1 text-sm text-ink"
+              className="rounded-md border border-line px-sp-2 py-sp-1 text-sm text-ink"
             >
               {STAT_ICON_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -115,7 +112,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
             <button
               type="button"
               onClick={() => setPendingDelete(stat)}
-              className="text-sm text-red-600 hover:underline"
+              className={dangerLinkClass}
             >
               Eliminar
             </button>
@@ -123,7 +120,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
         ))}
       </ul>
 
-      <form onSubmit={handleAdd} className="mt-sp-6 flex flex-wrap items-end gap-sp-3">
+      <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-wrap items-end gap-sp-3`}>
         <label className="flex flex-col gap-sp-1">
           <span className="text-sm font-medium text-ink">Número</span>
           <input

@@ -4,7 +4,10 @@ import { useState } from "react";
 import type { Brand } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ReorderButtons from "@/components/admin/ReorderButtons";
+import Card from "@/components/admin/Card";
+import Badge from "@/components/admin/Badge";
 import { swapOrder } from "@/lib/reorder";
+import { rowCardClass, accentLinkClass, secondaryButtonClass } from "@/lib/admin-ui";
 import BrandForm, { type BrandFormValues } from "./BrandForm";
 
 const API_BASE = "/api/admin/brands";
@@ -89,46 +92,47 @@ export default function BrandsManager({ initialBrands }: { initialBrands: Brand[
       <ul className="flex flex-col gap-sp-3">
         {brands.map((brand, index) =>
           editingId === brand.id ? (
-            <li key={brand.id} className="rounded-md border border-line bg-white p-sp-5">
-              <BrandForm
-                initial={toFormValues(brand)}
-                submitLabel="Guardar cambios"
-                onSubmit={(values) => handleUpdate(brand.id, values)}
-                onCancel={() => setEditingId(null)}
-              />
+            <li key={brand.id}>
+              <Card>
+                <BrandForm
+                  initial={toFormValues(brand)}
+                  submitLabel="Guardar cambios"
+                  onSubmit={(values) => handleUpdate(brand.id, values)}
+                  onCancel={() => setEditingId(null)}
+                />
+              </Card>
             </li>
           ) : (
-            <li
-              key={brand.id}
-              className="flex items-center gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-            >
+            <li key={brand.id} className={rowCardClass}>
               <ReorderButtons
                 onUp={() => handleMove(index, "up")}
                 onDown={() => handleMove(index, "down")}
                 disableUp={index === 0}
                 disableDown={index === brands.length - 1}
               />
-              {brand.logoUrl && (
+              {brand.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={brand.logoUrl} alt="" className="h-8 w-8 object-contain" />
+                <img
+                  src={brand.logoUrl}
+                  alt=""
+                  className="h-10 w-10 rounded-md border border-line object-contain p-1"
+                />
+              ) : (
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-cream font-bodoni italic text-ink/40">
+                  {brand.name.charAt(0)}
+                </span>
               )}
               <div className="flex-1">
                 <p className="text-ink">{brand.name}</p>
-                {!brand.active && (
-                  <span className="text-xs uppercase tracking-wide text-ink/50">Inactiva</span>
-                )}
+                {!brand.active && <Badge className="mt-1">Inactiva</Badge>}
               </div>
-              <button
-                type="button"
-                onClick={() => setEditingId(brand.id)}
-                className="text-sm text-coral hover:underline"
-              >
+              <button type="button" onClick={() => setEditingId(brand.id)} className={accentLinkClass}>
                 Editar
               </button>
               <button
                 type="button"
                 onClick={() => handleToggleActive(brand)}
-                className="text-sm text-ink/70 hover:underline"
+                className="text-sm font-medium text-ink/60 hover:text-ink transition"
               >
                 {brand.active ? "Desactivar" : "Activar"}
               </button>
@@ -139,19 +143,15 @@ export default function BrandsManager({ initialBrands }: { initialBrands: Brand[
 
       <div className="mt-sp-6">
         {showCreate ? (
-          <div className="rounded-md border border-line bg-white p-sp-5 max-w-sm">
+          <Card className="max-w-sm">
             <BrandForm
               submitLabel="Agregar marca"
               onSubmit={handleCreate}
               onCancel={() => setShowCreate(false)}
             />
-          </div>
+          </Card>
         ) : (
-          <button
-            type="button"
-            onClick={() => setShowCreate(true)}
-            className="text-sm text-coral hover:underline"
-          >
+          <button type="button" onClick={() => setShowCreate(true)} className={secondaryButtonClass}>
             + agregar marca
           </button>
         )}

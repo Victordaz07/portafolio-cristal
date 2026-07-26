@@ -3,6 +3,9 @@
 import { useState } from "react";
 import type { ContactMessage } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
+import Card from "@/components/admin/Card";
+import Badge from "@/components/admin/Badge";
+import { accentLinkClass } from "@/lib/admin-ui";
 
 const API_BASE = "/api/admin/messages";
 
@@ -31,46 +34,35 @@ export default function MessagesManager({
   }
 
   if (messages.length === 0) {
-    return <p className="text-ink/60">Todavía no has recibido mensajes.</p>;
+    return <Card className="text-sm text-ink/60">Todavía no has recibido mensajes.</Card>;
   }
 
   return (
     <ul className="flex flex-col gap-sp-4">
       {messages.map((message) => (
-        <li
-          key={message.id}
-          className={`rounded-md border p-sp-5 ${
-            message.read ? "border-line bg-white" : "border-coral bg-white"
-          }`}
-        >
-          <div className="flex flex-wrap items-start justify-between gap-sp-3">
-            <div>
-              <p className="font-medium text-ink">
-                {message.name} — {message.brand}
-              </p>
-              <p className="font-mono text-xs text-moss">
-                {message.email} · {message.collaborationType}
-              </p>
-              <p className="font-mono text-xs text-ink/50 mt-1">
-                {new Date(message.createdAt).toLocaleString("es-DO")}
-              </p>
+        <li key={message.id}>
+          <Card className={message.read ? "" : "border-coral/40"}>
+            <div className="flex flex-wrap items-start justify-between gap-sp-3">
+              <div>
+                <p className="font-medium text-ink">
+                  {message.name} — {message.brand}
+                </p>
+                <p className="font-mono text-xs text-moss">
+                  {message.email} · {message.collaborationType}
+                </p>
+                <p className="font-mono text-xs text-ink/50 mt-1">
+                  {new Date(message.createdAt).toLocaleString("es-DO")}
+                </p>
+              </div>
+              <div className="flex items-center gap-sp-3">
+                {!message.read && <Badge variant="new">Nuevo</Badge>}
+                <button type="button" onClick={() => toggleRead(message)} className={accentLinkClass}>
+                  {message.read ? "Marcar no leído" : "Marcar leído"}
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-sp-3">
-              {!message.read && (
-                <span className="rounded-full bg-coral px-sp-3 py-1 font-mono text-[10px] uppercase text-white">
-                  Nuevo
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={() => toggleRead(message)}
-                className="text-sm text-coral hover:underline"
-              >
-                {message.read ? "Marcar no leído" : "Marcar leído"}
-              </button>
-            </div>
-          </div>
-          <p className="mt-sp-3 text-sm text-ink/80 whitespace-pre-line">{message.message}</p>
+            <p className="mt-sp-3 text-sm text-ink/80 whitespace-pre-line">{message.message}</p>
+          </Card>
         </li>
       ))}
     </ul>

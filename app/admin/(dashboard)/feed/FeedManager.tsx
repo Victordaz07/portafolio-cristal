@@ -7,12 +7,21 @@ import { platformLabel } from "@/lib/embeds";
 import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
+import Badge from "@/components/admin/Badge";
+import Card from "@/components/admin/Card";
 import { swapOrder } from "@/lib/reorder";
+import { rowCardClass, accentLinkClass, dangerLinkClass, secondaryButtonClass } from "@/lib/admin-ui";
 import ContentCardForm, { type ContentCardFormValues } from "./ContentCardForm";
 
 const API_BASE = "/api/admin/content-cards";
 
-export default function FeedManager({ initialCards }: { initialCards: ContentCard[] }) {
+export default function FeedManager({
+  initialCards,
+  thumbnailsById = {},
+}: {
+  initialCards: ContentCard[];
+  thumbnailsById?: Record<string, string | null>;
+}) {
   const { showToast } = useToast();
   const [cards, setCards] = useState(initialCards);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -83,7 +92,7 @@ export default function FeedManager({ initialCards }: { initialCards: ContentCar
       <div className="flex flex-col gap-sp-3">
         {cards.map((card, index) =>
           editingId === card.id ? (
-            <div key={card.id} className="rounded-md border border-line bg-white p-sp-5">
+            <Card key={card.id}>
               <ContentCardForm
                 initial={{
                   type: card.type as ContentType,
@@ -104,41 +113,48 @@ export default function FeedManager({ initialCards }: { initialCards: ContentCar
                 onSubmit={(values) => handleUpdate(card.id, values)}
                 onCancel={() => setEditingId(null)}
               />
-            </div>
+            </Card>
           ) : (
-            <div
-              key={card.id}
-              className="flex items-center gap-sp-4 rounded-md border border-line bg-white px-sp-4 py-sp-3"
-            >
+            <div key={card.id} className={rowCardClass}>
               <ReorderButtons
                 onUp={() => handleMove(index, "up")}
                 onDown={() => handleMove(index, "down")}
                 disableUp={index === 0}
                 disableDown={index === cards.length - 1}
               />
-              <div
-                className={`shrink-0 rounded-sm bg-gradient-to-br from-cobalt to-cobalt-ink ${
-                  card.type === "video" ? "aspect-[9/16] w-10" : "aspect-[4/5] w-12"
-                }`}
-              />
+              {thumbnailsById[card.id] ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={thumbnailsById[card.id]!}
+                  alt=""
+                  className={`shrink-0 rounded-md object-cover ${
+                    card.type === "video" ? "aspect-[9/16] w-10" : "aspect-[4/5] w-12"
+                  }`}
+                />
+              ) : (
+                <div
+                  className={`shrink-0 rounded-md bg-gradient-to-br from-cobalt to-cobalt-ink ${
+                    card.type === "video" ? "aspect-[9/16] w-10" : "aspect-[4/5] w-12"
+                  }`}
+                />
+              )}
               <div className="flex-1 min-w-0">
                 <p className="truncate text-sm text-ink">{card.caption}</p>
-                <p className="font-mono text-xs uppercase tracking-wide text-moss">
-                  {card.category} · {card.type} · {platformLabel(card.platform as Platform)}
-                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-sp-2">
+                  <Badge>{card.category}</Badge>
+                  <span className="font-mono text-xs uppercase tracking-wide text-ink/50">
+                    {card.type} · {platformLabel(card.platform as Platform)}
+                  </span>
+                </div>
               </div>
               <div className="flex shrink-0 gap-sp-3 text-sm">
-                <button
-                  type="button"
-                  onClick={() => setEditingId(card.id)}
-                  className="text-coral hover:underline"
-                >
+                <button type="button" onClick={() => setEditingId(card.id)} className={accentLinkClass}>
                   Editar
                 </button>
                 <button
                   type="button"
                   onClick={() => setPendingDelete(card)}
-                  className="text-red-600 hover:underline"
+                  className={dangerLinkClass}
                 >
                   Eliminar
                 </button>
@@ -150,20 +166,16 @@ export default function FeedManager({ initialCards }: { initialCards: ContentCar
 
       <div className="mt-sp-6">
         {showCreate ? (
-          <div className="rounded-md border border-line bg-white p-sp-5">
+          <Card>
             <ContentCardForm
               existingCategories={categories}
               submitLabel="Agregar tarjeta"
               onSubmit={handleCreate}
               onCancel={() => setShowCreate(false)}
             />
-          </div>
+          </Card>
         ) : (
-          <button
-            type="button"
-            onClick={() => setShowCreate(true)}
-            className="text-sm text-coral hover:underline"
-          >
+          <button type="button" onClick={() => setShowCreate(true)} className={secondaryButtonClass}>
             + agregar tarjeta
           </button>
         )}

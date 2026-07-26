@@ -19,6 +19,7 @@ import {
   InboxIcon,
   LogoutIcon,
   CloseIcon,
+  BookIcon,
 } from "@/components/icons";
 
 type NavItem = { href: string; label: string; icon: (props: { className?: string }) => ReactNode };
@@ -52,6 +53,10 @@ const NAV_GROUPS: { title: string | null; items: NavItem[] }[] = [
       { href: "/admin/faq", label: "FAQ", icon: QuestionIcon },
       { href: "/admin/contacto", label: "Contacto", icon: GearIcon },
     ],
+  },
+  {
+    title: "Ayuda",
+    items: [{ href: "/admin/ayuda", label: "Manual de uso", icon: BookIcon }],
   },
 ];
 

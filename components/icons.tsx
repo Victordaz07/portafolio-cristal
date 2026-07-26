@@ -487,6 +487,32 @@ export function AtomIcon({ className }: { className?: string }) {
   );
 }
 
+export function BookIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H12v16H5.5A1.5 1.5 0 0 1 4 18.5Z" />
+      <path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H12v16h6.5a1.5 1.5 0 0 0 1.5-1.5Z" />
+    </svg>
+  );
+}
+
+export function PlayIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M7 4.7a1 1 0 0 1 1.53-.85l11 6.3a1 1 0 0 1 0 1.7l-11 6.3A1 1 0 0 1 7 17.2Z" />
+    </svg>
+  );
+}
+
 export const SERVICE_ICONS = {
   camera: CameraIcon,
   chat: ChatIcon,

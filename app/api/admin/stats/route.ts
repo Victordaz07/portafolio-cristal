@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 const statSchema = z.object({
   label: z.string().min(1),
+  labelEn: z.string().optional().or(z.literal("")),
   value: z.string().min(1),
   icon: z.enum(["heart", "star", "chat", "people"]).optional().default("star"),
 });
@@ -24,7 +25,11 @@ export async function POST(request: Request) {
 
   const maxOrder = await prisma.stat.aggregate({ _max: { order: true } });
   const stat = await prisma.stat.create({
-    data: { ...parsed.data, order: (maxOrder._max.order ?? -1) + 1 },
+    data: {
+      ...parsed.data,
+      labelEn: parsed.data.labelEn || null,
+      order: (maxOrder._max.order ?? -1) + 1,
+    },
   });
 
   return NextResponse.json(stat, { status: 201 });

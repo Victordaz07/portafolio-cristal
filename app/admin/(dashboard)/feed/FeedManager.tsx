@@ -91,9 +91,13 @@ export default function FeedManager({ initialCards }: { initialCards: ContentCar
                   postUrl: card.postUrl,
                   videoUrl: card.videoUrl ?? "",
                   caption: card.caption,
+                  captionEn: card.captionEn ?? "",
                   category: card.category,
+                  categoryEn: card.categoryEn ?? "",
                   statPrimary: card.statPrimary ?? "",
+                  statPrimaryEn: card.statPrimaryEn ?? "",
                   statSecondary: card.statSecondary ?? "",
+                  statSecondaryEn: card.statSecondaryEn ?? "",
                 }}
                 existingCategories={categories}
                 submitLabel="Guardar cambios"

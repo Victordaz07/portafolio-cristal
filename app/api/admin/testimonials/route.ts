@@ -6,8 +6,10 @@ export const dynamic = "force-dynamic";
 
 const testimonialSchema = z.object({
   quote: z.string().min(1),
+  quoteEn: z.string().optional().or(z.literal("")),
   name: z.string().min(1),
   role: z.string().min(1),
+  roleEn: z.string().optional().or(z.literal("")),
   photoUrl: z.string().url().optional().or(z.literal("")),
 });
 
@@ -27,8 +29,10 @@ export async function POST(request: Request) {
   const testimonial = await prisma.testimonial.create({
     data: {
       quote: parsed.data.quote,
+      quoteEn: parsed.data.quoteEn || null,
       name: parsed.data.name,
       role: parsed.data.role,
+      roleEn: parsed.data.roleEn || null,
       photoUrl: parsed.data.photoUrl || null,
       order: (maxOrder._max.order ?? -1) + 1,
     },

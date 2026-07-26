@@ -6,12 +6,13 @@ import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
 
 const API_BASE = "/api/admin/testimonials";
 
-const EMPTY = { quote: "", name: "", role: "", photoUrl: "" };
+const EMPTY = { quote: "", quoteEn: "", name: "", role: "", roleEn: "", photoUrl: "" };
 
 export default function TestimonialsManager({
   initialTestimonials,
@@ -106,16 +107,16 @@ export default function TestimonialsManager({
       </ul>
 
       <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-lg">
-        <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Cita</span>
-          <textarea
-            required
-            rows={3}
-            value={form.quote}
-            onChange={(e) => set("quote", e.target.value)}
-            className={inputClass}
-          />
-        </label>
+        <BilingualTextField
+          label="Cita"
+          es={form.quote}
+          en={form.quoteEn}
+          onEsChange={(v) => set("quote", v)}
+          onEnChange={(v) => set("quoteEn", v)}
+          multiline
+          rows={3}
+          required
+        />
         <div className="grid gap-sp-4 sm:grid-cols-2">
           <label className="flex flex-col gap-sp-1">
             <span className="text-sm font-medium text-ink">Nombre</span>
@@ -126,16 +127,14 @@ export default function TestimonialsManager({
               className={inputClass}
             />
           </label>
-          <label className="flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Rol / marca</span>
-            <input
-              required
-              value={form.role}
-              onChange={(e) => set("role", e.target.value)}
-              className={inputClass}
-              placeholder="Gerente de Marketing – IUNIK"
-            />
-          </label>
+          <BilingualTextField
+            label="Rol / marca"
+            es={form.role}
+            en={form.roleEn}
+            onEsChange={(v) => set("role", v)}
+            onEnChange={(v) => set("roleEn", v)}
+            required
+          />
         </div>
         <ImageUploadField
           label="Foto (opcional)"

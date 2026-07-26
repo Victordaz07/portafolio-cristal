@@ -6,12 +6,22 @@ import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
 
 const API_BASE = "/api/admin/reviews";
 
-const EMPTY = { photoUrl: "", category: "", title: "", description: "", rating: 5 };
+const EMPTY = {
+  photoUrl: "",
+  category: "",
+  categoryEn: "",
+  title: "",
+  titleEn: "",
+  description: "",
+  descriptionEn: "",
+  rating: 5,
+};
 
 export default function ReviewsManager({ initialReviews }: { initialReviews: Review[] }) {
   const { showToast } = useToast();
@@ -99,16 +109,14 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
 
       <form onSubmit={handleAdd} className="mt-sp-6 flex flex-col gap-sp-4 max-w-lg">
         <div className="grid gap-sp-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Categoría</span>
-            <input
-              required
-              value={form.category}
-              onChange={(e) => set("category", e.target.value)}
-              className={inputClass}
-              placeholder="Belleza"
-            />
-          </label>
+          <BilingualTextField
+            label="Categoría"
+            es={form.category}
+            en={form.categoryEn}
+            onEsChange={(v) => set("category", v)}
+            onEnChange={(v) => set("categoryEn", v)}
+            required
+          />
           <label className="flex flex-col gap-sp-1">
             <span className="text-sm font-medium text-ink">Calificación</span>
             <select
@@ -124,26 +132,24 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
             </select>
           </label>
         </div>
-        <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Título (producto – marca)</span>
-          <input
-            required
-            value={form.title}
-            onChange={(e) => set("title", e.target.value)}
-            className={inputClass}
-            placeholder="My Way – Giorgio Armani"
-          />
-        </label>
-        <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Descripción</span>
-          <textarea
-            required
-            rows={2}
-            value={form.description}
-            onChange={(e) => set("description", e.target.value)}
-            className={inputClass}
-          />
-        </label>
+        <BilingualTextField
+          label="Título (producto – marca)"
+          es={form.title}
+          en={form.titleEn}
+          onEsChange={(v) => set("title", v)}
+          onEnChange={(v) => set("titleEn", v)}
+          required
+        />
+        <BilingualTextField
+          label="Descripción"
+          es={form.description}
+          en={form.descriptionEn}
+          onEsChange={(v) => set("description", v)}
+          onEnChange={(v) => set("descriptionEn", v)}
+          multiline
+          rows={2}
+          required
+        />
         <ImageUploadField label="Foto (opcional)" value={form.photoUrl} onChange={(url) => set("photoUrl", url)} />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
           {saving ? "Agregando..." : "+ agregar reseña"}

@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 const statUpdateSchema = z.object({
   label: z.string().min(1).optional(),
+  labelEn: z.string().nullable().optional().or(z.literal("")),
   value: z.string().min(1).optional(),
   icon: z.enum(["heart", "star", "chat", "people"]).optional(),
   order: z.number().int().optional(),
@@ -19,7 +20,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
-  const stat = await prisma.stat.update({ where: { id }, data: parsed.data });
+  const data = { ...parsed.data };
+  if (data.labelEn === "") data.labelEn = null;
+
+  const stat = await prisma.stat.update({ where: { id }, data });
   return NextResponse.json(stat);
 }
 

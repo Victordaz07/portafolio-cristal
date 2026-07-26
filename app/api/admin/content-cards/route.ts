@@ -10,9 +10,13 @@ const contentCardSchema = z.object({
   postUrl: z.string().url(),
   videoUrl: z.string().url().optional().or(z.literal("")),
   caption: z.string().min(1),
+  captionEn: z.string().optional().or(z.literal("")),
   category: z.string().min(1),
+  categoryEn: z.string().optional().or(z.literal("")),
   statPrimary: z.string().optional().or(z.literal("")),
+  statPrimaryEn: z.string().optional().or(z.literal("")),
   statSecondary: z.string().optional().or(z.literal("")),
+  statSecondaryEn: z.string().optional().or(z.literal("")),
 });
 
 export async function GET() {
@@ -32,8 +36,12 @@ export async function POST(request: Request) {
     data: {
       ...parsed.data,
       videoUrl: parsed.data.videoUrl || null,
+      captionEn: parsed.data.captionEn || null,
+      categoryEn: parsed.data.categoryEn || null,
       statPrimary: parsed.data.statPrimary || null,
+      statPrimaryEn: parsed.data.statPrimaryEn || null,
       statSecondary: parsed.data.statSecondary || null,
+      statSecondaryEn: parsed.data.statSecondaryEn || null,
       order: (maxOrder._max.order ?? -1) + 1,
     },
   });

@@ -5,12 +5,13 @@ import type { Package } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import ReorderButtons from "@/components/admin/ReorderButtons";
+import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
 
 const API_BASE = "/api/admin/packages";
 
-const EMPTY = { emoji: "✨", name: "", itemsText: "" };
+const EMPTY = { emoji: "✨", name: "", nameEn: "", itemsText: "", itemsTextEn: "" };
 
 function toItems(text: string) {
   return text
@@ -38,7 +39,13 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
     const response = await fetch(API_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ emoji: form.emoji, name: form.name, items }),
+      body: JSON.stringify({
+        emoji: form.emoji,
+        name: form.name,
+        nameEn: form.nameEn,
+        items,
+        itemsEn: toItems(form.itemsTextEn),
+      }),
     });
     setSaving(false);
 
@@ -87,12 +94,20 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
             <div className="flex-1">
               <p className="font-medium text-ink">
                 {pkg.emoji} {pkg.name}
+                {pkg.nameEn && <span className="text-ink/40"> · {pkg.nameEn}</span>}
               </p>
               <ul className="mt-sp-1 list-disc pl-sp-5 text-sm text-ink/60">
                 {pkg.items.map((item, itemIndex) => (
                   <li key={itemIndex}>{item}</li>
                 ))}
               </ul>
+              {pkg.itemsEn.length > 0 && (
+                <ul className="mt-sp-1 list-disc pl-sp-5 text-sm text-ink/40">
+                  {pkg.itemsEn.map((item, itemIndex) => (
+                    <li key={itemIndex}>{item}</li>
+                  ))}
+                </ul>
+              )}
             </div>
             <button
               type="button"
@@ -115,26 +130,25 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
               className={inputClass}
             />
           </label>
-          <label className="flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Nombre del paquete</span>
-            <input
-              required
-              value={form.name}
-              onChange={(e) => setForm((c) => ({ ...c, name: e.target.value }))}
-              className={inputClass}
-            />
-          </label>
-        </div>
-        <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Qué incluye (un ítem por línea)</span>
-          <textarea
+          <BilingualTextField
+            label="Nombre del paquete"
+            es={form.name}
+            en={form.nameEn}
+            onEsChange={(v) => setForm((c) => ({ ...c, name: v }))}
+            onEnChange={(v) => setForm((c) => ({ ...c, nameEn: v }))}
             required
-            rows={5}
-            value={form.itemsText}
-            onChange={(e) => setForm((c) => ({ ...c, itemsText: e.target.value }))}
-            className={inputClass}
           />
-        </label>
+        </div>
+        <BilingualTextField
+          label="Qué incluye (un ítem por línea)"
+          es={form.itemsText}
+          en={form.itemsTextEn}
+          onEsChange={(v) => setForm((c) => ({ ...c, itemsText: v }))}
+          onEnChange={(v) => setForm((c) => ({ ...c, itemsTextEn: v }))}
+          multiline
+          rows={5}
+          required
+        />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
           {saving ? "Agregando..." : "+ agregar paquete"}
         </button>

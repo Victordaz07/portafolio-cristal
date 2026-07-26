@@ -15,6 +15,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
   const { showToast } = useToast();
   const [stats, setStats] = useState(initialStats);
   const [label, setLabel] = useState("");
+  const [labelEn, setLabelEn] = useState("");
   const [value, setValue] = useState("");
   const [icon, setIcon] = useState<StatIconKey>("star");
   const [saving, setSaving] = useState(false);
@@ -26,7 +27,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
     const response = await fetch(API_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ label, value, icon }),
+      body: JSON.stringify({ label, labelEn, value, icon }),
     });
     setSaving(false);
 
@@ -39,6 +40,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
     const created: Stat = await response.json();
     setStats((current) => [...current, created]);
     setLabel("");
+    setLabelEn("");
     setValue("");
     setIcon("star");
     showToast("success", "Stat agregado");
@@ -94,7 +96,10 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
             </span>
             <div className="flex-1">
               <p className="font-mono font-bold text-lg text-moss">{stat.value}</p>
-              <p className="text-xs uppercase tracking-wide text-ink/60">{stat.label}</p>
+              <p className="text-xs uppercase tracking-wide text-ink/60">
+                {stat.label}
+                {stat.labelEn && <span className="text-ink/40"> · {stat.labelEn}</span>}
+              </p>
             </div>
             <select
               value={stat.icon}
@@ -137,6 +142,15 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
             onChange={(e) => setLabel(e.target.value)}
             className={inputClass}
             placeholder="Seguidores"
+          />
+        </label>
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">Label (English)</span>
+          <input
+            value={labelEn}
+            onChange={(e) => setLabelEn(e.target.value)}
+            className={inputClass}
+            placeholder="Followers"
           />
         </label>
         <label className="flex flex-col gap-sp-1">

@@ -7,7 +7,9 @@ export const dynamic = "force-dynamic";
 const packageUpdateSchema = z.object({
   emoji: z.string().min(1).optional(),
   name: z.string().min(1).optional(),
+  nameEn: z.string().nullable().optional().or(z.literal("")),
   items: z.array(z.string().min(1)).min(1).optional(),
+  itemsEn: z.array(z.string().min(1)).optional(),
   order: z.number().int().optional(),
 });
 
@@ -19,7 +21,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
-  const pkg = await prisma.package.update({ where: { id }, data: parsed.data });
+  const data = { ...parsed.data };
+  if (data.nameEn === "") data.nameEn = null;
+
+  const pkg = await prisma.package.update({ where: { id }, data });
   return NextResponse.json(pkg);
 }
 

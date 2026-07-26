@@ -2,18 +2,29 @@
 
 import { useMemo, useState } from "react";
 import ContentCard, { type ContentCardProps } from "./ContentCard";
+import { t, type Locale } from "@/lib/i18n";
 
-export default function ContentFeed({ cards }: { cards: ContentCardProps[] }) {
+export default function ContentFeed({
+  cards,
+  locale,
+}: {
+  cards: ContentCardProps[];
+  locale: Locale;
+}) {
+  const copy = t(locale);
+  const ALL = copy.feed.todos;
+  const PHOTOS = copy.feed.fotos;
+
   const categories = useMemo(
     () => Array.from(new Set(cards.map((card) => card.category))),
     [cards]
   );
-  const pills = ["Todos", ...categories, "Fotos"];
-  const [activePill, setActivePill] = useState("Todos");
+  const pills = [ALL, ...categories, PHOTOS];
+  const [activePill, setActivePill] = useState(ALL);
 
   const filteredCards = cards.filter((card) => {
-    if (activePill === "Todos") return true;
-    if (activePill === "Fotos") return card.type === "photo";
+    if (activePill === ALL) return true;
+    if (activePill === PHOTOS) return card.type === "photo";
     return card.category === activePill;
   });
 

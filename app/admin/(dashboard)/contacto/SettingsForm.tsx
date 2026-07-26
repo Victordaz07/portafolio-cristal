@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { SiteSettings } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
+import BilingualTextField from "@/components/admin/BilingualTextField";
 import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
 
 export default function SettingsForm({
@@ -13,6 +14,7 @@ export default function SettingsForm({
   const { showToast } = useToast();
   const [form, setForm] = useState({
     whyMeText: initialSettings?.whyMeText ?? "",
+    whyMeTextEn: initialSettings?.whyMeTextEn ?? "",
     contactEmail: initialSettings?.contactEmail ?? "",
     instagramHandle: initialSettings?.instagramHandle ?? "",
     tiktokHandle: initialSettings?.tiktokHandle ?? "",
@@ -23,7 +25,9 @@ export default function SettingsForm({
     youtubeHandle: initialSettings?.youtubeHandle ?? "",
     pinterestHandle: initialSettings?.pinterestHandle ?? "",
     footerIntro: initialSettings?.footerIntro ?? "",
+    footerIntroEn: initialSettings?.footerIntroEn ?? "",
     supportMessage: initialSettings?.supportMessage ?? "",
+    supportMessageEn: initialSettings?.supportMessageEn ?? "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -47,42 +51,40 @@ export default function SettingsForm({
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl flex flex-col gap-sp-5">
-      <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Texto &quot;Why me?&quot;</span>
-        <textarea
-          required
-          rows={5}
-          value={form.whyMeText}
-          onChange={(e) => setForm((c) => ({ ...c, whyMeText: e.target.value }))}
-          className={inputClass}
-        />
-      </label>
+      <BilingualTextField
+        label='Texto "Why me?"'
+        es={form.whyMeText}
+        en={form.whyMeTextEn}
+        onEsChange={(v) => setForm((c) => ({ ...c, whyMeText: v }))}
+        onEnChange={(v) => setForm((c) => ({ ...c, whyMeTextEn: v }))}
+        multiline
+        rows={5}
+        required
+      />
 
       <h2 className="font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2">
         Pie de página — &quot;Conéctate conmigo&quot;
       </h2>
 
-      <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Texto de introducción</span>
-        <textarea
-          rows={3}
-          value={form.footerIntro}
-          onChange={(e) => setForm((c) => ({ ...c, footerIntro: e.target.value }))}
-          className={inputClass}
-          placeholder="Gracias por ser parte de este espacio..."
-        />
-      </label>
+      <BilingualTextField
+        label="Texto de introducción"
+        es={form.footerIntro}
+        en={form.footerIntroEn}
+        onEsChange={(v) => setForm((c) => ({ ...c, footerIntro: v }))}
+        onEnChange={(v) => setForm((c) => ({ ...c, footerIntroEn: v }))}
+        multiline
+        rows={3}
+      />
 
-      <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Mensaje de agradecimiento</span>
-        <textarea
-          rows={2}
-          value={form.supportMessage}
-          onChange={(e) => setForm((c) => ({ ...c, supportMessage: e.target.value }))}
-          className={inputClass}
-          placeholder="Cada like, comentario y compartida me ayuda a seguir creando contenido que te sirve."
-        />
-      </label>
+      <BilingualTextField
+        label="Mensaje de agradecimiento"
+        es={form.supportMessage}
+        en={form.supportMessageEn}
+        onEsChange={(v) => setForm((c) => ({ ...c, supportMessage: v }))}
+        onEnChange={(v) => setForm((c) => ({ ...c, supportMessageEn: v }))}
+        multiline
+        rows={2}
+      />
 
       <h2 className="font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2">
         ¿Hablamos?

@@ -6,7 +6,9 @@ export const dynamic = "force-dynamic";
 
 const faqUpdateSchema = z.object({
   question: z.string().min(1).optional(),
+  questionEn: z.string().nullable().optional().or(z.literal("")),
   answer: z.string().min(1).optional(),
+  answerEn: z.string().nullable().optional().or(z.literal("")),
   order: z.number().int().optional(),
 });
 
@@ -18,7 +20,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
-  const faqItem = await prisma.faqItem.update({ where: { id }, data: parsed.data });
+  const data = { ...parsed.data };
+  if (data.questionEn === "") data.questionEn = null;
+  if (data.answerEn === "") data.answerEn = null;
+
+  const faqItem = await prisma.faqItem.update({ where: { id }, data });
   return NextResponse.json(faqItem);
 }
 

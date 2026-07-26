@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Bodoni_Moda, Inter, Space_Mono, Parisienne } from "next/font/google";
+import { getLocale } from "@/lib/locale";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -45,13 +46,15 @@ export const metadata: Metadata = {
     "Portafolio de Cristal Amalia Flores Bello — creadora UGC en beauty, skincare, hair, books y lifestyle. Media kit, contenido real y paquetes de colaboración.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="es">
+    <html lang={locale}>
       <body
         className={`${fraunces.variable} ${bodoniModa.variable} ${inter.variable} ${spaceMono.variable} ${parisienne.variable} relative font-sans bg-cream text-ink antialiased`}
       >

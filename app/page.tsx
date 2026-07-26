@@ -34,6 +34,7 @@ import { getLocale } from "@/lib/locale";
 import { t, pick, pickArray } from "@/lib/i18n";
 import LocaleToggle from "@/components/LocaleToggle";
 import MotivationTrigger from "@/components/MotivationTrigger";
+import DesktopBrandMark from "@/components/DesktopBrandMark";
 import CreatorCredit from "@/components/CreatorCredit";
 
 export const dynamic = "force-dynamic";
@@ -157,9 +158,7 @@ export default async function HomePage() {
     <>
       <nav className="sticky top-0 z-40 hidden bg-cobalt text-cream md:block">
         <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3 px-sp-5 py-sp-4">
-          <span className="w-[92px] shrink-0 truncate font-bodoni italic font-bold uppercase text-xs sm:w-auto sm:text-sm">
-            {hero?.name ?? "Crislia"}
-          </span>
+          <DesktopBrandMark name={hero?.name?.split(" ")[0] ?? "Cristal"} locale={locale} />
           <div className="flex items-center gap-sp-5">
             <ul className="flex gap-sp-2 font-mono text-[10px] uppercase tracking-wide sm:gap-sp-5 sm:text-xs">
               {navLinks.map((link) => (

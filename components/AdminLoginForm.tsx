@@ -2,8 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { t, type Locale } from "@/lib/i18n";
 
-export default function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }) {
+export default function AdminLoginForm({
+  onSuccess,
+  locale = "es",
+}: {
+  onSuccess?: () => void;
+  locale?: Locale;
+}) {
+  const copy = t(locale).adminLogin;
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,15 +36,14 @@ export default function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }
       return;
     }
 
-    const data = await response.json().catch(() => ({}));
     setStatus("error");
-    setErrorMessage(data.error ?? "No se pudo iniciar sesión");
+    setErrorMessage(copy.error);
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-sp-4">
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Correo</span>
+        <span className="text-sm font-medium text-ink">{copy.correo}</span>
         <input
           type="email"
           required
@@ -48,7 +55,7 @@ export default function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }
       </label>
 
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Contraseña</span>
+        <span className="text-sm font-medium text-ink">{copy.contrasena}</span>
         <input
           type="password"
           required
@@ -70,7 +77,7 @@ export default function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }
         disabled={status === "loading"}
         className="mt-sp-2 rounded-sm bg-coral text-white font-medium py-sp-3 hover:opacity-90 disabled:opacity-60 transition"
       >
-        {status === "loading" ? "Entrando..." : "Entrar"}
+        {status === "loading" ? copy.entrando : copy.entrar}
       </button>
     </form>
   );

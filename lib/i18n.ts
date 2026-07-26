@@ -86,6 +86,16 @@ const es = {
   feed: { todos: "Todos", fotos: "Fotos" },
   mobileNav: { openMenu: "Abrir menú", closeMenu: "Cerrar menú" },
   localeToggle: { label: "EN", switchTo: "Ver en inglés" },
+  adminLogin: {
+    close: "Cerrar",
+    eyebrow: "Panel privado",
+    title: "Crislia — Admin",
+    correo: "Correo",
+    contrasena: "Contraseña",
+    entrar: "Entrar",
+    entrando: "Entrando...",
+    error: "Correo o contraseña incorrectos",
+  },
 };
 
 const en: typeof es = {
@@ -172,6 +182,16 @@ const en: typeof es = {
   feed: { todos: "All", fotos: "Photos" },
   mobileNav: { openMenu: "Open menu", closeMenu: "Close menu" },
   localeToggle: { label: "ES", switchTo: "View in Spanish" },
+  adminLogin: {
+    close: "Close",
+    eyebrow: "Private panel",
+    title: "Crislia — Admin",
+    correo: "Email",
+    contrasena: "Password",
+    entrar: "Log in",
+    entrando: "Logging in...",
+    error: "Incorrect email or password",
+  },
 };
 
 const dictionaries: Record<Locale, typeof es> = { es, en };

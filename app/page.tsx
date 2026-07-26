@@ -34,6 +34,7 @@ import { getLocale } from "@/lib/locale";
 import { t, pick, pickArray } from "@/lib/i18n";
 import LocaleToggle from "@/components/LocaleToggle";
 import MotivationTrigger from "@/components/MotivationTrigger";
+import CreatorCredit from "@/components/CreatorCredit";
 
 export const dynamic = "force-dynamic";
 
@@ -559,6 +560,15 @@ export default async function HomePage() {
           </div>
         </section>
       </main>
+
+      <footer className="border-t border-line bg-cream px-sp-5 py-sp-5">
+        <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-ink/40">
+            © {new Date().getFullYear()} {hero?.name ?? "Crislia"}
+          </p>
+          <CreatorCredit locale={locale} />
+        </div>
+      </footer>
     </>
   );
 }

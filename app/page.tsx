@@ -272,7 +272,15 @@ export default async function HomePage() {
                   {pick(locale, hero?.headlineSuffix ?? copy.hero.headlineSuffix, hero?.headlineSuffixEn)}
                 </h1>
 
-                <div className="mt-sp-5 h-px w-40 bg-gradient-to-r from-lime to-transparent" />
+                <MotivationTrigger
+                  locale={locale}
+                  ariaLabel="Decoración"
+                  className="mt-sp-5 flex items-center gap-sp-3"
+                >
+                  <span className="h-px w-14 bg-lime/60" />
+                  <SparkleIcon className="h-3 w-3 shrink-0 text-lime" />
+                  <span className="h-px w-24 bg-gradient-to-r from-lime/60 to-transparent" />
+                </MotivationTrigger>
 
                 <p className="mt-sp-5 font-sans leading-relaxed text-ink/75">
                   {renderHighlightedText(
@@ -280,20 +288,20 @@ export default async function HomePage() {
                   )}
                 </p>
 
-                <div className="mt-sp-6 flex flex-wrap gap-sp-4">
+                <div className="mt-sp-6 flex flex-wrap gap-sp-3">
                   <a
                     href={hero?.ctaPrimaryHref ?? "#contenido"}
-                    className="inline-flex items-center gap-sp-2 rounded-sm bg-cobalt px-sp-6 py-sp-3 font-medium text-cream hover:opacity-90 transition"
+                    className="inline-flex items-center gap-sp-2 rounded-full border border-cobalt px-sp-6 py-sp-3 font-medium text-cobalt hover:bg-cobalt hover:text-cream transition"
                   >
                     {pick(locale, hero?.ctaPrimaryLabel ?? copy.hero.ctaPrimary, hero?.ctaPrimaryLabelEn)}
                     <ArrowRightIcon className="h-4 w-4" />
                   </a>
                   <a
                     href={hero?.ctaSecondaryHref ?? "#contacto"}
-                    className="inline-flex items-center gap-sp-2 rounded-sm border border-cobalt px-sp-6 py-sp-3 font-medium text-cobalt hover:bg-cobalt hover:text-cream transition"
+                    className="inline-flex items-center gap-sp-2 rounded-full bg-cobalt px-sp-6 py-sp-3 font-medium text-cream hover:opacity-90 transition"
                   >
                     {pick(locale, hero?.ctaSecondaryLabel ?? copy.hero.ctaSecondary, hero?.ctaSecondaryLabelEn)}
-                    <ArrowRightIcon className="h-4 w-4" />
+                    <SparkleIcon className="h-4 w-4" />
                   </a>
                 </div>
 

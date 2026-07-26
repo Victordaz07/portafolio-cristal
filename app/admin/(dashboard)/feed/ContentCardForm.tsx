@@ -5,7 +5,22 @@ import type { Platform, ContentType } from "@/lib/embeds";
 import EmbedUrlInput from "@/components/admin/EmbedUrlInput";
 import VideoUploadField from "@/components/admin/VideoUploadField";
 import BilingualTextField from "@/components/admin/BilingualTextField";
+import { TikTokIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
+
+const PLATFORM_OPTIONS: Platform[] = ["tiktok", "instagram", "facebook"];
+
+const PLATFORM_NAMES: Record<Platform, string> = {
+  tiktok: "TikTok",
+  instagram: "Instagram",
+  facebook: "Facebook",
+};
+
+const PLATFORM_ICONS: Record<Platform, (props: { className?: string }) => JSX.Element> = {
+  tiktok: TikTokIcon,
+  instagram: InstagramIcon,
+  facebook: FacebookIcon,
+};
 
 export interface ContentCardFormValues {
   type: ContentType;
@@ -87,6 +102,40 @@ export default function ContentCardForm({
           setType(detected.inferredType);
         }}
       />
+
+      <div className="flex flex-col gap-sp-1 max-w-xs">
+        <span className="text-sm font-medium text-ink">
+          Ícono de plataforma que se muestra en la tarjeta
+        </span>
+        <div className="flex items-center gap-sp-3">
+          <select
+            required
+            value={platform ?? ""}
+            onChange={(e) => setPlatform(e.target.value as Platform)}
+            className={`${inputClass} flex-1`}
+          >
+            <option value="" disabled>
+              Elegir...
+            </option>
+            {PLATFORM_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {PLATFORM_NAMES[option]}
+              </option>
+            ))}
+          </select>
+          {platform && (
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-line">
+              {(() => {
+                const PlatformIcon = PLATFORM_ICONS[platform];
+                return <PlatformIcon className="h-4 w-4" />;
+              })()}
+            </span>
+          )}
+        </div>
+        <span className="text-xs text-ink/50">
+          Se detecta automáticamente al pegar la URL, pero puedes cambiarlo aquí si el ícono no es el correcto.
+        </span>
+      </div>
 
       {platform && !type && (
         <label className="flex flex-col gap-sp-1 max-w-xs">

@@ -10,6 +10,7 @@ const contentCardSchema = z
     platform: z.enum(["tiktok", "instagram", "facebook"]),
     postUrl: z.string().url().optional().or(z.literal("")),
     videoUrl: z.string().url().optional().or(z.literal("")),
+    photoUrl: z.string().url().optional().or(z.literal("")),
     caption: z.string().min(1),
     captionEn: z.string().optional().or(z.literal("")),
     category: z.string().min(1),
@@ -19,8 +20,8 @@ const contentCardSchema = z
     statSecondary: z.string().optional().or(z.literal("")),
     statSecondaryEn: z.string().optional().or(z.literal("")),
   })
-  .refine((data) => data.postUrl || data.videoUrl, {
-    message: "Debes indicar la URL del post o subir un video propio",
+  .refine((data) => data.postUrl || data.videoUrl || data.photoUrl, {
+    message: "Debes indicar la URL del post o subir un video/foto propio",
     path: ["postUrl"],
   });
 
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
       ...parsed.data,
       postUrl: parsed.data.postUrl || null,
       videoUrl: parsed.data.videoUrl || null,
+      photoUrl: parsed.data.photoUrl || null,
       captionEn: parsed.data.captionEn || null,
       categoryEn: parsed.data.categoryEn || null,
       statPrimary: parsed.data.statPrimary || null,

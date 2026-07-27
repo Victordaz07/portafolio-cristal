@@ -10,6 +10,7 @@ const contentCardUpdateSchema = z
     platform: z.enum(["tiktok", "instagram", "facebook"]).optional(),
     postUrl: z.string().url().nullable().optional().or(z.literal("")),
     videoUrl: z.string().url().nullable().optional().or(z.literal("")),
+    photoUrl: z.string().url().nullable().optional().or(z.literal("")),
     caption: z.string().min(1).optional(),
     captionEn: z.string().nullable().optional().or(z.literal("")),
     category: z.string().min(1).optional(),
@@ -20,10 +21,19 @@ const contentCardUpdateSchema = z
     statSecondaryEn: z.string().nullable().optional().or(z.literal("")),
     order: z.number().int().optional(),
   })
-  .refine((data) => data.postUrl === undefined || data.videoUrl === undefined || data.postUrl || data.videoUrl, {
-    message: "Debes indicar la URL del post o subir un video propio",
-    path: ["postUrl"],
-  });
+  .refine(
+    (data) =>
+      data.postUrl === undefined ||
+      data.videoUrl === undefined ||
+      data.photoUrl === undefined ||
+      data.postUrl ||
+      data.videoUrl ||
+      data.photoUrl,
+    {
+      message: "Debes indicar la URL del post o subir un video/foto propio",
+      path: ["postUrl"],
+    }
+  );
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -36,6 +46,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const data = { ...parsed.data };
   if (data.postUrl === "") data.postUrl = null;
   if (data.videoUrl === "") data.videoUrl = null;
+  if (data.photoUrl === "") data.photoUrl = null;
   if (data.captionEn === "") data.captionEn = null;
   if (data.categoryEn === "") data.categoryEn = null;
   if (data.statPrimary === "") data.statPrimary = null;

@@ -8,6 +8,7 @@ export default function EmbedLightbox({
   platform,
   url,
   videoUrl,
+  photoUrl,
   type,
   caption,
   onClose,
@@ -15,6 +16,7 @@ export default function EmbedLightbox({
   platform: Platform;
   url: string;
   videoUrl?: string | null;
+  photoUrl?: string | null;
   type: ContentType;
   caption: string;
   onClose: () => void;
@@ -62,6 +64,13 @@ export default function EmbedLightbox({
             muted
             playsInline
             className="mx-auto max-h-[75vh] w-full rounded-md"
+          />
+        ) : photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photoUrl}
+            alt={caption}
+            className="mx-auto max-h-[75vh] w-full rounded-md object-contain"
           />
         ) : (
           <PlatformEmbed platform={platform} url={url} type={type} />

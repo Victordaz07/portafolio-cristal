@@ -12,9 +12,11 @@ export default async function AdminFeedPage() {
   }, {});
 
   const thumbnails = await Promise.all(
-    cards.map((card) =>
-      card.postUrl ? getThumbnailUrl(card.platform as Platform, card.postUrl) : Promise.resolve(null)
-    )
+    cards.map((card) => {
+      if (card.photoUrl) return Promise.resolve(card.photoUrl);
+      if (card.postUrl) return getThumbnailUrl(card.platform as Platform, card.postUrl);
+      return Promise.resolve(null);
+    })
   );
   const thumbnailsById = Object.fromEntries(
     cards.map((card, index) => [card.id, thumbnails[index]])

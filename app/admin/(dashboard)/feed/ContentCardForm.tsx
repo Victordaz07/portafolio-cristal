@@ -137,10 +137,10 @@ export default function ContentCardForm({
         </span>
       </div>
 
-      {platform && !type && (
+      {!type && (
         <label className="flex flex-col gap-sp-1 max-w-xs">
           <span className="text-sm font-medium text-ink">
-            No pude detectar el tipo de contenido — selecciónalo:
+            Tipo de contenido {postUrl ? "— no pude detectarlo, selecciónalo:" : ""}
           </span>
           <select
             required

@@ -3,17 +3,20 @@
 import { useState } from "react";
 import { useToast } from "./ToastContext";
 
-export default function VideoUploadField({
+export default function MediaUploadField({
   label,
   value,
   onChange,
+  kind,
 }: {
   label: string;
   value: string;
   onChange: (url: string) => void;
+  kind: "video" | "photo";
 }) {
   const { showToast } = useToast();
   const [uploading, setUploading] = useState(false);
+  const noun = kind === "video" ? "el video" : "la foto";
 
   async function handleFile(file: File) {
     setUploading(true);
@@ -24,7 +27,7 @@ export default function VideoUploadField({
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      showToast("error", data.error ?? "No se pudo subir el video");
+      showToast("error", data.error ?? `No se pudo subir ${noun}`);
       setUploading(false);
       return;
     }
@@ -36,12 +39,16 @@ export default function VideoUploadField({
   return (
     <div className="flex flex-col gap-sp-2">
       <span className="text-sm font-medium text-ink">{label}</span>
-      {value && (
-        <video src={value} controls muted className="h-40 w-auto rounded-sm object-cover" />
-      )}
+      {value &&
+        (kind === "video" ? (
+          <video src={value} controls muted className="h-40 w-auto rounded-sm object-cover" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={value} alt="" className="h-40 w-auto rounded-sm object-cover" />
+        ))}
       <input
         type="file"
-        accept="video/*"
+        accept={kind === "video" ? "video/*" : "image/*"}
         disabled={uploading}
         onChange={(event) => {
           const file = event.target.files?.[0];
@@ -56,7 +63,7 @@ export default function VideoUploadField({
           onClick={() => onChange("")}
           className="self-start text-xs text-red-600 hover:underline"
         >
-          Quitar video
+          Quitar {kind === "video" ? "video" : "foto"}
         </button>
       )}
     </div>

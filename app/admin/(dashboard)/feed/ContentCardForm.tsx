@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Platform, ContentType } from "@/lib/embeds";
 import EmbedUrlInput from "@/components/admin/EmbedUrlInput";
-import VideoUploadField from "@/components/admin/VideoUploadField";
+import MediaUploadField from "@/components/admin/MediaUploadField";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { TikTokIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
@@ -27,6 +27,7 @@ export interface ContentCardFormValues {
   platform: Platform;
   postUrl: string;
   videoUrl: string;
+  photoUrl: string;
   caption: string;
   captionEn: string;
   category: string;
@@ -54,6 +55,7 @@ export default function ContentCardForm({
 }) {
   const [postUrl, setPostUrl] = useState(initial?.postUrl ?? "");
   const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? "");
+  const [photoUrl, setPhotoUrl] = useState(initial?.photoUrl ?? "");
   const [platform, setPlatform] = useState<Platform | null>(initial?.platform ?? null);
   const [type, setType] = useState<ContentType | null>(initial?.type ?? null);
   const [caption, setCaption] = useState(initial?.caption ?? "");
@@ -71,13 +73,14 @@ export default function ContentCardForm({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!platform || !type || (!postUrl && !videoUrl)) return;
+    if (!platform || !type || (!postUrl && !videoUrl && !photoUrl)) return;
     setSaving(true);
     await onSubmit({
       type,
       platform,
       postUrl,
       videoUrl,
+      photoUrl,
       caption,
       captionEn,
       category,
@@ -158,7 +161,8 @@ export default function ContentCardForm({
       )}
 
       {type === "video" && (
-        <VideoUploadField
+        <MediaUploadField
+          kind="video"
           label={
             postUrl
               ? "Video propio (opcional): súbelo aquí para que se reproduzca directo en el sitio, sin depender del embed de la plataforma"
@@ -166,6 +170,19 @@ export default function ContentCardForm({
           }
           value={videoUrl}
           onChange={setVideoUrl}
+        />
+      )}
+
+      {type === "photo" && (
+        <MediaUploadField
+          kind="photo"
+          label={
+            postUrl
+              ? "Foto propia (opcional): súbela aquí para que se muestre directo en el sitio, sin depender del embed de la plataforma"
+              : "Sube la foto: como no hay URL de post, esto es obligatorio para que la tarjeta tenga contenido"
+          }
+          value={photoUrl}
+          onChange={setPhotoUrl}
         />
       )}
 
@@ -253,7 +270,7 @@ export default function ContentCardForm({
       <div className="flex gap-sp-3">
         <button
           type="submit"
-          disabled={saving || !platform || !type || !category || (!postUrl && !videoUrl)}
+          disabled={saving || !platform || !type || !category || (!postUrl && !videoUrl && !photoUrl)}
           className={primaryButtonClass}
         >
           {saving ? "Guardando..." : submitLabel}

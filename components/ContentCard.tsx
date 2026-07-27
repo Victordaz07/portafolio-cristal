@@ -16,6 +16,7 @@ export interface ContentCardProps {
   platform: Platform;
   postUrl: string;
   videoUrl?: string | null;
+  photoUrl?: string | null;
   caption: string;
   category: string;
   statPrimary?: string | null;
@@ -28,6 +29,7 @@ export default function ContentCard({
   platform,
   postUrl,
   videoUrl,
+  photoUrl,
   caption,
   category,
   statPrimary,
@@ -96,6 +98,7 @@ export default function ContentCard({
           platform={platform}
           url={postUrl}
           videoUrl={videoUrl}
+          photoUrl={photoUrl}
           type={type}
           caption={caption}
           onClose={() => setOpen(false)}

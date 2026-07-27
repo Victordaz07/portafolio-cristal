@@ -75,9 +75,11 @@ export default async function HomePage() {
   ]);
 
   const feedThumbnails = await Promise.all(
-    contentCards.map((card) =>
-      card.postUrl ? getThumbnailUrl(card.platform as Platform, card.postUrl) : Promise.resolve(null)
-    )
+    contentCards.map((card) => {
+      if (card.photoUrl) return Promise.resolve(card.photoUrl);
+      if (card.postUrl) return getThumbnailUrl(card.platform as Platform, card.postUrl);
+      return Promise.resolve(null);
+    })
   );
 
   const feedCards: ContentCardProps[] = contentCards.map((card, index) => ({
@@ -85,6 +87,7 @@ export default async function HomePage() {
     platform: card.platform as Platform,
     postUrl: card.postUrl ?? "",
     videoUrl: card.videoUrl,
+    photoUrl: card.photoUrl,
     caption: pick(locale, card.caption, card.captionEn),
     category: pick(locale, card.category, card.categoryEn),
     statPrimary: pick(locale, card.statPrimary ?? "", card.statPrimaryEn) || null,

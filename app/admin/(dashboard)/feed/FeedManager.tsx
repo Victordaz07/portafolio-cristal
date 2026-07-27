@@ -99,6 +99,7 @@ export default function FeedManager({
                   platform: card.platform as Platform,
                   postUrl: card.postUrl ?? "",
                   videoUrl: card.videoUrl ?? "",
+                  photoUrl: card.photoUrl ?? "",
                   caption: card.caption,
                   captionEn: card.captionEn ?? "",
                   category: card.category,

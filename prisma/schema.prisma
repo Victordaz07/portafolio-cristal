@@ -50,6 +50,7 @@ model ContentCard {
   platform        String // "tiktok" | "instagram" | "facebook"
   postUrl         String?
   videoUrl        String?
+  photoUrl        String?
   caption         String
   captionEn       String?
   category        String

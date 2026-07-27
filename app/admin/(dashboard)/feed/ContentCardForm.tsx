@@ -71,7 +71,7 @@ export default function ContentCardForm({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!platform || !type) return;
+    if (!platform || !type || (!postUrl && !videoUrl)) return;
     setSaving(true);
     await onSubmit({
       type,
@@ -159,7 +159,11 @@ export default function ContentCardForm({
 
       {type === "video" && (
         <VideoUploadField
-          label="Video propio (opcional): súbelo aquí para que se reproduzca directo en el sitio, sin depender del embed de la plataforma"
+          label={
+            postUrl
+              ? "Video propio (opcional): súbelo aquí para que se reproduzca directo en el sitio, sin depender del embed de la plataforma"
+              : "Sube el video: como no hay URL de post, esto es obligatorio para que la tarjeta tenga contenido"
+          }
           value={videoUrl}
           onChange={setVideoUrl}
         />
@@ -249,7 +253,7 @@ export default function ContentCardForm({
       <div className="flex gap-sp-3">
         <button
           type="submit"
-          disabled={saving || !platform || !type || !category}
+          disabled={saving || !platform || !type || !category || (!postUrl && !videoUrl)}
           className={primaryButtonClass}
         >
           {saving ? "Guardando..." : submitLabel}

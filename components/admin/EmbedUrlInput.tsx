@@ -28,7 +28,6 @@ export default function EmbedUrlInput({
       <span className="text-sm font-medium text-ink">URL del post</span>
       <div className="flex flex-wrap items-center gap-sp-3">
         <input
-          required
           type="url"
           value={url}
           onChange={(e) => handleChange(e.target.value)}
@@ -49,6 +48,10 @@ export default function EmbedUrlInput({
           Cargar preview
         </button>
       </div>
+
+      <p className="text-xs text-ink/50">
+        Puedes dejarlo en blanco si vas a subir tu propio video más abajo, sin depender de una publicación existente.
+      </p>
 
       {!platform && url && (
         <p className="text-xs text-red-600">

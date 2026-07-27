@@ -48,7 +48,7 @@ model ContentCard {
   id              String   @id @default(cuid())
   type            String // "video" | "photo"
   platform        String // "tiktok" | "instagram" | "facebook"
-  postUrl         String
+  postUrl         String?
   videoUrl        String?
   caption         String
   captionEn       String?

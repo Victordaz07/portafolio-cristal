@@ -75,13 +75,15 @@ export default async function HomePage() {
   ]);
 
   const feedThumbnails = await Promise.all(
-    contentCards.map((card) => getThumbnailUrl(card.platform as Platform, card.postUrl))
+    contentCards.map((card) =>
+      card.postUrl ? getThumbnailUrl(card.platform as Platform, card.postUrl) : Promise.resolve(null)
+    )
   );
 
   const feedCards: ContentCardProps[] = contentCards.map((card, index) => ({
     type: card.type as ContentType,
     platform: card.platform as Platform,
-    postUrl: card.postUrl,
+    postUrl: card.postUrl ?? "",
     videoUrl: card.videoUrl,
     caption: pick(locale, card.caption, card.captionEn),
     category: pick(locale, card.category, card.categoryEn),

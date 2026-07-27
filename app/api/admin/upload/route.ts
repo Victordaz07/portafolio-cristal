@@ -1,26 +1,32 @@
 import { NextResponse } from "next/server";
-import { put } from "@vercel/blob";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return NextResponse.json(
-      { error: "Falta configurar BLOB_READ_WRITE_TOKEN para subir imágenes." },
+      { error: "Falta configurar BLOB_READ_WRITE_TOKEN para subir archivos." },
       { status: 501 }
     );
   }
 
-  const formData = await request.formData();
-  const file = formData.get("file");
+  const body = (await request.json()) as HandleUploadBody;
 
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: "No se recibió ningún archivo" }, { status: 400 });
+  try {
+    const jsonResponse = await handleUpload({
+      body,
+      request,
+      onBeforeGenerateToken: async () => ({
+        addRandomSuffix: true,
+      }),
+    });
+
+    return NextResponse.json(jsonResponse);
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "No se pudo subir el archivo" },
+      { status: 400 }
+    );
   }
-
-  const blob = await put(`admin/${Date.now()}-${file.name}`, file, {
-    access: "public",
-  });
-
-  return NextResponse.json({ url: blob.url });
 }

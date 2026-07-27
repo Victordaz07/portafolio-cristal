@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { upload } from "@vercel/blob/client";
 import { useToast } from "./ToastContext";
 
 export default function MediaUploadField({
@@ -20,20 +21,17 @@ export default function MediaUploadField({
 
   async function handleFile(file: File) {
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("/api/admin/upload", { method: "POST", body: formData });
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      showToast("error", data.error ?? `No se pudo subir ${noun}`);
+    try {
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/admin/upload",
+      });
+      onChange(blob.url);
+    } catch (error) {
+      showToast("error", error instanceof Error ? error.message : `No se pudo subir ${noun}`);
+    } finally {
       setUploading(false);
-      return;
     }
-
-    onChange(data.url);
-    setUploading(false);
   }
 
   return (

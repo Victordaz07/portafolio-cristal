@@ -4,6 +4,16 @@ import { useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { useToast } from "./ToastContext";
 
+const DIACRITICS_PATTERN = new RegExp("[\\u0300-\\u036f]", "g");
+
+function sanitizePathname(fileName: string) {
+  const sanitized = fileName
+    .normalize("NFD")
+    .replace(DIACRITICS_PATTERN, "")
+    .replace(/[^a-zA-Z0-9._-]/g, "-");
+  return `site-images/${Date.now()}-${sanitized}`;
+}
+
 export default function ImageUploadField({
   label,
   value,
@@ -19,9 +29,10 @@ export default function ImageUploadField({
   async function handleFile(file: File) {
     setUploading(true);
     try {
-      const blob = await upload(file.name, file, {
+      const blob = await upload(sanitizePathname(file.name), file, {
         access: "public",
         handleUploadUrl: "/api/admin/upload",
+        clientPayload: JSON.stringify({ kind: "photo" }),
       });
       onChange(blob.url);
     } catch (error) {

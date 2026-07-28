@@ -4,6 +4,16 @@ import { useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { useToast } from "./ToastContext";
 
+const DIACRITICS_PATTERN = new RegExp("[\\u0300-\\u036f]", "g");
+
+function sanitizePathname(kind: "video" | "photo", fileName: string) {
+  const sanitized = fileName
+    .normalize("NFD")
+    .replace(DIACRITICS_PATTERN, "")
+    .replace(/[^a-zA-Z0-9._-]/g, "-");
+  return `content-cards/${kind}/${Date.now()}-${sanitized}`;
+}
+
 export default function MediaUploadField({
   label,
   value,
@@ -17,14 +27,19 @@ export default function MediaUploadField({
 }) {
   const { showToast } = useToast();
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const noun = kind === "video" ? "el video" : "la foto";
 
   async function handleFile(file: File) {
     setUploading(true);
+    setProgress(0);
     try {
-      const blob = await upload(file.name, file, {
+      const blob = await upload(sanitizePathname(kind, file.name), file, {
         access: "public",
         handleUploadUrl: "/api/admin/upload",
+        multipart: file.size > 10 * 1024 * 1024,
+        clientPayload: JSON.stringify({ kind }),
+        onUploadProgress: (event) => setProgress(Math.round(event.percentage)),
       });
       onChange(blob.url);
     } catch (error) {
@@ -54,7 +69,7 @@ export default function MediaUploadField({
         }}
         className="text-sm text-ink/70"
       />
-      {uploading && <span className="text-xs text-moss">Subiendo...</span>}
+      {uploading && <span className="text-xs text-moss">Subiendo... {progress}%</span>}
       {value && (
         <button
           type="button"

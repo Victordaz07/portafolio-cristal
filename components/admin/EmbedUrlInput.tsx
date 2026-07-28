@@ -5,6 +5,17 @@ import { parseEmbedUrl, platformLabel, type Platform, type ContentType } from "@
 import PlatformEmbed from "@/components/embeds/PlatformEmbed";
 import { inputClass, secondaryButtonClass } from "@/lib/admin-ui";
 
+function isUnresolvedTikTokShortLink(rawUrl: string): boolean {
+  try {
+    const parsed = new URL(rawUrl);
+    const host = parsed.hostname.replace(/^www\./, "");
+    if (!(host === "tiktok.com" || host.endsWith(".tiktok.com"))) return false;
+    return !/\/video\/\d+/.test(parsed.pathname);
+  } catch {
+    return false;
+  }
+}
+
 export default function EmbedUrlInput({
   url,
   onUrlChange,
@@ -17,10 +28,27 @@ export default function EmbedUrlInput({
   type: ContentType | null;
 }) {
   const [showPreview, setShowPreview] = useState(false);
+  const [resolving, setResolving] = useState(false);
 
   function handleChange(value: string) {
     setShowPreview(false);
     onUrlChange(value, parseEmbedUrl(value));
+  }
+
+  async function handleLoadPreview() {
+    if (isUnresolvedTikTokShortLink(url)) {
+      setResolving(true);
+      try {
+        const response = await fetch(`/api/admin/resolve-url?url=${encodeURIComponent(url)}`);
+        const data = await response.json();
+        if (response.ok && data.resolvedUrl) {
+          onUrlChange(data.resolvedUrl, parseEmbedUrl(data.resolvedUrl));
+        }
+      } finally {
+        setResolving(false);
+      }
+    }
+    setShowPreview(true);
   }
 
   return (
@@ -41,11 +69,11 @@ export default function EmbedUrlInput({
         )}
         <button
           type="button"
-          disabled={!platform || !type || !url}
-          onClick={() => setShowPreview(true)}
+          disabled={!platform || !type || !url || resolving}
+          onClick={handleLoadPreview}
           className={secondaryButtonClass}
         >
-          Cargar preview
+          {resolving ? "Resolviendo enlace..." : "Cargar preview"}
         </button>
       </div>
 

@@ -44,10 +44,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         }
 
         return {
-          allowedContentTypes:
-            kind === "video"
-              ? ["video/mp4", "video/webm", "video/quicktime"]
-              : ["image/jpeg", "image/png", "image/webp", "image/avif"],
+          allowedContentTypes: kind === "video" ? ["video/*"] : ["image/*"],
           maximumSizeInBytes: kind === "video" ? MAX_VIDEO_BYTES : MAX_PHOTO_BYTES,
           addRandomSuffix: true,
         };

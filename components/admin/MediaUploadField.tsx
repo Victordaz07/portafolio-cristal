@@ -37,7 +37,6 @@ export default function MediaUploadField({
       const blob = await upload(sanitizePathname(kind, file.name), file, {
         access: "public",
         handleUploadUrl: "/api/admin/upload",
-        multipart: file.size > 10 * 1024 * 1024,
         clientPayload: JSON.stringify({ kind }),
         onUploadProgress: (event) => setProgress(Math.round(event.percentage)),
       });

@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import { MAX_VIDEO_BYTES, MAX_PHOTO_BYTES } from "@/lib/upload-limits";
 
 export const dynamic = "force-dynamic";
-
-const MAX_VIDEO_BYTES = 250 * 1024 * 1024;
-const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
 
 export async function GET() {
   return NextResponse.json({

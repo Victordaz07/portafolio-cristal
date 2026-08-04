@@ -11,16 +11,18 @@ import Badge from "@/components/admin/Badge";
 import Card from "@/components/admin/Card";
 import { swapOrder } from "@/lib/reorder";
 import { rowCardClass, accentLinkClass, dangerLinkClass, secondaryButtonClass } from "@/lib/admin-ui";
-import ContentCardForm, { type ContentCardFormValues } from "./ContentCardForm";
+import ContentCardForm, { type ContentCardFormValues, type BrandOption } from "./ContentCardForm";
 
 const API_BASE = "/api/admin/content-cards";
 
 export default function FeedManager({
   initialCards,
   thumbnailsById = {},
+  brands,
 }: {
   initialCards: ContentCard[];
   thumbnailsById?: Record<string, string | null>;
+  brands: BrandOption[];
 }) {
   const { showToast } = useToast();
   const [cards, setCards] = useState(initialCards);
@@ -108,8 +110,10 @@ export default function FeedManager({
                   statPrimaryEn: card.statPrimaryEn ?? "",
                   statSecondary: card.statSecondary ?? "",
                   statSecondaryEn: card.statSecondaryEn ?? "",
+                  brandId: card.brandId ?? "",
                 }}
                 existingCategories={categories}
+                existingBrands={brands}
                 submitLabel="Guardar cambios"
                 onSubmit={(values) => handleUpdate(card.id, values)}
                 onCancel={() => setEditingId(null)}
@@ -145,6 +149,8 @@ export default function FeedManager({
                   <Badge>{card.category}</Badge>
                   <span className="font-mono text-xs uppercase tracking-wide text-ink/50">
                     {card.type} · {platformLabel(card.platform as Platform)}
+                    {card.brandId &&
+                      ` · ${brands.find((brand) => brand.id === card.brandId)?.name ?? "marca"}`}
                   </span>
                 </div>
               </div>
@@ -170,6 +176,7 @@ export default function FeedManager({
           <Card>
             <ContentCardForm
               existingCategories={categories}
+              existingBrands={brands}
               submitLabel="Agregar tarjeta"
               onSubmit={handleCreate}
               onCancel={() => setShowCreate(false)}

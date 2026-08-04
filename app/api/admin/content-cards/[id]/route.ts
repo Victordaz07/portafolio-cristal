@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 const contentCardUpdateSchema = z
   .object({
     type: z.enum(["video", "photo"]).optional(),
-    platform: z.enum(["tiktok", "instagram", "facebook"]).optional(),
+    platform: z.enum(["tiktok", "instagram", "facebook", "ugc"]).optional(),
     postUrl: z.string().url().nullable().optional().or(z.literal("")),
     videoUrl: z.string().url().nullable().optional().or(z.literal("")),
     photoUrl: z.string().url().nullable().optional().or(z.literal("")),
@@ -19,6 +19,7 @@ const contentCardUpdateSchema = z
     statPrimaryEn: z.string().nullable().optional().or(z.literal("")),
     statSecondary: z.string().nullable().optional().or(z.literal("")),
     statSecondaryEn: z.string().nullable().optional().or(z.literal("")),
+    brandId: z.string().nullable().optional().or(z.literal("")),
     order: z.number().int().optional(),
   })
   .refine(
@@ -53,6 +54,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (data.statPrimaryEn === "") data.statPrimaryEn = null;
   if (data.statSecondary === "") data.statSecondary = null;
   if (data.statSecondaryEn === "") data.statSecondaryEn = null;
+  if (data.brandId === "") data.brandId = null;
 
   const card = await prisma.contentCard.update({ where: { id }, data });
   return NextResponse.json(card);

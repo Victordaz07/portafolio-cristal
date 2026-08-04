@@ -37,7 +37,7 @@ Copia `.env.example` a `.env` y completa:
 | `AUTH_SECRET` | Secreto aleatorio para firmar la cookie de sesión. |
 | `RESEND_API_KEY` | Opcional. Si falta, el formulario de contacto sigue guardando el mensaje en la base de datos pero no envía el correo (queda como TODO en `app/api/contact/route.ts`). |
 | `NEXT_PUBLIC_FB_APP_ID` | Necesario para mostrar embeds de Facebook. |
-| `BLOB_READ_WRITE_TOKEN` | Necesario para subir fotos, videos y logos de marcas. |
+| `PUBLIC_BLOB_READ_WRITE_TOKEN` | Necesario para subir fotos, videos y logos de marcas. Debe ser el token de un Blob Store con acceso **público** (la app siempre sube con `access: "public"`). |
 
 **Importante:** Next.js expande `$VAR` dentro de los archivos `.env`. El hash
 de bcrypt empieza con `$2b$...`, así que hay que escapar cada `$` como `\$`

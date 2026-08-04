@@ -13,9 +13,13 @@ editar absolutamente todo el contenido sin tocar código.
 - Tailwind CSS (tokens de diseño en `tailwind.config.ts`)
 - Prisma + Postgres (Neon)
 - Auth de admin: cookie de sesión firmada (`jose`) + `bcryptjs`
-- Subida de imágenes/video: Vercel Blob
+- Subida de imágenes/video: Vercel Blob (requiere un store con acceso **público**, ver nota abajo)
 - Envío de correo del formulario de contacto: Resend (opcional)
 - Embeds reales de TikTok / Instagram / Facebook, con opción de subir video propio
+- Feed con dos tipos de tarjeta: post de red social, o foto UGC propia sin red social (con marca opcional)
+- Miniatura de tarjetas: automática por oEmbed en TikTok; para Instagram/Facebook se
+  intenta traer el `og:image` del post (`/api/admin/resolve-thumbnail`) con opción de
+  subir una manualmente si falla
 - i18n propio (sin librería externa): cookie `locale` + diccionario en `lib/i18n.ts`
 
 ## Requisitos previos
@@ -112,8 +116,8 @@ Secciones (cada una con su Manager + formulario):
 | --- | --- |
 | Hero | Portada: nombre, título, descripción, foto, CTAs. Incluye **vista previa en vivo** mientras se edita. |
 | Media kit | Las cifras junto al Hero (seguidores, colaboraciones, calificación). |
-| Feed | Tarjetas de fotos/videos. Ver "el problema conocido con TikTok" abajo. |
-| Marcas | Carrusel de logos, con estado activo/inactivo. |
+| Feed | Tarjetas de fotos/videos, en dos modos: "Post de red social" o "Foto UGC de portafolio" (foto propia sin red social, con marca opcional). Ver "el problema conocido con TikTok" abajo. |
+| Marcas | Carrusel de logos, con estado activo/inactivo. También se pueden crear desde el formulario del Feed (modo Foto UGC). |
 | Reseñas destacadas | Reseñas de producto con calificación en estrellas. |
 | Cómo trabajo | Servicios ofrecidos, con ícono. |
 | Paquetes | Paquetes de colaboración (sin precios). |
@@ -149,6 +153,25 @@ Notas útiles:
    `DATABASE_URL="..." npx prisma migrate deploy`.
 4. (Opcional) corre el seed contra producción con
    `DATABASE_URL="..." npm run db:seed`.
+
+### Problema conocido: el Blob Store debe ser público
+
+Vercel Blob crea el store con un nivel de acceso fijo (`public` o `private`)
+elegido **al crearlo** — no es un ajuste que se pueda cambiar después desde
+la configuración del store. Esta app siempre sube archivos con
+`access: "public"` (las fotos/videos se muestran en el sitio público sin
+login), así que si el store conectado al proyecto quedó creado como
+`private`, **toda** subida de archivo falla con un 400 que el navegador
+reporta como bloqueado por CORS (el mensaje real, solo visible en un `put()`
+hecho del lado del servidor, es *"Cannot use public access on a private
+store"*).
+
+La solución es crear/conectar un Blob Store con acceso **Public** desde
+Vercel (dashboard → proyecto → Storage → Create Database → Blob → Access:
+Public) y usar el `PUBLIC_BLOB_READ_WRITE_TOKEN` que genera esa conexión
+(ver tabla de variables de entorno arriba) — no el `BLOB_READ_WRITE_TOKEN`
+que Vercel crea por defecto la primera vez, que puede quedar apuntando al
+store privado.
 
 ### Problema conocido en el deploy: `P1002` (advisory lock de Postgres)
 

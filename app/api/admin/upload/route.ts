@@ -5,7 +5,7 @@ import { MAX_VIDEO_BYTES, MAX_PHOTO_BYTES } from "@/lib/upload-limits";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const rawToken = process.env.BLOB_READ_WRITE_TOKEN;
+  const rawToken = process.env.PUBLIC_BLOB_READ_WRITE_TOKEN;
   return NextResponse.json({
     route: "ok",
     blobConfigured: Boolean(rawToken),
@@ -16,10 +16,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  const token = process.env.PUBLIC_BLOB_READ_WRITE_TOKEN?.trim();
 
   if (!token) {
-    console.error("BLOB_READ_WRITE_TOKEN no está disponible en este deployment.");
+    console.error("PUBLIC_BLOB_READ_WRITE_TOKEN no está disponible en este deployment.");
     return NextResponse.json(
       { error: "El almacenamiento no está configurado en este deployment." },
       { status: 500 }

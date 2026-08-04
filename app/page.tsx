@@ -64,7 +64,7 @@ export default async function HomePage() {
   ] = await Promise.all([
     prisma.hero.findFirst(),
     prisma.stat.findMany({ orderBy: { order: "asc" } }),
-    prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
+    prisma.contentCard.findMany({ orderBy: { order: "asc" }, include: { brand: true } }),
     prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
     prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
     prisma.siteSettings.findFirst(),
@@ -93,6 +93,8 @@ export default async function HomePage() {
     statPrimary: pick(locale, card.statPrimary ?? "", card.statPrimaryEn) || null,
     statSecondary: pick(locale, card.statSecondary ?? "", card.statSecondaryEn) || null,
     thumbnailUrl: feedThumbnails[index],
+    brandName: card.brand?.name ?? null,
+    brandLogoUrl: card.brand?.logoUrl ?? null,
   }));
 
   const hablamosRows = (

@@ -21,5 +21,7 @@ export default function PlatformEmbed({
       return <InstagramEmbed key={url} url={url} />;
     case "facebook":
       return <FacebookEmbed key={url} url={url} isVideo={type === "video"} />;
+    case "ugc":
+      return null;
   }
 }

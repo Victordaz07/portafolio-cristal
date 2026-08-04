@@ -8,15 +8,17 @@ import BilingualTextField from "@/components/admin/BilingualTextField";
 import { TikTokIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 
-const PLATFORM_OPTIONS: Platform[] = ["tiktok", "instagram", "facebook"];
+type SocialPlatform = Exclude<Platform, "ugc">;
 
-const PLATFORM_NAMES: Record<Platform, string> = {
+const PLATFORM_OPTIONS: SocialPlatform[] = ["tiktok", "instagram", "facebook"];
+
+const PLATFORM_NAMES: Record<SocialPlatform, string> = {
   tiktok: "TikTok",
   instagram: "Instagram",
   facebook: "Facebook",
 };
 
-const PLATFORM_ICONS: Record<Platform, (props: { className?: string }) => JSX.Element> = {
+const PLATFORM_ICONS: Record<SocialPlatform, (props: { className?: string }) => JSX.Element> = {
   tiktok: TikTokIcon,
   instagram: InstagramIcon,
   facebook: FacebookIcon,
@@ -36,6 +38,13 @@ export interface ContentCardFormValues {
   statPrimaryEn: string;
   statSecondary: string;
   statSecondaryEn: string;
+  brandId: string;
+}
+
+export interface BrandOption {
+  id: string;
+  name: string;
+  logoUrl: string | null;
 }
 
 const NEW_CATEGORY_VALUE = "__new__";
@@ -43,21 +52,29 @@ const NEW_CATEGORY_VALUE = "__new__";
 export default function ContentCardForm({
   initial,
   existingCategories,
+  existingBrands,
   submitLabel,
   onSubmit,
   onCancel,
 }: {
   initial?: ContentCardFormValues;
   existingCategories: string[];
+  existingBrands: BrandOption[];
   submitLabel: string;
   onSubmit: (values: ContentCardFormValues) => Promise<void>;
   onCancel?: () => void;
 }) {
+  const [mode, setMode] = useState<"social" | "ugc">(initial?.platform === "ugc" ? "ugc" : "social");
   const [postUrl, setPostUrl] = useState(initial?.postUrl ?? "");
   const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? "");
   const [photoUrl, setPhotoUrl] = useState(initial?.photoUrl ?? "");
-  const [platform, setPlatform] = useState<Platform | null>(initial?.platform ?? null);
-  const [type, setType] = useState<ContentType | null>(initial?.type ?? null);
+  const [platform, setPlatform] = useState<Platform | null>(
+    initial?.platform && initial.platform !== "ugc" ? initial.platform : null
+  );
+  const [type, setType] = useState<ContentType | null>(
+    initial?.platform === "ugc" ? "photo" : initial?.type ?? null
+  );
+  const [brandId, setBrandId] = useState(initial?.brandId ?? "");
   const [caption, setCaption] = useState(initial?.caption ?? "");
   const [captionEn, setCaptionEn] = useState(initial?.captionEn ?? "");
   const [category, setCategory] = useState(initial?.category ?? existingCategories[0] ?? "");
@@ -71,13 +88,31 @@ export default function ContentCardForm({
   const [statSecondaryEn, setStatSecondaryEn] = useState(initial?.statSecondaryEn ?? "");
   const [saving, setSaving] = useState(false);
 
+  function handleModeChange(next: "social" | "ugc") {
+    setMode(next);
+    if (next === "ugc") {
+      setType("photo");
+      setPlatform("ugc");
+      setPostUrl("");
+      setVideoUrl("");
+    } else {
+      setPlatform(null);
+      setType(null);
+      setBrandId("");
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!platform || !type || (!postUrl && !videoUrl && !photoUrl)) return;
+    if (mode === "ugc") {
+      if (!photoUrl) return;
+    } else if (!platform || !type || (!postUrl && !videoUrl && !photoUrl)) {
+      return;
+    }
     setSaving(true);
     await onSubmit({
-      type,
-      platform,
+      type: type ?? "photo",
+      platform: mode === "ugc" ? "ugc" : platform ?? "instagram",
       postUrl,
       videoUrl,
       photoUrl,
@@ -89,58 +124,113 @@ export default function ContentCardForm({
       statPrimaryEn,
       statSecondary,
       statSecondaryEn,
+      brandId: mode === "ugc" ? brandId : "",
     });
     setSaving(false);
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-sp-4">
-      <EmbedUrlInput
-        url={postUrl}
-        platform={platform}
-        type={type}
-        onUrlChange={(value, detected) => {
-          setPostUrl(value);
-          setPlatform(detected.platform);
-          setType(detected.inferredType);
-        }}
-      />
-
-      <div className="flex flex-col gap-sp-1 max-w-xs">
-        <span className="text-sm font-medium text-ink">
-          Ícono de plataforma que se muestra en la tarjeta
-        </span>
-        <div className="flex items-center gap-sp-3">
-          <select
-            required
-            value={platform ?? ""}
-            onChange={(e) => setPlatform(e.target.value as Platform)}
-            className={`${inputClass} flex-1`}
+      <div className="flex flex-col gap-sp-1 max-w-md">
+        <span className="text-sm font-medium text-ink">Tipo de tarjeta</span>
+        <div className="flex gap-sp-2">
+          <button
+            type="button"
+            onClick={() => handleModeChange("social")}
+            className={`flex-1 rounded-md border px-sp-3 py-sp-2 text-sm transition ${
+              mode === "social" ? "border-coral bg-coral/10 text-ink" : "border-line text-ink/60 hover:border-coral"
+            }`}
           >
-            <option value="" disabled>
-              Elegir...
-            </option>
-            {PLATFORM_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {PLATFORM_NAMES[option]}
-              </option>
-            ))}
-          </select>
-          {platform && (
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-line">
-              {(() => {
-                const PlatformIcon = PLATFORM_ICONS[platform];
-                return <PlatformIcon className="h-4 w-4" />;
-              })()}
-            </span>
-          )}
+            Post de red social
+          </button>
+          <button
+            type="button"
+            onClick={() => handleModeChange("ugc")}
+            className={`flex-1 rounded-md border px-sp-3 py-sp-2 text-sm transition ${
+              mode === "ugc" ? "border-coral bg-coral/10 text-ink" : "border-line text-ink/60 hover:border-coral"
+            }`}
+          >
+            Foto UGC de portafolio (sin red social)
+          </button>
         </div>
         <span className="text-xs text-ink/50">
-          Se detecta automáticamente al pegar la URL, pero puedes cambiarlo aquí si el ícono no es el correcto.
+          {mode === "ugc"
+            ? "Solo sube la foto, describe el trabajo y opcionalmente marca la marca para la que lo hiciste. No necesita link a ninguna red social."
+            : "Vincula un post existente de TikTok, Instagram o Facebook, o sube tu propio video/foto."}
         </span>
       </div>
 
-      {!type && (
+      {mode === "ugc" && (
+        <div className="flex flex-col gap-sp-1 max-w-xs">
+          <span className="text-sm font-medium text-ink">Marca (opcional)</span>
+          <select
+            value={brandId}
+            onChange={(e) => setBrandId(e.target.value)}
+            className={inputClass}
+          >
+            <option value="">Sin marca</option>
+            {existingBrands.map((brand) => (
+              <option key={brand.id} value={brand.id}>
+                {brand.name}
+              </option>
+            ))}
+          </select>
+          <span className="text-xs text-ink/50">
+            Si la marca tiene logo cargado en la sección Marcas, se mostrará sobre la foto.
+          </span>
+        </div>
+      )}
+
+      {mode === "social" && (
+        <>
+          <EmbedUrlInput
+            url={postUrl}
+            platform={platform}
+            type={type}
+            onUrlChange={(value, detected) => {
+              setPostUrl(value);
+              setPlatform(detected.platform);
+              setType(detected.inferredType);
+            }}
+          />
+
+          <div className="flex flex-col gap-sp-1 max-w-xs">
+            <span className="text-sm font-medium text-ink">
+              Ícono de plataforma que se muestra en la tarjeta
+            </span>
+            <div className="flex items-center gap-sp-3">
+              <select
+                required
+                value={platform ?? ""}
+                onChange={(e) => setPlatform(e.target.value as Platform)}
+                className={`${inputClass} flex-1`}
+              >
+                <option value="" disabled>
+                  Elegir...
+                </option>
+                {PLATFORM_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {PLATFORM_NAMES[option]}
+                  </option>
+                ))}
+              </select>
+              {platform && platform !== "ugc" && (
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-ink shadow-sm ring-1 ring-line">
+                  {(() => {
+                    const PlatformIcon = PLATFORM_ICONS[platform];
+                    return <PlatformIcon className="h-4 w-4" />;
+                  })()}
+                </span>
+              )}
+            </div>
+            <span className="text-xs text-ink/50">
+              Se detecta automáticamente al pegar la URL, pero puedes cambiarlo aquí si el ícono no es el correcto.
+            </span>
+          </div>
+        </>
+      )}
+
+      {mode === "social" && !type && (
         <label className="flex flex-col gap-sp-1 max-w-xs">
           <span className="text-sm font-medium text-ink">
             Tipo de contenido {postUrl ? "— no pude detectarlo, selecciónalo:" : ""}

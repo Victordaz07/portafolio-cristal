@@ -5,7 +5,10 @@ import PageHeader from "@/components/admin/PageHeader";
 import FeedManager from "./FeedManager";
 
 export default async function AdminFeedPage() {
-  const cards = await prisma.contentCard.findMany({ orderBy: { order: "asc" } });
+  const [cards, brands] = await Promise.all([
+    prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
+    prisma.brand.findMany({ orderBy: { order: "asc" }, select: { id: true, name: true, logoUrl: true } }),
+  ]);
   const categoryCounts = cards.reduce<Record<string, number>>((acc, card) => {
     acc[card.category] = (acc[card.category] ?? 0) + 1;
     return acc;
@@ -38,7 +41,7 @@ export default async function AdminFeedPage() {
         title="Feed"
         description="El contenido que se muestra en la sección de fotos y videos del sitio."
       />
-      <FeedManager initialCards={cards} thumbnailsById={thumbnailsById} />
+      <FeedManager initialCards={cards} thumbnailsById={thumbnailsById} brands={brands} />
     </div>
   );
 }

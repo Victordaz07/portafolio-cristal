@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import type { Platform, ContentType } from "@/lib/embeds";
-import { TikTokIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
+import { TikTokIcon, InstagramIcon, FacebookIcon, CameraIcon } from "@/components/icons";
 import EmbedLightbox from "./EmbedLightbox";
 
-const PLATFORM_ICONS: Record<Platform, (props: { className?: string }) => JSX.Element> = {
+const PLATFORM_ICONS: Record<Exclude<Platform, "ugc">, (props: { className?: string }) => JSX.Element> = {
   tiktok: TikTokIcon,
   instagram: InstagramIcon,
   facebook: FacebookIcon,
@@ -22,6 +22,8 @@ export interface ContentCardProps {
   statPrimary?: string | null;
   statSecondary?: string | null;
   thumbnailUrl?: string | null;
+  brandName?: string | null;
+  brandLogoUrl?: string | null;
 }
 
 export default function ContentCard({
@@ -35,10 +37,14 @@ export default function ContentCard({
   statPrimary,
   statSecondary,
   thumbnailUrl,
+  brandName,
+  brandLogoUrl,
 }: ContentCardProps) {
   const [open, setOpen] = useState(false);
-  const stat = [statPrimary, statSecondary].filter(Boolean).join(" · ");
-  const PlatformIcon = PLATFORM_ICONS[platform];
+  const stat = [statPrimary, statSecondary, platform === "ugc" ? brandName : null]
+    .filter(Boolean)
+    .join(" · ");
+  const PlatformIcon = platform !== "ugc" ? PLATFORM_ICONS[platform] : null;
 
   return (
     <>
@@ -66,8 +72,17 @@ export default function ContentCard({
           {category}
         </span>
 
-        <span className="absolute right-sp-3 top-sp-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm text-ink">
-          <PlatformIcon className="h-4 w-4" />
+        <span className="absolute right-sp-3 top-sp-3 z-10 flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm text-ink">
+          {platform === "ugc" ? (
+            brandLogoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={brandLogoUrl} alt={brandName ?? ""} className="h-full w-full object-contain p-1.5" />
+            ) : (
+              <CameraIcon className="h-4 w-4" />
+            )
+          ) : (
+            PlatformIcon && <PlatformIcon className="h-4 w-4" />
+          )}
         </span>
 
         <span className="absolute inset-0 z-10 flex items-center justify-center">

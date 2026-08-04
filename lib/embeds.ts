@@ -1,4 +1,4 @@
-export type Platform = "tiktok" | "instagram" | "facebook";
+export type Platform = "tiktok" | "instagram" | "facebook" | "ugc";
 export type ContentType = "video" | "photo";
 
 export interface ParsedEmbedUrl {
@@ -47,5 +47,7 @@ export function platformLabel(platform: Platform): string {
       return "IG";
     case "facebook":
       return "PIC";
+    case "ugc":
+      return "UGC";
   }
 }

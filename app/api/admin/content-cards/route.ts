@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 const contentCardSchema = z
   .object({
     type: z.enum(["video", "photo"]),
-    platform: z.enum(["tiktok", "instagram", "facebook"]),
+    platform: z.enum(["tiktok", "instagram", "facebook", "ugc"]),
     postUrl: z.string().url().optional().or(z.literal("")),
     videoUrl: z.string().url().optional().or(z.literal("")),
     photoUrl: z.string().url().optional().or(z.literal("")),
@@ -19,6 +19,7 @@ const contentCardSchema = z
     statPrimaryEn: z.string().optional().or(z.literal("")),
     statSecondary: z.string().optional().or(z.literal("")),
     statSecondaryEn: z.string().optional().or(z.literal("")),
+    brandId: z.string().optional().or(z.literal("")),
   })
   .refine((data) => data.postUrl || data.videoUrl || data.photoUrl, {
     message: "Debes indicar la URL del post o subir un video/foto propio",
@@ -50,6 +51,7 @@ export async function POST(request: Request) {
       statPrimaryEn: parsed.data.statPrimaryEn || null,
       statSecondary: parsed.data.statSecondary || null,
       statSecondaryEn: parsed.data.statSecondaryEn || null,
+      brandId: parsed.data.brandId || null,
       order: (maxOrder._max.order ?? -1) + 1,
     },
   });

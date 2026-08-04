@@ -4,7 +4,9 @@ import { useState } from "react";
 import type { Platform, ContentType } from "@/lib/embeds";
 import EmbedUrlInput from "@/components/admin/EmbedUrlInput";
 import MediaUploadField from "@/components/admin/MediaUploadField";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 import BilingualTextField from "@/components/admin/BilingualTextField";
+import { useToast } from "@/components/admin/ToastContext";
 import { TikTokIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 
@@ -48,6 +50,7 @@ export interface BrandOption {
 }
 
 const NEW_CATEGORY_VALUE = "__new__";
+const NEW_BRAND_VALUE = "__new_brand__";
 
 export default function ContentCardForm({
   initial,
@@ -74,7 +77,39 @@ export default function ContentCardForm({
   const [type, setType] = useState<ContentType | null>(
     initial?.platform === "ugc" ? "photo" : initial?.type ?? null
   );
+  const { showToast } = useToast();
+  const [brands, setBrands] = useState(existingBrands);
   const [brandId, setBrandId] = useState(initial?.brandId ?? "");
+  const [showNewBrand, setShowNewBrand] = useState(false);
+  const [newBrandName, setNewBrandName] = useState("");
+  const [newBrandLogoUrl, setNewBrandLogoUrl] = useState("");
+  const [creatingBrand, setCreatingBrand] = useState(false);
+
+  async function handleCreateBrand() {
+    if (!newBrandName.trim()) return;
+    setCreatingBrand(true);
+    try {
+      const response = await fetch("/api/admin/brands", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newBrandName.trim(), logoUrl: newBrandLogoUrl, websiteUrl: "", active: true }),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        showToast("error", data.error ?? "No se pudo crear la marca");
+        return;
+      }
+      const created = await response.json();
+      setBrands((current) => [...current, { id: created.id, name: created.name, logoUrl: created.logoUrl }]);
+      setBrandId(created.id);
+      setShowNewBrand(false);
+      setNewBrandName("");
+      setNewBrandLogoUrl("");
+      showToast("success", "Marca creada");
+    } finally {
+      setCreatingBrand(false);
+    }
+  }
   const [caption, setCaption] = useState(initial?.caption ?? "");
   const [captionEn, setCaptionEn] = useState(initial?.captionEn ?? "");
   const [category, setCategory] = useState(initial?.category ?? existingCategories[0] ?? "");
@@ -163,21 +198,68 @@ export default function ContentCardForm({
       {mode === "ugc" && (
         <div className="flex flex-col gap-sp-1 max-w-xs">
           <span className="text-sm font-medium text-ink">Marca (opcional)</span>
-          <select
-            value={brandId}
-            onChange={(e) => setBrandId(e.target.value)}
-            className={inputClass}
-          >
-            <option value="">Sin marca</option>
-            {existingBrands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
-          <span className="text-xs text-ink/50">
-            Si la marca tiene logo cargado en la sección Marcas, se mostrará sobre la foto.
-          </span>
+          {!showNewBrand && (
+            <>
+              <select
+                value={brandId}
+                onChange={(e) => {
+                  if (e.target.value === NEW_BRAND_VALUE) {
+                    setShowNewBrand(true);
+                  } else {
+                    setBrandId(e.target.value);
+                  }
+                }}
+                className={inputClass}
+              >
+                <option value="">Sin marca</option>
+                {brands.map((brand) => (
+                  <option key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </option>
+                ))}
+                <option value={NEW_BRAND_VALUE}>+ agregar nueva marca</option>
+              </select>
+              <span className="text-xs text-ink/50">
+                Si la marca tiene logo cargado, se mostrará sobre la foto.
+              </span>
+            </>
+          )}
+
+          {showNewBrand && (
+            <div className="flex flex-col gap-sp-3 rounded-md border border-line bg-cream p-sp-4">
+              <label className="flex flex-col gap-sp-1">
+                <span className="text-sm font-medium text-ink">Nombre de la marca</span>
+                <input
+                  value={newBrandName}
+                  onChange={(e) => setNewBrandName(e.target.value)}
+                  placeholder="Nombre de la marca"
+                  className={inputClass}
+                />
+              </label>
+              <ImageUploadField label="Logo (opcional)" value={newBrandLogoUrl} onChange={setNewBrandLogoUrl} />
+              <div className="flex gap-sp-3">
+                <button
+                  type="button"
+                  disabled={creatingBrand || !newBrandName.trim()}
+                  onClick={handleCreateBrand}
+                  className={secondaryButtonClass}
+                >
+                  {creatingBrand ? "Creando..." : "Crear marca"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowNewBrand(false);
+                    setNewBrandName("");
+                    setNewBrandLogoUrl("");
+                  }}
+                  className="text-sm text-ink/60 hover:underline"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

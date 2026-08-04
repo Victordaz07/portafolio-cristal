@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { useToast } from "./ToastContext";
+import { MAX_VIDEO_BYTES, MAX_PHOTO_BYTES, formatMb } from "@/lib/upload-limits";
 
 const DIACRITICS_PATTERN = new RegExp("[\\u0300-\\u036f]", "g");
 
@@ -31,6 +32,14 @@ export default function MediaUploadField({
   const noun = kind === "video" ? "el video" : "la foto";
 
   async function handleFile(file: File) {
+    const maxBytes = kind === "video" ? MAX_VIDEO_BYTES : MAX_PHOTO_BYTES;
+    if (file.size > maxBytes) {
+      showToast(
+        "error",
+        `${kind === "video" ? "El video" : "La foto"} pesa demasiado (máximo ${formatMb(maxBytes)}). Comprímelo o achícalo e inténtalo de nuevo.`
+      );
+      return;
+    }
     setUploading(true);
     setProgress(0);
     try {

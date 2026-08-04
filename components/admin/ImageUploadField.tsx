@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { useToast } from "./ToastContext";
+import { MAX_PHOTO_BYTES, formatMb } from "@/lib/upload-limits";
 
 const DIACRITICS_PATTERN = new RegExp("[\\u0300-\\u036f]", "g");
 
@@ -27,6 +28,13 @@ export default function ImageUploadField({
   const [uploading, setUploading] = useState(false);
 
   async function handleFile(file: File) {
+    if (file.size > MAX_PHOTO_BYTES) {
+      showToast(
+        "error",
+        `La imagen pesa demasiado (máximo ${formatMb(MAX_PHOTO_BYTES)}). Comprímela o achícala e inténtalo de nuevo.`
+      );
+      return;
+    }
     setUploading(true);
     try {
       const blob = await upload(sanitizePathname(file.name), file, {

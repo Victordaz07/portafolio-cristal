@@ -11,6 +11,7 @@ const contentCardUpdateSchema = z
     postUrl: z.string().url().nullable().optional().or(z.literal("")),
     videoUrl: z.string().url().nullable().optional().or(z.literal("")),
     photoUrl: z.string().url().nullable().optional().or(z.literal("")),
+    thumbnailUrl: z.string().url().nullable().optional().or(z.literal("")),
     caption: z.string().min(1).optional(),
     captionEn: z.string().nullable().optional().or(z.literal("")),
     category: z.string().min(1).optional(),
@@ -48,6 +49,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (data.postUrl === "") data.postUrl = null;
   if (data.videoUrl === "") data.videoUrl = null;
   if (data.photoUrl === "") data.photoUrl = null;
+  if (data.thumbnailUrl === "") data.thumbnailUrl = null;
   if (data.captionEn === "") data.captionEn = null;
   if (data.categoryEn === "") data.categoryEn = null;
   if (data.statPrimary === "") data.statPrimary = null;

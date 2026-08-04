@@ -76,6 +76,7 @@ export default async function HomePage() {
 
   const feedThumbnails = await Promise.all(
     contentCards.map((card) => {
+      if (card.thumbnailUrl) return Promise.resolve(card.thumbnailUrl);
       if (card.photoUrl) return Promise.resolve(card.photoUrl);
       if (card.postUrl) return getThumbnailUrl(card.platform as Platform, card.postUrl);
       return Promise.resolve(null);

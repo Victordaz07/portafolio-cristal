@@ -19,16 +19,19 @@ function isUnresolvedTikTokShortLink(rawUrl: string): boolean {
 export default function EmbedUrlInput({
   url,
   onUrlChange,
+  onThumbnailResolved,
   platform,
   type,
 }: {
   url: string;
   onUrlChange: (url: string, detected: { platform: Platform | null; inferredType: ContentType | null }) => void;
+  onThumbnailResolved?: (thumbnailUrl: string | null) => void;
   platform: Platform | null;
   type: ContentType | null;
 }) {
   const [showPreview, setShowPreview] = useState(false);
   const [resolving, setResolving] = useState(false);
+  const [fetchingThumbnail, setFetchingThumbnail] = useState(false);
 
   function handleChange(value: string) {
     setShowPreview(false);
@@ -36,12 +39,14 @@ export default function EmbedUrlInput({
   }
 
   async function handleLoadPreview() {
+    let resolvedUrl = url;
     if (isUnresolvedTikTokShortLink(url)) {
       setResolving(true);
       try {
         const response = await fetch(`/api/admin/resolve-url?url=${encodeURIComponent(url)}`);
         const data = await response.json();
         if (response.ok && data.resolvedUrl) {
+          resolvedUrl = data.resolvedUrl;
           onUrlChange(data.resolvedUrl, parseEmbedUrl(data.resolvedUrl));
         }
       } finally {
@@ -49,6 +54,19 @@ export default function EmbedUrlInput({
       }
     }
     setShowPreview(true);
+
+    if (onThumbnailResolved && (platform === "instagram" || platform === "facebook")) {
+      setFetchingThumbnail(true);
+      try {
+        const response = await fetch(`/api/admin/resolve-thumbnail?url=${encodeURIComponent(resolvedUrl)}`);
+        const data = await response.json();
+        onThumbnailResolved(response.ok ? data.thumbnailUrl ?? null : null);
+      } catch {
+        onThumbnailResolved(null);
+      } finally {
+        setFetchingThumbnail(false);
+      }
+    }
   }
 
   return (
@@ -69,16 +87,18 @@ export default function EmbedUrlInput({
         )}
         <button
           type="button"
-          disabled={!platform || !type || !url || resolving}
+          disabled={!platform || !type || !url || resolving || fetchingThumbnail}
           onClick={handleLoadPreview}
           className={secondaryButtonClass}
         >
-          {resolving ? "Resolviendo enlace..." : "Cargar preview"}
+          {resolving ? "Resolviendo enlace..." : fetchingThumbnail ? "Buscando portada..." : "Cargar preview"}
         </button>
       </div>
 
       <p className="text-xs text-ink/50">
         Puedes dejarlo en blanco si vas a subir tu propio video más abajo, sin depender de una publicación existente.
+        {(platform === "instagram" || platform === "facebook") &&
+          " Al cargar el preview intentamos traer la portada automáticamente; si no aparece, puedes subir una manualmente más abajo."}
       </p>
 
       {!platform && url && (

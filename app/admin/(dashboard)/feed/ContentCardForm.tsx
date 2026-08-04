@@ -32,6 +32,7 @@ export interface ContentCardFormValues {
   postUrl: string;
   videoUrl: string;
   photoUrl: string;
+  thumbnailUrl: string;
   caption: string;
   captionEn: string;
   category: string;
@@ -71,6 +72,7 @@ export default function ContentCardForm({
   const [postUrl, setPostUrl] = useState(initial?.postUrl ?? "");
   const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? "");
   const [photoUrl, setPhotoUrl] = useState(initial?.photoUrl ?? "");
+  const [thumbnailUrl, setThumbnailUrl] = useState(initial?.thumbnailUrl ?? "");
   const [platform, setPlatform] = useState<Platform | null>(
     initial?.platform && initial.platform !== "ugc" ? initial.platform : null
   );
@@ -151,6 +153,7 @@ export default function ContentCardForm({
       postUrl,
       videoUrl,
       photoUrl,
+      thumbnailUrl: mode === "social" ? thumbnailUrl : "",
       caption,
       captionEn,
       category,
@@ -274,6 +277,9 @@ export default function ContentCardForm({
               setPlatform(detected.platform);
               setType(detected.inferredType);
             }}
+            onThumbnailResolved={(resolvedThumbnailUrl) => {
+              if (resolvedThumbnailUrl) setThumbnailUrl(resolvedThumbnailUrl);
+            }}
           />
 
           <div className="flex flex-col gap-sp-1 max-w-xs">
@@ -342,6 +348,14 @@ export default function ContentCardForm({
           }
           value={videoUrl}
           onChange={setVideoUrl}
+        />
+      )}
+
+      {mode === "social" && type === "video" && (
+        <ImageUploadField
+          label="Miniatura (opcional): sube una foto/screenshot para la vista previa en la cuadrícula. TikTok normalmente ya trae una automática; Instagram y Facebook no, así que se recomienda subir una aquí."
+          value={thumbnailUrl}
+          onChange={setThumbnailUrl}
         />
       )}
 

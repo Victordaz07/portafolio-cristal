@@ -47,6 +47,7 @@ export default function MediaUploadField({
         access: "public",
         handleUploadUrl: "/api/admin/upload",
         clientPayload: JSON.stringify({ kind }),
+        multipart: true,
         onUploadProgress: (event) => setProgress(Math.round(event.percentage)),
       });
       onChange(blob.url);

@@ -41,6 +41,7 @@ export default function ImageUploadField({
         access: "public",
         handleUploadUrl: "/api/admin/upload",
         clientPayload: JSON.stringify({ kind: "photo" }),
+        multipart: true,
       });
       onChange(blob.url);
     } catch (error) {

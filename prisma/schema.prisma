@@ -52,6 +52,7 @@ model ContentCard {
   postUrl         String?
   videoUrl        String?
   photoUrl        String?
+  thumbnailUrl    String?
   caption         String
   captionEn       String?
   category        String

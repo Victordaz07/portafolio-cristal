@@ -102,6 +102,7 @@ export default function FeedManager({
                   postUrl: card.postUrl ?? "",
                   videoUrl: card.videoUrl ?? "",
                   photoUrl: card.photoUrl ?? "",
+                  thumbnailUrl: card.thumbnailUrl ?? "",
                   caption: card.caption,
                   captionEn: card.captionEn ?? "",
                   category: card.category,

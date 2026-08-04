@@ -125,9 +125,10 @@ const glosarioEs: GlossaryTerm[] = [
   { term: "Orden / reordenar", def: "Las flechas ↑ ↓ junto a cada elemento de una lista; controlan en qué posición aparece en el sitio público." },
   { term: "CTA", def: "\"Call to action\": los botones que invitan a hacer algo, como \"Ver portafolio\" o \"Trabajemos juntas\"." },
   { term: "Badge / pill", def: "Una etiqueta pequeña y redondeada, como la categoría de una tarjeta del Feed o \"Nuevo\" en Mensajes." },
-  { term: "Miniatura (oEmbed)", def: "La imagen de vista previa de un post que se trae automáticamente desde TikTok. Instagram y Facebook no la ofrecen, por eso a veces no aparece." },
-  { term: "Plataforma", def: "TikTok, Instagram o Facebook — de dónde viene el post que agregas al Feed." },
+  { term: "Miniatura", def: "La imagen de vista previa de una tarjeta en la cuadrícula del Feed. TikTok la trae automática. Para Instagram/Facebook, al tocar \"Cargar preview\" se intenta traer sola; si no aparece, se puede subir una manualmente con el campo \"Miniatura (opcional)\"." },
+  { term: "Plataforma", def: "TikTok, Instagram o Facebook — de dónde viene el post que agregas al Feed (solo aplica al modo \"Post de red social\")." },
   { term: "Video propio", def: "Un archivo de video que subes tú directamente (en vez de depender del embed de la plataforma). Explicado a fondo en \"Paso a paso: Reels\"." },
+  { term: "Foto UGC de portafolio", def: "El otro tipo de tarjeta del Feed: una foto propia sin ningún link a red social. Solo pide la foto, una descripción y opcionalmente la marca para la que hiciste el trabajo (con su logo)." },
   { term: "Vista previa en vivo", def: "El panel que aparece junto al formulario del Hero mostrando cómo se ve tu portada mientras escribes, antes de guardar." },
   { term: "Ver sitio", def: "El botón arriba del panel que abre tu sitio público en una pestaña nueva." },
   { term: "Idioma del sitio (ES/EN)", def: "El botón que ven tus visitantes para cambiar entre español e inglés — no afecta al admin, solo al sitio público." },
@@ -150,9 +151,10 @@ const glosarioEn: GlossaryTerm[] = [
   { term: "Order / reorder", def: "The ↑ ↓ arrows next to each item in a list; they control the position it appears in on the public site." },
   { term: "CTA", def: "\"Call to action\": the buttons that invite someone to do something, like \"View portfolio\" or \"Let's work together\"." },
   { term: "Badge / pill", def: "A small rounded label, like a Feed card's category or \"New\" in Messages." },
-  { term: "Thumbnail (oEmbed)", def: "The post's preview image, fetched automatically from TikTok. Instagram and Facebook don't offer this, so it sometimes won't appear." },
-  { term: "Platform", def: "TikTok, Instagram or Facebook — where the post you add to the Feed comes from." },
+  { term: "Thumbnail", def: "The preview image for a card in the Feed grid. TikTok fetches it automatically. For Instagram/Facebook, tapping \"Load preview\" tries to fetch it automatically; if it doesn't show up, you can upload one manually with the \"Thumbnail (optional)\" field." },
+  { term: "Platform", def: "TikTok, Instagram or Facebook — where the post you add to the Feed comes from (only applies to the \"Social post\" card type)." },
   { term: "Own video", def: "A video file you upload directly (instead of relying on the platform's embed). Fully explained in \"Reels step by step\"." },
+  { term: "UGC portfolio photo", def: "The other Feed card type: your own photo with no link to any social post. It only asks for the photo, a description, and optionally the brand you made it for (with its logo)." },
   { term: "Live preview", def: "The panel next to the Hero form showing how your landing looks while you type, before saving." },
   { term: "View site", def: "The button at the top of the panel that opens your public site in a new tab." },
   { term: "Site language (ES/EN)", def: "The toggle your visitors see to switch between Spanish and English — it doesn't affect the admin, only the public site." },
@@ -164,41 +166,58 @@ const reelsEs: ManualBlock[] = [
     paragraphs: ["En el menú, dentro de \"Contenido\", entra a Feed. Ahí verás todas las tarjetas actuales y el botón \"+ agregar tarjeta\"."],
   },
   {
-    title: "2. Elige tipo y plataforma",
+    title: "2. Elige el tipo de tarjeta",
+    paragraphs: [
+      "Arriba del formulario hay dos opciones: \"Post de red social\" (para un reel, TikTok, o un post existente de Instagram/Facebook) y \"Foto UGC de portafolio\" (una foto propia, sin ningún link a red social).",
+      "Si vas a agregar un reel o video, sigue con \"Post de red social\" (pasos 3 en adelante). Si solo quieres subir una foto de un trabajo que hiciste, sin post asociado, ve directo al siguiente bloque.",
+    ],
+  },
+  {
+    title: "📷 3. Si elegiste \"Foto UGC de portafolio\"",
+    paragraphs: [
+      "Este modo es el más simple: solo pide la foto (obligatoria), una descripción y una categoría.",
+      "Opcionalmente puedes marcar la marca para la que hiciste ese trabajo — elige una existente del menú, o toca \"+ agregar nueva marca\" para crear una nueva ahí mismo (nombre + logo) sin salir del Feed. Si la marca tiene logo, se muestra sobre la foto en el sitio en vez de un ícono de red social.",
+      "Con esto termina el flujo de UGC: puedes saltar directo al paso \"Completa el resto de la tarjeta\" más abajo.",
+    ],
+  },
+  {
+    title: "4. Si elegiste \"Post de red social\": plataforma y URL",
     paragraphs: [
       "Tipo: \"video\" para un reel/TikTok, \"photo\" para una imagen.",
       "Plataforma: TikTok, Instagram o Facebook — de dónde es el post original.",
+      "Pega la URL completa del post y toca \"Cargar preview\" para confirmar que el link funciona y ver cómo se ve el embed.",
     ],
   },
   {
-    title: "3. Pega el link del post y carga el preview",
-    paragraphs: [
-      "Pega la URL completa del post en el campo correspondiente y toca \"Cargar preview\" para confirmar que el link funciona y ver cómo se ve el embed.",
-    ],
-  },
-  {
-    title: "⚠️ 4. El problema conocido con TikTok",
+    title: "⚠️ 5. El problema conocido con TikTok",
     paragraphs: [
       "TikTok bloquea la reproducción del video embebido de forma inconsistente (a veces funciona, a veces da pantalla negra o error) — esto pasa tanto en celular como en computadora, y no es algo que se pueda arreglar desde este sitio: es una restricción que impone TikTok, no un error del panel.",
     ],
   },
   {
-    title: "✅ 5. La solución: sube tu propio video",
+    title: "✅ 6. La solución: sube tu propio video",
     paragraphs: [
       "En el formulario de la tarjeta hay un campo opcional para subir el archivo de video directamente (igual que subes una foto). Si lo subes, el sitio reproduce ese archivo real en vez de intentar el embed de TikTok — así el video siempre funciona, sin depender de TikTok.",
       "Recomendación: descarga tu propio video (sin marca de agua si es posible) y súbelo aquí cada vez que agregues un reel al Feed.",
     ],
   },
   {
-    title: "6. Completa el resto de la tarjeta",
-    list: [
-      "Caption (ES/EN): la descripción corta que se ve en el sitio.",
-      "Categoría (ES/EN): puedes reusar una categoría existente o escribir una nueva.",
-      "Estadísticas (opcional, ES/EN): por ejemplo \"120K vistas\" / \"120K views\", o \"3.2K me gusta\" / \"3.2K likes\".",
+    title: "🖼️ 7. La miniatura para Instagram y Facebook",
+    paragraphs: [
+      "A diferencia de TikTok, Instagram y Facebook no dejan traer una miniatura automática de forma confiable. Al tocar \"Cargar preview\" el panel intenta traerla sola de todos modos; si lo logra, se precarga en el campo \"Miniatura (opcional)\" que aparece debajo del video.",
+      "Si no la trae (a veces Instagram bloquea el intento), sube ahí mismo una captura de pantalla o foto liviana como miniatura — no hace falta resubir el video completo, solo una imagen de portada para que la tarjeta se vea bien en la cuadrícula.",
     ],
   },
   {
-    title: "7. Guarda, reordena y edita cuando quieras",
+    title: "8. Completa el resto de la tarjeta",
+    list: [
+      "Caption (ES/EN): la descripción corta que se ve en el sitio.",
+      "Categoría (ES/EN): puedes reusar una categoría existente o escribir una nueva.",
+      "Estadísticas (opcional, ES/EN): por ejemplo \"120K vistas\" / \"120K views\", o \"3.2K me gusta\" / \"3.2K likes\" (no aplica al modo Foto UGC).",
+    ],
+  },
+  {
+    title: "9. Guarda, reordena y edita cuando quieras",
     paragraphs: [
       "Toca \"Agregar tarjeta\" para guardar. Usa las flechas ↑ ↓ para cambiar el orden en el Feed público, o \"Editar\"/\"Eliminar\" en cualquier momento.",
     ],
@@ -211,41 +230,58 @@ const reelsEn: ManualBlock[] = [
     paragraphs: ["In the menu, under \"Content\", go to Feed. You'll see every current card and the \"+ add card\" button."],
   },
   {
-    title: "2. Choose type and platform",
+    title: "2. Choose the card type",
+    paragraphs: [
+      "At the top of the form there are two options: \"Social post\" (for a reel, TikTok, or an existing Instagram/Facebook post) and \"UGC portfolio photo\" (your own photo, with no link to any social post).",
+      "If you're adding a reel or video, keep going with \"Social post\" (step 3 onward). If you just want to upload a photo from a job you did, with no associated post, skip straight to the next block.",
+    ],
+  },
+  {
+    title: "📷 3. If you chose \"UGC portfolio photo\"",
+    paragraphs: [
+      "This mode is the simplest: it only asks for the photo (required), a description and a category.",
+      "You can optionally tag the brand you made that work for — pick an existing one from the dropdown, or tap \"+ add new brand\" to create one right there (name + logo) without leaving the Feed. If the brand has a logo, it's shown over the photo on the site instead of a social platform icon.",
+      "That's the whole UGC flow — you can jump straight to \"Fill in the rest of the card\" below.",
+    ],
+  },
+  {
+    title: "4. If you chose \"Social post\": platform and URL",
     paragraphs: [
       "Type: \"video\" for a reel/TikTok, \"photo\" for an image.",
       "Platform: TikTok, Instagram or Facebook — where the original post is from.",
+      "Paste the full post URL and tap \"Load preview\" to confirm the link works and see how the embed looks.",
     ],
   },
   {
-    title: "3. Paste the post link and load the preview",
-    paragraphs: [
-      "Paste the full post URL into the field and tap \"Load preview\" to confirm the link works and see how the embed looks.",
-    ],
-  },
-  {
-    title: "⚠️ 4. The known TikTok issue",
+    title: "⚠️ 5. The known TikTok issue",
     paragraphs: [
       "TikTok blocks the embedded video playback inconsistently (sometimes it works, sometimes it shows a black screen or an error) — this happens on both mobile and desktop, and it's not something this site can fix: it's a restriction TikTok itself imposes, not a bug in the panel.",
     ],
   },
   {
-    title: "✅ 5. The fix: upload your own video",
+    title: "✅ 6. The fix: upload your own video",
     paragraphs: [
       "The card form has an optional field to upload the video file directly (just like uploading a photo). If you upload it, the site plays that real file instead of trying TikTok's embed — so the video always works, without depending on TikTok.",
       "Recommendation: download your own video (without a watermark if possible) and upload it here every time you add a reel to the Feed.",
     ],
   },
   {
-    title: "6. Fill in the rest of the card",
-    list: [
-      "Caption (ES/EN): the short description shown on the site.",
-      "Category (ES/EN): you can reuse an existing category or write a new one.",
-      "Stats (optional, ES/EN): for example \"120K vistas\" / \"120K views\", or \"3.2K me gusta\" / \"3.2K likes\".",
+    title: "🖼️ 7. The thumbnail for Instagram and Facebook",
+    paragraphs: [
+      "Unlike TikTok, Instagram and Facebook don't reliably offer an automatic thumbnail. Tapping \"Load preview\" still tries to fetch one automatically; if it works, it pre-fills the \"Thumbnail (optional)\" field that shows up under the video.",
+      "If it doesn't come through (Instagram sometimes blocks the attempt), upload a screenshot or a light photo there yourself as the thumbnail — no need to re-upload the whole video, just a cover image so the card looks good in the grid.",
     ],
   },
   {
-    title: "7. Save, reorder and edit anytime",
+    title: "8. Fill in the rest of the card",
+    list: [
+      "Caption (ES/EN): the short description shown on the site.",
+      "Category (ES/EN): you can reuse an existing category or write a new one.",
+      "Stats (optional, ES/EN): for example \"120K vistas\" / \"120K views\", or \"3.2K me gusta\" / \"3.2K likes\" (doesn't apply to UGC mode).",
+    ],
+  },
+  {
+    title: "9. Save, reorder and edit anytime",
     paragraphs: [
       "Tap \"Add card\" to save. Use the ↑ ↓ arrows to change the order on the public Feed, or \"Edit\"/\"Delete\" anytime.",
     ],
@@ -270,11 +306,17 @@ const guiaEs: ManualBlock[] = [
   },
   {
     title: "Feed",
-    paragraphs: ["El contenido de fotos y videos. Ver la guía completa en \"Paso a paso: Reels y videos\" para el detalle de cómo agregar reels correctamente."],
+    paragraphs: [
+      "El contenido de fotos y videos. Cada tarjeta puede ser un \"Post de red social\" (vinculado a TikTok, Instagram o Facebook) o una \"Foto UGC de portafolio\" (una foto propia, sin ningún link, con marca opcional).",
+      "Ver la guía completa en \"Paso a paso: Reels y videos\" para el detalle de cómo agregar cada tipo correctamente, incluida la miniatura para Instagram/Facebook.",
+    ],
   },
   {
     title: "Marcas",
-    paragraphs: ["El carrusel de logos. Cada marca tiene nombre, logo, link a su web (opcional) y un estado activo/inactivo — las inactivas dejan de mostrarse en el sitio sin necesidad de borrarlas."],
+    paragraphs: [
+      "El carrusel de logos. Cada marca tiene nombre, logo, link a su web (opcional) y un estado activo/inactivo — las inactivas dejan de mostrarse en el sitio sin necesidad de borrarlas.",
+      "También puedes crear una marca nueva sin salir de Feed: al agregar una tarjeta de tipo \"Foto UGC\", el selector de marca tiene la opción \"+ agregar nueva marca\" (nombre + logo).",
+    ],
   },
   {
     title: "Reseñas destacadas",
@@ -324,11 +366,17 @@ const guiaEn: ManualBlock[] = [
   },
   {
     title: "Feed",
-    paragraphs: ["The photo and video content. See the full guide under \"Reels & videos step by step\" for the details on adding reels correctly."],
+    paragraphs: [
+      "The photo and video content. Each card can be a \"Social post\" (linked to TikTok, Instagram or Facebook) or a \"UGC portfolio photo\" (your own photo, no link, with an optional brand tag).",
+      "See the full guide under \"Reels & videos step by step\" for the details on adding each type correctly, including the Instagram/Facebook thumbnail.",
+    ],
   },
   {
     title: "Brands",
-    paragraphs: ["The logo carousel. Each brand has a name, logo, an optional website link, and an active/inactive status — inactive ones stop showing on the site without needing to delete them."],
+    paragraphs: [
+      "The logo carousel. Each brand has a name, logo, an optional website link, and an active/inactive status — inactive ones stop showing on the site without needing to delete them.",
+      "You can also create a new brand without leaving Feed: when adding a \"UGC photo\" card, the brand dropdown has a \"+ add new brand\" option (name + logo).",
+    ],
   },
   {
     title: "Featured reviews",

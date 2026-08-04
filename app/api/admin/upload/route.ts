@@ -5,15 +5,18 @@ import { MAX_VIDEO_BYTES, MAX_PHOTO_BYTES } from "@/lib/upload-limits";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const rawToken = process.env.BLOB_READ_WRITE_TOKEN;
   return NextResponse.json({
     route: "ok",
-    blobConfigured: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+    blobConfigured: Boolean(rawToken),
+    blobTokenTrimmedDiffers: Boolean(rawToken && rawToken !== rawToken.trim()),
+    blobTokenLooksValid: Boolean(rawToken?.trim().startsWith("vercel_blob_rw_")),
     vercelEnvironment: process.env.VERCEL_ENV ?? "unknown",
   });
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
 
   if (!token) {
     console.error("BLOB_READ_WRITE_TOKEN no está disponible en este deployment.");

@@ -25,7 +25,7 @@ export const NICHES: Niche[] = [
   { id: "tecnologia", label: "Tecnología", labelEn: "Tech", product: "tecnología y gadgets", productEn: "tech and gadgets", headline: ["Tecnología", "explicada", "con naturalidad."], headlineEn: ["Tech,", "explained", "naturally."] },
   { id: "viajes", label: "Viajes", labelEn: "Travel", product: "viajes y experiencias", productEn: "travel and experiences", headline: ["Experiencias que", "dan ganas", "de vivir."], headlineEn: ["Experiences people", "want", "to live."] },
   { id: "mascotas", label: "Mascotas", labelEn: "Pets", product: "productos para mascotas", productEn: "pet products", headline: ["Contenido que", "enamora", "a sus dueños."], headlineEn: ["Content pet", "parents", "love."] },
-  { id: "otro", label: "Creadora UGC", labelEn: "UGC creator", product: "productos", productEn: "products", headline: ["Contenido que", "conecta", "con tu marca."], headlineEn: ["Content that", "connects", "with your brand."] },
+  { id: "otro", label: "Varios temas", labelEn: "Various topics", product: "productos", productEn: "products", headline: ["Contenido que", "conecta", "con tu marca."], headlineEn: ["Content that", "connects", "with your brand."] },
 ];
 
 export function getNiche(id: string) {
@@ -45,7 +45,7 @@ export function siteTemplate(niche: Niche) {
     hero: {
       niche: niche.label,
       nicheEn: niche.labelEn,
-      badgeLabel: `Creadora UGC • ${niche.label}`,
+      badgeLabel: `Contenido UGC • ${niche.label}`,
       badgeLabelEn: `UGC Creator • ${niche.labelEn}`,
       headlinePlain: niche.headline[0],
       headlineEmphasis: niche.headline[1],

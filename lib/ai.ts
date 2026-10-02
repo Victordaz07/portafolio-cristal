@@ -23,7 +23,7 @@ export async function getCreatorContext() {
   ]);
   const recent = cards.map((c) => `- ${c.caption} (${c.category})`).join("\n");
   return [
-    `Creadora: ${hero?.name ?? "creadora UGC"}.`,
+    `Creador(a) de contenido: ${hero?.name ?? "creador(a) UGC"}.`,
     `Nicho: ${hero?.niche ?? "UGC de belleza y estilo de vida"}.`,
     recent ? `Publicaciones recientes de su portafolio:\n${recent}` : "",
   ]

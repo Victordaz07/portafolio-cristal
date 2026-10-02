@@ -3,7 +3,7 @@
 > Kit completo (identidad, redes, campañas y prompts): [`foliocrew-kit-de-marca.md`](foliocrew-kit-de-marca.md).
 
 **Foliocrew** es la plataforma: el panel, las páginas legales y lo que ven Meta, TikTok y
-Google al revisar las apps. El sitio público de cada creadora (por ahora, el de Cristal)
+Google al revisar las apps. El sitio público de cada persona creadora (por ahora, el de Cristal)
 mantiene su propia identidad.
 
 - **Nombre:** *folio* (la página de un portafolio) + *crew* (tu equipo, tu comunidad).
@@ -42,7 +42,7 @@ Reglas:
 | Lavanda | `#B692E7` | Página derecha del ícono, palabra clave sobre fondo oscuro. |
 
 El panel usa casi los mismos tonos (`ink`, `moss`, `lime` en Tailwind). El color de acento
-del **sitio** de cada creadora se cambia en Apariencia.
+del **sitio** de cada persona creadora se cambia en Apariencia.
 
 ## Tipografías
 

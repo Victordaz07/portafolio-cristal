@@ -81,7 +81,7 @@ Panel admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/log
 
 ## Marca
 
-La plataforma se llama **Foliocrew** (`PLATFORM_NAME`). El logo, los colores, las tipografías y la voz están en [`docs/marca.md`](docs/marca.md); el kit completo (redes, campañas y prompts) está en [`docs/foliocrew-kit-de-marca.md`](docs/foliocrew-kit-de-marca.md). Los archivos del logo viven en `public/brand/`. El sitio público de cada creadora mantiene su propia identidad.
+La plataforma se llama **Foliocrew** (`PLATFORM_NAME`). El logo, los colores, las tipografías y la voz están en [`docs/marca.md`](docs/marca.md); el kit completo (redes, campañas y prompts) está en [`docs/foliocrew-kit-de-marca.md`](docs/foliocrew-kit-de-marca.md). Los archivos del logo viven en `public/brand/`. El sitio público de cada persona creadora mantiene su propia identidad.
 
 ## Scripts
 
@@ -122,29 +122,29 @@ Dos detalles ocultos, pensados como un pequeño gesto para Crislia:
 
 ## Multiusuario (Foliocrew)
 
-Cada creadora tiene su espacio (`Creator`) y **todas** las tablas tienen `creatorId`:
+Cada persona creadora tiene su espacio (`Creator`) y **todas** las tablas tienen `creatorId`:
 
-- **`lib/prisma.ts`**: el `prisma` de siempre, pero filtra solo por creadora.
-  - Cada consulta lee únicamente filas de la creadora de la petición, crea filas a su nombre y solo edita o borra lo suyo.
+- **`lib/prisma.ts`**: el `prisma` de siempre, pero filtra solo por persona creadora.
+  - Cada consulta lee únicamente filas de la persona creadora de la petición, crea filas a su nombre y solo edita o borra lo suyo.
   - También impide enlazar una marca ajena (`brandId`).
-  - Si no sabe de qué creadora es la petición, falla.
+  - Si no sabe de qué persona creadora es la petición, falla.
 - **`prismaRoot`** (`lib/prisma-root.ts`): el cliente sin filtro. Solo se usa para el login, el registro y para buscar dominios.
-- **`lib/tenant.ts`** decide la creadora de cada petición:
+- **`lib/tenant.ts`** decide la persona creadora de cada petición:
   - En el panel, sale de la sesión.
-  - En el sitio público, sale del dominio: `<slug>.PLATFORM_ROOT_DOMAIN`, el dominio propio de la creadora o, si no es ninguno de los dos, la creadora por defecto (`DEFAULT_CREATOR_SLUG`).
+  - En el sitio público, sale del dominio: `<slug>.PLATFORM_ROOT_DOMAIN`, el dominio propio de la persona creadora o, si no es ninguno de los dos, la persona creadora por defecto (`DEFAULT_CREATOR_SLUG`).
   - Para scripts, se usa `runAsCreator(id, fn)`.
-- **`middleware.ts`** verifica la sesión y pasa la creadora en cabeceras internas (`lib/tenant-headers.ts`). Siempre borra las que manda el navegador.
+- **`middleware.ts`** verifica la sesión y pasa la persona creadora en cabeceras internas (`lib/tenant-headers.ts`). Siempre borra las que manda el navegador.
 - **Registro**:
   - Se hace en `/admin/registro` y pide `SIGNUP_INVITE_CODE`. Sin esa variable, el registro está cerrado.
-  - Crea la creadora, su usuaria, una portada y la configuración inicial.
+  - Crea la persona creadora, su usuario, una portada y la configuración inicial.
 - **Mi cuenta** (`/admin/cuenta`): nombre, contraseña y dirección del sitio.
 - **Página de venta** (`app/foliocrew`, en `/foliocrew` y en la raíz del dominio de la plataforma):
   - secciones: portada, problema, cómo funciona, herramientas, para quién, planes (`lib/plans.ts`; precios ocultos salvo `FOLIOCREW_SHOW_PRICES=true`), FAQ y cierre;
   - **lista de espera** (`WaitlistEntry`, `app/api/waitlist`): guarda los UTM, tiene campo trampa para bots, límite de 5 intentos por minuto y no duplica correos;
   - imagen Open Graph y píxel de Meta opcional (`NEXT_PUBLIC_META_PIXEL_ID`);
-  - la dueña de la plataforma (`PLATFORM_ADMIN_EMAILS`) ve **Lista de espera** en el panel: totales, origen, CSV y marcar invitadas.
+  - quien administra la plataforma (`PLATFORM_ADMIN_EMAILS`) ve **Lista de espera** en el panel: totales, origen, CSV y marcar invitaciones enviadas.
 - **Asistente de bienvenida** (`/admin/bienvenida`, `app/api/admin/onboarding`):
-  - las creadoras nuevas (`Creator.onboardedAt` nulo) llegan ahí desde el Resumen;
+  - los creadores nuevas (`Creator.onboardedAt` nulo) llegan ahí desde el Resumen;
   - arma la portada, la bio, los servicios, los paquetes y las FAQ con plantillas por nicho (`lib/onboarding.ts`; nunca duplica secciones que ya tienen contenido), crea las primeras piezas a partir de sus links y guarda el contacto y el color;
   - la lista "Completa tu sitio" (`components/admin/SetupChecklist.tsx`) se muestra en el Resumen hasta completar todo.
 - **Dominios** (ver [`docs/dominios.md`](docs/dominios.md)):
@@ -172,7 +172,7 @@ Secciones (cada una con su Manager + formulario):
 | Feed | Tarjetas de fotos/videos, en dos modos: "Post de red social" o "Foto UGC de portafolio" (foto propia sin red social, con marca opcional). Ver "el problema conocido con TikTok" abajo. |
 | Feed / Publicaciones | Tarjetas con métricas (vistas, likes, comentarios, compartidos, guardados; el engagement se calcula), comentario destacado "Lo que dicen", filtros por tipo, "☆ Destacar" para Colaboraciones y "↻ Sincronizar métricas" desde Instagram/TikTok conectados (`lib/social/metrics-sync.ts`, empareja por el link del post). |
 | Vista pública | El sitio dentro del panel (iframe), en escritorio o celular y ES/EN. |
-| Crear | Composer de publicaciones: tipo, redes, marca, caption con **sugerencias de IA** (Claude, 3 opciones con el contexto de la creadora), avisos de límites por red, vista previa por red, consejos de IA por red y programación por día/hora (`APP_TIMEZONE`). Aún no publica automáticamente. |
+| Crear | Composer de publicaciones: tipo, redes, marca, caption con **sugerencias de IA** (Claude, 3 opciones con el contexto de la persona creadora), avisos de límites por red, vista previa por red, consejos de IA por red y programación por día/hora (`APP_TIMEZONE`). Aún no publica automáticamente. |
 | Calendario | Vista mensual con las publicaciones por red, "¿Ya las publicaste?" para las vencidas, próximas publicaciones y "Marcar publicada". |
 | Metas y plan | Metas con valor actual y objetivo (manuales o automáticas: seguidores de cada red conectada, publicaciones del mes), promedio general con frase motivadora del día y plan de acción semanal con tareas que se pueden traer de semanas anteriores. |
 | Bitácora | Línea de hitos y aprendizajes, diario de contenido y racha de días activos (entradas, tareas completadas y publicaciones nuevas). |

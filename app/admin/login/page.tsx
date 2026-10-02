@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
 
         <AdminLoginForm />
         <p className="mt-sp-5 text-center text-sm text-ink/60">
-          ¿Eres creadora y quieres tu espacio?{" "}
+          ¿Creas contenido y quieres tu espacio?{" "}
           <Link href="/admin/registro" className="font-medium text-coral hover:underline">
             Crea tu cuenta
           </Link>

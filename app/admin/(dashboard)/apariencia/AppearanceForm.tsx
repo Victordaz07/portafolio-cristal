@@ -113,7 +113,7 @@ export default function AppearanceForm({ initial, niche }: { initial: Values; ni
           <span className="rounded-full bg-lime/50 px-sp-3 py-1 font-mono text-[10px] uppercase tracking-wide text-moss">{niche || "UGC Creator"}</span>
           <p className="max-w-sm text-sm text-ink/70">{values.description || "Tu bio aparece aquí."}</p>
           <div className="flex gap-sp-2">
-            <span className="rounded-full bg-coral px-sp-4 py-sp-2 text-xs font-bold text-white">Trabajemos juntas</span>
+            <span className="rounded-full bg-coral px-sp-4 py-sp-2 text-xs font-bold text-white">Colaboremos</span>
             <span className="rounded-full border border-coral px-sp-4 py-sp-2 text-xs font-bold text-coral">Ver portafolio</span>
           </div>
         </Card>

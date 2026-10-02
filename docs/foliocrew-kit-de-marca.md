@@ -32,20 +32,20 @@
 | --- | --- |
 | **Nombre** | Foliocrew |
 | **Dominio** | `foliocrew.pro`, comprado en Hostinger el 2 de octubre de 2026 (vence el 2 de octubre de 2027, renovación automática). `foliocrew.com` ya está tomado. |
-| **Qué es** | La plataforma donde las creadoras UGC muestran su trabajo a las marcas, organizan sus colaboraciones y hacen crecer su negocio. |
+| **Qué es** | La plataforma donde los creadores UGC muestran su trabajo a las marcas, organizan sus colaboraciones y hacen crecer su negocio. |
 | **Frase principal** | *Tu talento merece su espacio.* |
-| **Para quién** | Creadoras de contenido UGC hispanohablantes (LatAm y EE. UU.) que quieren conseguir y manejar marcas como un negocio. |
-| **Problema** | Las creadoras usan 6 herramientas sueltas (Linktree, Canva, Excel, Notes, Drive, WhatsApp). El portafolio se ve amateur, los tratos se pierden y no saben qué números mostrarle a una marca. |
+| **Para quién** | Creadores de contenido UGC hispanohablantes (LatAm y EE. UU.) que quieren conseguir y manejar marcas como un negocio. |
+| **Problema** | Los creadores usan 6 herramientas sueltas (Linktree, Canva, Excel, Notes, Drive, WhatsApp). El portafolio se ve amateur, los tratos se pierden y no saben qué números mostrarle a una marca. |
 | **Solución** | Un portafolio profesional y bilingüe con su propio dominio, más un panel que junta CRM de marcas, calendario, captions con IA, métricas, reportes, media kit y bandeja de mensajes. |
-| **Diferencial** | Hecho por y para creadoras UGC (no influencers genéricos), en español, con IA que escribe como ella, y con datos reales de sus redes conectadas. |
+| **Diferencial** | Hecho por y para creadores UGC (no influencers genéricos), en español, con IA que escribe como ella, y con datos reales de sus redes conectadas. |
 | **Caso piloto** | El portafolio de Cristal (Crislia), que ya funciona con todo el panel. |
-| **Estado** | Producto funcionando para una creadora. Siguiente paso: multiusuario + pagos (Stripe) + dominios propios. |
+| **Estado** | Producto funcionando para una persona creadora. Siguiente paso: multiusuario + pagos (Stripe) + dominios propios. |
 
 **Pitch de 1 frase:**
-> Foliocrew convierte el trabajo de una creadora en un portafolio profesional que las marcas toman en serio, y le da un panel para manejar su negocio entero desde un solo lugar.
+> Foliocrew convierte el trabajo de una persona creadora en un portafolio profesional que las marcas toman en serio, y le da un panel para manejar su negocio entero desde un solo lugar.
 
 **Pitch de 30 segundos:**
-> Si haces contenido UGC, sabes que conseguir marcas es la mitad del trabajo. Con Foliocrew tienes tu portafolio con tu propio dominio, en español e inglés, con tus métricas reales y tu media kit siempre al día. Y detrás, un panel donde llevas tus tratos con marcas, planeas tu contenido con ayuda de IA, ves qué te funciona y respondes mensajes sin perder ninguno. Todo en un lugar, pensado para creadoras.
+> Si haces contenido UGC, sabes que conseguir marcas es la mitad del trabajo. Con Foliocrew tienes tu portafolio con tu propio dominio, en español e inglés, con tus métricas reales y tu media kit siempre al día. Y detrás, un panel donde llevas tus tratos con marcas, planeas tu contenido con ayuda de IA, ves qué te funciona y respondes mensajes sin perder ninguno. Todo en un lugar, pensado para creadores.
 
 ---
 
@@ -53,7 +53,7 @@
 
 Ya construido y funcionando (úsalo como lista de beneficios en ventas y anuncios):
 
-| Módulo | Beneficio para la creadora |
+| Módulo | Beneficio para la persona creadora |
 | --- | --- |
 | **Portafolio público bilingüe** | Un sitio profesional en español e inglés, con su dominio. |
 | **Feed con métricas** | Muestra sus videos y fotos con vistas, likes y engagement reales. |
@@ -74,22 +74,22 @@ Ya construido y funcionando (úsalo como lista de beneficios en ventas y anuncio
 
 ## 3. Modelo de negocio y precios
 
-**Modelo:** suscripción mensual o anual. El **dominio lo paga cada creadora aparte** (~$10–15/año),
+**Modelo:** suscripción mensual o anual. El **dominio lo paga cada persona creadora aparte** (~$10–15/año),
 así no cargas con ese costo.
 
-Precios sugeridos (en USD; ajusta tras hablar con 10 creadoras):
+Precios sugeridos (en USD; ajusta tras hablar con 10 creadores):
 
 | Plan | Precio | Para quién | Incluye |
 | --- | --- | --- | --- |
 | **Folio** | $9/mes | Empezando | Portafolio + media kit + feed + bandeja de formulario + subdominio `nombre.foliocrew.pro` |
 | **Folio Pro** ⭐ | $19/mes | En crecimiento | Todo + dominio propio + CRM + calendario + IA + reportes + redes conectadas |
-| **Crew** | $49/mes | Agencias / managers | Hasta 5 creadoras, reportes para marcas, soporte prioritario |
+| **Crew** | $49/mes | Agencias / managers | Hasta 5 creadores, reportes para marcas, soporte prioritario |
 
 - **Anual:** 2 meses gratis (Pro anual = $190).
 - **Prueba gratis:** 14 días sin tarjeta.
-- **Oferta fundadoras:** las primeras 50 pagan 50 % de por vida a cambio de feedback y un testimonio.
+- **Oferta de lanzamiento:** las primeras 50 cuentas pagan 50 % de por vida a cambio de feedback y un testimonio.
 
-**Cuentas rápidas:** 100 creadoras en Pro = $1,900/mes. Costos aproximados: servidor y
+**Cuentas rápidas:** 100 creadores en Pro = $1,900/mes. Costos aproximados: servidor y
 base de datos ($20–50), IA ($0.01–0.05 por caption), Stripe (~3 % + $0.30 por cobro).
 
 ---
@@ -97,20 +97,20 @@ base de datos ($20–50), IA ($0.01–0.05 por caption), Stripe (~3 % + $0.30 po
 ## 4. Identidad de marca
 
 ### Propósito
-**Misión:** que cada creadora UGC tenga las herramientas de una agencia, sin necesitar una.
-**Visión:** ser la plataforma donde nacen las carreras de las creadoras UGC hispanas.
+**Misión:** que cada persona creadora UGC tenga las herramientas de una agencia, sin necesitar una.
+**Visión:** ser la plataforma donde nacen las carreras de los creadores UGC hispanas.
 
 ### Valores
 1. **Profesional, pero cercana.** Hablamos de negocio sin sonar corporativos.
 2. **Honestidad.** Métricas reales, nada inflado. (Igual que el UGC: auténtico.)
-3. **Hecho por creadoras.** Cada función nace de un problema real.
-4. **Crecer juntas.** Comunidad, no competencia.
+3. **Hecho por creadores.** Cada función nace de un problema real.
+4. **Crecer en comunidad.** Comunidad, no competencia.
 
 ### Personalidad
-Si Foliocrew fuera una persona: **la amiga que ya vive de crear contenido** y te pasa
+Si Foliocrew fuera una persona: **la persona amiga que ya vive de crear contenido** y te pasa
 todos sus trucos. Segura, organizada, cálida, con buen ojo estético y cero pretensión.
 
-**Arquetipo:** la Creadora + la Cuidadora. Inspira a crear y te acompaña.
+**Arquetipo:** el Creador + el Cuidador (arquetipos de marca, no de género). Inspira a crear y te acompaña.
 
 ### Voz y tono
 
@@ -133,13 +133,13 @@ Ejemplos:
 - Tu contenido. Tus marcas. Todo conectado.
 - Tu espacio para mostrar y organizar.
 - Tu portafolio y tus colaboraciones, en un solo lugar.
-- Donde las marcas encuentran creadoras.
+- Donde las marcas encuentran creadores.
 - Tu portafolio UGC, como de agencia.
 - Muestra tu trabajo. Maneja tu negocio.
 - Del contenido al contrato.
 
 ### Palabras de marca
-Folio · crew · espacio · mostrar · conectar · crecer · colaborar · auténtico · profesional · creadora · portafolio
+Folio · crew · espacio · mostrar · conectar · crecer · colaborar · auténtico · profesional · creadores · portafolio
 
 ---
 
@@ -160,11 +160,11 @@ Folio · crew · espacio · mostrar · conectar · crecer · colaborar · autén
 - **Mensaje:** *"Maneja tus marcas como un negocio."*
 
 ### Persona 3: "Agencias y managers" (futuro plan Estudio)
-- Manejan 3–15 creadoras.
+- Manejan 3–15 creadores.
 - **Quieren:** reportes rápidos y un lugar para todo.
 
 ### Dónde están
-Instagram (reels y carruseles educativos), TikTok (#ugccreator, #creadoraugc), YouTube
+Instagram (reels y carruseles educativos), TikTok (#ugccreator, #creadoraugc, #creadorugc), YouTube
 (tutoriales UGC), grupos de Facebook y Telegram de UGC, cursos de UGC.
 
 ---
@@ -200,7 +200,7 @@ Como en tus piezas: fondo tinta con títulos en crema y una palabra en lavanda i
 > El logo no se escribe con una fuente: usa siempre los archivos de `public/brand/`.
 
 ### Estilo de fotos (como tu post "Tu talento merece su espacio")
-- Creadoras reales, latinas y diversas, trabajando: celular en trípode, escritorio, maquillaje, plantas.
+- Personas creadoras reales y diversas (hombres y mujeres, latinos), trabajando: celular en trípode, escritorio, maquillaje, plantas.
 - Luz natural cálida, fondos crema, toques de lavanda en la ropa o los objetos.
 - Profundidad de campo (fondo o primer plano desenfocado).
 - **Evitar:** fotos de stock genéricas, neón, exceso de filtros.
@@ -208,7 +208,7 @@ Como en tus piezas: fondo tinta con títulos en crema y una palabra en lavanda i
 ### Elementos gráficos
 - **Las páginas superpuestas** del ícono, en línea fina lavanda, como decoración de fondo
   (como en tu story y tu post).
-- Etiquetas tipo píldora lavanda ("Para creadoras UGC").
+- Etiquetas tipo píldora lavanda ("Para creadores UGC").
 - Una línea fina lavanda para separar el pie de las piezas.
 - Mucho espacio vacío.
 
@@ -280,13 +280,13 @@ Crea un set de 6 portadas para historias destacadas de Instagram, fondo tinta #2
 
 ### Mockup de la plataforma
 ```
-Mockup realista de una laptop y un celular sobre un escritorio crema con plantas y luz natural de mañana. La pantalla muestra un portafolio web elegante de una creadora de contenido, con tonos crema y lavanda, una cuadrícula de videos verticales y números de métricas. Fotografía editorial.
+Mockup realista de una laptop y un celular sobre un escritorio crema con plantas y luz natural de mañana. La pantalla muestra un portafolio web elegante de una persona creadora de contenido, con tonos crema y lavanda, una cuadrícula de videos verticales y números de métricas. Fotografía editorial.
 ```
 > Mejor aún: toma capturas reales del panel y pídele a ChatGPT: *"Pon esta captura de pantalla dentro de un mockup de laptop sobre un escritorio crema con luz natural."*
 
-### Creadora usando la plataforma (para anuncios)
+### Persona creadora usando la plataforma (para anuncios)
 ```
-Foto estilo lifestyle de una creadora de contenido latina de unos 28 años, sentada en su escritorio en casa, sonriendo mientras mira su laptop. A su lado, un aro de luz y productos de skincare. Luz natural de ventana, tonos crema y lavanda suaves, auténtica, nada de foto de stock.
+Foto estilo lifestyle de una persona creadora de contenido latina o latino de unos 28 años (alterna hombres y mujeres entre versiones), sentada en su escritorio en casa, sonriendo mientras mira su laptop. A su lado, un aro de luz y productos de skincare. Luz natural de ventana, tonos crema y lavanda suaves, auténtica, nada de foto de stock.
 ```
 
 ### Plantilla de carrusel educativo (1080×1350)
@@ -330,14 +330,14 @@ Ilustración flat minimalista: una hoja de calendario mensual con stickers de ce
 **Bio (máximo 150 caracteres). Opciones:**
 ```
 Tu talento merece su espacio ✨
-Portafolio + media kit + CRM para creadoras UGC
+Portafolio + media kit + CRM para creadores UGC
 🇪🇸🇺🇸 En español e inglés
 👇 Prueba gratis 14 días
 ```
 ```
-La plataforma de las creadoras UGC 💜
+La plataforma de los creadores UGC 💜
 Muestra tu trabajo. Maneja tus marcas.
-Hecho por creadoras, para creadoras
+Hecho por creadores, para creadores
 👇 Crea tu folio
 ```
 
@@ -354,12 +354,12 @@ Hecho por creadoras, para creadoras
 6. Carrusel: "Plantilla de correo para escribirle a una marca".
 7. Reel: el panel por dentro (CRM, calendario, reportes).
 8. Carrusel: "Qué es UGC y por qué las marcas lo pagan".
-9. Post: oferta de fundadoras.
+9. Post: oferta de lanzamiento.
 
 ### TikTok
 - Cuenta empresarial. Mismo nombre y foto.
-- **Bio:** `Portafolio + CRM para creadoras UGC 💜 Prueba gratis 👇`
-- Contenido: tips UGC rápidos, "día en la vida de una creadora", antes/después de portafolios.
+- **Bio:** `Portafolio + CRM para creadores UGC 💜 Prueba gratis 👇`
+- Contenido: tips UGC rápidos, "día en la vida de una persona creadora", antes/después de portafolios.
 
 ### Otras redes
 - **YouTube:** tutoriales largos ("Cómo armar tu portafolio UGC desde cero") y Shorts reciclados.
@@ -389,7 +389,7 @@ Hecho por creadoras, para creadoras
 | **Educar** (tips UGC) | 40 % | Cómo cobrar, cómo escribirle a marcas, ganchos que venden, iluminación con celular |
 | **Inspirar** (casos reales) | 25 % | Historia de Cristal, antes/después de portafolios, logros de usuarias |
 | **Mostrar el producto** | 20 % | Funciones, tutoriales cortos, novedades |
-| **Comunidad** | 15 % | Encuestas, preguntas, memes de creadoras, repostear usuarias |
+| **Comunidad** | 15 % | Encuestas, preguntas, memes de creadores, repostear usuarias |
 
 ### Frecuencia (realista para empezar)
 - **Instagram:** 4 reels + 2 carruseles por semana, historias diarias (3–5).
@@ -397,7 +397,7 @@ Hecho por creadoras, para creadoras
 - **YouTube:** 1 video largo al mes.
 
 ### Ganchos (primeros 3 segundos)
-- "Si eres creadora UGC y las marcas no te responden, mira esto."
+- "Si creas contenido UGC y las marcas no te responden, mira esto."
 - "Le mandé mi portafolio a 20 marcas. Esto cambió todo."
 - "Deja de mandar tu portafolio en Canva."
 - "Esto es lo que una marca ve en los primeros 5 segundos de tu portafolio."
@@ -409,18 +409,18 @@ Hecho por creadoras, para creadoras
 ```
 [Gancho en 1 línea]
 
-[Problema que siente la creadora, en 1–2 líneas]
+[Problema que siente la persona creadora, en 1–2 líneas]
 
 [3 tips o pasos, numerados]
 
 [Cierre con llamada a la acción: guarda, comenta una palabra o ve al link]
 
-#ugccreator #creadoraugc #contenidougc #ugc #ugcespañol #creadoradecontenido #mediakit #portafolioUGC
+#ugccreator #creadoraugc #creadorugc #contenidougc #ugc #ugcespañol #creadoradecontenido #creadordecontenido #mediakit #portafolioUGC
 ```
 
 ### Hashtags (rota 5–8 por post)
-**Nicho:** #creadoraugc #ugcespañol #ugclatam #contenidougc #ugccreator #ugccommunity #ugcportfolio
-**Amplios:** #creadoradecontenido #marketingdigital #emprendedora #trabajodesdecasa
+**Nicho:** #creadoraugc #creadorugc #ugcespañol #ugclatam #contenidougc #ugccreator #ugccommunity #ugcportfolio
+**Amplios:** #creadoradecontenido #creadordecontenido #marketingdigital #emprendimiento #trabajodesdecasa
 **Marca:** #Foliocrew #TuTalentoMereceSuEspacio #CreaConectaCrece
 
 ### Calendario de 30 días (arranque)
@@ -428,8 +428,8 @@ Hecho por creadoras, para creadoras
 | --- | --- | --- | --- | --- |
 | 1 | Reel: presentación | Carrusel: errores de portafolio | Reel: caso Cristal | Historia: encuesta "¿qué te cuesta más?" |
 | 2 | Reel: cuánto cobrar | Carrusel: correo para marcas | Reel: media kit en 1 link | Carrusel: glosario UGC |
-| 3 | Reel: panel por dentro | Carrusel: ganchos que venden | Reel: día de una creadora | Live o Q&A |
-| 4 | Reel: testimonio | Carrusel: checklist de portafolio | Reel: oferta fundadoras | Post: resumen del mes |
+| 3 | Reel: panel por dentro | Carrusel: ganchos que venden | Reel: día de una persona creadora | Live o Q&A |
+| 4 | Reel: testimonio | Carrusel: checklist de portafolio | Reel: oferta de lanzamiento | Post: resumen del mes |
 
 ---
 
@@ -446,12 +446,12 @@ Hecho por creadoras, para creadoras
 **Campaña 1: Lista de espera (prelanzamiento)**
 - **Objetivo:** Clientes potenciales (Leads) o Tráfico a la landing.
 - **Presupuesto:** $5–10/día durante 2 semanas.
-- **Público:** mujeres de 20 a 38 años en EE. UU. (hispanohablantes), México, Colombia, República Dominicana, Argentina y España (separa EE. UU. de LatAm, porque cuestan distinto). Intereses: *creación de contenido, marketing de influencers, Canva, CapCut, UGC, emprendimiento*.
+- **Público:** personas de 20 a 38 años (todos los géneros) en EE. UU. (hispanohablantes), México, Colombia, República Dominicana, Argentina y España (separa EE. UU. de LatAm, porque cuestan distinto). Intereses: *creación de contenido, marketing de influencers, Canva, CapCut, UGC, emprendimiento*.
 - **Resultado esperado:** costo por registro de $0.50–3 en LatAm y $2–6 en EE. UU. (son referencias, mide los tuyos).
 
 **Campaña 2: Retargeting**
 - **Público:** quien visitó la landing o interactuó con el perfil en los últimos 30 días.
-- **Mensaje:** prueba gratis, testimonio o "las fundadoras tienen 50 %".
+- **Mensaje:** prueba gratis, testimonio o "las primeras 50 cuentas tienen 50 %".
 - **Presupuesto:** $3–5/día.
 
 **Campaña 3: Conversión (después de lanzar)**
@@ -463,24 +463,24 @@ Hecho por creadoras, para creadoras
 2. **Testimonio:** Cristal hablando a cámara: "Desde que mando este link, las marcas responden".
 3. **Recorrido rápido:** 15 s del panel con texto en pantalla de cada función.
 4. **Problema:** "¿Cuántas apps usas para tu negocio UGC?" (muestra 6 íconos) → "Ahora una".
-5. **UGC de UGC:** contrata a 2–3 creadoras para que hagan anuncios de la plataforma (meta, ¿no? 😉).
+5. **UGC de UGC:** contrata a 2–3 creadores para que hagan anuncios de la plataforma (meta, ¿no? 😉).
 
 ### Textos de anuncios
 **Principal (corto):**
 > Tu portafolio UGC, como de agencia. Media kit siempre al día, tus marcas organizadas y captions con IA. Prueba gratis 14 días 💜
 
 **Principal (largo):**
-> Las marcas deciden en 5 segundos si te escriben. Con Foliocrew tienes un portafolio profesional, con tu dominio y en dos idiomas, con tus métricas reales. Y detrás, un panel para manejar tus tratos, tu calendario y tus pagos. Hecho por creadoras, para creadoras. Únete a la lista y recibe 50 % de por vida 👇
+> Las marcas deciden en 5 segundos si te escriben. Con Foliocrew tienes un portafolio profesional, con tu dominio y en dos idiomas, con tus métricas reales. Y detrás, un panel para manejar tus tratos, tu calendario y tus pagos. Hecho por creadores, para creadores. Únete a la lista y recibe 50 % de por vida 👇
 
-**Títulos:** "Tu talento merece su espacio" · "Crea. Conecta. Crece." · "Deja el portafolio de Canva" · "50 % de por vida para fundadoras"
+**Títulos:** "Tu talento merece su espacio" · "Crea. Conecta. Crece." · "Deja el portafolio de Canva" · "50 % de por vida en el lanzamiento"
 **Botón:** Registrarte / Más información
 
 ### Colaboraciones y alianzas (crecimiento sin anuncios)
-- **Creadoras embajadoras:** 5–10 creadoras UGC con Pro gratis + 30 % de comisión por cada referida.
+- **Creadores embajadoras:** 5–10 creadores UGC con Pro gratis + 30 % de comisión por cada referida.
 - **Cursos y mentoras de UGC:** ofréceles un código de descuento para sus alumnas y una comisión.
 - **Grupos de Facebook y Telegram de UGC:** aporta valor (plantillas, tips) antes de vender.
-- **Programa de referidos:** "Invita a una amiga y las dos tienen 1 mes gratis".
-- **Sorteo de lanzamiento:** 3 cuentas Pro de por vida; para participar hay que seguir, comentar etiquetando a 2 amigas y compartir en historias.
+- **Programa de referidos:** "Invita a alguien que cree contenido y los dos tienen 1 mes gratis".
+- **Sorteo de lanzamiento:** 3 cuentas Pro de por vida; para participar hay que seguir, comentar etiquetando a 2 personas y compartir en historias.
 
 ---
 
@@ -489,12 +489,12 @@ Hecho por creadoras, para creadoras
 | Fase | Duración | Qué hacer |
 | --- | --- | --- |
 | **0. Base** | Semana 1 | Comprar dominio, correos `hola@`, abrir todas las redes, landing con lista de espera |
-| **1. Calentar** | Semanas 2–4 | Publicar contenido educativo, contar la historia, hacer encuestas, hablar 1 a 1 con 20 creadoras |
-| **2. Prelanzamiento** | Semanas 5–6 | Anuncios de lista de espera, oferta de fundadoras, embajadoras probando el producto |
+| **1. Calentar** | Semanas 2–4 | Publicar contenido educativo, contar la historia, hacer encuestas, hablar 1 a 1 con 20 creadores |
+| **2. Prelanzamiento** | Semanas 5–6 | Anuncios de lista de espera, oferta de lanzamiento, embajadores probando el producto |
 | **3. Lanzamiento** | Semana 7 | Abrir registros a la lista primero (48 h), después al público. Live de lanzamiento, sorteo |
 | **4. Crecer** | Mes 3 en adelante | Testimonios, referidos, anuncios de conversión, nuevas funciones cada mes |
 
-**Meta de lanzamiento sugerida:** 300 personas en lista de espera → 50 fundadoras pagando.
+**Meta de lanzamiento sugerida:** 300 personas en lista de espera → 50 cuentas de lanzamiento pagando.
 
 ---
 
@@ -503,8 +503,8 @@ Hecho por creadoras, para creadoras
 > Esta página aún no existe: el sitio actual es el portafolio de Cristal. Es el siguiente
 > paso grande (va junto con el modo multiusuario). Esta es la estructura y el texto.
 
-1. **Héroe:** "Tu talento merece su espacio." / "El portafolio y el panel que las creadoras UGC necesitaban. Muestra tu trabajo, consigue marcas y maneja tu negocio desde un solo lugar." / [Crear mi folio gratis] + mockup.
-2. **Prueba social:** "Creadoras que ya son parte del crew" + logos de marcas con las que trabajan.
+1. **Héroe:** "Tu talento merece su espacio." / "El portafolio y el panel que los creadores UGC necesitaban. Muestra tu trabajo, consigue marcas y maneja tu negocio desde un solo lugar." / [Crear mi folio gratis] + mockup.
+2. **Prueba social:** "Creadores que ya son parte del crew" + logos de marcas con las que trabajan.
 3. **Problema:** "¿Portafolio en Canva, tratos en notas, pagos en WhatsApp? Te entendemos."
 4. **Solución, en 3 bloques:**
    - **Muestra:** portafolio con dominio, bilingüe y con métricas reales.
@@ -521,8 +521,8 @@ Hecho por creadoras, para creadoras
 ## 14. Correos automáticos
 
 **Bienvenida (al registrarse)**
-> Asunto: Bienvenida al crew 💜
-> Hola [nombre]: ¡bienvenida a Foliocrew! En 10 minutos puedes tener tu portafolio listo:
+> Asunto: Ya eres parte del crew 💜
+> Hola [nombre]: ¡te damos la bienvenida a Foliocrew! En 10 minutos puedes tener tu portafolio listo:
 > 1) sube tu foto y tu bio, 2) agrega tus 3 mejores videos, 3) conecta Instagram.
 > [Armar mi folio]. Si te trabas, responde este correo y te ayudo yo. — [Tu nombre]
 
@@ -541,7 +541,7 @@ Hecho por creadoras, para creadoras
 
 **Primero, dale el contexto** (o crea un "GPT personalizado" o un "Proyecto" con este texto):
 ```
-Eres la community manager de Foliocrew, una plataforma para creadoras de contenido UGC hispanohablantes: portafolio profesional, media kit, CRM de marcas, calendario, IA para captions y reportes. Taglines: "Tu talento merece su espacio." y "Crea. Conecta. Crece." Voz: cercana (de tú), profesional, clara, motivadora con datos, sin jerga técnica y sin exceso de emojis. Público: creadoras de 20 a 38 años, en LatAm y EE. UU., que quieren conseguir y manejar marcas como un negocio. Nunca prometas resultados garantizados ni inventes estadísticas.
+Eres la community manager de Foliocrew, una plataforma para creadores de contenido UGC hispanohablantes: portafolio profesional, media kit, CRM de marcas, calendario, IA para captions y reportes. Taglines: "Tu talento merece su espacio." y "Crea. Conecta. Crece." Voz: cercana (de tú), profesional, clara, motivadora con datos, sin jerga técnica y sin exceso de emojis. Público: creadores de 20 a 38 años, en LatAm y EE. UU., que quieren conseguir y manejar marcas como un negocio. Nunca prometas resultados garantizados ni inventes estadísticas.
 ```
 
 **Captions**
@@ -551,7 +551,7 @@ Escribe 3 opciones de caption para un reel de Instagram sobre [tema]. Cada una: 
 
 **Guion de reel**
 ```
-Escribe el guion de un reel de 30 segundos sobre [tema], para creadoras UGC. Formato: [0–3 s] gancho dicho a cámara, [3–25 s] 3 puntos con el texto en pantalla de cada uno, [25–30 s] llamada a la acción. Incluye sugerencias de tomas.
+Escribe el guion de un reel de 30 segundos sobre [tema], para creadores UGC. Formato: [0–3 s] gancho dicho a cámara, [3–25 s] 3 puntos con el texto en pantalla de cada uno, [25–30 s] llamada a la acción. Incluye sugerencias de tomas.
 ```
 
 **Carrusel**
@@ -561,7 +561,7 @@ Crea el texto de un carrusel de Instagram de 8 diapositivas sobre [tema]. Diapos
 
 **Anuncios**
 ```
-Escribe 5 variaciones de anuncio de Meta Ads para Foliocrew dirigidas a [persona: creadora que empieza / creadora que ya factura]. Para cada una: texto principal (máx. 125 caracteres), título (máx. 40) y descripción (máx. 30). Ángulos: dolor, aspiración, prueba social, oferta de fundadoras, comparación con Canva.
+Escribe 5 variaciones de anuncio de Meta Ads para Foliocrew dirigidas a [perfil: quien empieza en UGC / quien ya factura]. Para cada una: texto principal (máx. 125 caracteres), título (máx. 40) y descripción (máx. 30). Ángulos: dolor, aspiración, prueba social, oferta de fundadoras, comparación con Canva.
 ```
 
 **Calendario mensual**
@@ -571,7 +571,7 @@ Arma un calendario de contenido de 30 días para Instagram y TikTok de Foliocrew
 
 **Responder comentarios y DMs**
 ```
-Una creadora comentó: "[comentario]". Escribe una respuesta corta, cálida y útil, en la voz de Foliocrew, que invite a seguir la conversación sin sonar a vendedora.
+Una persona creadora comentó: "[comentario]". Escribe una respuesta corta, cálida y útil, en la voz de Foliocrew, que invite a seguir la conversación sin sonar a venta.
 ```
 
 **Ideas de anuncios en video**
@@ -614,11 +614,11 @@ Dame 10 ideas de anuncios en video de 15–30 segundos para Foliocrew, grabados 
 
 | Etapa | Qué | Estado |
 | --- | --- | --- |
-| 1 | Portafolio + panel completo para una creadora (Cristal) | ✅ Hecho (PR #49) |
+| 1 | Portafolio + panel completo para una persona creadora (Cristal) | ✅ Hecho (PR #49) |
 | 2 | Marca: logo final ✅, dominio, redes, landing con lista de espera | ⏳ Ahora |
-| 3 | **Multiusuario:** registro, login por creadora, un sitio por creadora (`nombre.foliocrew.pro`) | Siguiente |
+| 3 | **Multiusuario:** registro, login por persona creadora, un sitio por persona creadora (`nombre.foliocrew.pro`) | Siguiente |
 | 4 | **Pagos con Stripe:** planes, prueba gratis, portal de cliente | Siguiente |
-| 5 | **Dominios propios:** cada creadora conecta su dominio (vía Vercel) | Después |
+| 5 | **Dominios propios:** cada persona creadora conecta su dominio (vía Vercel) | Después |
 | 6 | Publicación automática en redes + DMs de Instagram (requiere aprobación de Meta) | Después |
 | 7 | Plan Estudio para agencias, app móvil | Futuro |
 
@@ -636,7 +636,7 @@ Dame 10 ideas de anuncios en video de 15–30 segundos para Foliocrew, grabados 
 **Próximas 2 semanas**
 - [ ] Generar las imágenes de marca (sección 8)
 - [ ] Publicar las primeras 9 piezas (sección 9)
-- [ ] Hablar con 20 creadoras UGC: ¿qué les duele?, ¿pagarían $9 o $19?
+- [ ] Hablar con 20 creadores UGC: ¿qué les duele?, ¿pagarían $9 o $19?
 - [ ] Landing con lista de espera (te la construyo)
 - [ ] Revisar y unir el PR #49
 
@@ -644,7 +644,7 @@ Dame 10 ideas de anuncios en video de 15–30 segundos para Foliocrew, grabados 
 - [ ] Anuncios de lista de espera ($5–10/día)
 - [ ] 5 embajadoras con Pro gratis
 - [ ] Multiusuario + Stripe
-- [ ] Lanzamiento con oferta de fundadoras
+- [ ] Lanzamiento con oferta de lanzamiento (50 % para las primeras 50 cuentas)
 
 ---
 

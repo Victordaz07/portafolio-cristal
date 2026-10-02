@@ -44,7 +44,7 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   // Cada página pública pone el nombre de su creadora (generateMetadata); esto es el respaldo.
-  title: "Foliocrew — Portafolios para creadoras UGC",
+  title: "Foliocrew — Portafolios para creadores de contenido UGC",
   description: "Tu talento merece su espacio: portafolio, media kit y colaboraciones en un solo lugar.",
 };
 

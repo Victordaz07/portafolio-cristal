@@ -13,7 +13,7 @@ const COPY = {
     heading: "Creado con intención, pensado para sentirse personal.",
     creatorLine: `Diseñado y desarrollado por ${creatorInfo.name} — Diseñador y creador de experiencias web.`,
     description:
-      "Este sitio es una experiencia 100% personalizada, hecha a la medida de Cristal. Diseño portafolios así para creadoras y marcas personales — el tuyo podría ser el siguiente.",
+      "Este sitio es una experiencia 100% personalizada, hecha a la medida de Cristal. Diseño portafolios así para creadores de contenido y marcas personales — el tuyo podría ser el siguiente.",
     availability: "Disponible para proyectos personalizados",
     primaryLabel: "Empezar un proyecto",
     secondaryLabel: "Ver mi portafolio",

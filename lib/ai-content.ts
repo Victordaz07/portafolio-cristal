@@ -3,7 +3,7 @@ import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { AI_MODEL, getAiClient, getCreatorContext } from "@/lib/ai";
 import { CONTENT_TYPE_LABEL, NETWORK_META, type ContentType, type PlanNetwork } from "@/lib/content-plan";
 
-const SYSTEM = `Eres asistente de una creadora de contenido UGC que trabaja con marcas.
+const SYSTEM = `Eres asistente de una persona creadora de contenido UGC que trabaja con marcas.
 Escribes en español neutro latino, con tono cercano, auténtico y nada exagerado.
 No inventas datos sobre productos ni prometes resultados. Respeta las reglas y límites de cada red.`;
 
@@ -66,7 +66,7 @@ export async function suggestNetworkTips(input: { caption: string; contentType: 
     messages: [
       {
         role: "user",
-        content: `Una creadora UGC va a publicar este ${CONTENT_TYPE_LABEL[input.contentType]} en: ${labels.join(", ")}.
+        content: `Una persona creadora de contenido UGC va a publicar este ${CONTENT_TYPE_LABEL[input.contentType]} en: ${labels.join(", ")}.
 Caption:
 """
 ${input.caption}

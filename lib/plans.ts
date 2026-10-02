@@ -31,7 +31,7 @@ export const PLANS: Plan[] = [
     name: "Crew",
     price: 49,
     tagline: "Para agencias y managers",
-    features: ["Todo lo de Folio Pro", "Hasta 5 creadoras", "Reportes para marcas", "Soporte prioritario"],
+    features: ["Todo lo de Folio Pro", "Hasta 5 perfiles de creador", "Reportes para marcas", "Soporte prioritario"],
   },
 ];
 

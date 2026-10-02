@@ -176,7 +176,7 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
     <div className="mx-auto flex max-w-3xl flex-col gap-sp-5 py-sp-3">
       <div className="flex flex-wrap items-end justify-between gap-sp-3">
         <div>
-          <p className={eyebrow}>Bienvenida a Foliocrew</p>
+          <p className={eyebrow}>Te damos la bienvenida a Foliocrew</p>
           <h1 className="mt-sp-1 font-fraunces text-3xl font-semibold italic text-ink">Armemos tu sitio en 10 minutos</h1>
         </div>
         <button type="button" onClick={skip} className="text-xs text-ink/50 hover:text-ink">

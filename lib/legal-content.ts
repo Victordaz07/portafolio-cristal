@@ -37,24 +37,24 @@ export function getLegalPage(id: LegalPageId, locale: Locale, ctx: LegalContext)
 const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
   privacy: ({ platformName, legalOwner, legalEmail }) => ({
     title: "Política de privacidad",
-    intro: `${platformName} es una plataforma para que creadoras de contenido publiquen su portafolio y administren su trabajo con marcas. Esta política explica qué datos tratamos, para qué y cómo puedes controlarlos. El responsable es ${legalOwner} (${legalEmail}).`,
+    intro: `${platformName} es una plataforma para que creadores de contenido publiquen su portafolio y administren su trabajo con marcas. Esta política explica qué datos tratamos, para qué y cómo puedes controlarlos. El responsable es ${legalOwner} (${legalEmail}).`,
     sections: [
       {
         heading: "1. Datos que tratamos",
         list: [
           "Visitantes del portafolio: si usas el formulario de contacto, guardamos tu nombre, marca, correo, tipo de colaboración y mensaje.",
-          "Creadoras que usan el panel: correo de acceso y el contenido que cargan (textos, fotos, videos, marcas, notas de tratos).",
-          "Cuentas de redes sociales conectadas (Instagram, Facebook, TikTok, YouTube), solo si la creadora decide conectarlas: identificador de la cuenta, nombre de usuario, foto de perfil, número de seguidores, publicaciones y sus métricas (vistas, likes, comentarios) y los tokens de acceso que entrega cada red.",
+          "Personas que usan el panel: correo de acceso y el contenido que cargan (textos, fotos, videos, marcas, notas de tratos).",
+          "Cuentas de redes sociales conectadas (Instagram, Facebook, TikTok, YouTube), solo si la persona usuaria decide conectarlas: identificador de la cuenta, nombre de usuario, foto de perfil, número de seguidores, publicaciones y sus métricas (vistas, likes, comentarios) y los tokens de acceso que entrega cada red.",
           "Cookies técnicas: idioma elegido y sesión del panel. No usamos cookies de publicidad ni de rastreo.",
         ],
       },
       {
         heading: "2. Para qué los usamos",
         list: [
-          "Mostrar el portafolio público de cada creadora.",
+          "Mostrar el portafolio público de cada persona usuaria.",
           "Responder a las marcas que escriben por el formulario.",
-          "Mostrar a la creadora, dentro de su panel privado, sus propias métricas y publicaciones, y ayudarla a gestionar comentarios, mensajes y publicaciones en sus cuentas cuando ella lo pide.",
-          "Generar sugerencias de texto con inteligencia artificial cuando la creadora lo solicita.",
+          "Mostrar a la persona usuaria, dentro de su panel privado, sus propias métricas y publicaciones, y ayudarla a gestionar comentarios, mensajes y publicaciones en sus cuentas cuando ella lo pide.",
+          "Generar sugerencias de texto con inteligencia artificial cuando la persona usuaria lo solicita.",
         ],
         paragraphs: [
           "No vendemos datos, no los usamos para publicidad y no los compartimos con terceros fuera de los proveedores que necesitamos para operar (ver punto 4).",
@@ -63,8 +63,8 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
       {
         heading: "3. Datos de redes sociales",
         paragraphs: [
-          "Solo accedemos a las cuentas que la creadora conecta con el inicio de sesión oficial de cada red, y solo con los permisos que ella aprueba en esa pantalla. Nunca vemos su contraseña.",
-          "Los tokens de acceso se guardan cifrados (AES-256) y nunca se muestran en el sitio público. Las métricas y publicaciones obtenidas solo se ven en el panel privado de la creadora, salvo que ella decida mostrarlas en su portafolio.",
+          "Solo accedemos a las cuentas que la persona usuaria conecta con el inicio de sesión oficial de cada red, y solo con los permisos que ella aprueba en esa pantalla. Nunca vemos su contraseña.",
+          "Los tokens de acceso se guardan cifrados (AES-256) y nunca se muestran en el sitio público. Las métricas y publicaciones obtenidas solo se ven en el panel privado de la persona usuaria, salvo que ella decida mostrarlas en su portafolio.",
           `Uso de datos de YouTube: ${platformName} usa los servicios de la API de YouTube. Al conectar YouTube aceptas los Términos de servicio de YouTube (${YOUTUBE_TERMS}), y aplica también la Política de privacidad de Google (${GOOGLE_PRIVACY}). El uso de la información recibida de las APIs de Google cumple con la Política de datos de usuario de los servicios de API de Google (${GOOGLE_API_POLICY}), incluidos los requisitos de uso limitado. Puedes revocar el acceso en cualquier momento desde ${GOOGLE_PERMISSIONS}.`,
         ],
       },
@@ -74,14 +74,14 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
           "Vercel (alojamiento del sitio y almacenamiento de archivos).",
           "Neon (base de datos PostgreSQL).",
           "Resend (envío de correos del formulario, si está activo).",
-          "Anthropic (inteligencia artificial para sugerencias de texto; solo recibe el texto que la creadora pide procesar).",
-          "Meta, TikTok y Google (solo para las cuentas que la creadora conecta).",
+          "Anthropic (inteligencia artificial para sugerencias de texto; solo recibe el texto que la persona usuaria pide procesar).",
+          "Meta, TikTok y Google (solo para las cuentas que la persona usuaria conecta).",
         ],
       },
       {
         heading: "5. Cuánto tiempo los guardamos",
         paragraphs: [
-          "Los datos se guardan mientras la creadora use la plataforma. Al desconectar una red, borramos sus tokens de inmediato. Los mensajes del formulario se guardan hasta que la creadora los borra o pide eliminarlos.",
+          "Los datos se guardan mientras la persona usuaria use la plataforma. Al desconectar una red, borramos sus tokens de inmediato. Los mensajes del formulario se guardan hasta que la persona usuaria los borra o pide eliminarlos.",
         ],
       },
       {
@@ -113,13 +113,13 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
       {
         heading: "1. El servicio",
         paragraphs: [
-          `${platformName} ofrece un portafolio público para creadoras de contenido y un panel privado para administrarlo, organizar colaboraciones con marcas y, si la creadora lo decide, conectar sus redes sociales para ver métricas y gestionar contenido.`,
+          `${platformName} ofrece un portafolio público para creadores de contenido y un panel privado para administrarlo, organizar colaboraciones con marcas y, si la persona usuaria lo decide, conectar sus redes sociales para ver métricas y gestionar contenido.`,
         ],
       },
       {
         heading: "2. Cuentas y acceso",
         list: [
-          "Cada creadora es responsable de mantener segura su contraseña.",
+          "Cada persona usuaria es responsable de mantener segura su contraseña.",
           "Solo puedes conectar redes sociales que te pertenecen o que estás autorizada a administrar.",
           "Podemos suspender cuentas que infrinjan estos términos o las reglas de las redes conectadas.",
         ],
@@ -170,7 +170,7 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
     intro: `Cómo borrar los datos que ${platformName} guarda sobre ti o sobre tus cuentas de redes sociales.`,
     sections: [
       {
-        heading: "Si eres creadora y conectaste una red",
+        heading: "Si creas contenido y conectaste una red",
         list: [
           "Entra a tu panel → Negocio → Conectar cuentas → \"Desconectar\" en la red que quieras. Borramos de inmediato los tokens de acceso de esa red.",
           "Para quitar también el permiso desde la red: Instagram → Configuración → Apps y sitios web; Facebook → Configuración → Integraciones empresariales; TikTok → Configuración y privacidad → Seguridad → Apps y servicios; Google → " + GOOGLE_PERMISSIONS + ".",

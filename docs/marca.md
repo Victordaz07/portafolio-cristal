@@ -1,5 +1,7 @@
 # Marca: Vitrina UGC
 
+> Kit completo (identidad, redes, campañas y prompts): [`vitrina-ugc-kit-de-marca.md`](vitrina-ugc-kit-de-marca.md).
+
 **Vitrina UGC** es la plataforma: el panel, las páginas legales y lo que ven Meta, TikTok
 y Google al revisar las apps. El sitio público de cada creadora (por ahora, el de Cristal)
 mantiene su propia identidad.
@@ -10,6 +12,10 @@ mantiene su propia identidad.
   (el botón de play). El contenido de la creadora, puesto en vidriera para las marcas.
 
 ## Logo
+
+> **Provisional.** El logo definitivo se hará con ChatGPT (brief y prompts en
+> [`vitrina-ugc-kit-de-marca.md`](vitrina-ugc-kit-de-marca.md#7-el-logo-brief-y-prompts-para-chatgpt)).
+> Cuando esté listo, se reemplazan estos archivos con los mismos nombres.
 
 Los archivos viven en `public/brand/`. Son vectoriales: el texto está convertido a trazos,
 así que se ven igual en cualquier lugar.

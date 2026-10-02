@@ -138,6 +138,10 @@ Cada creadora tiene su espacio (`Creator`) y **todas** las tablas tienen `creato
   - Se hace en `/admin/registro` y pide `SIGNUP_INVITE_CODE`. Sin esa variable, el registro está cerrado.
   - Crea la creadora, su usuaria, una portada y la configuración inicial.
 - **Mi cuenta** (`/admin/cuenta`): nombre, contraseña y dirección del sitio.
+- **Asistente de bienvenida** (`/admin/bienvenida`, `app/api/admin/onboarding`):
+  - las creadoras nuevas (`Creator.onboardedAt` nulo) llegan ahí desde el Resumen;
+  - arma la portada, la bio, los servicios, los paquetes y las FAQ con plantillas por nicho (`lib/onboarding.ts`; nunca duplica secciones que ya tienen contenido), crea las primeras piezas a partir de sus links y guarda el contacto y el color;
+  - la lista "Completa tu sitio" (`components/admin/SetupChecklist.tsx`) se muestra en el Resumen hasta completar todo.
 - **Dominios** (ver [`docs/dominios.md`](docs/dominios.md)):
   - cada sitio tiene un dominio propio (en **Mi dominio**, con la API de Vercel), un subdominio (`<slug>.PLATFORM_ROOT_DOMAIN`) o la dirección provisional `/s/<slug>`;
   - la raíz de la plataforma muestra la portada de Foliocrew (`app/foliocrew`);

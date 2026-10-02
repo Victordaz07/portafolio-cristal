@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 // servirse una versión prerenderizada en build.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Panel — Vitrina UGC", robots: { index: false } };
+export const metadata: Metadata = { title: "Panel — Foliocrew", robots: { index: false } };
 
 export default async function AdminDashboardLayout({ children }: { children: ReactNode }) {
   const unreadMessages = await prisma.contactMessage.count({ where: { read: false } });

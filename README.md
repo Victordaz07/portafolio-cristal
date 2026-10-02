@@ -81,7 +81,7 @@ Panel admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/log
 
 ## Marca
 
-La plataforma se llama **Vitrina UGC** (`PLATFORM_NAME`). El logo, los colores, las tipografías y la voz están en [`docs/marca.md`](docs/marca.md); los archivos del logo viven en `public/brand/`. El sitio público de cada creadora mantiene su propia identidad.
+La plataforma se llama **Foliocrew** (`PLATFORM_NAME`). El logo, los colores, las tipografías y la voz están en [`docs/marca.md`](docs/marca.md); el kit completo (redes, campañas y prompts) está en [`docs/foliocrew-kit-de-marca.md`](docs/foliocrew-kit-de-marca.md). Los archivos del logo viven en `public/brand/`. El sitio público de cada creadora mantiene su propia identidad.
 
 ## Scripts
 

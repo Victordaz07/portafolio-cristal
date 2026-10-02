@@ -1,87 +1,69 @@
-# Marca: Vitrina UGC
+# Marca: Foliocrew
 
-> Kit completo (identidad, redes, campañas y prompts): [`vitrina-ugc-kit-de-marca.md`](vitrina-ugc-kit-de-marca.md).
+> Kit completo (identidad, redes, campañas y prompts): [`foliocrew-kit-de-marca.md`](foliocrew-kit-de-marca.md).
 
-**Vitrina UGC** es la plataforma: el panel, las páginas legales y lo que ven Meta, TikTok
-y Google al revisar las apps. El sitio público de cada creadora (por ahora, el de Cristal)
+**Foliocrew** es la plataforma: el panel, las páginas legales y lo que ven Meta, TikTok y
+Google al revisar las apps. El sitio público de cada creadora (por ahora, el de Cristal)
 mantiene su propia identidad.
 
-- **Dominio previsto:** `vitrinaugc.com` (estaba disponible; todavía no se compró).
-- **Frase:** "Tu vitrina de contenido UGC".
-- **Idea:** una vitrina de tienda (el toldo festoneado) donde lo que se exhibe son videos
-  (el botón de play). El contenido de la creadora, puesto en vidriera para las marcas.
+- **Nombre:** *folio* (la página de un portafolio) + *crew* (tu equipo, tu comunidad).
+- **Dominio sugerido:** `foliocrew.app`, disponible al 2 de octubre de 2026 ($9.99 el primer año, $15 al renovar).
+  `foliocrew.com` ya está tomado. Todavía no se compró nada.
+- **Frases:** "Tu talento merece su espacio." · "Crea. Conecta. Crece."
 
 ## Logo
 
-> **Provisional.** El logo definitivo se hará con ChatGPT (brief y prompts en
-> [`vitrina-ugc-kit-de-marca.md`](vitrina-ugc-kit-de-marca.md#7-el-logo-brief-y-prompts-para-chatgpt)).
-> Cuando esté listo, se reemplazan estos archivos con los mismos nombres.
-
-Los archivos viven en `public/brand/`. Son vectoriales: el texto está convertido a trazos,
-así que se ven igual en cualquier lugar.
+Hecho con ChatGPT y vectorizado con `scripts/brand/vectorize_logo.py`. Ese script separa
+los 3 colores del PNG original y los traza con potrace.
 
 | Archivo | Uso |
 | --- | --- |
-| `logo.svg` | Logo horizontal sobre fondos claros (login, documentos). |
-| `logo-claro.svg` | Logo horizontal sobre fondos oscuros (sidebar del panel). |
-| `isotipo.svg` | Solo el ícono: avatar de redes, favicon, apps. |
-| `isotipo-512.png` | El ícono en PNG para subir a las consolas de Meta, TikTok y Google. |
+| `public/brand/logo.svg` / `.png` | Logo horizontal sobre fondo claro (login, documentos). |
+| `public/brand/logo-claro.svg` / `.png` | Logo horizontal sobre fondo oscuro (sidebar del panel). |
+| `public/brand/isotipo.svg` | Solo el ícono, sin fondo. |
+| `public/brand/icono-app.svg` | Ícono de app: fondo tinta, páginas crema y lavanda. |
+| `public/brand/icono-512.png` | Ícono para las consolas de Meta, TikTok y Google, y foto de perfil. |
 | `app/icon.svg` / `app/apple-icon.png` | Favicon e ícono de iPhone (Next.js los toma solos). |
+| `public/brand/original/` | Archivos originales de ChatGPT (logo plano, con degradado e ícono oscuro). |
+| `public/brand/campana/` | Piezas de campaña: story "Crea. Conecta. Crece." y post "Tu talento merece su espacio". |
 
 Reglas:
-- No estirar, rotar ni cambiar los colores del logo.
-- Dejar alrededor un aire mínimo de la mitad del alto del ícono.
-- No usar el isotipo a menos de 16 px.
-
-Para regenerar los SVG (por ejemplo, si cambian los colores), usa el script
-`scripts/brand/make_logo.py`. Usa `fonttools` y las fuentes Fraunces Italic 700 y Space Mono 700.
+- No estirar, rotar ni cambiar los colores.
+- Dejar alrededor un aire mínimo del ancho de la "o".
+- Tamaño mínimo: el ícono a 16 px y el logo horizontal a 100 px de ancho.
 
 ## Colores
 
 | Nombre | Hex | Uso |
 | --- | --- | --- |
-| Tinta | `#241227` | Texto, fondo del sidebar y del ícono. |
-| Crema | `#FBF7F5` | Fondo general. |
-| Lila | `#A866BE` | Acento principal: botones, enlaces, el toldo. |
-| Morado | `#801F82` | Acento oscuro: hover, detalles. |
-| Lavanda | `#C3ACEA` | Acento claro: etiquetas, la franja del toldo. |
+| Tinta | `#251023` | Texto, fondos oscuros, fondo del ícono. |
+| Crema | `#FBF7F5` | Fondo claro. |
+| Ciruela | `#7F207B` | Página izquierda del ícono, palabra clave sobre fondo claro. |
+| Lavanda | `#B692E7` | Página derecha del ícono, palabra clave sobre fondo oscuro. |
 
-Son los mismos colores del panel (`coral`, `moss` y `lime` en Tailwind). El color de
-acento del **sitio** de cada creadora se cambia en Apariencia. El de la **marca** Vitrina
-UGC es siempre lila.
+El panel usa casi los mismos tonos (`ink`, `moss`, `lime` en Tailwind). El color de acento
+del **sitio** de cada creadora se cambia en Apariencia.
 
 ## Tipografías
 
-- **Fraunces Italic:** títulos y el nombre "vitrina".
-- **Space Mono:** etiquetas, la píldora "UGC" y los números.
-- **Inter:** texto corrido.
+- **Títulos de campaña:** Fraunces, con la palabra clave en itálica.
+- **Subtítulos y botones:** Outfit.
+- **Texto:** Inter.
 
 ## Voz
 
-Cercana, en español neutro, de tú, sin tecnicismos. Habla como una colega que sabe del
-negocio: "Las marcas suelen quedarse con quien contesta primero", no "Tiempo de respuesta
-excedido".
+Cercana, en español neutro, de tú, sin tecnicismos. Habla como una colega que ya vive de
+crear contenido: "Las marcas suelen quedarse con quien contesta primero", no "Tiempo de
+respuesta excedido".
 
-## Imágenes con IA (DALL·E / gpt-image)
+## Imágenes con IA
 
-Las ilustraciones y fotos de marca (imagen para compartir links, login, estados vacíos,
-banner de redes, ideas de isotipo) se generan con la API de imágenes de OpenAI:
+Las imágenes de marca se generan con ChatGPT. Los prompts están en la sección 8 del kit.
 
-1. Crea una clave en platform.openai.com → API keys.
-2. Ponla como `OPENAI_API_KEY`:
-   - en tu `.env` local, o
-   - en las variables del entorno de la nube.
+También se pueden generar desde la terminal con `npm run brand:images`, que usa la API de
+imágenes de OpenAI y los prompts de `scripts/brand/prompts.mjs`:
+- Necesita `OPENAI_API_KEY` en `.env` o en las variables del entorno. Nunca la pegues en un chat.
+- El modelo por defecto es `gpt-image-1`. Para usar DALL·E 3, pon `OPENAI_IMAGE_MODEL=dall-e-3`.
+- Las imágenes quedan en `public/brand/ia/`.
 
-   Nunca la pegues en un chat ni la subas a GitHub.
-3. Corre `npm run brand:images` (o solo algunas: `npm run brand:images -- og-plataforma`).
-4. Las imágenes quedan en `public/brand/ia/`. Revísalas antes de usarlas.
-
-Los textos de cada imagen están en `scripts/brand/prompts.mjs`. El modelo por defecto es
-`gpt-image-1`, el sucesor de DALL·E en la misma API. Para usar DALL·E 3, pon
-`OPENAI_IMAGE_MODEL=dall-e-3`.
-
-La app no usa esta clave: solo la usa este script.
-
-El logo oficial es el SVG vectorial, no una imagen generada. Las imágenes de IA no salen
-nítidas a tamaño pequeño ni se pueden editar como vector. La imagen
-`logo-exploracion` sirve solo como inspiración.
+La app no usa esta clave: solo la usa el script.

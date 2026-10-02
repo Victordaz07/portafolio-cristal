@@ -122,9 +122,9 @@ export default function AdminShell({
   return (
     <div className="min-h-screen bg-cream md:flex">
       <div className="flex items-center justify-between bg-ink px-sp-5 py-sp-3 text-cream md:hidden print:hidden">
-        <Link href="/admin" aria-label="Vitrina UGC — inicio del panel">
+        <Link href="/admin" aria-label="Foliocrew — inicio del panel">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/logo-claro.svg" alt="Vitrina UGC" className="h-7 w-auto" />
+          <img src="/brand/logo-claro.svg" alt="Foliocrew" className="h-7 w-auto" />
         </Link>
         <button
           type="button"
@@ -143,9 +143,9 @@ export default function AdminShell({
         } flex-col gap-3.5 bg-ink px-sp-4 py-7 text-cream print:hidden md:sticky md:top-0 md:flex md:h-screen md:w-[250px] md:shrink-0`}
       >
         <div className="mb-sp-2 hidden md:block">
-          <Link href="/admin" aria-label="Vitrina UGC — inicio del panel">
+          <Link href="/admin" aria-label="Foliocrew — inicio del panel">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/logo-claro.svg" alt="Vitrina UGC" className="h-8 w-auto" />
+            <img src="/brand/logo-claro.svg" alt="Foliocrew" className="h-8 w-auto" />
           </Link>
           <p className="mt-sp-1 font-mono text-[9px] uppercase tracking-[0.16em] text-lime">
             Panel privado

@@ -1,6 +1,6 @@
-# Vitrina UGC: kit completo del proyecto
+# Foliocrew: kit completo del proyecto
 
-> Todo lo necesario para construir la marca, crear el logo con ChatGPT, abrir las redes,
+> Todo lo necesario para construir la marca, usar el logo, abrir las redes,
 > lanzar campañas y vender la plataforma. Los prompts están listos para copiar y pegar.
 
 **Índice**
@@ -10,9 +10,9 @@
 4. [Identidad de marca](#4-identidad-de-marca)
 5. [Público objetivo](#5-público-objetivo)
 6. [Identidad visual](#6-identidad-visual)
-7. [El logo: brief y prompts para ChatGPT](#7-el-logo-brief-y-prompts-para-chatgpt)
+7. [El logo](#7-el-logo)
 8. [Prompts de imágenes de marca](#8-prompts-de-imágenes-de-marca)
-9. [Redes sociales de Vitrina UGC](#9-redes-sociales-de-vitrina-ugc)
+9. [Redes sociales de Foliocrew](#9-redes-sociales-de-foliocrew)
 10. [Estrategia de contenido](#10-estrategia-de-contenido)
 11. [Campañas en Instagram y Meta Ads](#11-campañas-en-instagram-y-meta-ads)
 12. [Lanzamiento paso a paso](#12-lanzamiento-paso-a-paso)
@@ -30,10 +30,10 @@
 
 | | |
 | --- | --- |
-| **Nombre** | Vitrina UGC |
-| **Dominio** | `vitrinaugc.com` (estaba disponible a ~$11.25/año; **cómpralo antes de mostrar la marca en público**) |
+| **Nombre** | Foliocrew |
+| **Dominio** | `foliocrew.app` (disponible el 2 de octubre de 2026: $9.99 el primer año y $15/año al renovar). `foliocrew.com` ya está tomado. Alternativa: `getfoliocrew.com` ($11.25/año). **Cómpralo antes de mostrar la marca en público.** |
 | **Qué es** | La plataforma donde las creadoras UGC muestran su trabajo a las marcas, organizan sus colaboraciones y hacen crecer su negocio. |
-| **Frase principal** | *Tu contenido, en vitrina.* |
+| **Frase principal** | *Tu talento merece su espacio.* |
 | **Para quién** | Creadoras de contenido UGC hispanohablantes (LatAm y EE. UU.) que quieren conseguir y manejar marcas como un negocio. |
 | **Problema** | Las creadoras usan 6 herramientas sueltas (Linktree, Canva, Excel, Notes, Drive, WhatsApp). El portafolio se ve amateur, los tratos se pierden y no saben qué números mostrarle a una marca. |
 | **Solución** | Un portafolio profesional y bilingüe con su propio dominio, más un panel que junta CRM de marcas, calendario, captions con IA, métricas, reportes, media kit y bandeja de mensajes. |
@@ -42,10 +42,10 @@
 | **Estado** | Producto funcionando para una creadora. Siguiente paso: multiusuario + pagos (Stripe) + dominios propios. |
 
 **Pitch de 1 frase:**
-> Vitrina UGC convierte el trabajo de una creadora en un portafolio profesional que las marcas toman en serio, y le da un panel para manejar su negocio entero desde un solo lugar.
+> Foliocrew convierte el trabajo de una creadora en un portafolio profesional que las marcas toman en serio, y le da un panel para manejar su negocio entero desde un solo lugar.
 
 **Pitch de 30 segundos:**
-> Si haces contenido UGC, sabes que conseguir marcas es la mitad del trabajo. Con Vitrina UGC tienes tu portafolio con tu propio dominio, en español e inglés, con tus métricas reales y tu media kit siempre al día. Y detrás, un panel donde llevas tus tratos con marcas, planeas tu contenido con ayuda de IA, ves qué te funciona y respondes mensajes sin perder ninguno. Todo en un lugar, pensado para creadoras.
+> Si haces contenido UGC, sabes que conseguir marcas es la mitad del trabajo. Con Foliocrew tienes tu portafolio con tu propio dominio, en español e inglés, con tus métricas reales y tu media kit siempre al día. Y detrás, un panel donde llevas tus tratos con marcas, planeas tu contenido con ayuda de IA, ves qué te funciona y respondes mensajes sin perder ninguno. Todo en un lugar, pensado para creadoras.
 
 ---
 
@@ -81,9 +81,9 @@ Precios sugeridos (en USD; ajusta tras hablar con 10 creadoras):
 
 | Plan | Precio | Para quién | Incluye |
 | --- | --- | --- | --- |
-| **Vitrina** | $9/mes | Empezando | Portafolio + media kit + feed + bandeja de formulario + subdominio `nombre.vitrinaugc.com` |
-| **Vitrina Pro** ⭐ | $19/mes | En crecimiento | Todo + dominio propio + CRM + calendario + IA + reportes + redes conectadas |
-| **Estudio** | $49/mes | Agencias / managers | Hasta 5 creadoras, reportes para marcas, soporte prioritario |
+| **Folio** | $9/mes | Empezando | Portafolio + media kit + feed + bandeja de formulario + subdominio `nombre.foliocrew.app` |
+| **Folio Pro** ⭐ | $19/mes | En crecimiento | Todo + dominio propio + CRM + calendario + IA + reportes + redes conectadas |
+| **Crew** | $49/mes | Agencias / managers | Hasta 5 creadoras, reportes para marcas, soporte prioritario |
 
 - **Anual:** 2 meses gratis (Pro anual = $190).
 - **Prueba gratis:** 14 días sin tarjeta.
@@ -107,7 +107,7 @@ base de datos ($20–50), IA ($0.01–0.05 por caption), Stripe (~3 % + $0.30 po
 4. **Crecer juntas.** Comunidad, no competencia.
 
 ### Personalidad
-Si Vitrina UGC fuera una persona: **la amiga que ya vive de crear contenido** y te pasa
+Si Foliocrew fuera una persona: **la amiga que ya vive de crear contenido** y te pasa
 todos sus trucos. Segura, organizada, cálida, con buen ojo estético y cero pretensión.
 
 **Arquetipo:** la Creadora + la Cuidadora. Inspira a crear y te acompaña.
@@ -128,14 +128,18 @@ Ejemplos:
 - ❌ "¡Eres increíble! ✨✨✨"
 
 ### Frases (taglines) para elegir
-- **Tu contenido, en vitrina.** ← principal
+- **Tu talento merece su espacio.** ← principal
+- Crea. Conecta. Crece.
+- Tu contenido. Tus marcas. Todo conectado.
+- Tu espacio para mostrar y organizar.
+- Tu portafolio y tus colaboraciones, en un solo lugar.
 - Donde las marcas encuentran creadoras.
 - Tu portafolio UGC, como de agencia.
 - Muestra tu trabajo. Maneja tu negocio.
 - Del contenido al contrato.
 
 ### Palabras de marca
-Vitrina · mostrar · brillar · colaborar · crecer · auténtico · profesional · creadora · marca · portafolio
+Folio · crew · espacio · mostrar · conectar · crecer · colaborar · auténtico · profesional · creadora · portafolio
 
 ---
 
@@ -167,171 +171,146 @@ Instagram (reels y carruseles educativos), TikTok (#ugccreator, #creadoraugc), Y
 
 ## 6. Identidad visual
 
-### Colores (se pueden cambiar con tu logo nuevo)
+### El nombre
+**Foliocrew** = *folio* (la página de un portafolio) + *crew* (tu equipo, tu comunidad).
+Se escribe **Foliocrew** en textos (con mayúscula inicial) y **foliocrew** en el logo.
+En el logo, "folio" va en negrita y "crew" en delgada.
+
+### Colores (sacados de tu logo)
 
 | Rol | Nombre | HEX | RGB |
 | --- | --- | --- | --- |
-| Principal oscuro | Tinta | `#241227` | 36 18 39 |
+| Principal oscuro | Tinta | `#251023` | 37 16 35 |
 | Fondo | Crema | `#FBF7F5` | 251 247 245 |
-| Acento principal | Lila | `#A866BE` | 168 102 190 |
-| Acento oscuro | Morado | `#801F82` | 128 31 130 |
-| Acento claro | Lavanda | `#C3ACEA` | 195 172 234 |
-| Apoyo | Salvia | `#9FB98E` | 159 185 142 |
+| Acento fuerte | Ciruela | `#7F207B` | 127 32 123 |
+| Acento claro | Lavanda | `#B692E7` | 182 146 231 |
+| Lavanda del ícono | Lavanda suave | `#BCA3EA` | 188 163 234 |
+| Versión con degradado | Violeta | `#A66AE0` | 166 106 224 |
 
-**Proporción:** 60 % crema, 25 % tinta, 10 % lila, 5 % lavanda o salvia.
-
-> Si tu logo de ChatGPT trae otra paleta, me pasas los HEX y actualizo todo el panel en minutos.
+**Proporción:** 60 % crema o tinta (fondo), 25 % el otro, 10 % lavanda, 5 % ciruela.
+Como en tus piezas: fondo tinta con títulos en crema y una palabra en lavanda itálica
+("Crea. Conecta. *Crece.*"), o fondo crema con títulos en tinta y la palabra clave en ciruela
+("Tu talento merece su *espacio.*").
 
 ### Tipografías (gratis, de Google Fonts)
-- **Títulos:** Fraunces Italic (elegante, editorial).
-- **Etiquetas y números:** Space Mono (técnica, moderna).
-- **Texto:** Inter (limpia, legible).
+- **Títulos de campaña:** Fraunces, con la palabra clave en itálica (alternativa: DM Serif Display).
+- **Subtítulos y botones:** Outfit, una sans geométrica que combina con el logo.
+- **Texto del panel y del sitio:** Inter.
 
-### Estilo de fotos
-- Luz natural y suave, fondos crema o neutros, manos y productos en acción.
-- Creadoras reales: diversas, no modelos perfectas.
-- Escenas de trabajo: teléfono en trípode, aro de luz, escritorio con plantas.
+> El logo no se escribe con una fuente: usa siempre los archivos de `public/brand/`.
+
+### Estilo de fotos (como tu post "Tu talento merece su espacio")
+- Creadoras reales, latinas y diversas, trabajando: celular en trípode, escritorio, maquillaje, plantas.
+- Luz natural cálida, fondos crema, toques de lavanda en la ropa o los objetos.
+- Profundidad de campo (fondo o primer plano desenfocado).
 - **Evitar:** fotos de stock genéricas, neón, exceso de filtros.
 
 ### Elementos gráficos
-- El marco de vitrina (rectángulo redondeado) como contenedor de fotos.
-- Etiquetas tipo "píldora" en Space Mono (`UGC`, `NUEVO`, `+32 %`).
-- Mucho espacio vacío. Menos es más.
+- **Las páginas superpuestas** del ícono, en línea fina lavanda, como decoración de fondo
+  (como en tu story y tu post).
+- Etiquetas tipo píldora lavanda ("Para creadoras UGC").
+- Una línea fina lavanda para separar el pie de las piezas.
+- Mucho espacio vacío.
 
 ---
 
-## 7. El logo: brief y prompts para ChatGPT
+## 7. El logo
 
-### Brief (pégalo primero en ChatGPT para darle contexto)
+Lo hiciste con ChatGPT y está en el repo, vectorizado (SVG) para que se vea nítido en cualquier tamaño.
 
-```
-Voy a crear el logo de mi marca. Contexto:
+| Archivo | Uso |
+| --- | --- |
+| `public/brand/logo.svg` / `logo.png` | Logo horizontal sobre fondo claro |
+| `public/brand/logo-claro.svg` / `logo-claro.png` | Logo horizontal sobre fondo oscuro (texto crema) |
+| `public/brand/isotipo.svg` | Solo el ícono, sin fondo |
+| `public/brand/icono-app.svg` | Ícono de app (fondo tinta, páginas crema + lavanda) |
+| `public/brand/icono-512.png` | Ícono para las consolas de Meta, TikTok y Google, y foto de perfil |
+| `app/icon.svg` / `app/apple-icon.png` | Favicon e ícono de iPhone |
+| `public/brand/original/` | Tus archivos originales de ChatGPT |
+| `public/brand/campana/` | Tus piezas de campaña (story y post) |
 
-- Nombre: Vitrina UGC
-- Qué es: plataforma (web app) para creadoras de contenido UGC (contenido generado por usuarios para marcas). Les da un portafolio profesional, un media kit y un panel para manejar sus colaboraciones con marcas.
-- Público: mujeres creadoras de 20 a 38 años, hispanohablantes, en LatAm y EE. UU.
-- Personalidad: profesional pero cercana, editorial, cálida, femenina sin ser cursi, moderna.
-- Concepto: una "vitrina" (escaparate de tienda) donde se exhibe el contenido de la creadora para que las marcas lo vean.
-- Colores preferidos: tinta berenjena #241227, crema #FBF7F5, lila #A866BE, morado #801F82, lavanda #C3ACEA.
-- Debe funcionar: pequeño (ícono de app y favicon de 32 px), en una sola tinta, sobre fondo claro y oscuro.
-- Evitar: clichés de cámara de fotos, corazones, estrellas brillantes, degradados complejos, letras ilegibles, parecerse a Instagram o TikTok.
+**Reglas:**
+- No estirar, rotar ni cambiar los colores.
+- Aire alrededor: como mínimo, el ancho de la "o" de "folio".
+- Tamaño mínimo: el ícono a 16 px y el logo horizontal a 100 px de ancho.
+- Sobre fotos, usa la versión que contraste o ponle detrás un recuadro crema o tinta.
 
-Cuando te pida diseños, dame logos planos, vectoriales, sin sombras ni efectos 3D, sobre fondo liso.
+**Variantes que puedes pedirle a ChatGPT** (sube el logo al chat primero):
 ```
-
-### Prompts de logo (prueba varios)
-
-**A. Wordmark editorial (solo letras)**
+Con este logo exacto, sin cambiar las formas ni las letras, genera:
+1. Versión vertical (ícono arriba, "foliocrew" abajo), fondo transparente.
+2. Versión en una sola tinta blanca sobre fondo transparente.
+3. Versión en una sola tinta tinta #251023 sobre fondo transparente.
+Fondo liso, sin sombras ni efectos.
 ```
-Diseña un logotipo tipográfico para "Vitrina UGC". "vitrina" en minúsculas, con una serif itálica elegante y editorial, estilo revista de moda; "UGC" pequeño, en una píldora redondeada con letra monoespaciada. Color tinta #241227 con la píldora en lila #A866BE. Fondo crema #FBF7F5 liso. Logo plano, vectorial, centrado, sin efectos, mucho espacio alrededor. El texto debe ser exactamente "vitrina" y "UGC", bien escrito.
 ```
-
-**B. Ícono + nombre (isotipo de vitrina)**
+Anima este ícono para un video de 3 segundos: la página ciruela entra desde la izquierda, la lavanda desde la derecha y se encajan formando el ícono; luego aparece "foliocrew" a la derecha. Fondo tinta #251023. Movimiento suave y elegante.
 ```
-Crea un logo para "Vitrina UGC": un ícono simple de una ventana de tienda (escaparate) con un toldo, y dentro un rectángulo vertical que representa una pantalla de celular con un video. Al lado, el nombre "vitrina" en serif itálica elegante y "UGC" en una píldora pequeña. Estilo flat, geométrico, minimalista, colores #241227, #A866BE y #C3ACEA sobre fondo #FBF7F5. Vectorial, sin sombras, sin degradados.
-```
-
-**C. Monograma "V"**
-```
-Diseña un monograma con la letra "V" para la marca "Vitrina UGC". La V debe sugerir sutilmente el marco de una vitrina o un marco de foto, o tener un pequeño triángulo de "play" en el espacio negativo. Geométrico, elegante, que funcione en 32 px. Colores lila #A866BE y tinta #241227 sobre fondo crema. Flat, vectorial, sin efectos. Muéstralo dentro de un cuadrado redondeado tipo ícono de app y también solo.
-```
-
-**D. Marco de foto vertical**
-```
-Logo minimalista para "Vitrina UGC": un marco vertical con proporción 9:16 (como un reel), con esquinas redondeadas, y la letra "v" en serif itálica dentro, como si estuviera en exhibición. Debajo o al lado, el nombre "vitrina UGC". Colores #241227 y #A866BE, fondo #FBF7F5. Flat, vectorial, elegante, femenino y profesional.
-```
-
-**E. Hoja de exploración (para elegir dirección)**
-```
-Hazme una hoja de presentación con 6 conceptos de logo distintos para "Vitrina UGC", numerados del 1 al 6, en una cuadrícula de 3x2 sobre fondo crema. Mezcla: wordmark editorial, monograma V, ícono de vitrina, marco vertical de reel, toldo de tienda y una opción con sello o insignia. Todos planos, vectoriales y con la paleta #241227, #A866BE, #C3ACEA. Escribe el nombre correctamente.
-```
-
-### Cuando elijas uno, pídele las variantes
-```
-Me quedo con el concepto número __. Ahora genera estas variantes manteniendo exactamente el mismo diseño:
-1. Versión horizontal (ícono + nombre) sobre fondo crema #FBF7F5.
-2. Versión horizontal en colores claros sobre fondo tinta #241227.
-3. Solo el ícono, dentro de un cuadrado redondeado (ícono de app), fondo tinta.
-4. Solo el ícono en una sola tinta negra sobre fondo blanco.
-5. Versión vertical (ícono arriba, nombre abajo).
-Todas con fondo liso y sin efectos.
-```
-
-### Checklist para aprobar el logo
-- [ ] Se lee bien a 32 px (achícalo en el celular y míralo).
-- [ ] Funciona en una sola tinta (blanco y negro).
-- [ ] Funciona sobre fondo claro **y** oscuro.
-- [ ] El texto está bien escrito (las IA a veces cambian letras: revisa "vitrina" y "UGC").
-- [ ] No se parece al logo de Instagram, TikTok, Linktree ni de otra marca conocida.
-- [ ] Te sigue gustando después de 2 días.
-
-### Cómo me lo pasas para ponerlo en la plataforma
-- **Ideal:** archivo **SVG** (vectorial). ChatGPT da PNG; para convertirlo a SVG usa
-  vectorizer.ai, Illustrator ("Calco de imagen") o Figma con un plugin de vectorizar.
-- **Si solo tienes PNG:** mínimo 2000 px de ancho, **fondo transparente**.
-- Necesito: logo horizontal claro, logo horizontal para fondo oscuro, e ícono cuadrado.
-- Súbelos al repo en `public/brand/` (o pásamelos en el chat) y yo reemplazo todo: panel, login, favicon e íconos.
+> Si cambias el logo, guarda el PNG nuevo en `public/brand/original/logo-plano.webp`
+> y corre `python3 scripts/brand/vectorize_logo.py` (o pásamelo y lo hago yo).
 
 ---
 
 ## 8. Prompts de imágenes de marca
 
-> Úsalos en ChatGPT. Añade al final de cada uno: *"Paleta: #241227, #FBF7F5, #A866BE, #801F82, #C3ACEA. Estilo editorial, luz natural suave, mucho espacio vacío. Sin texto ni logos de marcas reales."*
+> Úsalos en ChatGPT. **Sube primero tu logo y tus dos piezas** (`public/brand/campana/`) y di:
+> *"Usa este logo y el estilo de estas piezas como referencia."* Luego añade al final de cada prompt:
+> *"Paleta: tinta #251023, crema #FBF7F5, ciruela #7F207B, lavanda #B692E7. Títulos en serif con la palabra clave en itálica, estilo editorial, luz natural suave, mucho espacio vacío. Sin logos de marcas reales."*
 > Cuando tengas tu logo, súbelo al chat y di: *"Usa este logo donde haga falta."*
 
 ### Imagen para compartir el enlace (Open Graph, 1200×630)
 ```
-Imagen horizontal 1200x630: una vitrina de boutique al atardecer; dentro, en lugar de ropa, pantallas de celular verticales mostrando videos de productos de belleza y estilo de vida, como si fueran productos en exhibición. Cálida, elegante, editorial.
+Imagen horizontal 1200x630: fondo tinta #251023 con el logo de foliocrew arriba a la izquierda, el título "Tu talento merece su espacio." en serif grande color crema con "espacio." en lavanda itálica, y a la derecha las páginas superpuestas del ícono en línea fina lavanda. Elegante, editorial, mucho aire.
 ```
 
 ### Foto de perfil de las redes (1080×1080)
 ```
-Ícono de perfil cuadrado 1080x1080 con [mi logo] centrado sobre fondo tinta #241227, con margen amplio para que se vea bien recortado en círculo.
+Ícono de perfil cuadrado 1080x1080 con [mi logo] centrado sobre fondo tinta #251023, con margen amplio para que se vea bien recortado en círculo.
 ```
 
 ### Banner de portada (Facebook, LinkedIn, YouTube, X)
 ```
-Banner horizontal panorámico: flat-lay sobre superficie crema con un celular mostrando un video vertical, un mini trípode, productos de skincare, retazos de tela lila y notas escritas a mano. Todo ordenado con mucho espacio libre a la derecha para poner texto.
+Banner horizontal panorámico: flat-lay sobre superficie crema con un celular mostrando un video vertical, un mini trípode, productos de skincare, retazos de tela lavanda y notas escritas a mano. Todo ordenado con mucho espacio libre a la derecha para poner texto.
 ```
 
 ### Portadas de destacados de Instagram (1080×1920, ícono centrado)
 ```
-Crea un set de 6 portadas para historias destacadas de Instagram, fondo lila #A866BE liso con un ícono de línea simple color crema, centrado: 1) estrella (Empieza aquí), 2) lupa (Cómo funciona), 3) etiqueta de precio (Planes), 4) corazón con chat (Testimonios), 5) bombilla (Tips UGC), 6) signo de pregunta (FAQ). Estilo de línea consistente y minimalista.
+Crea un set de 6 portadas para historias destacadas de Instagram, fondo tinta #251023 liso con un ícono de línea simple color lavanda #B692E7, centrado: 1) estrella (Empieza aquí), 2) lupa (Cómo funciona), 3) etiqueta de precio (Planes), 4) corazón con chat (Testimonios), 5) bombilla (Tips UGC), 6) signo de pregunta (FAQ). Estilo de línea consistente y minimalista.
 ```
 
 ### Mockup de la plataforma
 ```
-Mockup realista de una laptop y un celular sobre un escritorio crema con plantas y luz natural de mañana. La pantalla muestra un portafolio web elegante de una creadora de contenido, con tonos crema y lila, una cuadrícula de videos verticales y números de métricas. Fotografía editorial.
+Mockup realista de una laptop y un celular sobre un escritorio crema con plantas y luz natural de mañana. La pantalla muestra un portafolio web elegante de una creadora de contenido, con tonos crema y lavanda, una cuadrícula de videos verticales y números de métricas. Fotografía editorial.
 ```
 > Mejor aún: toma capturas reales del panel y pídele a ChatGPT: *"Pon esta captura de pantalla dentro de un mockup de laptop sobre un escritorio crema con luz natural."*
 
 ### Creadora usando la plataforma (para anuncios)
 ```
-Foto estilo lifestyle de una creadora de contenido latina de unos 28 años, sentada en su escritorio en casa, sonriendo mientras mira su laptop. A su lado, un aro de luz y productos de skincare. Luz natural de ventana, tonos crema y lila suaves, auténtica, nada de foto de stock.
+Foto estilo lifestyle de una creadora de contenido latina de unos 28 años, sentada en su escritorio en casa, sonriendo mientras mira su laptop. A su lado, un aro de luz y productos de skincare. Luz natural de ventana, tonos crema y lavanda suaves, auténtica, nada de foto de stock.
 ```
 
 ### Plantilla de carrusel educativo (1080×1350)
 ```
-Diseña una plantilla de portada de carrusel de Instagram 1080x1350, fondo crema, un título grande en serif itálica color tinta, una etiqueta tipo píldora lila arriba que dice "TIP UGC", y una flecha sutil abajo a la derecha. Minimalista, editorial, con espacio para el texto: "[TÍTULO]".
+Diseña una plantilla de portada de carrusel de Instagram 1080x1350, fondo crema, un título grande en serif itálica color tinta, una etiqueta tipo píldora lavanda arriba que dice "TIP UGC", y una flecha sutil abajo a la derecha. Minimalista, editorial, con espacio para el texto: "[TÍTULO]".
 ```
 
 ### Ilustraciones para la app (estados vacíos)
 ```
-Ilustración flat minimalista sobre fondo crema: un buzón con forma de tiendita con toldo, del que salen corazones de papel. Calma y alegría. Paleta lila y tinta.
+Ilustración flat minimalista sobre fondo crema: una carpeta abierta con dos páginas superpuestas (ciruela y lavanda), de la que salen corazones de papel. Calma y alegría. Paleta lavanda, ciruela y tinta.
 ```
 ```
-Ilustración flat minimalista: una hoja de calendario mensual con stickers de celular y cámara, un lápiz y una taza de café. Fondo crema, paleta lila y tinta.
+Ilustración flat minimalista: una hoja de calendario mensual con stickers de celular y cámara, un lápiz y una taza de café. Fondo crema, paleta lavanda, ciruela y tinta.
 ```
 
 ---
 
-## 9. Redes sociales de Vitrina UGC
+## 9. Redes sociales de Foliocrew
 
 ### Nombres de usuario (verifica la disponibilidad en cada red)
-1. `@vitrinaugc` ← ideal, igual en todas
-2. `@vitrina.ugc`
-3. `@vitrinaugc.app`
-4. `@holavitrina`
+1. `@foliocrew` ← ideal, igual en todas
+2. `@folio.crew`
+3. `@foliocrew.app`
+4. `@holafoliocrew`
 
 > Regístralo el mismo día en Instagram, TikTok, YouTube, Facebook, LinkedIn, X y Threads,
 > aunque no publiques en todas, para que nadie más lo tome.
@@ -339,18 +318,18 @@ Ilustración flat minimalista: una hoja de calendario mensual con stickers de ce
 ### Instagram (la red principal)
 
 **Configuración:**
-1. Crea la cuenta con un correo de la marca (ej. `hola@vitrinaugc.com`).
+1. Crea la cuenta con un correo de la marca (ej. `hola@foliocrew.app`).
 2. Configuración → Tipo de cuenta → **Cuenta profesional → Empresa**, categoría *Software* o *Servicio de Internet*.
 3. Crea una **página de Facebook** de la marca y vincúlala (la necesitas para anuncios y para Meta Business Suite).
 4. Entra a **Meta Business Suite** (business.facebook.com) y agrega la página y el Instagram.
 5. Activa la autenticación en dos pasos.
 
 **Nombre (aparece en búsquedas, máximo 30 caracteres):**
-`Vitrina UGC | Portafolio UGC`
+`Foliocrew | Portafolio UGC`
 
 **Bio (máximo 150 caracteres). Opciones:**
 ```
-Tu contenido, en vitrina ✨
+Tu talento merece su espacio ✨
 Portafolio + media kit + CRM para creadoras UGC
 🇪🇸🇺🇸 En español e inglés
 👇 Prueba gratis 14 días
@@ -359,15 +338,15 @@ Portafolio + media kit + CRM para creadoras UGC
 La plataforma de las creadoras UGC 💜
 Muestra tu trabajo. Maneja tus marcas.
 Hecho por creadoras, para creadoras
-👇 Crea tu vitrina
+👇 Crea tu folio
 ```
 
-**Enlace:** `vitrinaugc.com` (con UTM: `?utm_source=instagram&utm_medium=bio`).
+**Enlace:** `foliocrew.app` (con UTM: `?utm_source=instagram&utm_medium=bio`).
 
 **Destacadas:** ⭐ Empieza aquí · 🔍 Cómo funciona · 💰 Planes · 💬 Testimonios · 💡 Tips UGC · ❓ FAQ
 
 **Primeras 9 publicaciones (para que el perfil no se vea vacío):**
-1. Reel: "Presentamos Vitrina UGC" (qué es, en 20 s).
+1. Reel: "Presentamos Foliocrew" (qué es, en 20 s).
 2. Carrusel: "5 errores en tu portafolio UGC que hacen que las marcas no respondan".
 3. Reel: recorrido por el portafolio de Cristal (el caso real).
 4. Carrusel: "Cuánto cobrar por tu primer video UGC" (guía de rangos).
@@ -442,7 +421,7 @@ Hecho por creadoras, para creadoras
 ### Hashtags (rota 5–8 por post)
 **Nicho:** #creadoraugc #ugcespañol #ugclatam #contenidougc #ugccreator #ugccommunity #ugcportfolio
 **Amplios:** #creadoradecontenido #marketingdigital #emprendedora #trabajodesdecasa
-**Marca:** #VitrinaUGC #TuContenidoEnVitrina
+**Marca:** #Foliocrew #TuTalentoMereceSuEspacio #CreaConectaCrece
 
 ### Calendario de 30 días (arranque)
 | Semana | Lunes | Miércoles | Viernes | Domingo |
@@ -480,7 +459,7 @@ Hecho por creadoras, para creadoras
 - Usa públicos similares (lookalike) de quienes ya se registraron.
 
 ### Ideas de anuncios (creatividades)
-1. **Antes/después:** portafolio en Canva → portafolio en Vitrina (pantalla dividida).
+1. **Antes/después:** portafolio en Canva → portafolio en Foliocrew (pantalla dividida).
 2. **Testimonio:** Cristal hablando a cámara: "Desde que mando este link, las marcas responden".
 3. **Recorrido rápido:** 15 s del panel con texto en pantalla de cada función.
 4. **Problema:** "¿Cuántas apps usas para tu negocio UGC?" (muestra 6 íconos) → "Ahora una".
@@ -491,9 +470,9 @@ Hecho por creadoras, para creadoras
 > Tu portafolio UGC, como de agencia. Media kit siempre al día, tus marcas organizadas y captions con IA. Prueba gratis 14 días 💜
 
 **Principal (largo):**
-> Las marcas deciden en 5 segundos si te escriben. Con Vitrina UGC tienes un portafolio profesional, con tu dominio y en dos idiomas, con tus métricas reales. Y detrás, un panel para manejar tus tratos, tu calendario y tus pagos. Hecho por creadoras, para creadoras. Únete a la lista y recibe 50 % de por vida 👇
+> Las marcas deciden en 5 segundos si te escriben. Con Foliocrew tienes un portafolio profesional, con tu dominio y en dos idiomas, con tus métricas reales. Y detrás, un panel para manejar tus tratos, tu calendario y tus pagos. Hecho por creadoras, para creadoras. Únete a la lista y recibe 50 % de por vida 👇
 
-**Títulos:** "Tu contenido, en vitrina" · "Deja el portafolio de Canva" · "50 % de por vida para fundadoras"
+**Títulos:** "Tu talento merece su espacio" · "Crea. Conecta. Crece." · "Deja el portafolio de Canva" · "50 % de por vida para fundadoras"
 **Botón:** Registrarte / Más información
 
 ### Colaboraciones y alianzas (crecimiento sin anuncios)
@@ -509,7 +488,7 @@ Hecho por creadoras, para creadoras
 
 | Fase | Duración | Qué hacer |
 | --- | --- | --- |
-| **0. Base** | Semana 1 | Comprar dominio, logo final, correos `hola@`, abrir todas las redes, landing con lista de espera |
+| **0. Base** | Semana 1 | Comprar dominio, correos `hola@`, abrir todas las redes, landing con lista de espera |
 | **1. Calentar** | Semanas 2–4 | Publicar contenido educativo, contar la historia, hacer encuestas, hablar 1 a 1 con 20 creadoras |
 | **2. Prelanzamiento** | Semanas 5–6 | Anuncios de lista de espera, oferta de fundadoras, embajadoras probando el producto |
 | **3. Lanzamiento** | Semana 7 | Abrir registros a la lista primero (48 h), después al público. Live de lanzamiento, sorteo |
@@ -524,8 +503,8 @@ Hecho por creadoras, para creadoras
 > Esta página aún no existe: el sitio actual es el portafolio de Cristal. Es el siguiente
 > paso grande (va junto con el modo multiusuario). Esta es la estructura y el texto.
 
-1. **Héroe:** "Tu contenido, en vitrina." / "El portafolio y el panel que las creadoras UGC necesitaban. Muestra tu trabajo, consigue marcas y maneja tu negocio desde un solo lugar." / [Crear mi vitrina gratis] + mockup.
-2. **Prueba social:** "Creadoras que ya tienen su vitrina" + logos de marcas con las que trabajan.
+1. **Héroe:** "Tu talento merece su espacio." / "El portafolio y el panel que las creadoras UGC necesitaban. Muestra tu trabajo, consigue marcas y maneja tu negocio desde un solo lugar." / [Crear mi folio gratis] + mockup.
+2. **Prueba social:** "Creadoras que ya son parte del crew" + logos de marcas con las que trabajan.
 3. **Problema:** "¿Portafolio en Canva, tratos en notas, pagos en WhatsApp? Te entendemos."
 4. **Solución, en 3 bloques:**
    - **Muestra:** portafolio con dominio, bilingüe y con métricas reales.
@@ -542,10 +521,10 @@ Hecho por creadoras, para creadoras
 ## 14. Correos automáticos
 
 **Bienvenida (al registrarse)**
-> Asunto: Tu vitrina ya está abierta 💜
-> Hola [nombre]: ¡bienvenida a Vitrina UGC! En 10 minutos puedes tener tu portafolio listo:
+> Asunto: Bienvenida al crew 💜
+> Hola [nombre]: ¡bienvenida a Foliocrew! En 10 minutos puedes tener tu portafolio listo:
 > 1) sube tu foto y tu bio, 2) agrega tus 3 mejores videos, 3) conecta Instagram.
-> [Armar mi vitrina]. Si te trabas, responde este correo y te ayudo yo. — [Tu nombre]
+> [Armar mi folio]. Si te trabas, responde este correo y te ayudo yo. — [Tu nombre]
 
 **Día 2:** "Tu media kit en un link" (cómo compartirlo).
 **Día 5:** "Cómo escribirle a una marca" (plantilla + Bandeja).
@@ -562,7 +541,7 @@ Hecho por creadoras, para creadoras
 
 **Primero, dale el contexto** (o crea un "GPT personalizado" o un "Proyecto" con este texto):
 ```
-Eres la community manager de Vitrina UGC, una plataforma para creadoras de contenido UGC hispanohablantes: portafolio profesional, media kit, CRM de marcas, calendario, IA para captions y reportes. Tagline: "Tu contenido, en vitrina." Voz: cercana (de tú), profesional, clara, motivadora con datos, sin jerga técnica y sin exceso de emojis. Público: creadoras de 20 a 38 años, en LatAm y EE. UU., que quieren conseguir y manejar marcas como un negocio. Nunca prometas resultados garantizados ni inventes estadísticas.
+Eres la community manager de Foliocrew, una plataforma para creadoras de contenido UGC hispanohablantes: portafolio profesional, media kit, CRM de marcas, calendario, IA para captions y reportes. Taglines: "Tu talento merece su espacio." y "Crea. Conecta. Crece." Voz: cercana (de tú), profesional, clara, motivadora con datos, sin jerga técnica y sin exceso de emojis. Público: creadoras de 20 a 38 años, en LatAm y EE. UU., que quieren conseguir y manejar marcas como un negocio. Nunca prometas resultados garantizados ni inventes estadísticas.
 ```
 
 **Captions**
@@ -577,39 +556,39 @@ Escribe el guion de un reel de 30 segundos sobre [tema], para creadoras UGC. For
 
 **Carrusel**
 ```
-Crea el texto de un carrusel de Instagram de 8 diapositivas sobre [tema]. Diapositiva 1: título-gancho de máximo 8 palabras. Diapositivas 2 a 7: un punto por diapositiva, máximo 25 palabras. Diapositiva 8: resumen + llamada a la acción para guardar y seguir a @vitrinaugc.
+Crea el texto de un carrusel de Instagram de 8 diapositivas sobre [tema]. Diapositiva 1: título-gancho de máximo 8 palabras. Diapositivas 2 a 7: un punto por diapositiva, máximo 25 palabras. Diapositiva 8: resumen + llamada a la acción para guardar y seguir a @foliocrew.
 ```
 
 **Anuncios**
 ```
-Escribe 5 variaciones de anuncio de Meta Ads para Vitrina UGC dirigidas a [persona: creadora que empieza / creadora que ya factura]. Para cada una: texto principal (máx. 125 caracteres), título (máx. 40) y descripción (máx. 30). Ángulos: dolor, aspiración, prueba social, oferta de fundadoras, comparación con Canva.
+Escribe 5 variaciones de anuncio de Meta Ads para Foliocrew dirigidas a [persona: creadora que empieza / creadora que ya factura]. Para cada una: texto principal (máx. 125 caracteres), título (máx. 40) y descripción (máx. 30). Ángulos: dolor, aspiración, prueba social, oferta de fundadoras, comparación con Canva.
 ```
 
 **Calendario mensual**
 ```
-Arma un calendario de contenido de 30 días para Instagram y TikTok de Vitrina UGC, con los pilares: educar 40 %, inspirar 25 %, producto 20 %, comunidad 15 %. Tabla con: día, red, formato, tema, gancho y llamada a la acción.
+Arma un calendario de contenido de 30 días para Instagram y TikTok de Foliocrew, con los pilares: educar 40 %, inspirar 25 %, producto 20 %, comunidad 15 %. Tabla con: día, red, formato, tema, gancho y llamada a la acción.
 ```
 
 **Responder comentarios y DMs**
 ```
-Una creadora comentó: "[comentario]". Escribe una respuesta corta, cálida y útil, en la voz de Vitrina UGC, que invite a seguir la conversación sin sonar a vendedora.
+Una creadora comentó: "[comentario]". Escribe una respuesta corta, cálida y útil, en la voz de Foliocrew, que invite a seguir la conversación sin sonar a vendedora.
 ```
 
 **Ideas de anuncios en video**
 ```
-Dame 10 ideas de anuncios en video de 15–30 segundos para Vitrina UGC, grabados en estilo UGC (celular, natural). Para cada una: concepto, gancho, tomas y texto en pantalla.
+Dame 10 ideas de anuncios en video de 15–30 segundos para Foliocrew, grabados en estilo UGC (celular, natural). Para cada una: concepto, gancho, tomas y texto en pantalla.
 ```
 
 ---
 
 ## 16. Legal y operación
 
-- [ ] **Dominio** `vitrinaugc.com` (y si puedes, `vitrinaugc.co` o `.app` para protegerlo).
-- [ ] **Correo profesional:** `hola@`, `soporte@` y `legal@vitrinaugc.com` (Google Workspace, Zoho Mail o el correo de tu proveedor de dominio).
+- [ ] **Dominio** `foliocrew.app` (y si puedes, `foliocrew.co` o `.app` para protegerlo).
+- [ ] **Correo profesional:** `hola@`, `soporte@` y `legal@foliocrew.app` (Google Workspace, Zoho Mail o el correo de tu proveedor de dominio).
 - [ ] **Registro de marca:** búscala y regístrala en tu país (ONAPI en República Dominicana, USPTO en EE. UU., IMPI en México, OEPM en España). Clases de Niza sugeridas: **42** (software) y **35** (servicios de marketing). Consulta con un abogado o gestor de marcas.
 - [ ] **Empresa:** para cobrar con Stripe necesitas una persona física o jurídica con cuenta bancaria. En EE. UU., una LLC es lo común; asesórate con un contador.
 - [ ] **Términos y privacidad:** ya existen (`/terminos`, `/privacidad`, `/eliminar-datos`). Revísalos con un abogado antes de cobrar.
-- [ ] **Apps de las redes:** Meta, TikTok y Google con el nombre "Vitrina UGC", el logo nuevo y el dominio. Guía en `docs/conectar-cuentas.md`.
+- [ ] **Apps de las redes:** Meta, TikTok y Google con el nombre "Foliocrew", el logo nuevo y el dominio. Guía en `docs/conectar-cuentas.md`.
 - [ ] **Pagos:** Stripe (suscripciones + portal de cliente). Va en la fase multiusuario.
 - [ ] **Soporte:** un WhatsApp Business o un chat simple (Crisp o Tawk.to tienen plan gratis).
 
@@ -636,8 +615,8 @@ Dame 10 ideas de anuncios en video de 15–30 segundos para Vitrina UGC, grabado
 | Etapa | Qué | Estado |
 | --- | --- | --- |
 | 1 | Portafolio + panel completo para una creadora (Cristal) | ✅ Hecho (PR #49) |
-| 2 | Marca: logo final, redes, landing con lista de espera | ⏳ Ahora |
-| 3 | **Multiusuario:** registro, login por creadora, un sitio por creadora (`nombre.vitrinaugc.com`) | Siguiente |
+| 2 | Marca: logo final ✅, dominio, redes, landing con lista de espera | ⏳ Ahora |
+| 3 | **Multiusuario:** registro, login por creadora, un sitio por creadora (`nombre.foliocrew.app`) | Siguiente |
 | 4 | **Pagos con Stripe:** planes, prueba gratis, portal de cliente | Siguiente |
 | 5 | **Dominios propios:** cada creadora conecta su dominio (vía Vercel) | Después |
 | 6 | Publicación automática en redes + DMs de Instagram (requiere aprobación de Meta) | Después |
@@ -648,10 +627,10 @@ Dame 10 ideas de anuncios en video de 15–30 segundos para Vitrina UGC, grabado
 ## 19. Checklist maestro
 
 **Esta semana**
-- [ ] Comprar `vitrinaugc.com`
-- [ ] Crear el logo con ChatGPT (sección 7) y pasármelo en SVG o PNG transparente
-- [ ] Reservar `@vitrinaugc` en Instagram, TikTok, YouTube, Facebook, LinkedIn, X y Threads
-- [ ] Crear el correo `hola@vitrinaugc.com`
+- [ ] Comprar `foliocrew.app` (`foliocrew.com` está tomado)
+- [x] Logo hecho con ChatGPT y ya puesto en la plataforma
+- [ ] Reservar `@foliocrew` en Instagram, TikTok, YouTube, Facebook, LinkedIn, X y Threads
+- [ ] Crear el correo `hola@foliocrew.app`
 - [ ] Configurar Instagram como cuenta Empresa + página de Facebook + Meta Business Suite
 
 **Próximas 2 semanas**

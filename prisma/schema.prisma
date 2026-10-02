@@ -195,3 +195,23 @@ model SiteSettings {
   supportMessageEn String?
   updatedAt        DateTime @updatedAt
 }
+
+// Cuentas de redes conectadas por OAuth (panel v2 → Conectar cuentas).
+// Los tokens se guardan cifrados (lib/token-crypto.ts), nunca en texto plano.
+model SocialAccount {
+  id           String    @id @default(cuid())
+  platform     String    @unique // "instagram" | "facebook" | "tiktok" | "youtube"
+  externalId   String
+  username     String?
+  displayName  String?
+  avatarUrl    String?
+  followers    Int?
+  accessToken  String
+  refreshToken String?
+  expiresAt    DateTime?
+  scopes       String[]  @default([])
+  connectedAt  DateTime  @default(now())
+  lastSyncAt   DateTime?
+  lastError    String?
+  updatedAt    DateTime  @updatedAt
+}

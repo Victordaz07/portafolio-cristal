@@ -328,6 +328,16 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Conectar cuentas",
+    paragraphs: [
+      "En Negocio → Conectar cuentas conectas Instagram, Facebook, TikTok y YouTube con su login oficial (el mismo botón \"Iniciar sesión con…\" de cada red). El panel nunca ve tu contraseña.",
+      "Después de conectar, toca \"Probar\": el panel le pide a la red tu perfil y tus 6 publicaciones más recientes, y te muestra lo que respondió o el error exacto.",
+      "Cada tarjeta explica qué se puede y qué no se puede hacer con esa red (por ejemplo, TikTok no permite leer DMs). \"Desconectar\" borra los permisos guardados en el panel.",
+      "Abajo está la prueba de la IA (Claude), que se usará para sugerir captions.",
+      "Si una red dice \"Sin configurar\", faltan las claves de su app de desarrollador: eso lo prepara quien administra el sitio (guía en docs/conectar-cuentas.md).",
+    ],
+  },
+  {
     title: "Reseñas destacadas",
     paragraphs: ["Reseñas de producto con foto opcional, categoría, título, descripción y calificación de 1 a 5 estrellas."],
   },
@@ -390,6 +400,16 @@ const guiaEn: ManualBlock[] = [
       "Next steps and payments show up in the Summary, flagged when something is overdue.",
       "In Site carousel you reorder logos with ↑ ↓ and choose which ones are shown or hidden (without deleting them).",
       "You can also create a new brand without leaving Feed: when adding a \"UGC photo\" card, the brand dropdown has a \"+ add new brand\" option (name + logo).",
+    ],
+  },
+  {
+    title: "Connect accounts",
+    paragraphs: [
+      "In Business → Connect accounts you connect Instagram, Facebook, TikTok and YouTube with their official login (each network's own \"Sign in with…\" button). The panel never sees your password.",
+      "After connecting, tap \"Test\": the panel asks the network for your profile and your 6 most recent posts, and shows you what it answered or the exact error.",
+      "Each card explains what can and can't be done with that network (for example, TikTok doesn't allow reading DMs). \"Disconnect\" deletes the permissions saved in the panel.",
+      "At the bottom is the AI test (Claude), which will be used to suggest captions.",
+      "If a network says \"Not configured\", its developer app keys are missing: whoever manages the site sets that up (guide in docs/conectar-cuentas.md).",
     ],
   },
   {

@@ -42,7 +42,10 @@ const NAV_GROUPS: NavGroup[] = [
   {
     id: "negocio",
     title: "Negocio",
-    items: [{ href: "/admin/mensajes", label: "Bandeja", badgeKey: "unread" }],
+    items: [
+      { href: "/admin/mensajes", label: "Bandeja", badgeKey: "unread" },
+      { href: "/admin/conectar", label: "Conectar cuentas" },
+    ],
   },
   {
     id: "ayuda",

@@ -42,6 +42,13 @@ Copia `.env.example` a `.env` y completa:
 | `RESEND_API_KEY` | Opcional. Si falta, el formulario de contacto sigue guardando el mensaje en la base de datos pero no envía el correo (queda como TODO en `app/api/contact/route.ts`). |
 | `NEXT_PUBLIC_FB_APP_ID` | Necesario para mostrar embeds de Facebook. |
 | `PUBLIC_BLOB_READ_WRITE_TOKEN` | Necesario para subir fotos, videos y logos de marcas. Debe ser el token de un Blob Store con acceso **público** (la app siempre sube con `access: "public"`). |
+| `TOKEN_ENCRYPTION_KEY` | Cifra los tokens de redes sociales en la base de datos. Obligatoria para conectar redes. No cambiarla después de conectar cuentas. |
+| `APP_URL` | URL pública fija del sitio, usada para armar las URLs de redirección OAuth. |
+| `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` | App de Meta con Instagram API (Instagram Login). |
+| `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET`, `FACEBOOK_CONFIG_ID` | Facebook Login for Business (páginas). `FACEBOOK_CONFIG_ID` es opcional. |
+| `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` | TikTok Login Kit. |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | OAuth de Google con YouTube Data API v3. |
+| `ANTHROPIC_API_KEY` | Claude, para las sugerencias de IA. |
 
 **Importante:** Next.js expande `$VAR` dentro de los archivos `.env`. El hash
 de bcrypt empieza con `$2b$...`, así que hay que escapar cada `$` como `\$`
@@ -127,6 +134,7 @@ Secciones (cada una con su Manager + formulario):
 | FAQ | Preguntas frecuentes (acordeón). |
 | Contacto | Redes, email, WhatsApp y textos del pie de página. |
 | Mensajes | Buzón de mensajes recibidos desde el formulario del sitio. |
+| Conectar cuentas | Login oficial (OAuth) con Instagram, Facebook, TikTok y YouTube, con botón **Probar** que trae el perfil y las publicaciones recientes, y prueba de conexión con Claude (IA). Los tokens se guardan cifrados (`lib/token-crypto.ts`). Guía de configuración: [`docs/conectar-cuentas.md`](docs/conectar-cuentas.md). |
 | **Manual de uso** | Documentación completa del panel, bilingüe (ES/EN): primera vez, glosario, paso a paso de Feed/reels, y guía por sección. Vive en `/admin/ayuda`. |
 
 Notas útiles:

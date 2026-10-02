@@ -29,7 +29,9 @@ const config: Config = {
       },
       spacing: {
         "sp-1": "4px",
+        "sp-1.5": "6px",
         "sp-2": "8px",
+        "sp-2.5": "10px",
         "sp-3": "12px",
         "sp-4": "16px",
         "sp-5": "24px",

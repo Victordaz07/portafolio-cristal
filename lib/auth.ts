@@ -13,6 +13,8 @@ export interface SessionPayload {
   userId: string;
   creatorId: string;
   email: string;
+  /** AdminUser.sessionVersion al iniciar sesión: si cambia la contraseña, la sesión deja de valer. */
+  sv?: number;
 }
 
 export async function createSessionToken(session: SessionPayload) {

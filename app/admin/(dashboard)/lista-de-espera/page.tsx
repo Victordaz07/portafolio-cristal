@@ -4,6 +4,7 @@ import { isPlatformAdmin } from "@/lib/platform-admin";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import WaitlistTable from "./WaitlistTable";
+import { emailConfigured } from "@/lib/email";
 
 export default async function WaitlistPage() {
   if (!(await isPlatformAdmin())) notFound();
@@ -12,6 +13,7 @@ export default async function WaitlistPage() {
   for (const e of entries) bySource.set(e.utmSource || "directo", (bySource.get(e.utmSource || "directo") ?? 0) + 1);
   const last7 = entries.filter((e) => Date.now() - e.createdAt.getTime() < 7 * 86_400_000).length;
   const invited = entries.filter((e) => e.status === "invited").length;
+  const joined = entries.filter((e) => e.status === "joined").length;
   const root = process.env.PLATFORM_ROOT_DOMAIN;
   const origin = root ? `https://${root}` : "";
 
@@ -22,12 +24,13 @@ export default async function WaitlistPage() {
         title="Lista de espera"
         description="Las personas que se anotaron en la página de venta. Solo quien administra la plataforma ve esta sección."
       />
-      <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-5">
         {[
           ["Total", entries.length],
           ["Últimos 7 días", last7],
+          ["En espera", entries.length - invited - joined],
           ["Con invitación", invited],
-          ["En espera", entries.length - invited],
+          ["Ya crearon cuenta", joined],
         ].map(([label, value]) => (
           <Card key={label}>
             <p className="font-fraunces text-3xl font-semibold text-coral">{value}</p>
@@ -57,10 +60,11 @@ export default async function WaitlistPage() {
           niche: e.niche,
           audience: e.audience,
           source: [e.utmSource, e.utmCampaign].filter(Boolean).join(" · "),
-          invited: e.status === "invited",
+          status: e.status,
           createdAt: e.createdAt.toISOString(),
         }))}
         inviteCodeSet={Boolean(process.env.SIGNUP_INVITE_CODE)}
+        emailReady={emailConfigured()}
         registerUrl={`${origin}/admin/registro`}
         landingUrl={root ? origin : "/foliocrew"}
       />

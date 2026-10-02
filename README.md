@@ -143,6 +143,7 @@ Cada persona creadora tiene su espacio (`Creator`) y **todas** las tablas tienen
   - **lista de espera** (`WaitlistEntry`, `app/api/waitlist`): guarda los UTM, tiene campo trampa para bots, límite de 5 intentos por minuto y no duplica correos;
   - imagen Open Graph y píxel de Meta opcional (`NEXT_PUBLIC_META_PIXEL_ID`);
   - quien administra la plataforma (`PLATFORM_ADMIN_EMAILS`) ve **Lista de espera** en el panel: totales, origen, CSV y marcar invitaciones enviadas.
+- **Correos** (Fase 12, Resend; ver [`docs/correos.md`](docs/correos.md)): bienvenida con enlace para confirmar el correo, recuperar contraseña (`/admin/recuperar` → `/admin/restablecer`), aviso de contraseña cambiada (cierra las sesiones de otros equipos con `AdminUser.sessionVersion`), aviso cuando una marca escribe desde el sitio, y en la lista de espera: confirmación al anotarse e **Invitar por correo** (link + código). Los enlaces son de un solo uso y solo se guarda su hash (`AuthToken`).
 - **Asistente de bienvenida** (`/admin/bienvenida`, `app/api/admin/onboarding`):
   - los creadores nuevas (`Creator.onboardedAt` nulo) llegan ahí desde el Resumen;
   - arma la portada, la bio, los servicios, los paquetes y las FAQ con plantillas por nicho (`lib/onboarding.ts`; nunca duplica secciones que ya tienen contenido), crea las primeras piezas a partir de sus links y guarda el contacto y el color;

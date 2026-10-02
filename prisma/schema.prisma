@@ -12,7 +12,7 @@ datasource db {
 
 model Creator {
   id                     String    @id @default(cuid())
-  /// Subdominio: <slug>.foliocrew.app
+  /// Subdominio: <slug>.foliocrew.pro
   slug                   String    @unique
   name                   String
   /// Dominio propio de la creadora (Fase 8), p. ej. "crisliaugc.com"
@@ -268,16 +268,36 @@ model ContactMessage {
 }
 
 model AdminUser {
-  id           String   @id @default(cuid())
-  name         String?
-  role         String   @default("owner") // "owner" (más adelante: "editor" para agencias)
-  creatorId    String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
-  creator      Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
+  id              String      @id @default(cuid())
+  name            String?
+  role            String      @default("owner") // "owner" (más adelante: "editor" para agencias)
+  creatorId       String      @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator         Creator     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  email           String      @unique
+  passwordHash    String
+  /// Cuándo confirmó su correo con el enlace que le mandamos (null = sin confirmar)
+  emailVerifiedAt DateTime?
+  /// Sube al cambiar o restablecer la contraseña: cierra las sesiones abiertas en otros equipos
+  sessionVersion  Int         @default(0)
+  createdAt       DateTime    @default(now())
+  tokens          AuthToken[]
 
   @@index([creatorId])
+}
+
+/// Enlaces de un solo uso que se mandan por correo (restablecer contraseña, confirmar correo).
+/// Solo se guarda el hash del token: quien lea la base de datos no puede usarlos.
+model AuthToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // "reset" | "verify"
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, type])
 }
 
 model SiteSettings {

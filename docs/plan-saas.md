@@ -46,7 +46,7 @@ www.crisliaugc.com            → dominio propio de la creadora (plan Pro), apun
 | **8. Sitios por creadora** ✅ (se activa al comprar el dominio) | Sitio público por subdominio (`nombre.foliocrew.app`) y dominios propios con verificación de DNS. Media kit, legales y `sitemap` por creadora. | Tu portafolio en vivo, con tu nombre |
 | **9. Onboarding** ✅ | Asistente de 4 pasos: nombre del sitio, foto y bio, 3 mejores videos, conectar Instagram. Plantillas de textos por nicho. | Una creadora nueva lista en 10 minutos |
 | **10. Pagos (Stripe)** | Planes Folio, Folio Pro y Crew, prueba de 14 días, cupones de fundadora, portal de cliente y webhooks. Funciones según el plan. | Foliocrew cobra solo |
-| **11. Página de venta** | `foliocrew.app` con la landing del kit, lista de espera, precios y FAQ. Píxel de Meta para los anuncios. | Adónde mandar el tráfico de Instagram |
+| **11. Página de venta** ✅ | `foliocrew.app` con la landing del kit, lista de espera, precios y FAQ. Píxel de Meta para los anuncios. | Adónde mandar el tráfico de Instagram |
 | **12. Correos** | Bienvenida, verificación, recuperar contraseña, recordatorios de la prueba y aviso de pago fallido (Resend). | Comunicación automática |
 | **13. Tu panel de dueño** | Lista de creadoras, plan, estado de pago, uso de IA, soporte e "entrar como" (para ayudar). | Control del negocio |
 | **14. Apps de redes en producción** | Revisión de Meta (App Review + verificación del negocio), auditoría de TikTok y verificación de Google. Te preparo los videos y textos que piden. | Cualquier creadora puede conectar sus redes |

@@ -73,6 +73,13 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
+// Solo para la dueña de la plataforma.
+const PLATFORM_GROUP: NavGroup = {
+  id: "foliocrew",
+  title: "Foliocrew",
+  items: [{ href: "/admin/lista-de-espera", label: "Lista de espera" }],
+};
+
 const OPEN_GROUPS_KEY = "admin-nav-open-groups";
 
 function isActive(pathname: string, href: string) {
@@ -84,11 +91,14 @@ export default function AdminShell({
   unreadMessages = 0,
   creatorName = "",
   siteUrl = "/",
+  platformAdmin = false,
 }: {
   children: ReactNode;
   unreadMessages?: number;
   creatorName?: string;
   siteUrl?: string;
+  /** Dueña de Foliocrew: ve el grupo "Foliocrew" (lista de espera). */
+  platformAdmin?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -174,7 +184,7 @@ export default function AdminShell({
         </Link>
 
         <nav className="-mx-1 mt-sp-1 flex flex-1 flex-col gap-sp-1 overflow-y-auto px-1">
-          {NAV_GROUPS.map((group) => {
+          {(platformAdmin ? [...NAV_GROUPS, PLATFORM_GROUP] : NAV_GROUPS).map((group) => {
             const groupActive = group.items.some((item) => isActive(pathname, item.href));
             const open = openGroups[group.id] !== false;
             return (

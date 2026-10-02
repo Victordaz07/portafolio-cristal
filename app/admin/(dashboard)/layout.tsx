@@ -5,6 +5,7 @@ import { ToastProvider } from "@/components/admin/ToastContext";
 import { prisma, prismaRoot } from "@/lib/prisma";
 import { getSession } from "@/lib/tenant";
 import { sessionCreatorSite } from "@/lib/site-url";
+import { isPlatformAdmin } from "@/lib/platform-admin";
 
 // El panel lee siempre el estado más reciente de la base de datos: nunca debe
 // servirse una versión prerenderizada en build.
@@ -14,15 +15,16 @@ export const metadata: Metadata = { title: "Panel — Foliocrew", robots: { inde
 
 export default async function AdminDashboardLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
-  const [unreadMessages, creator, site] = await Promise.all([
+  const [unreadMessages, creator, site, platformAdmin] = await Promise.all([
     prisma.contactMessage.count({ where: { read: false } }),
     session ? prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true } }) : null,
     sessionCreatorSite(),
+    isPlatformAdmin(),
   ]);
 
   return (
     <ToastProvider>
-      <AdminShell unreadMessages={unreadMessages} creatorName={creator?.name ?? ""} siteUrl={site?.url ?? "/"}>{children}</AdminShell>
+      <AdminShell unreadMessages={unreadMessages} creatorName={creator?.name ?? ""} siteUrl={site?.url ?? "/"} platformAdmin={platformAdmin}>{children}</AdminShell>
     </ToastProvider>
   );
 }

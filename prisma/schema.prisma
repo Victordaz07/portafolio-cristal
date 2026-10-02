@@ -417,3 +417,25 @@ model FollowerSnapshot {
 
   @@unique([creatorId, platform, date])
 }
+
+// ─── Foliocrew: lista de espera de la plataforma (no pertenece a una creadora) ───
+
+model WaitlistEntry {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  name        String?
+  instagram   String?
+  niche       String?
+  /// "0-1k" | "1k-10k" | "10k-50k" | "50k+"
+  audience    String?
+  /// De dónde llegó (utm_source, utm_medium, utm_campaign) y quién la mandó
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  referrer    String?
+  status      String    @default("waiting") // "waiting" | "invited"
+  invitedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([createdAt])
+}

@@ -138,6 +138,11 @@ Cada creadora tiene su espacio (`Creator`) y **todas** las tablas tienen `creato
   - Se hace en `/admin/registro` y pide `SIGNUP_INVITE_CODE`. Sin esa variable, el registro está cerrado.
   - Crea la creadora, su usuaria, una portada y la configuración inicial.
 - **Mi cuenta** (`/admin/cuenta`): nombre, contraseña y dirección del sitio.
+- **Página de venta** (`app/foliocrew`, en `/foliocrew` y en la raíz del dominio de la plataforma):
+  - secciones: portada, problema, cómo funciona, herramientas, para quién, planes (`lib/plans.ts`; precios ocultos salvo `FOLIOCREW_SHOW_PRICES=true`), FAQ y cierre;
+  - **lista de espera** (`WaitlistEntry`, `app/api/waitlist`): guarda los UTM, tiene campo trampa para bots, límite de 5 intentos por minuto y no duplica correos;
+  - imagen Open Graph y píxel de Meta opcional (`NEXT_PUBLIC_META_PIXEL_ID`);
+  - la dueña de la plataforma (`PLATFORM_ADMIN_EMAILS`) ve **Lista de espera** en el panel: totales, origen, CSV y marcar invitadas.
 - **Asistente de bienvenida** (`/admin/bienvenida`, `app/api/admin/onboarding`):
   - las creadoras nuevas (`Creator.onboardedAt` nulo) llegan ahí desde el Resumen;
   - arma la portada, la bio, los servicios, los paquetes y las FAQ con plantillas por nicho (`lib/onboarding.ts`; nunca duplica secciones que ya tienen contenido), crea las primeras piezas a partir de sus links y guarda el contacto y el color;

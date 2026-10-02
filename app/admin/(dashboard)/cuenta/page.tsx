@@ -1,5 +1,7 @@
 import { prisma, prismaRoot } from "@/lib/prisma";
-import { getSession, platformRootDomain } from "@/lib/tenant";
+import Link from "next/link";
+import { getSession } from "@/lib/tenant";
+import { sessionCreatorSite } from "@/lib/site-url";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountForm from "./AccountForm";
@@ -12,7 +14,7 @@ export default async function AccountPage() {
         prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true, slug: true, customDomain: true } }),
       ])
     : [null, null];
-  const siteUrl = creator ? `https://${creator.slug}.${platformRootDomain()}` : "";
+  const siteUrl = (await sessionCreatorSite())?.url ?? "";
 
   return (
     <div className="flex flex-col gap-sp-5">
@@ -21,8 +23,11 @@ export default async function AccountPage() {
         <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Tu sitio</p>
         <p className="font-mono text-sm text-ink">{siteUrl.replace("https://", "")}</p>
         <p className="mt-sp-1 text-xs text-ink/55">
-          Tu dirección en Foliocrew. Funciona en cuanto el dominio de la plataforma esté configurado; más adelante podrás
-          conectar tu propio dominio{creator?.customDomain ? ` (ahora: ${creator.customDomain})` : ""}.
+          Para conectar tu propio dominio o ver tus otras direcciones, ve a{" "}
+          <Link href="/admin/dominio" className="font-semibold text-coral hover:underline">
+            Mi dominio
+          </Link>
+          .
         </p>
       </Card>
       <AccountForm initialName={user?.name ?? creator?.name ?? ""} email={user?.email ?? ""} />

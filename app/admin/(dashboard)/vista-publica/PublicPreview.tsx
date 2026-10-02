@@ -9,7 +9,7 @@ const DEVICES = [
 ] as const;
 
 /** El sitio público dentro del panel, tal cual lo ve un visitante. */
-export default function PublicPreview() {
+export default function PublicPreview({ src }: { src: string }) {
   const [device, setDevice] = useState<(typeof DEVICES)[number]["id"]>("desktop");
   const [lang, setLang] = useState<"es" | "en">("es");
   const [reloadKey, setReloadKey] = useState(0);
@@ -71,7 +71,7 @@ export default function PublicPreview() {
       <div className="flex justify-center rounded-[18px] border border-line bg-ink/5 p-sp-3">
         <iframe
           key={reloadKey}
-          src="/"
+          src={src}
           title="Vista pública del portafolio"
           style={{ width }}
           className="h-[78vh] max-w-full rounded-[12px] border border-line bg-white shadow-sm transition-all"

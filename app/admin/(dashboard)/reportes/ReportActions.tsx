@@ -18,7 +18,9 @@ export default function ReportActions({
   currentMonth,
   months,
   mediaKit,
+  siteUrl,
 }: {
+  siteUrl: string;
   currentMonth: string;
   months: { value: string; label: string }[];
   mediaKit: { name: string; niche: string; followers: string; engagement: string; collabs: string };
@@ -58,7 +60,7 @@ export default function ReportActions({
 
   async function copyMediaKit() {
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/media-kit`);
+      await navigator.clipboard.writeText(`${siteUrl}/media-kit`);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
@@ -88,7 +90,7 @@ export default function ReportActions({
           <button type="button" onClick={copyMediaKit} className="rounded-full bg-lime px-sp-4 py-sp-2 text-xs font-bold text-ink">
             {copied ? "¡Link copiado!" : "Copiar enlace"}
           </button>
-          <a href="/media-kit" target="_blank" rel="noreferrer" className="rounded-full border border-cream/30 px-sp-4 py-sp-2 text-xs font-semibold">
+          <a href={`${siteUrl}/media-kit`} target="_blank" rel="noreferrer" className="rounded-full border border-cream/30 px-sp-4 py-sp-2 text-xs font-semibold">
             Ver media kit ↗
           </a>
         </div>

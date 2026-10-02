@@ -36,6 +36,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/vista-publica", label: "Vista pública" },
       { href: "/admin/apariencia", label: "Apariencia" },
+      { href: "/admin/dominio", label: "Mi dominio" },
       { href: "/admin/hero", label: "Portada (Hero)" },
       { href: "/admin/media-kit", label: "Media kit" },
       { href: "/admin/servicios", label: "Cómo trabajo" },
@@ -82,10 +83,12 @@ export default function AdminShell({
   children,
   unreadMessages = 0,
   creatorName = "",
+  siteUrl = "/",
 }: {
   children: ReactNode;
   unreadMessages?: number;
   creatorName?: string;
+  siteUrl?: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -234,7 +237,7 @@ export default function AdminShell({
 
         <div className="flex flex-col gap-sp-2">
           <Link
-            href="/"
+            href={siteUrl}
             target="_blank"
             rel="noreferrer"
             className="rounded-full border border-cream/25 px-3.5 py-2.5 text-center text-xs font-semibold text-cream transition hover:bg-cream/10"

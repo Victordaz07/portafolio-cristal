@@ -13,7 +13,14 @@ const COLLABORATION_TYPES = [
   { key: "A medida", es: "A medida", en: "Custom" },
 ];
 
-export default function ContactForm({ locale }: { locale: Locale }) {
+export default function ContactForm({
+  locale,
+  endpoint = "/api/contact",
+}: {
+  locale: Locale;
+  /** En la dirección provisional /s/<slug> el envío va a /s/<slug>/api/contact (así llega a la creadora correcta). */
+  endpoint?: string;
+}) {
   const copy = t(locale).contactForm;
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
@@ -28,7 +35,7 @@ export default function ContactForm({ locale }: { locale: Locale }) {
     setStatus("loading");
     setErrorMessage("");
 
-    const response = await fetch("/api/contact", {
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, brand, email, collaborationType, message }),

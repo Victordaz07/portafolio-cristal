@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/admin/PageHeader";
-import { getPublicAppUrl } from "@/lib/site-config";
+import { sessionCreatorSite } from "@/lib/site-url";
 import InboxManager from "./MessagesManager";
 
 export default async function AdminMensajesPage() {
@@ -23,7 +23,7 @@ export default async function AdminMensajesPage() {
         brandNames={brands.map((b) => b.name)}
         instagramUsername={instagram ? instagram.username ?? "" : null}
         signature={(hero?.name ?? "").split(" ")[0] || ""}
-        mediaKitUrl={`${getPublicAppUrl()}/media-kit`}
+        mediaKitUrl={`${(await sessionCreatorSite())?.url ?? ""}/media-kit`}
       />
     </div>
   );

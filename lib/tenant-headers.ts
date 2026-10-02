@@ -7,7 +7,10 @@ export const SESSION_CREATOR_HEADER = "x-fc-creator";
 /** Usuario de la sesión iniciada. */
 export const SESSION_USER_HEADER = "x-fc-user";
 
-export const INTERNAL_HEADERS = [SCOPE_HEADER, SESSION_CREATOR_HEADER, SESSION_USER_HEADER];
+/** Sitio pedido por la dirección provisional /s/<slug> (sin dominio propio ni subdominio). */
+export const SITE_SLUG_HEADER = "x-fc-site";
+
+export const INTERNAL_HEADERS = [SCOPE_HEADER, SESSION_CREATOR_HEADER, SESSION_USER_HEADER, SITE_SLUG_HEADER];
 
 /** Subdominios que no pueden ser el nombre del sitio de una creadora. */
 export const RESERVED_SLUGS = new Set([

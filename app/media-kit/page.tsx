@@ -7,6 +7,7 @@ import { engagementRate, formatCompact } from "@/lib/metrics";
 import { getThumbnailUrl } from "@/lib/oembed";
 import type { Platform } from "@/lib/embeds";
 import { followerGrowth } from "@/lib/reports";
+import { sitePathPrefix } from "@/lib/tenant";
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function MediaKitPage({ searchParams }: { searchParams: Promise<{ lang?: string }> }) {
   const { lang } = await searchParams;
   const locale: Locale = lang === "en" || lang === "es" ? lang : await getLocale();
+  const sitePrefix = await sitePathPrefix();
   const copy = COPY[locale];
 
   const [hero, stats, growth, cards, brands, settings, collabs] = await Promise.all([
@@ -84,7 +86,7 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
       <div className="mx-auto flex max-w-3xl flex-col gap-sp-6">
         <div className="flex items-center justify-between gap-sp-3">
           <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{copy.title}</p>
-          <Link href={`/media-kit?lang=${locale === "es" ? "en" : "es"}`} className="rounded-full border border-line px-sp-3 py-1 font-mono text-xs text-ink hover:border-coral">
+          <Link href={`${sitePrefix}/media-kit?lang=${locale === "es" ? "en" : "es"}`} className="rounded-full border border-line px-sp-3 py-1 font-mono text-xs text-ink hover:border-coral">
             {copy.switchTo}
           </Link>
         </div>

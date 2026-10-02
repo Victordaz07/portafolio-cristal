@@ -16,6 +16,7 @@ import {
   monthLabel,
 } from "@/lib/reports";
 import ReportActions from "./ReportActions";
+import { sessionCreatorSite } from "@/lib/site-url";
 
 const eyebrowClass = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
 
@@ -196,6 +197,7 @@ export default async function AdminReportsPage() {
         </Card>
 
         <ReportActions
+          siteUrl={(await sessionCreatorSite())?.url ?? ""}
           currentMonth={month}
           months={Array.from({ length: 6 }, (_, i) => {
             const m = shiftMonth(month, -i);

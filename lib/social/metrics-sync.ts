@@ -62,6 +62,7 @@ export async function syncFeedMetrics(): Promise<{ results: SyncResult[]; update
             ...(likes != null && { likes }),
             ...(comments != null && { comments }),
             ...(shares != null && { shares }),
+            ...(item.publishedAt && { postedAt: new Date(item.publishedAt) }),
             metricsSyncedAt: new Date(),
           },
         });

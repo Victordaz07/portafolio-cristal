@@ -80,6 +80,8 @@ model ContentCard {
   topCommentAuthor String?
   // Pieza destacada en la sección Colaboraciones de su marca.
   featured         Boolean   @default(false)
+  // Cuándo se publicó en la red (lo trae la sincronización); alimenta "mejor hora para publicar".
+  postedAt         DateTime?
 }
 
 model Brand {
@@ -293,4 +295,17 @@ model ScheduledPost {
   updatedAt    DateTime  @updatedAt
 
   @@index([scheduledFor])
+}
+
+// ─── Reportes (panel v2): historial de seguidores por red ───
+
+model FollowerSnapshot {
+  id        String   @id @default(cuid())
+  platform  String // "instagram" | "tiktok" | "youtube" | "facebook"
+  date      String // "YYYY-MM-DD" en APP_TIMEZONE; uno por red y día
+  followers Int
+  source    String   @default("auto") // "auto" (cuenta conectada) | "manual"
+  createdAt DateTime @default(now())
+
+  @@unique([platform, date])
 }

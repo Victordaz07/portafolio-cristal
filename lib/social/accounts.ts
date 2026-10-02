@@ -2,6 +2,7 @@ import type { SocialAccount } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { decryptToken, encryptToken } from "@/lib/token-crypto";
 import { PROVIDERS } from "./providers";
+import { recordFollowerSnapshot } from "@/lib/reports";
 import type { PlatformId, RecentItem, SocialProfile, StoredTokens, TokenSet } from "./types";
 
 /**
@@ -47,11 +48,13 @@ export async function saveConnection(platform: PlatformId, tokens: TokenSet, pro
     lastSyncAt: new Date(),
     lastError: null,
   };
-  return prisma.socialAccount.upsert({
+  const account = await prisma.socialAccount.upsert({
     where: { platform },
     create: { platform, ...data },
     update: { ...data, connectedAt: new Date() },
   });
+  await recordFollowerSnapshot(platform, profile.followers);
+  return account;
 }
 
 /** Descifra los tokens de la cuenta y los renueva si están por vencer (guardando los nuevos). */
@@ -103,6 +106,7 @@ export async function testConnection(platform: PlatformId): Promise<ConnectionTe
       where: { platform },
       data: { ...profileData(profile), lastSyncAt: new Date(), lastError: null },
     });
+    await recordFollowerSnapshot(platform, profile.followers);
     return { ok: true, refreshed, profile, recent };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error desconocido";

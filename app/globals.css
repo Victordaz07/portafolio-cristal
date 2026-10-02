@@ -49,3 +49,10 @@ body {
     outline-offset: 2px;
   }
 }
+
+/* Al imprimir (reporte mensual en PDF): sin fondos decorativos ni colores de pantalla. */
+@media print {
+  body {
+    background: #fff !important;
+  }
+}

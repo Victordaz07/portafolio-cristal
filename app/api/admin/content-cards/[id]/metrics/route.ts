@@ -18,6 +18,7 @@ const metricsSchema = z.object({
   topComment: text,
   topCommentEn: text,
   topCommentAuthor: z.string().trim().max(100).nullable().optional(),
+  postedAt: z.string().datetime().nullable().optional(),
 });
 
 /** Edita a mano las métricas, el comentario destacado y si la pieza va destacada. */
@@ -29,6 +30,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   for (const key of ["topComment", "topCommentEn", "topCommentAuthor"] as const) {
     if (data[key] === "") data[key] = null;
   }
-  const card = await prisma.contentCard.update({ where: { id }, data });
+  const { postedAt, ...rest } = data;
+  const card = await prisma.contentCard.update({
+    where: { id },
+    data: { ...rest, ...(postedAt !== undefined && { postedAt: postedAt ? new Date(postedAt) : null }) },
+  });
   return NextResponse.json(card);
 }

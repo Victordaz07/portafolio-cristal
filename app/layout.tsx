@@ -60,7 +60,7 @@ export default async function RootLayout({
       >
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed inset-0 -z-10 bg-[url('/images/pattern-bg.webp')] bg-repeat opacity-25"
+          className="pointer-events-none fixed inset-0 -z-10 bg-[url('/images/pattern-bg.webp')] bg-repeat opacity-25 print:hidden"
         />
         {children}
       </body>

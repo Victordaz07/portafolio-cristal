@@ -378,6 +378,12 @@ function MetricsEditor({
   const [topCommentEn, setTopCommentEn] = useState(card.topCommentEn ?? "");
   const [author, setAuthor] = useState(card.topCommentAuthor ?? "");
   const [showMetrics, setShowMetrics] = useState(card.showMetrics);
+  // <input type="datetime-local"> trabaja en la hora local del navegador.
+  const [postedAt, setPostedAt] = useState(() => {
+    if (!card.postedAt) return "";
+    const d = new Date(card.postedAt);
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+  });
   const [saving, setSaving] = useState(false);
 
   async function submit(event: React.FormEvent) {
@@ -389,7 +395,14 @@ function MetricsEditor({
         return [f.key, raw === "" ? null : Number(raw)];
       })
     );
-    await onSave({ ...numbers, topComment, topCommentEn, topCommentAuthor: author, showMetrics });
+    await onSave({
+      ...numbers,
+      topComment,
+      topCommentEn,
+      topCommentAuthor: author,
+      showMetrics,
+      postedAt: postedAt ? new Date(postedAt).toISOString() : null,
+    });
     setSaving(false);
   }
 
@@ -424,6 +437,10 @@ function MetricsEditor({
           <input value={author} onChange={(e) => setAuthor(e.target.value)} className={inputClass} placeholder="@valeria.mua" />
         </label>
       </div>
+      <label className="flex max-w-xs flex-col gap-1">
+        <span className="text-[11px] font-medium text-ink/70">Publicado el (para “mejor hora para publicar”)</span>
+        <input type="datetime-local" value={postedAt} onChange={(e) => setPostedAt(e.target.value)} className={inputClass} />
+      </label>
       <label className="flex items-center gap-sp-2 text-sm text-ink">
         <input type="checkbox" checked={showMetrics} onChange={(e) => setShowMetrics(e.target.checked)} />
         Mostrar las métricas en el sitio público

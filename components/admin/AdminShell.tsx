@@ -57,6 +57,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Negocio",
     items: [
       { href: "/admin/mensajes", label: "Bandeja", badgeKey: "unread" },
+      { href: "/admin/reportes", label: "Reportes" },
       { href: "/admin/conectar", label: "Conectar cuentas" },
     ],
   },
@@ -119,7 +120,7 @@ export default function AdminShell({
 
   return (
     <div className="min-h-screen bg-cream md:flex">
-      <div className="flex items-center justify-between bg-ink px-sp-5 py-sp-3 text-cream md:hidden">
+      <div className="flex items-center justify-between bg-ink px-sp-5 py-sp-3 text-cream md:hidden print:hidden">
         <Link href="/admin" className="font-bodoni text-lg font-bold uppercase italic leading-none">
           Cristal
         </Link>
@@ -137,7 +138,7 @@ export default function AdminShell({
       <aside
         className={`${
           mobileOpen ? "flex" : "hidden"
-        } flex-col gap-3.5 bg-ink px-sp-4 py-7 text-cream md:sticky md:top-0 md:flex md:h-screen md:w-[250px] md:shrink-0`}
+        } flex-col gap-3.5 bg-ink px-sp-4 py-7 text-cream print:hidden md:sticky md:top-0 md:flex md:h-screen md:w-[250px] md:shrink-0`}
       >
         <div className="mb-sp-2 hidden md:block">
           <Link href="/admin" className="font-bodoni text-xl font-bold uppercase italic leading-none">
@@ -243,7 +244,7 @@ export default function AdminShell({
         </div>
       </aside>
 
-      <main className="min-w-0 flex-1 px-sp-5 py-7 md:px-sp-6 md:py-sp-6">{children}</main>
+      <main className="min-w-0 flex-1 px-sp-5 py-7 md:px-sp-6 md:py-sp-6 print:p-0">{children}</main>
     </div>
   );
 }

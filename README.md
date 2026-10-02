@@ -138,6 +138,10 @@ Cada creadora tiene su espacio (`Creator`) y **todas** las tablas tienen `creato
   - Se hace en `/admin/registro` y pide `SIGNUP_INVITE_CODE`. Sin esa variable, el registro está cerrado.
   - Crea la creadora, su usuaria, una portada y la configuración inicial.
 - **Mi cuenta** (`/admin/cuenta`): nombre, contraseña y dirección del sitio.
+- **Dominios** (ver [`docs/dominios.md`](docs/dominios.md)):
+  - cada sitio tiene un dominio propio (en **Mi dominio**, con la API de Vercel), un subdominio (`<slug>.PLATFORM_ROOT_DOMAIN`) o la dirección provisional `/s/<slug>`;
+  - la raíz de la plataforma muestra la portada de Foliocrew (`app/foliocrew`);
+  - cada sitio tiene su propio `sitemap.xml` y `robots.txt`.
 - **La migración `multiusuario`** crea a Cristal (`creator_cristal`, slug `cristal`) y le asigna todos los datos que ya existían.
 - **Login**: la cuenta de `ADMIN_EMAIL` pasa sola a la base la primera vez que entra.
 

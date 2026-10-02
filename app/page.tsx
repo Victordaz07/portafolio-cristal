@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { currentCreator, defaultCreatorSlug } from "@/lib/tenant";
+import { currentCreator, defaultCreatorSlug, sitePathPrefix } from "@/lib/tenant";
 import type { Platform, ContentType } from "@/lib/embeds";
 import HeroStat from "@/components/HeroStat";
 import HeroStatCard from "@/components/HeroStatCard";
@@ -72,6 +72,7 @@ export default async function HomePage() {
   const copy = t(locale);
   // El sitio de Cristal (la creadora original) conserva el crédito de su diseñador.
   const isFlagship = (await currentCreator()).slug === defaultCreatorSlug();
+  const sitePrefix = await sitePathPrefix();
 
   const navLinks = [
     { href: "#about", label: copy.nav.about },
@@ -627,7 +628,7 @@ export default async function HomePage() {
             </div>
 
             <div className="mt-sp-8 grid gap-sp-8 md:grid-cols-[1fr,1fr] md:items-start">
-              <ContactForm locale={locale} />
+              <ContactForm locale={locale} endpoint={`${sitePrefix}/api/contact`} />
 
               <div>
                 <div className="relative overflow-hidden rounded-lg">

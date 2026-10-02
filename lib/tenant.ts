@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { prismaRoot } from "./prisma-root";
-import { RESERVED_SLUGS, SCOPE_HEADER, SESSION_CREATOR_HEADER, SESSION_USER_HEADER } from "./tenant-headers";
+import { RESERVED_SLUGS, SCOPE_HEADER, SESSION_CREATOR_HEADER, SESSION_USER_HEADER, SITE_SLUG_HEADER } from "./tenant-headers";
 
 // ─── ¿De qué creadora es esta petición? ───
 //
@@ -71,8 +71,12 @@ async function creatorIdForHost(hostname: string): Promise<string | null | undef
       id = creator && creator.status === "active" ? creator.id : null;
     }
   } else {
-    const domain = hostname.replace(/^www\./, "");
-    const creator = await prismaRoot.creator.findUnique({ where: { customDomain: domain }, select: { id: true, status: true } });
+    // El dominio guardado puede tener o no "www.": se acepta la visita de cualquiera de las dos formas.
+    const bare = hostname.replace(/^www\./, "");
+    const creator = await prismaRoot.creator.findFirst({
+      where: { customDomain: { in: [hostname, bare, `www.${bare}`] } },
+      select: { id: true, status: true },
+    });
     id = creator ? (creator.status === "active" ? creator.id : null) : undefined;
   }
   if (id) hostCache.set(hostname, { id, expires: Date.now() + HOST_CACHE_MS });
@@ -101,6 +105,14 @@ export async function currentCreatorId(): Promise<string> {
     return sessionCreator;
   }
 
+  // Dirección provisional /s/<slug> (la pone el middleware).
+  const siteSlug = h.get(SITE_SLUG_HEADER);
+  if (siteSlug) {
+    const creator = await prismaRoot.creator.findUnique({ where: { slug: siteSlug }, select: { id: true, status: true } });
+    if (!creator || creator.status !== "active") notFound();
+    return creator.id;
+  }
+
   const hostname = (h.get("x-forwarded-host") || h.get("host") || "").split(":")[0].toLowerCase();
   const byHost = await creatorIdForHost(hostname);
   if (byHost === null) notFound(); // subdominio o dominio de una creadora que no existe o está pausada
@@ -112,6 +124,12 @@ export async function currentCreatorId(): Promise<string> {
 export async function currentCreator() {
   const id = await currentCreatorId();
   return prismaRoot.creator.findUniqueOrThrow({ where: { id }, select: { id: true, slug: true, name: true, customDomain: true } });
+}
+
+/** "/s/<slug>" si la página se abrió por la dirección provisional; "" en subdominio o dominio propio. */
+export async function sitePathPrefix() {
+  const slug = (await requestHeaders()).get(SITE_SLUG_HEADER);
+  return slug ? `/s/${slug}` : "";
 }
 
 /** Para borrar la caché cuando cambia un dominio o un slug. */

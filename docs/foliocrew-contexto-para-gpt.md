@@ -152,6 +152,11 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
   - **reporte mensual listo para guardar en PDF** y mandarlo a una marca.
 - **Conectar cuentas:** inicio de sesión oficial con Instagram, Facebook, TikTok y YouTube. Los permisos se guardan cifrados, y puedes probar la conexión o desconectarla cuando quieras.
 
+- **Mi dominio:**
+  - ves la dirección de tu sitio para compartir;
+  - **conectas tu propio dominio** (por ejemplo, `tunombre.com`, que compras y pagas tú donde quieras). El panel te dice exactamente qué registro poner en tu proveedor, comprueba la conexión y el sitio queda con HTTPS.
+  - Cada creadora también tiene su dirección `tunombre.foliocrew.app` (se activa con el lanzamiento del dominio de Foliocrew).
+
 **Ayuda**
 - **Manual de uso** bilingüe dentro del panel.
 - **Mi cuenta:** nombre, contraseña y dirección de tu sitio.
@@ -160,8 +165,6 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 
 | Función | Estado |
 | --- | --- |
-| Dirección propia `tunombre.foliocrew.app` para cada creadora | En construcción |
-| **Conectar tu propio dominio** (por ejemplo, `tunombre.com`) | En construcción |
 | Asistente de bienvenida para tener el sitio listo en 10 minutos | Próximamente |
 | Planes y pagos con prueba gratis | Próximamente |
 | Página de Foliocrew con lista de espera | Próximamente |

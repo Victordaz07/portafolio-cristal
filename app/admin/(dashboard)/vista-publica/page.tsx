@@ -1,11 +1,13 @@
 import PageHeader from "@/components/admin/PageHeader";
 import PublicPreview from "./PublicPreview";
+import { sessionCreatorSite } from "@/lib/site-url";
 
-export default function AdminPublicViewPage() {
+export default async function AdminPublicViewPage() {
+  const site = await sessionCreatorSite();
   return (
     <div>
       <PageHeader eyebrow="Landing" title="Vista pública" />
-      <PublicPreview />
+      <PublicPreview src={site?.previewPath ?? "/"} />
     </div>
   );
 }

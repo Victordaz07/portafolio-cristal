@@ -11,15 +11,17 @@ datasource db {
 // ─── Foliocrew: cada creadora es dueña de sus datos ───
 
 model Creator {
-  id           String   @id @default(cuid())
+  id                     String    @id @default(cuid())
   /// Subdominio: <slug>.foliocrew.app
-  slug         String   @unique
-  name         String
+  slug                   String    @unique
+  name                   String
   /// Dominio propio de la creadora (Fase 8), p. ej. "crisliaugc.com"
-  customDomain String?  @unique
-  status       String   @default("active") // "active" | "paused"
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  customDomain           String?   @unique
+  /// Cuándo se comprobó que el dominio propio apunta a Foliocrew (null = pendiente)
+  customDomainVerifiedAt DateTime?
+  status                 String    @default("active") // "active" | "paused"
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
   hero              Hero?
   stats             Stat[]

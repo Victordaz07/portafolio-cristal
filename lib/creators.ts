@@ -60,7 +60,7 @@ export async function createCreatorAccount(input: { name: string; slug: string; 
         ctaPrimaryLabel: "Ver portafolio",
         ctaPrimaryLabelEn: "View portfolio",
         ctaPrimaryHref: "#contenido",
-        ctaSecondaryLabel: "Trabajemos juntas",
+        ctaSecondaryLabel: "Colaboremos",
         ctaSecondaryLabelEn: "Let's work together",
         ctaSecondaryHref: "#contacto",
       },

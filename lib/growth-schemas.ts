@@ -22,9 +22,14 @@ export const actionSchema = z.object({
   order: z.number().int().optional(),
 });
 
-export const logSchema = z.object({
+// Sin valores por defecto: los PATCH parciales solo deben tocar los campos enviados.
+export const logUpdateSchema = z.object({
   kind: z.enum(LOG_KINDS),
   date: dateKey,
   title: z.string().trim().min(1).max(200),
+  body: z.string().trim().max(5000),
+});
+
+export const logSchema = logUpdateSchema.extend({
   body: z.string().trim().max(5000).optional().default(""),
 });

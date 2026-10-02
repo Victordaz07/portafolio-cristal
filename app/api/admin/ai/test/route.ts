@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
-import { AI_MODEL, getAiClient, isAiConfigured } from "@/lib/ai";
+import { AI_MODEL, aiErrorMessage, getAiClient, isAiConfigured } from "@/lib/ai";
 
 export const dynamic = "force-dynamic";
 
@@ -45,12 +45,6 @@ export async function POST() {
       usage: { input: response.usage.input_tokens, output: response.usage.output_tokens },
     });
   } catch (error) {
-    let message = "Error desconocido";
-    if (error instanceof Anthropic.AuthenticationError) message = "La ANTHROPIC_API_KEY no es válida";
-    else if (error instanceof Anthropic.PermissionDeniedError) message = "La clave no tiene permiso para este modelo";
-    else if (error instanceof Anthropic.RateLimitError) message = "Límite de uso alcanzado; intenta en un momento";
-    else if (error instanceof Anthropic.APIError) message = `Error ${error.status}: ${error.message}`;
-    else if (error instanceof Error) message = error.message;
-    return NextResponse.json({ ok: false, error: message });
+    return NextResponse.json({ ok: false, error: aiErrorMessage(error) });
   }
 }

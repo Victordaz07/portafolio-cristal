@@ -131,6 +131,8 @@ Secciones (cada una con su Manager + formulario):
 | Hero | Portada: nombre, título, descripción, foto, CTAs. Incluye **vista previa en vivo** mientras se edita. |
 | Media kit | Las cifras junto al Hero (seguidores, colaboraciones, calificación). |
 | Feed | Tarjetas de fotos/videos, en dos modos: "Post de red social" o "Foto UGC de portafolio" (foto propia sin red social, con marca opcional). Ver "el problema conocido con TikTok" abajo. |
+| Crear | Composer de publicaciones: tipo, redes, marca, caption con **sugerencias de IA** (Claude, 3 opciones con el contexto de la creadora), avisos de límites por red, vista previa por red, consejos de IA por red y programación por día/hora (`APP_TIMEZONE`). Aún no publica automáticamente. |
+| Calendario | Vista mensual con las publicaciones por red, "¿Ya las publicaste?" para las vencidas, próximas publicaciones y "Marcar publicada". |
 | Metas y plan | Metas con valor actual y objetivo (manuales o automáticas: seguidores de cada red conectada, publicaciones del mes), promedio general con frase motivadora del día y plan de acción semanal con tareas que se pueden traer de semanas anteriores. |
 | Bitácora | Línea de hitos y aprendizajes, diario de contenido y racha de días activos (entradas, tareas completadas y publicaciones nuevas). |
 | Marcas | Dos pestañas: **Tratos** (CRM de colaboraciones: estado del trato, contacto, valor, paquete, plataformas, próximo paso con fecha, pago, notas e historial automático) y **Carrusel del sitio** (orden y visibilidad de los logos). Los datos del trato nunca llegan al sitio público. También se pueden crear marcas desde el formulario del Feed (modo Foto UGC). |

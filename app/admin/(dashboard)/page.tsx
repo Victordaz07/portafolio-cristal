@@ -11,7 +11,8 @@ import {
   formatMoney,
 } from "@/lib/crm";
 import { weekStartOf } from "@/lib/growth";
-import { getActivityStreak, todayKey } from "@/lib/growth-server";
+import { appTimeZone, getActivityStreak, todayKey } from "@/lib/growth-server";
+import { NETWORK_META, formatTime, isPlanNetwork, utcToZoned } from "@/lib/content-plan";
 
 // Iniciales y color por red, igual que en el diseño del panel v2.
 const PLATFORM_META: Record<string, { initials: string; className: string }> = {
@@ -39,7 +40,6 @@ function SectionTitle({ children, aside }: { children: ReactNode; aside?: ReactN
 
 export default async function AdminHomePage() {
   const [
-    contentCards,
     unreadMessages,
     pendingMessages,
     latestCards,
@@ -47,8 +47,9 @@ export default async function AdminHomePage() {
     deals,
     weekActions,
     streak,
+    upcomingPosts,
+    scheduledCount,
   ] = await Promise.all([
-    prisma.contentCard.count(),
     prisma.contactMessage.count({ where: { read: false } }),
     prisma.contactMessage.findMany({
       where: { read: false },
@@ -76,7 +77,15 @@ export default async function AdminHomePage() {
     }),
     prisma.actionItem.findMany({ where: { weekStart: weekStartOf(todayKey()) }, select: { done: true } }),
     getActivityStreak(),
+    prisma.scheduledPost.findMany({
+      where: { scheduledFor: { gte: new Date() }, status: { not: "published" } },
+      orderBy: { scheduledFor: "asc" },
+      take: 3,
+      include: { brand: { select: { name: true } } },
+    }),
+    prisma.scheduledPost.count({ where: { scheduledFor: { gte: new Date() }, status: "scheduled" } }),
   ]);
+  const tz = appTimeZone();
 
   const weekDone = weekActions.filter((a) => a.done).length;
   const weekPct = weekActions.length ? Math.round((weekDone / weekActions.length) * 100) : 0;
@@ -92,7 +101,7 @@ export default async function AdminHomePage() {
   const payments = deals.filter((d) => isPaymentStatus(d.paymentStatus));
 
   const kpis = [
-    { label: "Publicaciones en el feed", value: contentCards, href: "/admin/feed" },
+    { label: "Publicaciones programadas", value: scheduledCount, href: "/admin/calendario" },
     {
       label: "Tratos activos",
       value: deals.filter((d) => d.dealStatus === "active").length,
@@ -108,7 +117,8 @@ export default async function AdminHomePage() {
   ];
 
   const quickActions = [
-    { label: "+ Nueva publicación", href: "/admin/feed" },
+    { label: "+ Nueva publicación", href: "/admin/crear" },
+    { label: "+ Tarjeta en el Feed", href: "/admin/feed" },
     { label: "+ Agregar marca", href: "/admin/marcas" },
     { label: "Editar portada", href: "/admin/hero" },
   ];
@@ -169,6 +179,55 @@ export default async function AdminHomePage() {
                             {dueLabel(deal.nextActionDue)}
                           </span>
                         )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </Card>
+
+          <Card>
+            <SectionTitle
+              aside={
+                <Link href="/admin/calendario" className="text-xs font-semibold text-coral hover:underline">
+                  Ver calendario
+                </Link>
+              }
+            >
+              Próximas publicaciones
+            </SectionTitle>
+            {upcomingPosts.length === 0 ? (
+              <p className="text-sm text-ink/60">
+                Nada programado.{" "}
+                <Link href="/admin/crear" className="font-medium text-coral hover:underline">
+                  Crea tu próxima publicación
+                </Link>
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-sp-3">
+                {upcomingPosts.map((post) => {
+                  const when = utcToZoned(post.scheduledFor, tz);
+                  const first = post.networks.find(isPlanNetwork);
+                  return (
+                    <li key={post.id}>
+                      <Link href={`/admin/crear?id=${post.id}`} className="flex items-center gap-sp-3 hover:opacity-80">
+                        <span
+                          className={`flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-[8px] font-mono text-[9px] font-bold ${
+                            first ? NETWORK_META[first].badge : "bg-lime text-ink"
+                          }`}
+                        >
+                          {first ? NETWORK_META[first].initials : "·"}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-ink">
+                            {post.caption.split("\n")[0] || "(sin texto)"}
+                          </p>
+                          {post.brand && <p className="truncate text-xs text-ink/60">{post.brand.name}</p>}
+                        </div>
+                        <span className="shrink-0 text-xs text-ink/50">
+                          {Number(when.dateKey.slice(8))}/{Number(when.dateKey.slice(5, 7))} · {formatTime(when.time)}
+                        </span>
                       </Link>
                     </li>
                   );

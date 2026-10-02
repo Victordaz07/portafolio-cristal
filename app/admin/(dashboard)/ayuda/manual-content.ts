@@ -31,7 +31,7 @@ const primeraVezEs: ManualBlock[] = [
     list: [
       "Resumen (arriba de todo): tu panorama del día — seguimientos con marcas, pagos, mensajes sin leer y últimas publicaciones.",
       "Crecimiento: Metas y plan (tus metas con progreso y el plan de la semana) y Bitácora (hitos, aprendizajes y diario).",
-      "Contenido: Feed (fotos y videos).",
+      "Contenido: Feed (fotos y videos de tu portafolio), Calendario (tu plan del mes) y Crear (armar una publicación con ayuda de la IA).",
       "Landing: Portada (Hero), Media kit (tus stats), Cómo trabajo, Paquetes, FAQ y Contacto y pie — todo lo que se ve en tu sitio público.",
       "Prueba social: Marcas (tu CRM de tratos y el carrusel de logos), Reseñas destacadas y Testimonios.",
       "Negocio: Bandeja, con los mensajes que te escriben las marcas desde el formulario de contacto del sitio.",
@@ -79,7 +79,7 @@ const primeraVezEn: ManualBlock[] = [
     list: [
       "Summary (at the very top): your overview for the day — brand follow-ups, payments, unread messages and latest posts.",
       "Growth: Goals & plan (your goals with progress and the weekly plan) and Log (milestones, learnings and journal).",
-      "Content: Feed (photos & videos).",
+      "Content: Feed (your portfolio photos & videos), Calendar (your monthly plan) and Create (build a post with AI help).",
       "Landing: Hero, Media kit (your stats), How I work, Packages, FAQ and Contact & footer — everything shown on your public site.",
       "Social proof: Brands (your deals CRM and the logo carousel), Featured reviews and Testimonials.",
       "Business: Inbox, with the messages brands send you through the site's contact form.",
@@ -356,6 +356,21 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Crear publicación",
+    paragraphs: [
+      "Elige el tipo (post, carrusel, reel, video largo o historia), en qué redes va y si es para una marca. Escribe el caption o toca \"Sugerir con IA\": la IA te da 3 opciones usando el tema, la marca y tu estilo; toca la que te guste para usarla.",
+      "Mientras escribes ves una vista previa por red y, a la derecha, consejos de la IA para ejecutarlo en cada una. También te avisa si pasas el límite de caracteres o de hashtags de alguna red.",
+      "Elige día y hora y toca \"Programar\" (o guárdala como borrador). Por ahora no se publica sola: la ves en el Calendario y en el Resumen para subirla ese día.",
+    ],
+  },
+  {
+    title: "Calendario",
+    paragraphs: [
+      "Vista del mes con puntos de color por red en cada día que tiene algo programado. Toca un día para ver qué hay y programar algo nuevo ese día.",
+      "Cuando subas la publicación, toca \"Marcar publicada\". Si alguna ya pasó su fecha y no la marcaste, aparece arriba en \"¿Ya las publicaste?\". Marcar publicaciones también suma a tu racha.",
+    ],
+  },
+  {
     title: "Reseñas destacadas",
     paragraphs: ["Reseñas de producto con foto opcional, categoría, título, descripción y calificación de 1 a 5 estrellas."],
   },
@@ -444,6 +459,21 @@ const guiaEn: ManualBlock[] = [
       "The milestones line keeps your achievements (\"First paid collaboration\") and your learnings (\"Agreeing the brief in writing avoids rework\").",
       "The content journal is for a short reflection every week: what worked, what didn't and what you'll try next.",
       "The streak counts the consecutive days you did something: a log entry, a completed plan task or a new Feed post. You also see it in the Summary.",
+    ],
+  },
+  {
+    title: "Create post",
+    paragraphs: [
+      "Pick the type (post, carousel, reel, long video or story), which networks it goes to and whether it's for a brand. Write the caption or tap \"Suggest with AI\": the AI gives you 3 options using the topic, the brand and your style; tap the one you like to use it.",
+      "While you write you see a preview per network and, on the right, AI tips to execute it on each one. It also warns you if you go over a network's character or hashtag limit.",
+      "Pick the day and time and tap \"Schedule\" (or save it as a draft). For now it doesn't publish itself: you see it in the Calendar and the Summary so you can upload it that day.",
+    ],
+  },
+  {
+    title: "Calendar",
+    paragraphs: [
+      "Month view with colored dots per network on each day that has something scheduled. Tap a day to see what's there and schedule something new that day.",
+      "When you upload the post, tap \"Mark published\". If one is past its date and you didn't mark it, it shows up at the top under \"Did you publish them?\". Marking posts also adds to your streak.",
     ],
   },
   {

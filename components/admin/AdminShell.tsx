@@ -24,7 +24,11 @@ const NAV_GROUPS: NavGroup[] = [
   {
     id: "contenido",
     title: "Contenido",
-    items: [{ href: "/admin/feed", label: "Feed / Publicaciones" }],
+    items: [
+      { href: "/admin/feed", label: "Feed / Publicaciones" },
+      { href: "/admin/calendario", label: "Calendario" },
+      { href: "/admin/crear", label: "Crear" },
+    ],
   },
   {
     id: "landing",

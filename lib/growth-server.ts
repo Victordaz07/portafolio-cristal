@@ -45,19 +45,21 @@ async function countFeedPostsThisMonth() {
   return prisma.contentCard.count({ where: { createdAt: { gte: monthStart } } });
 }
 
-/** Racha: días seguidos con una entrada de bitácora, una tarea completada o una publicación nueva. */
+/** Racha: días seguidos con una entrada de bitácora, una tarea completada, una publicación nueva en el Feed o una marcada como publicada. */
 export async function getActivityStreak() {
   const tz = appTimeZone();
   const since = new Date(Date.now() - 400 * 86_400_000);
-  const [logs, actions, cards] = await Promise.all([
+  const [logs, actions, cards, published] = await Promise.all([
     prisma.logEntry.findMany({ where: { createdAt: { gte: since } }, select: { date: true } }),
     prisma.actionItem.findMany({ where: { completedAt: { gte: since } }, select: { completedAt: true } }),
     prisma.contentCard.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
+    prisma.scheduledPost.findMany({ where: { publishedAt: { gte: since } }, select: { publishedAt: true } }),
   ]);
   const days = new Set<string>([
     ...logs.map((l) => l.date),
     ...actions.map((a) => localDateKey(a.completedAt!, tz)),
     ...cards.map((c) => localDateKey(c.createdAt, tz)),
+    ...published.map((p) => localDateKey(p.publishedAt!, tz)),
   ]);
   return streakDays(days, todayKey());
 }

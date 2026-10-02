@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { logSchema } from "@/lib/growth-schemas";
+import { logUpdateSchema } from "@/lib/growth-schemas";
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const parsed = logSchema.partial().safeParse(await request.json().catch(() => null));
+  const parsed = logUpdateSchema.partial().safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   const entry = await prisma.logEntry.update({ where: { id }, data: parsed.data });
   return NextResponse.json(entry);

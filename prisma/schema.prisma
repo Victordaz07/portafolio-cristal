@@ -91,6 +91,7 @@ model Brand {
   lastContactAt  DateTime?
   notes          String?
   events         BrandEvent[]
+  scheduledPosts ScheduledPost[]
 }
 
 model BrandEvent {
@@ -256,4 +257,25 @@ model LogEntry {
   createdAt DateTime @default(now())
 
   @@index([kind, date])
+}
+
+// ─── Contenido (panel v2): publicaciones planeadas en Calendario / Crear ───
+
+model ScheduledPost {
+  id           String    @id @default(cuid())
+  caption      String    @default("")
+  topic        String? // tema usado para las sugerencias de IA
+  contentType  String    @default("reel") // "post" | "carousel" | "reel" | "long_video" | "story"
+  networks     String[]  @default([]) // "instagram" | "tiktok" | "youtube" | "facebook"
+  brandId      String?
+  brand        Brand?    @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  mediaUrl     String?
+  mediaType    String? // "image" | "video"
+  scheduledFor DateTime
+  status       String    @default("scheduled") // "draft" | "scheduled" | "published"
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([scheduledFor])
 }

@@ -173,7 +173,6 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | Función | Estado |
 | --- | --- |
 | Planes y pagos con prueba gratis | Próximamente |
-| Página de Foliocrew con lista de espera | Próximamente |
 | Correos automáticos (bienvenida, recuperar contraseña) | Próximamente |
 | **Publicar automáticamente** en las redes desde el calendario | Futuro (requiere aprobación de cada red) |
 | **Mensajes directos (DM)** de Instagram en la Bandeja | Futuro (requiere aprobación de Meta) |
@@ -254,4 +253,4 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
   - Inter para el texto.
 - **Estilo visual:** creadoras reales y diversas trabajando (celular en trípode, escritorio, productos), luz natural, tonos crema y lavanda, y las páginas superpuestas del logo como decoración en línea fina.
 - **Redes:** @foliocrew (verificar la disponibilidad en cada red).
-- **Web:** foliocrew.app (en proceso).
+- **Web:** página de venta con lista de espera en `portafolio-cristal.vercel.app/foliocrew` (pasará a `foliocrew.app` cuando se active el dominio). Para los links de campañas usa UTM, por ejemplo `?utm_source=instagram&utm_campaign=lanzamiento`.

@@ -10,6 +10,8 @@ import {
   dueLabel,
   formatMoney,
 } from "@/lib/crm";
+import { weekStartOf } from "@/lib/growth";
+import { getActivityStreak, todayKey } from "@/lib/growth-server";
 
 // Iniciales y color por red, igual que en el diseño del panel v2.
 const PLATFORM_META: Record<string, { initials: string; className: string }> = {
@@ -43,6 +45,8 @@ export default async function AdminHomePage() {
     latestCards,
     stats,
     deals,
+    weekActions,
+    streak,
   ] = await Promise.all([
     prisma.contentCard.count(),
     prisma.contactMessage.count({ where: { read: false } }),
@@ -70,7 +74,12 @@ export default async function AdminHomePage() {
         nextActionDue: true,
       },
     }),
+    prisma.actionItem.findMany({ where: { weekStart: weekStartOf(todayKey()) }, select: { done: true } }),
+    getActivityStreak(),
   ]);
+
+  const weekDone = weekActions.filter((a) => a.done).length;
+  const weekPct = weekActions.length ? Math.round((weekDone / weekActions.length) * 100) : 0;
 
   const openDeals = deals.filter((d) => d.dealStatus === "active" || d.dealStatus === "negotiating");
   const followUps = deals
@@ -239,6 +248,25 @@ export default async function AdminHomePage() {
         </div>
 
         <div className="flex flex-col gap-sp-4">
+          <Link href="/admin/metas" className="rounded-[18px] bg-ink p-sp-5 text-cream transition hover:opacity-95">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-lime">Racha y plan de la semana</p>
+            {weekActions.length === 0 ? (
+              <p className="mt-sp-3 font-fraunces text-xl font-semibold">Arma tu plan de esta semana →</p>
+            ) : (
+              <>
+                <p className="mt-sp-3 font-fraunces text-2xl font-semibold">
+                  {weekDone} / {weekActions.length} tareas del plan listas
+                </p>
+                <div className="mt-sp-3 h-1.5 overflow-hidden rounded-full bg-cream/15">
+                  <div className="h-full rounded-full bg-lime" style={{ width: `${weekPct}%` }} />
+                </div>
+              </>
+            )}
+            <p className="mt-sp-3 text-xs text-cream/70">
+              {streak > 0 ? `${streak} ${streak === 1 ? "día" : "días"} seguidos activa` : "Empieza tu racha hoy"}
+            </p>
+          </Link>
+
           <Link
             href="/admin/media-kit"
             className="rounded-[18px] bg-ink p-sp-5 text-cream transition hover:opacity-95"

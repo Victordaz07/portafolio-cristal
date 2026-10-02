@@ -30,6 +30,7 @@ const primeraVezEs: ManualBlock[] = [
     title: "¿Cómo está organizado el menú de la izquierda?",
     list: [
       "Resumen (arriba de todo): tu panorama del día — seguimientos con marcas, pagos, mensajes sin leer y últimas publicaciones.",
+      "Crecimiento: Metas y plan (tus metas con progreso y el plan de la semana) y Bitácora (hitos, aprendizajes y diario).",
       "Contenido: Feed (fotos y videos).",
       "Landing: Portada (Hero), Media kit (tus stats), Cómo trabajo, Paquetes, FAQ y Contacto y pie — todo lo que se ve en tu sitio público.",
       "Prueba social: Marcas (tu CRM de tratos y el carrusel de logos), Reseñas destacadas y Testimonios.",
@@ -77,6 +78,7 @@ const primeraVezEn: ManualBlock[] = [
     title: "How is the left-hand menu organized?",
     list: [
       "Summary (at the very top): your overview for the day — brand follow-ups, payments, unread messages and latest posts.",
+      "Growth: Goals & plan (your goals with progress and the weekly plan) and Log (milestones, learnings and journal).",
       "Content: Feed (photos & videos).",
       "Landing: Hero, Media kit (your stats), How I work, Packages, FAQ and Contact & footer — everything shown on your public site.",
       "Social proof: Brands (your deals CRM and the logo carousel), Featured reviews and Testimonials.",
@@ -338,6 +340,22 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Metas y plan",
+    paragraphs: [
+      "Crea metas con un valor actual y un objetivo (ej: \"Publicar 25 piezas este mes\"). La barra muestra tu avance y arriba ves el promedio de todas tus metas, junto a una frase motivadora distinta cada día.",
+      "Algunas metas se actualizan solas: seguidores de Instagram, TikTok, YouTube o Facebook (si conectaste la red) y publicaciones del Feed en el mes. Las manuales las ajustas con los botones − y +.",
+      "El plan de acción es tu lista de tareas de la semana: márcalas al terminarlas. Si te quedaron pendientes de semanas anteriores, el panel te ofrece traerlas a la semana actual.",
+    ],
+  },
+  {
+    title: "Bitácora",
+    paragraphs: [
+      "La línea de hitos guarda tus logros (\"Primera colaboración pagada\") y tus aprendizajes (\"Negociar el brief por escrito evita retrabajos\").",
+      "El diario de contenido es para una reflexión corta cada semana: qué funcionó, qué no y qué vas a probar.",
+      "La racha cuenta los días seguidos en que hiciste algo: una entrada en la bitácora, una tarea del plan completada o una publicación nueva en el Feed. También la ves en el Resumen.",
+    ],
+  },
+  {
     title: "Reseñas destacadas",
     paragraphs: ["Reseñas de producto con foto opcional, categoría, título, descripción y calificación de 1 a 5 estrellas."],
   },
@@ -410,6 +428,22 @@ const guiaEn: ManualBlock[] = [
       "Each card explains what can and can't be done with that network (for example, TikTok doesn't allow reading DMs). \"Disconnect\" deletes the permissions saved in the panel.",
       "At the bottom is the AI test (Claude), which will be used to suggest captions.",
       "If a network says \"Not configured\", its developer app keys are missing: whoever manages the site sets that up (guide in docs/conectar-cuentas.md).",
+    ],
+  },
+  {
+    title: "Goals & plan",
+    paragraphs: [
+      "Create goals with a current value and a target (e.g. \"Publish 25 pieces this month\"). The bar shows your progress and the top shows the average of all your goals, next to a different motivational phrase every day.",
+      "Some goals update themselves: Instagram, TikTok, YouTube or Facebook followers (if you connected the network) and Feed posts this month. You adjust manual ones with the − and + buttons.",
+      "The action plan is your task list for the week: check them off when done. If tasks are left over from previous weeks, the panel offers to bring them into the current week.",
+    ],
+  },
+  {
+    title: "Log",
+    paragraphs: [
+      "The milestones line keeps your achievements (\"First paid collaboration\") and your learnings (\"Agreeing the brief in writing avoids rework\").",
+      "The content journal is for a short reflection every week: what worked, what didn't and what you'll try next.",
+      "The streak counts the consecutive days you did something: a log entry, a completed plan task or a new Feed post. You also see it in the Summary.",
     ],
   },
   {

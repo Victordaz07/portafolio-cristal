@@ -215,3 +215,45 @@ model SocialAccount {
   lastError    String?
   updatedAt    DateTime  @updatedAt
 }
+
+// ─── Crecimiento (panel v2): metas, plan semanal y bitácora ───
+
+model Goal {
+  id        String    @id @default(cuid())
+  title     String
+  category  String    @default("content") // "content" | "audience" | "skill" | "habit"
+  current   Float     @default(0)
+  target    Float
+  unit      String? // sufijo opcional para mostrar, ej. "K" o "videos"
+  // De dónde sale el valor actual: "manual" o automático (seguidores de una red, publicaciones del mes).
+  source    String    @default("manual")
+  dueDate   DateTime?
+  archived  Boolean   @default(false)
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model ActionItem {
+  id          String    @id @default(cuid())
+  label       String
+  category    String    @default("content")
+  weekStart   String // lunes de la semana, "YYYY-MM-DD" en la zona horaria de la app
+  done        Boolean   @default(false)
+  completedAt DateTime?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  @@index([weekStart])
+}
+
+model LogEntry {
+  id        String   @id @default(cuid())
+  kind      String // "milestone" | "learning" | "journal"
+  date      String // "YYYY-MM-DD"
+  title     String
+  body      String   @default("")
+  createdAt DateTime @default(now())
+
+  @@index([kind, date])
+}

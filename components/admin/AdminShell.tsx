@@ -14,6 +14,14 @@ type NavGroup = { id: string; title: string; items: NavItem[] };
 // grupo a medida que se implementan.
 const NAV_GROUPS: NavGroup[] = [
   {
+    id: "crecimiento",
+    title: "Crecimiento",
+    items: [
+      { href: "/admin/metas", label: "Metas y plan" },
+      { href: "/admin/bitacora", label: "Bitácora" },
+    ],
+  },
+  {
     id: "contenido",
     title: "Contenido",
     items: [{ href: "/admin/feed", label: "Feed / Publicaciones" }],

@@ -43,9 +43,9 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cristal Flores — UGC Content Creator",
-  description:
-    "Portafolio de Cristal Amalia Flores Bello — creadora UGC en beauty, skincare, hair, books y lifestyle. Media kit, contenido real y paquetes de colaboración.",
+  // Cada página pública pone el nombre de su creadora (generateMetadata); esto es el respaldo.
+  title: "Foliocrew — Portafolios para creadoras UGC",
+  description: "Tu talento merece su espacio: portafolio, media kit y colaboraciones en un solo lugar.",
 };
 
 export default async function RootLayout({

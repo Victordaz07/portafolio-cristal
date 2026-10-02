@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
   // TODO: enviar notificación por correo con Resend una vez que exista RESEND_API_KEY.
   // El mensaje ya queda guardado en la base de datos aunque el envío de correo falle o
-  // no esté configurado, para que Crislia lo vea en /admin igual.
+  // no esté configurado, para que la creadora lo vea en /admin igual.
   if (process.env.RESEND_API_KEY) {
     try {
       const { Resend } = await import("resend");
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       const settings = await prisma.siteSettings.findFirst();
       if (settings?.contactEmail) {
         await resend.emails.send({
-          from: "Portafolio Crislia <onboarding@resend.dev>",
+          from: "Foliocrew <onboarding@resend.dev>",
           to: settings.contactEmail,
           subject: `Nueva colaboración: ${data.brand} (${data.collaborationType})`,
           text: `${data.name} — ${data.email}\n\n${data.message}`,

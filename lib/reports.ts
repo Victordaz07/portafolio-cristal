@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { currentCreatorId } from "@/lib/tenant";
 import { appTimeZone, todayKey } from "@/lib/growth-server";
 import { addDays, localDateKey } from "@/lib/growth";
 import { engagementRate } from "@/lib/metrics";
@@ -10,7 +11,7 @@ export async function recordFollowerSnapshot(platform: string, followers: number
   if (followers == null || followers < 0) return;
   const day = date ?? todayKey();
   await prisma.followerSnapshot.upsert({
-    where: { platform_date: { platform, date: day } },
+    where: { creatorId_platform_date: { creatorId: await currentCreatorId(), platform, date: day } },
     create: { platform, date: day, followers, source },
     update: { followers, source },
   });

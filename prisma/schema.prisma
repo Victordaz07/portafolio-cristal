@@ -8,8 +8,44 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+// ─── Foliocrew: cada creadora es dueña de sus datos ───
+
+model Creator {
+  id           String   @id @default(cuid())
+  /// Subdominio: <slug>.foliocrew.app
+  slug         String   @unique
+  name         String
+  /// Dominio propio de la creadora (Fase 8), p. ej. "crisliaugc.com"
+  customDomain String?  @unique
+  status       String   @default("active") // "active" | "paused"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  hero              Hero?
+  stats             Stat[]
+  contentCards      ContentCard[]
+  brands            Brand[]
+  brandEvents       BrandEvent[]
+  reviews           Review[]
+  services          Service[]
+  testimonials      Testimonial[]
+  packages          Package[]
+  faqItems          FaqItem[]
+  contactMessages   ContactMessage[]
+  users             AdminUser[]
+  siteSettings      SiteSettings?
+  socialAccounts    SocialAccount[]
+  goals             Goal[]
+  actionItems       ActionItem[]
+  logEntries        LogEntry[]
+  scheduledPosts    ScheduledPost[]
+  followerSnapshots FollowerSnapshot[]
+}
+
 model Hero {
   id                  String   @id @default(cuid())
+  creatorId           String   @unique @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator             Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   name                String
   location            String
   niche               String
@@ -37,16 +73,22 @@ model Hero {
 
 model Stat {
   id        String   @id @default(cuid())
+  creatorId String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   label     String
   labelEn   String?
   value     String
   icon      String   @default("star")
   order     Int      @default(0)
   createdAt DateTime @default(now())
+
+  @@index([creatorId])
 }
 
 model ContentCard {
   id              String   @id @default(cuid())
+  creatorId       String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator         Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   type            String // "video" | "photo"
   platform        String // "tiktok" | "instagram" | "facebook"
   postUrl         String?
@@ -82,10 +124,14 @@ model ContentCard {
   featured         Boolean   @default(false)
   // Cuándo se publicó en la red (lo trae la sincronización); alimenta "mejor hora para publicar".
   postedAt         DateTime?
+
+  @@index([creatorId])
 }
 
 model Brand {
   id           String        @id @default(cuid())
+  creatorId    String        @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator      Creator       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   name         String
   logoUrl      String?
   websiteUrl   String?
@@ -101,7 +147,7 @@ model Brand {
   contactEmail   String?
   dealValue      Int? // en USD, sin decimales
   packageDetail  String?
-  platforms      String[]     @default([])
+  platforms      String[]        @default([])
   paymentStatus  String? // "pending" | "paid"
   nextAction     String?
   nextActionDue  DateTime?
@@ -109,10 +155,14 @@ model Brand {
   notes          String?
   events         BrandEvent[]
   scheduledPosts ScheduledPost[]
+
+  @@index([creatorId])
 }
 
 model BrandEvent {
   id        String   @id @default(cuid())
+  creatorId String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   brandId   String
   brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
   date      DateTime @default(now())
@@ -120,10 +170,13 @@ model BrandEvent {
   createdAt DateTime @default(now())
 
   @@index([brandId, date])
+  @@index([creatorId])
 }
 
 model Review {
   id            String   @id @default(cuid())
+  creatorId     String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator       Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   photoUrl      String?
   category      String
   categoryEn    String?
@@ -134,69 +187,99 @@ model Review {
   rating        Int      @default(5)
   order         Int      @default(0)
   createdAt     DateTime @default(now())
+
+  @@index([creatorId])
 }
 
 model Service {
   id            String  @id @default(cuid())
+  creatorId     String  @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator       Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   icon          String  @default("camera")
   title         String
   titleEn       String?
   description   String
   descriptionEn String?
   order         Int     @default(0)
+
+  @@index([creatorId])
 }
 
 model Testimonial {
-  id       String  @id @default(cuid())
-  quote    String
-  quoteEn  String?
-  name     String
-  role     String
-  roleEn   String?
-  photoUrl String?
-  order    Int     @default(0)
+  id        String  @id @default(cuid())
+  creatorId String  @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  quote     String
+  quoteEn   String?
+  name      String
+  role      String
+  roleEn    String?
+  photoUrl  String?
+  order     Int     @default(0)
+
+  @@index([creatorId])
 }
 
 model Package {
-  id      String   @id @default(cuid())
-  emoji   String   @default("✨")
-  name    String
-  nameEn  String?
-  items   String[]
-  itemsEn String[]
-  order   Int      @default(0)
+  id        String   @id @default(cuid())
+  creatorId String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  emoji     String   @default("✨")
+  name      String
+  nameEn    String?
+  items     String[]
+  itemsEn   String[]
+  order     Int      @default(0)
+
+  @@index([creatorId])
 }
 
 model FaqItem {
   id         String  @id @default(cuid())
+  creatorId  String  @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator    Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   question   String
   questionEn String?
   answer     String
   answerEn   String?
   order      Int     @default(0)
+
+  @@index([creatorId])
 }
 
 model ContactMessage {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
+  creatorId         String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator           Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   name              String
   brand             String
   email             String
   collaborationType String
   message           String
-  read              Boolean  @default(false)
+  read              Boolean   @default(false)
   repliedAt         DateTime?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime  @default(now())
+
+  @@index([creatorId])
 }
 
 model AdminUser {
   id           String   @id @default(cuid())
+  name         String?
+  role         String   @default("owner") // "owner" (más adelante: "editor" para agencias)
+  creatorId    String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator      Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
+
+  @@index([creatorId])
 }
 
 model SiteSettings {
   id               String   @id @default(cuid())
+  creatorId        String   @unique @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator          Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   whyMeText        String
   whyMeTextEn      String?
   contactEmail     String
@@ -220,7 +303,9 @@ model SiteSettings {
 // Los tokens se guardan cifrados (lib/token-crypto.ts), nunca en texto plano.
 model SocialAccount {
   id           String    @id @default(cuid())
-  platform     String    @unique // "instagram" | "facebook" | "tiktok" | "youtube"
+  creatorId    String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator      Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  platform     String // "instagram" | "facebook" | "tiktok" | "youtube"
   externalId   String
   username     String?
   displayName  String?
@@ -234,12 +319,16 @@ model SocialAccount {
   lastSyncAt   DateTime?
   lastError    String?
   updatedAt    DateTime  @updatedAt
+
+  @@unique([creatorId, platform])
 }
 
 // ─── Crecimiento (panel v2): metas, plan semanal y bitácora ───
 
 model Goal {
   id        String    @id @default(cuid())
+  creatorId String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   title     String
   category  String    @default("content") // "content" | "audience" | "skill" | "habit"
   current   Float     @default(0)
@@ -252,10 +341,14 @@ model Goal {
   order     Int       @default(0)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@index([creatorId])
 }
 
 model ActionItem {
   id          String    @id @default(cuid())
+  creatorId   String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   label       String
   category    String    @default("content")
   weekStart   String // lunes de la semana, "YYYY-MM-DD" en la zona horaria de la app
@@ -265,10 +358,13 @@ model ActionItem {
   createdAt   DateTime  @default(now())
 
   @@index([weekStart])
+  @@index([creatorId])
 }
 
 model LogEntry {
   id        String   @id @default(cuid())
+  creatorId String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   kind      String // "milestone" | "learning" | "journal"
   date      String // "YYYY-MM-DD"
   title     String
@@ -276,12 +372,15 @@ model LogEntry {
   createdAt DateTime @default(now())
 
   @@index([kind, date])
+  @@index([creatorId])
 }
 
 // ─── Contenido (panel v2): publicaciones planeadas en Calendario / Crear ───
 
 model ScheduledPost {
   id           String    @id @default(cuid())
+  creatorId    String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator      Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   caption      String    @default("")
   topic        String? // tema usado para las sugerencias de IA
   contentType  String    @default("reel") // "post" | "carousel" | "reel" | "long_video" | "story"
@@ -297,17 +396,20 @@ model ScheduledPost {
   updatedAt    DateTime  @updatedAt
 
   @@index([scheduledFor])
+  @@index([creatorId])
 }
 
 // ─── Reportes (panel v2): historial de seguidores por red ───
 
 model FollowerSnapshot {
   id        String   @id @default(cuid())
+  creatorId String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   platform  String // "instagram" | "tiktok" | "youtube" | "facebook"
   date      String // "YYYY-MM-DD" en APP_TIMEZONE; uno por red y día
   followers Int
   source    String   @default("auto") // "auto" (cuenta conectada) | "manual"
   createdAt DateTime @default(now())
 
-  @@unique([platform, date])
+  @@unique([creatorId, platform, date])
 }

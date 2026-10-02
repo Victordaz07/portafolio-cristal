@@ -20,9 +20,9 @@ export const SECTION_OPTIONS: { value: "primera-vez" | "glosario" | "reels" | "g
 
 const primeraVezEs: ManualBlock[] = [
   {
-    title: "¡Bienvenida a tu panel, Crislia!",
+    title: "¡Bienvenida a tu panel de Foliocrew!",
     paragraphs: [
-      "Este panel es tuyo: desde aquí controlas absolutamente todo lo que se ve en tu sitio público (portafolio-cristal.vercel.app) sin necesitar a nadie que toque código.",
+      "Este panel es tuyo: desde aquí controlas absolutamente todo lo que se ve en tu sitio público (la dirección está en Ayuda → Mi cuenta) sin necesitar a nadie que toque código.",
       "Cada sección que edites aquí se refleja al instante en el sitio real. No hay un botón de \"publicar\" aparte: al guardar, ya está en vivo.",
     ],
   },
@@ -68,9 +68,9 @@ const primeraVezEs: ManualBlock[] = [
 
 const primeraVezEn: ManualBlock[] = [
   {
-    title: "Welcome to your panel, Crislia!",
+    title: "Welcome to your Foliocrew panel!",
     paragraphs: [
-      "This panel is all yours: from here you control everything that shows up on your public site (portafolio-cristal.vercel.app) without needing anyone to touch code.",
+      "This panel is all yours: from here you control everything that shows up on your public site (its address is under Help → My account) without needing anyone to touch code.",
       "Every section you edit here reflects instantly on the real site. There's no separate \"publish\" button: once you save, it's already live.",
     ],
   },

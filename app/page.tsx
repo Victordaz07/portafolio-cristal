@@ -1,5 +1,7 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { currentCreator, defaultCreatorSlug } from "@/lib/tenant";
 import type { Platform, ContentType } from "@/lib/embeds";
 import HeroStat from "@/components/HeroStat";
 import HeroStatCard from "@/components/HeroStatCard";
@@ -41,9 +43,35 @@ import CreatorCredit from "@/components/CreatorCredit";
 
 export const dynamic = "force-dynamic";
 
+/** Foto de reemplazo mientras la creadora no sube la suya (nunca la de otra creadora). */
+const PHOTO_PLACEHOLDER = "/images/placeholder-creadora.svg";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const hero = await prisma.hero.findFirst({ select: { name: true, niche: true, description: true } });
+  if (!hero) return {};
+  return {
+    title: `${hero.name} — ${hero.niche || "Creadora UGC"}`,
+    description: hero.description || `Portafolio de ${hero.name}: contenido UGC, media kit y colaboraciones.`,
+  };
+}
+
+/** Pie para las creadoras de Foliocrew (el sitio de Cristal mantiene su crédito propio). */
+function MadeWithFoliocrew() {
+  return (
+    <p className="py-sp-4 text-center text-xs text-ink/50">
+      Hecho con{" "}
+      <a href="https://foliocrew.app" className="font-semibold text-ink/70 hover:text-coral">
+        Foliocrew
+      </a>
+    </p>
+  );
+}
+
 export default async function HomePage() {
   const locale = await getLocale();
   const copy = t(locale);
+  // El sitio de Cristal (la creadora original) conserva el crédito de su diseñador.
+  const isFlagship = (await currentCreator()).slug === defaultCreatorSlug();
 
   const navLinks = [
     { href: "#about", label: copy.nav.about },
@@ -93,7 +121,7 @@ export default async function HomePage() {
     })
   );
 
-  const firstName = hero?.name?.split(" ")[0] ?? "Crislia";
+  const firstName = hero?.name?.split(" ")[0] ?? "";
   const handles: Record<string, string | null | undefined> = {
     instagram: settings?.instagramHandle,
     tiktok: settings?.tiktokHandle,
@@ -221,14 +249,14 @@ export default async function HomePage() {
           <div className="md:hidden">
             <div className="relative">
               <MobileHeroNav
-                name={hero?.name?.split(" ")[0] ?? "Cristal"}
+                name={firstName}
                 links={navLinks}
                 locale={locale}
               />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={hero?.photoUrlMobile ?? "/images/hero-placeholder-mobile.png"}
-                alt={hero?.name ?? "Crislia"}
+                src={hero?.photoUrlMobile ?? hero?.photoUrl ?? PHOTO_PLACEHOLDER}
+                alt={hero?.name ?? ""}
                 className="aspect-square w-full object-cover object-bottom"
               />
               <div className="relative -mt-10 rounded-t-3xl bg-cream px-sp-5 pb-sp-3 pt-sp-7 text-center">
@@ -294,7 +322,7 @@ export default async function HomePage() {
           <div className="relative hidden md:block">
             <div className="absolute inset-x-0 top-0 z-20">
               <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3 px-sp-5 py-sp-5 lg:px-sp-8">
-                <DesktopBrandMark name={hero?.name?.split(" ")[0] ?? "Cristal"} locale={locale} />
+                <DesktopBrandMark name={firstName} locale={locale} />
                 <div className="flex items-center gap-sp-3">
                   <ul className="flex gap-sp-5 rounded-full border border-line bg-cream/70 px-sp-5 py-sp-2 font-mono text-[11px] uppercase tracking-wide text-ink/80 backdrop-blur-sm">
                     {navLinks.map((link) => (
@@ -384,8 +412,8 @@ export default async function HomePage() {
             <div className="relative min-h-[560px] lg:min-h-[640px]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={hero?.photoUrl ?? "/images/hero-placeholder.png"}
-                alt={hero?.name ?? "Crislia"}
+                src={hero?.photoUrl ?? PHOTO_PLACEHOLDER}
+                alt={hero?.name ?? ""}
                 className="absolute inset-0 h-full w-full object-cover object-right"
               />
             </div>
@@ -418,7 +446,7 @@ export default async function HomePage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/brands-banner.png"
-              alt={hero?.name ?? "Crislia"}
+              alt={hero?.name ?? ""}
               className="aspect-[5/2] w-full object-cover object-top"
             />
 
@@ -591,7 +619,7 @@ export default async function HomePage() {
               <SparkleIcon className="mx-auto h-5 w-5 text-lime" />
               <h2 className="mt-sp-3 font-fraunces italic text-[clamp(2rem,5vw,2.8rem)] text-ink">
                 {copy.contacto.headingPrefix}
-                {hero?.name?.split(" ")[0] ?? "Crislia"}
+                {firstName}
               </h2>
               <p className="mt-sp-3 text-ink/75 leading-relaxed whitespace-pre-line">
                 {pick(locale, settings?.footerIntro ?? copy.contacto.footerFallback, settings?.footerIntroEn)}
@@ -606,7 +634,7 @@ export default async function HomePage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/images/contact-photo.webp"
-                    alt={copy.contacto.photoAlt(hero?.name ?? "Crislia")}
+                    alt={copy.contacto.photoAlt(hero?.name ?? "")}
                     className="w-full"
                   />
 
@@ -639,7 +667,7 @@ export default async function HomePage() {
         <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3">
           <div className="flex flex-wrap items-center gap-x-sp-3 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-ink/40">
             <p>
-              © {new Date().getFullYear()} {hero?.name ?? "Crislia"}
+              © {new Date().getFullYear()} {hero?.name ?? ""}
             </p>
             <Link href="/privacidad" className="hover:text-coral">
               {locale === "en" ? "Privacy" : "Privacidad"}
@@ -648,7 +676,7 @@ export default async function HomePage() {
               {locale === "en" ? "Terms" : "Términos"}
             </Link>
           </div>
-          <CreatorCredit locale={locale} />
+          {isFlagship ? <CreatorCredit locale={locale} /> : <MadeWithFoliocrew />}
         </div>
       </footer>
     </>

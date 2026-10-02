@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { ToastProvider } from "@/components/admin/ToastContext";
-import { prisma } from "@/lib/prisma";
+import { prisma, prismaRoot } from "@/lib/prisma";
+import { getSession } from "@/lib/tenant";
 
 // El panel lee siempre el estado más reciente de la base de datos: nunca debe
 // servirse una versión prerenderizada en build.
@@ -11,11 +12,15 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Panel — Foliocrew", robots: { index: false } };
 
 export default async function AdminDashboardLayout({ children }: { children: ReactNode }) {
-  const unreadMessages = await prisma.contactMessage.count({ where: { read: false } });
+  const session = await getSession();
+  const [unreadMessages, creator] = await Promise.all([
+    prisma.contactMessage.count({ where: { read: false } }),
+    session ? prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true } }) : null,
+  ]);
 
   return (
     <ToastProvider>
-      <AdminShell unreadMessages={unreadMessages}>{children}</AdminShell>
+      <AdminShell unreadMessages={unreadMessages} creatorName={creator?.name ?? ""}>{children}</AdminShell>
     </ToastProvider>
   );
 }

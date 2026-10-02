@@ -42,7 +42,7 @@ www.crisliaugc.com            → dominio propio de la creadora (plan Pro), apun
 
 | Fase | Qué se construye | Resultado |
 | --- | --- | --- |
-| **7. Multiusuario** | Tabla `Creator` + `creatorId` en todas las tablas. Migración que pasa los datos actuales a Cristal. Usuarios con registro, inicio de sesión, verificación de correo y recuperar contraseña. Panel que solo muestra lo de cada una. | Cristal y tú, cada una con su panel y sus datos |
+| **7. Multiusuario** ✅ | Tabla `Creator` + `creatorId` en todas las tablas. Migración que pasa los datos actuales a Cristal. Usuarios con registro, inicio de sesión, verificación de correo y recuperar contraseña. Panel que solo muestra lo de cada una. | Cristal y tú, cada una con su panel y sus datos |
 | **8. Sitios por creadora** | Sitio público por subdominio (`nombre.foliocrew.app`) y dominios propios con verificación de DNS. Media kit, legales y `sitemap` por creadora. | Tu portafolio en vivo, con tu nombre |
 | **9. Onboarding** | Asistente de 4 pasos: nombre del sitio, foto y bio, 3 mejores videos, conectar Instagram. Plantillas de textos por nicho. | Una creadora nueva lista en 10 minutos |
 | **10. Pagos (Stripe)** | Planes Folio, Folio Pro y Crew, prueba de 14 días, cupones de fundadora, portal de cliente y webhooks. Funciones según el plan. | Foliocrew cobra solo |

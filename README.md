@@ -120,6 +120,27 @@ Dos detalles ocultos, pensados como un pequeño gesto para Crislia:
   construyó el sitio (`components/CreatorCredit.tsx`, datos centralizados en
   `lib/creator-info.ts`).
 
+## Multiusuario (Foliocrew)
+
+Cada creadora tiene su espacio (`Creator`) y **todas** las tablas tienen `creatorId`:
+
+- **`lib/prisma.ts`**: el `prisma` de siempre, pero filtra solo por creadora.
+  - Cada consulta lee únicamente filas de la creadora de la petición, crea filas a su nombre y solo edita o borra lo suyo.
+  - También impide enlazar una marca ajena (`brandId`).
+  - Si no sabe de qué creadora es la petición, falla.
+- **`prismaRoot`** (`lib/prisma-root.ts`): el cliente sin filtro. Solo se usa para el login, el registro y para buscar dominios.
+- **`lib/tenant.ts`** decide la creadora de cada petición:
+  - En el panel, sale de la sesión.
+  - En el sitio público, sale del dominio: `<slug>.PLATFORM_ROOT_DOMAIN`, el dominio propio de la creadora o, si no es ninguno de los dos, la creadora por defecto (`DEFAULT_CREATOR_SLUG`).
+  - Para scripts, se usa `runAsCreator(id, fn)`.
+- **`middleware.ts`** verifica la sesión y pasa la creadora en cabeceras internas (`lib/tenant-headers.ts`). Siempre borra las que manda el navegador.
+- **Registro**:
+  - Se hace en `/admin/registro` y pide `SIGNUP_INVITE_CODE`. Sin esa variable, el registro está cerrado.
+  - Crea la creadora, su usuaria, una portada y la configuración inicial.
+- **Mi cuenta** (`/admin/cuenta`): nombre, contraseña y dirección del sitio.
+- **La migración `multiusuario`** crea a Cristal (`creator_cristal`, slug `cristal`) y le asigna todos los datos que ya existían.
+- **Login**: la cuenta de `ADMIN_EMAIL` pasa sola a la base la primera vez que entra.
+
 ## Panel `/admin`
 
 Todas las rutas bajo `/admin/*` y `/api/admin/*` (excepto login) están

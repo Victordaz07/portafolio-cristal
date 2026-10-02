@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { currentCreatorId } from "@/lib/tenant";
 import { brandCrmInclude } from "@/lib/brand-crm";
 import { dateInputToDate } from "@/lib/crm";
 
@@ -32,7 +33,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const brand = await prisma.brand.update({
     where: { id },
     data: {
-      events: { create: { note: parsed.data.note, date } },
+      events: { create: { note: parsed.data.note, date, creatorId: await currentCreatorId() } },
       lastContactAt:
         !existing.lastContactAt || existing.lastContactAt < date ? date : existing.lastContactAt,
     },

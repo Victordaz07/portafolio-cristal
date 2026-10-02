@@ -11,6 +11,7 @@ import { inputClass, labelClass, primaryButtonClass, cardClass } from "@/lib/adm
 type HeroFormValues = Omit<
   Hero,
   | "id"
+  | "creatorId"
   | "updatedAt"
   | "photoUrl"
   | "photoUrlMobile"

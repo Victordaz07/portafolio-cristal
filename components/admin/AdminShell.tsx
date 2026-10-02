@@ -65,7 +65,10 @@ const NAV_GROUPS: NavGroup[] = [
   {
     id: "ayuda",
     title: "Ayuda",
-    items: [{ href: "/admin/ayuda", label: "Manual de uso" }],
+    items: [
+      { href: "/admin/ayuda", label: "Manual de uso" },
+      { href: "/admin/cuenta", label: "Mi cuenta" },
+    ],
   },
 ];
 
@@ -78,9 +81,11 @@ function isActive(pathname: string, href: string) {
 export default function AdminShell({
   children,
   unreadMessages = 0,
+  creatorName = "",
 }: {
   children: ReactNode;
   unreadMessages?: number;
+  creatorName?: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -148,7 +153,7 @@ export default function AdminShell({
             <img src="/brand/logo-claro.svg" alt="Foliocrew" className="h-8 w-auto" />
           </Link>
           <p className="mt-sp-1 font-mono text-[9px] uppercase tracking-[0.16em] text-lime">
-            Panel privado
+            {creatorName ? `Panel de ${creatorName.split(" ")[0]}` : "Panel privado"}
           </p>
         </div>
 

@@ -1,5 +1,6 @@
 import type { SocialAccount } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { currentCreatorId } from "@/lib/tenant";
 import { decryptToken, encryptToken } from "@/lib/token-crypto";
 import { PROVIDERS } from "./providers";
 import { recordFollowerSnapshot } from "@/lib/reports";
@@ -49,7 +50,7 @@ export async function saveConnection(platform: PlatformId, tokens: TokenSet, pro
     lastError: null,
   };
   const account = await prisma.socialAccount.upsert({
-    where: { platform },
+    where: { creatorId_platform: { creatorId: await currentCreatorId(), platform } },
     create: { platform, ...data },
     update: { ...data, connectedAt: new Date() },
   });
@@ -70,7 +71,7 @@ export async function getFreshTokens(account: SocialAccount) {
     expiresAt: renewed.expiresAt ?? null,
   };
   await prisma.socialAccount.update({
-    where: { platform: account.platform },
+    where: { id: account.id },
     data: {
       accessToken: encryptToken(tokens.accessToken),
       refreshToken: tokens.refreshToken ? encryptToken(tokens.refreshToken) : null,
@@ -91,7 +92,7 @@ export interface ConnectionTestResult {
 /** Renueva el token si hace falta, trae perfil + publicaciones recientes y guarda el resultado. */
 export async function testConnection(platform: PlatformId): Promise<ConnectionTestResult> {
   const provider = PROVIDERS[platform];
-  const account = await prisma.socialAccount.findUnique({ where: { platform } });
+  const account = await prisma.socialAccount.findFirst({ where: { platform } });
   if (!account) return { ok: false, refreshed: false, error: "Esta red no está conectada" };
 
   let refreshed = false;
@@ -103,14 +104,14 @@ export async function testConnection(platform: PlatformId): Promise<ConnectionTe
     const profile = await provider.fetchProfile(tokens);
     const recent = await provider.fetchRecent(tokens);
     await prisma.socialAccount.update({
-      where: { platform },
+      where: { id: account.id },
       data: { ...profileData(profile), lastSyncAt: new Date(), lastError: null },
     });
     await recordFollowerSnapshot(platform, profile.followers);
     return { ok: true, refreshed, profile, recent };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error desconocido";
-    await prisma.socialAccount.update({ where: { platform }, data: { lastError: message.slice(0, 500) } });
+    await prisma.socialAccount.update({ where: { id: account.id }, data: { lastError: message.slice(0, 500) } });
     return { ok: false, refreshed, error: message };
   }
 }

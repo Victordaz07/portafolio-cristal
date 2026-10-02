@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import AdminLoginForm from "@/components/AdminLoginForm";
 
 export const metadata: Metadata = { title: "Entrar — Foliocrew", robots: { index: false } };
@@ -17,6 +18,12 @@ export default function AdminLoginPage() {
         </h1>
 
         <AdminLoginForm />
+        <p className="mt-sp-5 text-center text-sm text-ink/60">
+          ¿Eres creadora y quieres tu espacio?{" "}
+          <Link href="/admin/registro" className="font-medium text-coral hover:underline">
+            Crea tu cuenta
+          </Link>
+        </p>
       </div>
     </main>
   );

@@ -28,7 +28,10 @@ export interface RecentItem {
   url: string | null;
   thumbnailUrl: string | null;
   publishedAt: string | null;
+  /** Métricas con etiqueta para mostrar en la prueba de conexión. */
   metrics: Record<string, number | null>;
+  /** Las mismas métricas en formato fijo, para sincronizarlas con el Feed. */
+  stats: { views: number | null; likes: number | null; comments: number | null; shares: number | null };
 }
 
 export interface StoredTokens {
@@ -54,7 +57,7 @@ export interface SocialProvider {
   authorizeUrl(redirectUri: string, state: string): string;
   exchangeCode(code: string, redirectUri: string): Promise<TokenSet>;
   fetchProfile(tokens: StoredTokens): Promise<SocialProfile>;
-  fetchRecent(tokens: StoredTokens): Promise<RecentItem[]>;
+  fetchRecent(tokens: StoredTokens, limit?: number): Promise<RecentItem[]>;
   /** Renueva el token si hace falta; null si no hay nada que renovar. */
   refresh?(tokens: StoredTokens): Promise<TokenSet | null>;
 }

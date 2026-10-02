@@ -98,7 +98,7 @@ Cada campo de texto editable en la base de datos tiene una columna paralela
 `xxxEn` (nullable, con respaldo automático al español si está vacía); los
 strings de diseño fijos (nav, botones, labels) viven en `lib/i18n.ts`.
 
-Secciones del sitio: Hero, Media kit, Feed (fotos/videos), Marcas, Reseñas
+Secciones del sitio: Hero, Media kit, Feed (tarjetas con estilo de cada red, métricas y "Lo que dicen"), Colaboraciones (por marca, hasta 3 piezas destacadas), Marcas, Reseñas
 destacadas, Cómo trabajo, Paquetes, Testimonios, FAQ y Contacto.
 
 Páginas legales públicas (las piden Meta, TikTok y Google para aprobar las apps):
@@ -131,6 +131,8 @@ Secciones (cada una con su Manager + formulario):
 | Hero | Portada: nombre, título, descripción, foto, CTAs. Incluye **vista previa en vivo** mientras se edita. |
 | Media kit | Las cifras junto al Hero (seguidores, colaboraciones, calificación). |
 | Feed | Tarjetas de fotos/videos, en dos modos: "Post de red social" o "Foto UGC de portafolio" (foto propia sin red social, con marca opcional). Ver "el problema conocido con TikTok" abajo. |
+| Feed / Publicaciones | Tarjetas con métricas (vistas, likes, comentarios, compartidos, guardados; el engagement se calcula), comentario destacado "Lo que dicen", filtros por tipo, "☆ Destacar" para Colaboraciones y "↻ Sincronizar métricas" desde Instagram/TikTok conectados (`lib/social/metrics-sync.ts`, empareja por el link del post). |
+| Vista pública | El sitio dentro del panel (iframe), en escritorio o celular y ES/EN. |
 | Crear | Composer de publicaciones: tipo, redes, marca, caption con **sugerencias de IA** (Claude, 3 opciones con el contexto de la creadora), avisos de límites por red, vista previa por red, consejos de IA por red y programación por día/hora (`APP_TIMEZONE`). Aún no publica automáticamente. |
 | Calendario | Vista mensual con las publicaciones por red, "¿Ya las publicaste?" para las vencidas, próximas publicaciones y "Marcar publicada". |
 | Metas y plan | Metas con valor actual y objetivo (manuales o automáticas: seguidores de cada red conectada, publicaciones del mes), promedio general con frase motivadora del día y plan de acción semanal con tareas que se pueden traer de semanas anteriores. |

@@ -101,11 +101,11 @@ const instagram: SocialProvider = {
       },
     };
   },
-  async fetchRecent({ accessToken }) {
+  async fetchRecent({ accessToken }, limit = 6) {
     const media = await fetchJson<{ data?: Json[] }>(
       `https://graph.instagram.com/${META_GRAPH_VERSION}/me/media?${new URLSearchParams({
         fields: "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count",
-        limit: "6",
+        limit: String(Math.min(limit, 50)),
         access_token: accessToken,
       })}`
     );
@@ -116,6 +116,8 @@ const instagram: SocialProvider = {
       thumbnailUrl: str(m.thumbnail_url ?? m.media_url),
       publishedAt: str(m.timestamp),
       metrics: { Likes: num(m.like_count), Comentarios: num(m.comments_count) },
+      // Las vistas de Instagram requieren el permiso de métricas (insights), que aún no se pide.
+      stats: { views: null, likes: num(m.like_count), comments: num(m.comments_count), shares: null },
     }));
   },
   async refresh({ accessToken, expiresAt, connectedAt }) {
@@ -211,7 +213,7 @@ const facebook: SocialProvider = {
       },
     };
   },
-  async fetchRecent({ accessToken }) {
+  async fetchRecent({ accessToken }, limit = 6) {
     const graph = `https://graph.facebook.com/${META_GRAPH_VERSION}`;
     const pages = await fetchJson<{ data?: Json[] }>(
       `${graph}/me/accounts?${new URLSearchParams({ fields: "id,access_token", access_token: accessToken })}`
@@ -221,7 +223,7 @@ const facebook: SocialProvider = {
     const posts = await fetchJson<{ data?: Json[] }>(
       `${graph}/${page.id}/posts?${new URLSearchParams({
         fields: "id,message,created_time,permalink_url,full_picture",
-        limit: "6",
+        limit: String(Math.min(limit, 50)),
         access_token: String(page.access_token),
       })}`
     );
@@ -232,6 +234,7 @@ const facebook: SocialProvider = {
       thumbnailUrl: str(p.full_picture),
       publishedAt: str(p.created_time),
       metrics: {},
+      stats: { views: null, likes: null, comments: null, shares: null },
     }));
   },
 };
@@ -315,7 +318,7 @@ const tiktok: SocialProvider = {
       extra: { Siguiendo: num(user.following_count), "Likes totales": num(user.likes_count), Videos: num(user.video_count) },
     };
   },
-  async fetchRecent({ accessToken }) {
+  async fetchRecent({ accessToken }, limit = 6) {
     const data = await fetchJson<{ data?: { videos?: Json[] } }>(
       `https://open.tiktokapis.com/v2/video/list/?fields=${[
         "id",
@@ -327,11 +330,12 @@ const tiktok: SocialProvider = {
         "view_count",
         "like_count",
         "comment_count",
+        "share_count",
       ].join(",")}`,
       {
         method: "POST",
         headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ max_count: 6 }),
+        body: JSON.stringify({ max_count: Math.min(limit, 20) }), // TikTok permite hasta 20 por página
       }
     );
     return (data.data?.videos ?? []).map((v) => ({
@@ -341,6 +345,7 @@ const tiktok: SocialProvider = {
       thumbnailUrl: str(v.cover_image_url),
       publishedAt: v.create_time ? new Date(Number(v.create_time) * 1000).toISOString() : null,
       metrics: { Vistas: num(v.view_count), Likes: num(v.like_count), Comentarios: num(v.comment_count) },
+      stats: { views: num(v.view_count), likes: num(v.like_count), comments: num(v.comment_count), shares: num(v.share_count) },
     }));
   },
   async refresh({ refreshToken, expiresAt }) {
@@ -431,7 +436,7 @@ const youtube: SocialProvider = {
       extra: { "Vistas totales": num(stats.viewCount), Videos: num(stats.videoCount) },
     };
   },
-  async fetchRecent({ accessToken }) {
+  async fetchRecent({ accessToken }, limit = 6) {
     const headers = { Authorization: `Bearer ${accessToken}` };
     const channels = await fetchJson<{ items?: Json[] }>(
       "https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true",
@@ -441,7 +446,7 @@ const youtube: SocialProvider = {
     const uploads = details.relatedPlaylists?.uploads;
     if (!uploads) return [];
     const playlist = await fetchJson<{ items?: Json[] }>(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=6&playlistId=${uploads}`,
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=${Math.min(limit, 50)}&playlistId=${uploads}`,
       { headers }
     );
     const ids = (playlist.items ?? []).map((i) => (i.contentDetails as Json).videoId).filter(Boolean);
@@ -461,6 +466,7 @@ const youtube: SocialProvider = {
         thumbnailUrl: thumbs.medium?.url ?? thumbs.default?.url ?? null,
         publishedAt: str(snippet.publishedAt),
         metrics: { Vistas: num(stats.viewCount), Likes: num(stats.likeCount), Comentarios: num(stats.commentCount) },
+        stats: { views: num(stats.viewCount), likes: num(stats.likeCount), comments: num(stats.commentCount), shares: null },
       };
     });
   },

@@ -47,9 +47,9 @@ export default function ContentFeed({
         ))}
       </div>
 
-      <div className="mt-sp-6 grid gap-sp-5 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+      <div className="mt-sp-6 grid items-start gap-sp-5 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
         {filteredCards.map((card, index) => (
-          <ContentCard key={`${card.postUrl}-${index}`} {...card} />
+          <ContentCard key={`${card.postUrl}-${index}`} {...card} locale={locale} />
         ))}
       </div>
     </div>

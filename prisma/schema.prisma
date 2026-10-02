@@ -65,6 +65,21 @@ model ContentCard {
   brand           Brand?   @relation(fields: [brandId], references: [id], onDelete: SetNull)
   order           Int      @default(0)
   createdAt       DateTime @default(now())
+
+  // Métricas (panel v2): manuales o sincronizadas desde la red conectada.
+  views            Int?
+  likes            Int?
+  comments         Int?
+  shares           Int?
+  saves            Int?
+  metricsSyncedAt  DateTime?
+  showMetrics      Boolean   @default(true) // mostrarlas en el sitio público
+  // "Lo que dicen": comentario destacado del público.
+  topComment       String?
+  topCommentEn     String?
+  topCommentAuthor String?
+  // Pieza destacada en la sección Colaboraciones de su marca.
+  featured         Boolean   @default(false)
 }
 
 model Brand {

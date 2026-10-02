@@ -371,6 +371,21 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Métricas del Feed",
+    paragraphs: [
+      "Cada tarjeta del Feed muestra 4 números: vistas, likes, comentarios y engagement. El engagement se calcula solo: (likes + comentarios + compartidos + guardados) ÷ vistas.",
+      "Toca \"Métricas\" en una tarjeta para escribir los números a mano y el comentario destacado (\"Lo que dicen\"), con quién lo dijo. También puedes ocultar las métricas de esa pieza en el sitio público.",
+      "Si conectaste Instagram o TikTok, el botón \"↻ Sincronizar métricas\" trae los números de tus publicaciones (las encuentra por el link de cada tarjeta). Instagram todavía no entrega vistas; esas se escriben a mano.",
+      "En las tarjetas con marca, \"☆ Destacar\" elige qué piezas aparecen en la sección Colaboraciones del sitio (hasta 3 por marca). Si no destacas ninguna, se muestran las primeras de esa marca.",
+    ],
+  },
+  {
+    title: "Vista pública",
+    paragraphs: [
+      "Muestra tu sitio tal cual lo ve una marca, dentro del panel. Puedes verlo en modo escritorio o celular y en español o inglés.",
+    ],
+  },
+  {
     title: "Reseñas destacadas",
     paragraphs: ["Reseñas de producto con foto opcional, categoría, título, descripción y calificación de 1 a 5 estrellas."],
   },
@@ -474,6 +489,21 @@ const guiaEn: ManualBlock[] = [
     paragraphs: [
       "Month view with colored dots per network on each day that has something scheduled. Tap a day to see what's there and schedule something new that day.",
       "When you upload the post, tap \"Mark published\". If one is past its date and you didn't mark it, it shows up at the top under \"Did you publish them?\". Marking posts also adds to your streak.",
+    ],
+  },
+  {
+    title: "Feed metrics",
+    paragraphs: [
+      "Each Feed card shows 4 numbers: views, likes, comments and engagement. Engagement is calculated automatically: (likes + comments + shares + saves) ÷ views.",
+      "Tap \"Metrics\" on a card to type the numbers by hand and the featured comment (\"What people say\"), with who said it. You can also hide that piece's metrics on the public site.",
+      "If you connected Instagram or TikTok, the \"↻ Sync metrics\" button brings in your posts' numbers (it finds them by each card's link). Instagram doesn't provide views yet; type those by hand.",
+      "On cards with a brand, \"☆ Feature\" picks which pieces show in the site's Collaborations section (up to 3 per brand). If you feature none, that brand's first ones are shown.",
+    ],
+  },
+  {
+    title: "Public view",
+    paragraphs: [
+      "Shows your site exactly as a brand sees it, inside the panel. You can view it in desktop or phone mode, in Spanish or English.",
     ],
   },
   {

@@ -54,6 +54,29 @@ export async function saveConnection(platform: PlatformId, tokens: TokenSet, pro
   });
 }
 
+/** Descifra los tokens de la cuenta y los renueva si están por vencer (guardando los nuevos). */
+export async function getFreshTokens(account: SocialAccount) {
+  const provider = PROVIDERS[account.platform as PlatformId];
+  let tokens = storedTokens(account);
+  const renewed = provider.refresh ? await provider.refresh(tokens) : null;
+  if (!renewed) return { tokens, refreshed: false };
+  tokens = {
+    ...tokens,
+    accessToken: renewed.accessToken,
+    refreshToken: renewed.refreshToken ?? tokens.refreshToken,
+    expiresAt: renewed.expiresAt ?? null,
+  };
+  await prisma.socialAccount.update({
+    where: { platform: account.platform },
+    data: {
+      accessToken: encryptToken(tokens.accessToken),
+      refreshToken: tokens.refreshToken ? encryptToken(tokens.refreshToken) : null,
+      expiresAt: tokens.expiresAt,
+    },
+  });
+  return { tokens, refreshed: true };
+}
+
 export interface ConnectionTestResult {
   ok: boolean;
   refreshed: boolean;
@@ -70,25 +93,9 @@ export async function testConnection(platform: PlatformId): Promise<ConnectionTe
 
   let refreshed = false;
   try {
-    let tokens = storedTokens(account);
-    const renewed = provider.refresh ? await provider.refresh(tokens) : null;
-    if (renewed) {
-      refreshed = true;
-      tokens = {
-        ...tokens,
-        accessToken: renewed.accessToken,
-        refreshToken: renewed.refreshToken ?? tokens.refreshToken,
-        expiresAt: renewed.expiresAt ?? null,
-      };
-      await prisma.socialAccount.update({
-        where: { platform },
-        data: {
-          accessToken: encryptToken(tokens.accessToken),
-          refreshToken: tokens.refreshToken ? encryptToken(tokens.refreshToken) : null,
-          expiresAt: tokens.expiresAt,
-        },
-      });
-    }
+    const fresh = await getFreshTokens(account);
+    const tokens = fresh.tokens;
+    refreshed = fresh.refreshed;
 
     const profile = await provider.fetchProfile(tokens);
     const recent = await provider.fetchRecent(tokens);

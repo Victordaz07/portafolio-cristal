@@ -35,6 +35,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Landing",
     items: [
       { href: "/admin/vista-publica", label: "Vista pública" },
+      { href: "/admin/apariencia", label: "Apariencia" },
       { href: "/admin/hero", label: "Portada (Hero)" },
       { href: "/admin/media-kit", label: "Media kit" },
       { href: "/admin/servicios", label: "Cómo trabajo" },

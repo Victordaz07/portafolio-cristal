@@ -4,6 +4,10 @@
 
 :root {
   --background: #fbf7f5;
+  /* Acento por defecto (lila); el layout lo reemplaza con el elegido en Apariencia. */
+  --accent: 168 102 190;
+  --accent-dark: 128 31 130;
+  --accent-light: 195 172 234;
   --foreground: #241227;
 }
 

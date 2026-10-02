@@ -211,6 +211,7 @@ model SiteSettings {
   footerIntroEn    String?
   supportMessage   String?
   supportMessageEn String?
+  accentColor      String   @default("lila") // paleta de acento (lib/theme.ts)
   updatedAt        DateTime @updatedAt
 }
 

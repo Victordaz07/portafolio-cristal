@@ -46,7 +46,10 @@ export interface SocialProvider {
   envKeys: [string, string];
   scopes: string[];
   consoleUrl: string;
+  /** Lo que hace esta conexión con los permisos que pide hoy. */
   can: string[];
+  /** Lo que la API permite pero necesita más permisos o la aprobación de la red. */
+  later: string[];
   cannot: string[];
   authorizeUrl(redirectUri: string, state: string): string;
   exchangeCode(code: string, redirectUri: string): Promise<TokenSet>;

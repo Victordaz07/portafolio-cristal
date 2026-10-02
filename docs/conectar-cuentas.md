@@ -17,8 +17,16 @@ conviene usar siempre la misma URL:
 
 | Opción | `APP_URL` | Cuándo usarla |
 | --- | --- | --- |
-| **Producción (recomendada)** | `https://portafolio-cristal.vercel.app` (o tu dominio propio) | Después de unir el PR a `main` |
+| **Tu dominio propio (lo ideal)** | `https://tu-dominio.com` | Cuando ya tengas el dominio conectado en Vercel (ver 0.3) |
+| Producción en Vercel | `https://portafolio-cristal.vercel.app` | Después de unir el PR a `main`, mientras llega el dominio |
 | Preview de la rama | `https://portafolio-cristal-git-cl-fbf3ce-victor-ruizs-projects-2df6e656.vercel.app` | Para probar antes de unir el PR (esta URL es fija para la rama) |
+
+> **Si cambias de dirección más adelante** (por ejemplo, cuando llegue el dominio), hay que actualizar
+> `APP_URL` en Vercel **y** la URL de redirección en la consola de cada red. Las cuentas ya conectadas
+> siguen funcionando; solo los logins nuevos usan la URL nueva.
+
+> **Abre siempre el panel desde la misma dirección que `APP_URL`.** Si entras desde otra, la red te
+> devuelve a una dirección donde no tienes la sesión iniciada. El panel te avisa si pasa.
 
 La pantalla **Conectar cuentas** te muestra la URL de redirección exacta de cada red, con un botón
 **Copiar**. Esa URL es la que pegas en cada consola.
@@ -35,7 +43,38 @@ En Vercel → tu proyecto → **Settings → Environment Variables** agrega:
 | `TOKEN_ENCRYPTION_KEY` | Un texto aleatorio largo. Genéralo con `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`. **No lo cambies después**: los tokens guardados dejarían de poder leerse y habría que reconectar todo. |
 | `APP_URL` | La URL elegida arriba, sin `/` al final. |
 
+Opcionales, pero recomendadas antes de pedir la aprobación de las redes:
+
+| Variable | Valor |
+| --- | --- |
+| `PLATFORM_NAME` | Nombre comercial de la plataforma. Sale en privacidad y términos; usa el mismo nombre que le pongas a las apps de cada red. |
+| `LEGAL_OWNER_NAME` | Persona o empresa responsable (si no, se usa "Victor Ruiz"). |
+| `LEGAL_CONTACT_EMAIL` | Correo para privacidad y borrado de datos, idealmente de tu dominio (ej. `privacidad@tu-dominio.com`). |
+
 Después de agregar o cambiar variables hay que **volver a desplegar** (Deployments → ⋯ → Redeploy).
+
+### 0.3 Conectar el dominio en Vercel
+
+1. Compra el dominio (en Vercel o donde prefieras).
+2. Vercel → tu proyecto → **Settings → Domains → Add** → escribe el dominio. Si lo compraste fuera de
+   Vercel, copia los registros DNS que te muestra en el sitio donde lo compraste.
+3. Cuando diga "Valid Configuration", cambia `APP_URL` al dominio nuevo y vuelve a desplegar.
+
+### 0.4 Páginas que piden las redes para aprobar la app
+
+El sitio ya tiene estas páginas públicas. En **Conectar cuentas** aparecen con su URL completa y un
+botón **Copiar**:
+
+| Página | Dirección | Dónde se pega |
+| --- | --- | --- |
+| Política de privacidad | `/privacidad?lang=en` | Meta (Configuración básica), TikTok (app details), Google (Branding) |
+| Términos de servicio | `/terminos?lang=en` | Meta, TikTok, Google |
+| Eliminación de datos | `/eliminar-datos?lang=en` | Meta → "URL de instrucciones para eliminar datos" |
+| Página principal | `/` | Google (Branding) y TikTok |
+
+Se pegan con `?lang=en` porque los revisores leen en inglés. En el sitio se ven en español. Los textos
+son una base razonable, **no asesoría legal**: conviene que los revise un abogado antes de vender la
+suscripción.
 
 ---
 
@@ -143,7 +182,20 @@ de Google.
 
 ---
 
-## 6. Qué hace el botón "Probar"
+## 6. Qué permite cada red (con cuentas de creadora o profesionales)
+
+| Red | Ya funciona en el panel | Posible más adelante | No se puede |
+| --- | --- | --- | --- |
+| **Instagram** | Perfil, seguidores, publicaciones con likes y comentarios; leer y responder comentarios y DMs | Publicar fotos, carruseles, Reels e Historias (hasta 100 por día); métricas avanzadas (alcance, guardados, compartidos, público); menciones | Música de Instagram; editar lo ya publicado; lista de seguidores; escribir primero por DM; responder DMs pasadas 24 h |
+| **Facebook** | Páginas, seguidores y publicaciones recientes | Publicar y programar posts, fotos, videos y Reels; métricas; responder comentarios; Messenger (24 h) | Perfiles personales; música de Facebook; escribir primero por Messenger |
+| **TikTok** | Perfil, seguidores, likes y videos con vistas, likes y comentarios | Publicar videos y fotos (privados hasta la auditoría); mandar borradores a la app; con **cuenta Business** + TikTok for Business: comentarios y métricas avanzadas | DMs; responder comentarios con cuenta Creator; música de TikTok; más de ~15 publicaciones por día |
+| **YouTube** | Canal, suscriptores, vistas y videos con sus métricas | Subir y programar videos y Shorts (privados hasta la auditoría); editar títulos y miniaturas; responder comentarios; estadísticas avanzadas y ganancias | Publicaciones de comunidad; DMs; música de YouTube |
+
+**Aprobaciones** (solo hacen falta para que otras creadoras usen la plataforma; para probar con la
+cuenta de Cristal no): Meta *App Review* (1 a 4 semanas), auditoría de TikTok (2 a 6 semanas),
+verificación de Google + auditoría de YouTube (2 a 8 semanas). Son tiempos aproximados.
+
+## 7. Qué hace el botón "Probar"
 
 1. Si el token está por vencer, lo renueva (Instagram, TikTok, YouTube).
 2. Pide a la API el **perfil**: seguidores y datos extra de cada red.
@@ -155,7 +207,7 @@ navegador ni se muestran en el sitio público.
 
 ---
 
-## 7. Errores comunes
+## 8. Errores comunes
 
 | Mensaje | Qué significa | Solución |
 | --- | --- | --- |

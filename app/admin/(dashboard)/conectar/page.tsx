@@ -6,6 +6,7 @@ import { PLATFORM_IDS } from "@/lib/social/types";
 import { getAppUrl, getRedirectUri } from "@/lib/social/accounts";
 import { isTokenEncryptionConfigured } from "@/lib/token-crypto";
 import { isAiConfigured, AI_MODEL } from "@/lib/ai";
+import { siteConfig } from "@/lib/site-config";
 import ConnectManager, { type PlatformCard, type SetupItem } from "./ConnectManager";
 
 export default async function AdminConnectPage({
@@ -48,16 +49,35 @@ export default async function AdminConnectPage({
       consoleUrl: provider.consoleUrl,
       scopes: provider.scopes,
       can: provider.can,
+      later: provider.later,
       cannot: provider.cannot,
       account: account && JSON.parse(JSON.stringify(account)),
     };
   });
+
+  // Si el panel se abre desde otra dirección que APP_URL, la red volvería a otro dominio
+  // (sin la sesión del panel) y la conexión fallaría.
+  const appUrl = process.env.APP_URL?.replace(/\/$/, "") ?? null;
+  const currentOrigin = `${proto}://${host}`;
+  const domainMismatch = appUrl && appUrl !== currentOrigin ? { appUrl, currentOrigin } : null;
 
   const setup: SetupItem[] = [
     {
       key: "TOKEN_ENCRYPTION_KEY",
       ok: isTokenEncryptionConfigured(),
       help: "Cifra los tokens de las redes en la base de datos. Obligatoria para conectar cualquier red.",
+    },
+    {
+      key: "PLATFORM_NAME",
+      ok: !!process.env.PLATFORM_NAME,
+      help: `Nombre comercial de la plataforma (hoy: "${siteConfig.platformName}"). Sale en las páginas de privacidad y términos; usa el mismo nombre que le pongas a las apps de cada red.`,
+      optional: true,
+    },
+    {
+      key: "LEGAL_CONTACT_EMAIL",
+      ok: !!process.env.LEGAL_CONTACT_EMAIL,
+      help: `Correo para temas de privacidad y borrado de datos (hoy: ${siteConfig.legalEmail}). Ideal: uno de tu dominio, ej. privacidad@tu-dominio.com.`,
+      optional: true,
     },
     {
       key: "APP_URL",
@@ -79,6 +99,13 @@ export default async function AdminConnectPage({
         setup={setup}
         ai={{ configured: isAiConfigured(), model: AI_MODEL }}
         flash={{ connected: query.connected ?? null, error: query.error ?? null }}
+        domainMismatch={domainMismatch}
+        reviewUrls={[
+          { label: "Sitio web / página principal", url: `${getAppUrl(requestUrl)}/` },
+          { label: "Política de privacidad", url: `${getAppUrl(requestUrl)}/privacidad?lang=en` },
+          { label: "Términos de servicio", url: `${getAppUrl(requestUrl)}/terminos?lang=en` },
+          { label: "Instrucciones para eliminar datos", url: `${getAppUrl(requestUrl)}/eliminar-datos?lang=en` },
+        ]}
       />
     </div>
   );

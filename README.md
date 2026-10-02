@@ -49,6 +49,7 @@ Copia `.env.example` a `.env` y completa:
 | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` | TikTok Login Kit. |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | OAuth de Google con YouTube Data API v3. |
 | `ANTHROPIC_API_KEY` | Claude, para las sugerencias de IA. |
+| `PLATFORM_NAME`, `LEGAL_OWNER_NAME`, `LEGAL_CONTACT_EMAIL` | Opcionales. Nombre de la plataforma y datos del responsable que aparecen en las páginas legales (`lib/site-config.ts`). |
 
 **Importante:** Next.js expande `$VAR` dentro de los archivos `.env`. El hash
 de bcrypt empieza con `$2b$...`, así que hay que escapar cada `$` como `\$`
@@ -99,6 +100,10 @@ strings de diseño fijos (nav, botones, labels) viven en `lib/i18n.ts`.
 
 Secciones del sitio: Hero, Media kit, Feed (fotos/videos), Marcas, Reseñas
 destacadas, Cómo trabajo, Paquetes, Testimonios, FAQ y Contacto.
+
+Páginas legales públicas (las piden Meta, TikTok y Google para aprobar las apps):
+`/privacidad`, `/terminos` y `/eliminar-datos`, en español e inglés (`?lang=en`).
+Textos en `lib/legal-content.ts`; enlazadas desde el pie del sitio.
 
 Dos detalles ocultos, pensados como un pequeño gesto para Crislia:
 

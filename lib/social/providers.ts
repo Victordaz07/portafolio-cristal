@@ -26,13 +26,20 @@ const instagram: SocialProvider = {
   consoleUrl: "https://developers.facebook.com/apps/",
   can: [
     "Leer tu perfil, seguidores y publicaciones con sus likes y comentarios",
-    "Leer y responder comentarios",
-    "Leer y responder DMs (dentro de la ventana de 24 h de Meta)",
+    "Leer, responder, ocultar y borrar comentarios",
+    "Leer y responder DMs (hasta 24 h después del último mensaje de la persona)",
+  ],
+  later: [
+    "Publicar fotos, carruseles, Reels e Historias (hasta 100 por día)",
+    "Métricas avanzadas: alcance, vistas, guardados, compartidos y público por edad, país y género",
+    "Ver cuándo otras cuentas te mencionan",
   ],
   cannot: [
-    "Funcionar con una cuenta personal: debe ser Business o Creator",
-    "Ver métricas de otras cuentas",
-    "Usarse con cualquier persona sin la revisión de la app por Meta (en desarrollo solo tú y tus testers)",
+    "Usar la música de Instagram (el audio va dentro del video)",
+    "Editar el texto o la foto de algo ya publicado",
+    "Ver la lista de seguidores o las métricas privadas de otras cuentas",
+    "Escribir primero por DM a alguien que nunca te escribió",
+    "Usarse con otras creadoras sin la revisión de Meta (en modo desarrollo solo tú y tus testers)",
   ],
   authorizeUrl(redirectUri, state) {
     const params = new URLSearchParams({
@@ -135,9 +142,16 @@ const facebook: SocialProvider = {
   scopes: ["pages_show_list", "pages_read_engagement"],
   consoleUrl: "https://developers.facebook.com/apps/",
   can: ["Listar tus páginas de Facebook y sus seguidores", "Leer las publicaciones recientes de tu página"],
+  later: [
+    "Publicar y programar posts, fotos, videos y Reels en la página",
+    "Métricas de la página: alcance, interacciones y seguidores",
+    "Responder y ocultar comentarios",
+    "Responder mensajes de Messenger (hasta 24 h después del último mensaje)",
+  ],
   cannot: [
-    "Leer tu perfil personal o publicaciones personales",
-    "Leer Messenger sin permisos adicionales y revisión de Meta",
+    "Publicar o leer un perfil personal (solo páginas)",
+    "Usar la música de Facebook",
+    "Escribir primero por Messenger a quien no te escribió",
   ],
   authorizeUrl(redirectUri, state) {
     const params = new URLSearchParams({
@@ -242,10 +256,17 @@ const tiktok: SocialProvider = {
   scopes: ["user.info.basic", "user.info.profile", "user.info.stats", "video.list"],
   consoleUrl: "https://developers.tiktok.com/apps/",
   can: ["Leer tu perfil, seguidores y likes totales", "Listar tus videos con vistas, likes y comentarios"],
+  later: [
+    "Publicar videos y fotos (en privado hasta que TikTok apruebe la app)",
+    "Mandar un video como borrador a la app de TikTok para agregarle sonido y publicarlo allá",
+    "Solo con cuenta Business y aprobación de TikTok for Business: leer y responder comentarios y ver métricas avanzadas",
+  ],
   cannot: [
-    "Leer ni responder DMs (TikTok no los ofrece a apps)",
-    "Responder comentarios",
-    "Usarse con cualquier persona mientras la app esté en Sandbox (solo cuentas agregadas como testers)",
+    "Leer ni responder DMs (TikTok no los ofrece a creadoras)",
+    "Responder comentarios con cuenta Creator (solo con cuenta Business)",
+    "Usar la música de TikTok desde la API",
+    "Publicar más de ~15 veces al día",
+    "Usarse con otras creadoras mientras la app esté en Sandbox (solo cuentas de prueba)",
   ],
   authorizeUrl(redirectUri, state) {
     const params = new URLSearchParams({
@@ -349,8 +370,15 @@ const youtube: SocialProvider = {
   scopes: ["https://www.googleapis.com/auth/youtube.readonly"],
   consoleUrl: "https://console.cloud.google.com/apis/credentials",
   can: ["Leer tu canal, suscriptores y total de vistas", "Listar tus videos recientes con vistas, likes y comentarios"],
+  later: [
+    "Subir y programar videos y Shorts (en privado hasta que Google apruebe la app)",
+    "Editar título, descripción, miniatura y listas de reproducción",
+    "Responder y moderar comentarios",
+    "Estadísticas avanzadas: tiempo de visualización, retención, público y ganancias",
+  ],
   cannot: [
-    "Responder comentarios con este permiso de solo lectura",
+    "Publicaciones de comunidad ni DMs (YouTube no tiene)",
+    "Usar la música de YouTube",
     "Mantener la conexión más de 7 días mientras la app de Google esté en modo \"Testing\"",
   ],
   authorizeUrl(redirectUri, state) {

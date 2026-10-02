@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { Platform, ContentType } from "@/lib/embeds";
 import HeroStat from "@/components/HeroStat";
@@ -588,9 +589,17 @@ export default async function HomePage() {
 
       <footer className="border-t border-line bg-cream px-sp-5 py-sp-5">
         <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-ink/40">
-            © {new Date().getFullYear()} {hero?.name ?? "Crislia"}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-sp-3 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-ink/40">
+            <p>
+              © {new Date().getFullYear()} {hero?.name ?? "Crislia"}
+            </p>
+            <Link href="/privacidad" className="hover:text-coral">
+              {locale === "en" ? "Privacy" : "Privacidad"}
+            </Link>
+            <Link href="/terminos" className="hover:text-coral">
+              {locale === "en" ? "Terms" : "Términos"}
+            </Link>
+          </div>
           <CreatorCredit locale={locale} />
         </div>
       </footer>

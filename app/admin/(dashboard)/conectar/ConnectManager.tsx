@@ -19,6 +19,7 @@ export interface PlatformCard {
   consoleUrl: string;
   scopes: string[];
   can: string[];
+  later: string[];
   cannot: string[];
   account: {
     username: string | null;
@@ -123,11 +124,15 @@ export default function ConnectManager({
   setup,
   ai,
   flash,
+  domainMismatch,
+  reviewUrls,
 }: {
   cards: PlatformCard[];
   setup: SetupItem[];
   ai: { configured: boolean; model: string };
   flash: { connected: string | null; error: string | null };
+  domainMismatch: { appUrl: string; currentOrigin: string } | null;
+  reviewUrls: { label: string; url: string }[];
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -191,6 +196,18 @@ export default function ConnectManager({
         </p>
       )}
 
+      {domainMismatch && (
+        <p className="rounded-[14px] bg-lime/35 px-sp-4 py-sp-3 text-sm text-ink">
+          <strong>Ojo:</strong> estás en <code className="font-mono text-xs">{domainMismatch.currentOrigin}</code>, pero{" "}
+          <code className="font-mono text-xs">APP_URL</code> es{" "}
+          <code className="font-mono text-xs">{domainMismatch.appUrl}</code>. Para conectar, abre el panel desde{" "}
+          <a href={`${domainMismatch.appUrl}/admin/conectar`} className="font-semibold text-coral hover:underline">
+            {domainMismatch.appUrl}
+          </a>
+          ; si no, la red te devolverá a una dirección donde no tienes la sesión iniciada.
+        </p>
+      )}
+
       <Card>
         <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Configuración general</p>
         <ul className="flex flex-col gap-sp-3">
@@ -220,7 +237,34 @@ export default function ConnectManager({
         </p>
       </Card>
 
-      <div className="grid gap-sp-4 xl:grid-cols-2">
+      <Card>
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-coral">URLs para las apps de cada red</p>
+        <p className="mt-sp-1 text-[13px] text-ink/60">
+          Meta, TikTok y Google piden estas páginas al crear la app y para aprobarla. Van en inglés (
+          <code className="font-mono text-xs">?lang=en</code>) porque los revisores leen en inglés; en tu sitio se ven en
+          español.
+        </p>
+        <ul className="mt-sp-3 flex flex-col gap-sp-2">
+          {reviewUrls.map((item) => (
+            <li key={item.label} className="flex flex-col gap-sp-1 sm:flex-row sm:items-center sm:gap-sp-3">
+              <span className="text-[13px] font-semibold text-ink sm:w-60 sm:shrink-0">{item.label}</span>
+              <div className="flex min-w-0 flex-1 items-center gap-sp-2">
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="min-w-0 flex-1 truncate rounded-[10px] border border-line bg-white px-sp-3 py-sp-2 font-mono text-[11px] text-ink hover:border-coral"
+                >
+                  {item.url}
+                </a>
+                <CopyButton value={item.url} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </Card>
+
+      <div className="flex flex-col gap-sp-4">
         {cards.map((card) => {
           const badge = BADGES[card.id];
           const result = results[card.id];
@@ -286,9 +330,9 @@ export default function ConnectManager({
                 </p>
               </div>
 
-              <div className="grid gap-sp-3 sm:grid-cols-2">
+              <div className="grid gap-sp-3 sm:grid-cols-3">
                 <div>
-                  <p className={eyebrowClass}>Podemos</p>
+                  <p className={eyebrowClass}>Ya funciona</p>
                   <ul className="mt-sp-1 flex flex-col gap-1 text-[13px] text-ink/80">
                     {card.can.map((line) => (
                       <li key={line}>✓ {line}</li>
@@ -296,7 +340,15 @@ export default function ConnectManager({
                   </ul>
                 </div>
                 <div>
-                  <p className={eyebrowClass}>No podemos</p>
+                  <p className={eyebrowClass}>Posible más adelante</p>
+                  <ul className="mt-sp-1 flex flex-col gap-1 text-[13px] text-ink/70">
+                    {card.later.map((line) => (
+                      <li key={line}>◷ {line}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className={eyebrowClass}>No se puede</p>
                   <ul className="mt-sp-1 flex flex-col gap-1 text-[13px] text-ink/60">
                     {card.cannot.map((line) => (
                       <li key={line}>✕ {line}</li>

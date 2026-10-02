@@ -40,7 +40,7 @@ type GraphComment = {
 };
 
 async function instagramToken() {
-  const account = await prisma.socialAccount.findUnique({ where: { platform: "instagram" } });
+  const account = await prisma.socialAccount.findFirst({ where: { platform: "instagram" } });
   if (!account) return null;
   const { tokens } = await getFreshTokens(account);
   return { token: tokens.accessToken, username: (account.username ?? "").replace(/^@/, "").toLowerCase() };

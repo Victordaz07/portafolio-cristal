@@ -18,7 +18,7 @@ export async function POST() {
       const { tokens } = await getFreshTokens(account);
       const profile = await PROVIDERS[account.platform].fetchProfile(tokens);
       await prisma.socialAccount.update({
-        where: { platform: account.platform },
+        where: { id: account.id },
         data: { followers: profile.followers, lastSyncAt: new Date(), lastError: null },
       });
       await recordFollowerSnapshot(account.platform, profile.followers);

@@ -47,7 +47,7 @@ export default function MobileHeroNav({
           <button
             type="button"
             onClick={handleSparkleTap}
-            aria-label="Cristal"
+            aria-label={name}
             className="p-sp-1 -m-sp-1"
           >
             <SparkleIcon className="h-4 w-4 text-ink" />

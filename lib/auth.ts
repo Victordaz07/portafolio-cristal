@@ -9,8 +9,14 @@ function getSecretKey() {
   return new TextEncoder().encode(secret);
 }
 
-export async function createSessionToken(email: string) {
-  return new SignJWT({ email })
+export interface SessionPayload {
+  userId: string;
+  creatorId: string;
+  email: string;
+}
+
+export async function createSessionToken(session: SessionPayload) {
+  return new SignJWT({ ...session })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_DURATION}s`)
@@ -20,7 +26,9 @@ export async function createSessionToken(email: string) {
 export async function verifySessionToken(token: string) {
   try {
     const { payload } = await jwtVerify(token, getSecretKey());
-    return payload as { email: string };
+    // Las sesiones de antes de Foliocrew no traen creadora: hay que volver a entrar.
+    if (typeof payload.userId !== "string" || typeof payload.creatorId !== "string") return null;
+    return payload as unknown as SessionPayload;
   } catch {
     return null;
   }

@@ -7,7 +7,7 @@ export default async function AdminMensajesPage() {
   const [messages, brands, instagram, hero] = await Promise.all([
     prisma.contactMessage.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.brand.findMany({ select: { name: true } }),
-    prisma.socialAccount.findUnique({ where: { platform: "instagram" }, select: { username: true } }),
+    prisma.socialAccount.findFirst({ where: { platform: "instagram" }, select: { username: true } }),
     prisma.hero.findFirst({ select: { name: true } }),
   ]);
 
@@ -22,7 +22,7 @@ export default async function AdminMensajesPage() {
         initialMessages={messages.map((m) => ({ ...m, createdAt: m.createdAt.toISOString(), repliedAt: m.repliedAt?.toISOString() ?? null }))}
         brandNames={brands.map((b) => b.name)}
         instagramUsername={instagram ? instagram.username ?? "" : null}
-        signature={(hero?.name ?? "").split(" ")[0] || "Cristal"}
+        signature={(hero?.name ?? "").split(" ")[0] || ""}
         mediaKitUrl={`${getPublicAppUrl()}/media-kit`}
       />
     </div>

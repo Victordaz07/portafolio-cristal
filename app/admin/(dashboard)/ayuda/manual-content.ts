@@ -22,6 +22,7 @@ const primeraVezEs: ManualBlock[] = [
   {
     title: "¡Bienvenida a tu panel de Foliocrew!",
     paragraphs: [
+      "Al crear tu cuenta, el asistente de bienvenida arma tu sitio en 4 pasos: tu perfil (foto, nombre y nicho), tus textos (portada, bio, servicios, paquetes y preguntas frecuentes según tu nicho, en español e inglés), tu mejor contenido (pega hasta 3 links de Instagram, TikTok o Facebook) y tu contacto y color. Después, en el Resumen, la lista \"Completa tu sitio\" te muestra lo que falta.",
       "Este panel es tuyo: desde aquí controlas absolutamente todo lo que se ve en tu sitio público (la dirección está en Ayuda → Mi cuenta) sin necesitar a nadie que toque código.",
       "Cada sección que edites aquí se refleja al instante en el sitio real. No hay un botón de \"publicar\" aparte: al guardar, ya está en vivo.",
     ],
@@ -70,6 +71,7 @@ const primeraVezEn: ManualBlock[] = [
   {
     title: "Welcome to your Foliocrew panel!",
     paragraphs: [
+      "When you sign up, the welcome assistant builds your site in 4 steps: your profile (photo, name and niche), your texts (hero, bio, services, packages and FAQ based on your niche, in Spanish and English), your best content (paste up to 3 Instagram, TikTok or Facebook links) and your contact info and color. Then, on the Summary, the \"Complete your site\" list shows what's left.",
       "This panel is all yours: from here you control everything that shows up on your public site (its address is under Help → My account) without needing anyone to touch code.",
       "Every section you edit here reflects instantly on the real site. There's no separate \"publish\" button: once you save, it's already live.",
     ],

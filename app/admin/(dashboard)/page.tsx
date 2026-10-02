@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import SetupChecklist from "@/components/admin/SetupChecklist";
+import { prismaRoot } from "@/lib/prisma-root";
+import { getSession } from "@/lib/tenant";
 import type { ReactNode } from "react";
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/admin/PageHeader";
@@ -39,6 +43,13 @@ function SectionTitle({ children, aside }: { children: ReactNode; aside?: ReactN
 }
 
 export default async function AdminHomePage() {
+  // Las creadoras nuevas empiezan por el asistente de bienvenida.
+  const session = await getSession();
+  const creator = session
+    ? await prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { onboardedAt: true } })
+    : null;
+  if (creator && !creator.onboardedAt) redirect("/admin/bienvenida");
+
   const [
     unreadMessages,
     pendingMessages,
@@ -126,6 +137,8 @@ export default async function AdminHomePage() {
   return (
     <div>
       <PageHeader eyebrow="Resumen" title="Tu panorama general" />
+
+      <SetupChecklist />
 
       <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-[repeat(auto-fit,minmax(190px,1fr))]">
         {kpis.map((kpi) => (

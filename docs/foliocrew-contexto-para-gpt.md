@@ -64,7 +64,14 @@ Todo en un solo lugar, pensado para creadoras.
 
 ### 2. Cómo funciona (paso a paso)
 
-1. **Creas tu cuenta.** Eliges el nombre de tu sitio (por ejemplo, `tunombre.foliocrew.app`) y entras a tu panel. Hoy el registro es por invitación.
+1. **Creas tu cuenta.** Eliges el nombre de tu sitio (por ejemplo, `tunombre.foliocrew.app`). Hoy el registro es por invitación.
+   Un **asistente de bienvenida** arma tu sitio en 4 pasos (unos 10 minutos):
+   - tu perfil: foto, nombre y nicho;
+   - tus textos: portada, bio, servicios, paquetes y preguntas frecuentes **escritos según tu nicho**, en español e inglés;
+   - tu mejor contenido: pegas hasta 3 links;
+   - tu contacto y tu color.
+
+   Al terminar te da el link listo para compartir y una lista de "Completa tu sitio".
 2. **Armas tu portafolio desde el panel:**
    - tu foto, tu bio en español e inglés y tu color;
    - tus mejores videos y fotos (de Instagram, TikTok o Facebook, o subidos directamente);
@@ -165,7 +172,6 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 
 | Función | Estado |
 | --- | --- |
-| Asistente de bienvenida para tener el sitio listo en 10 minutos | Próximamente |
 | Planes y pagos con prueba gratis | Próximamente |
 | Página de Foliocrew con lista de espera | Próximamente |
 | Correos automáticos (bienvenida, recuperar contraseña) | Próximamente |

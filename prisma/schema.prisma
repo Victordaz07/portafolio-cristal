@@ -19,6 +19,8 @@ model Creator {
   customDomain           String?   @unique
   /// Cuándo se comprobó que el dominio propio apunta a Foliocrew (null = pendiente)
   customDomainVerifiedAt DateTime?
+  /// Cuándo terminó (o saltó) el asistente de bienvenida; null = todavía no
+  onboardedAt            DateTime?
   status                 String    @default("active") // "active" | "paused"
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt

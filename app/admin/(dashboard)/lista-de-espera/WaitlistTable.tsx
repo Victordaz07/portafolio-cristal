@@ -13,33 +13,50 @@ interface Row {
   niche: string | null;
   audience: string | null;
   source: string;
-  invited: boolean;
+  status: string;
   createdAt: string;
 }
+
+const STATUS: Record<string, { label: string; className: string }> = {
+  waiting: { label: "En espera", className: "bg-cream text-ink/60" },
+  invited: { label: "Invitación enviada", className: "bg-sage/30 text-cobalt-ink" },
+  joined: { label: "Cuenta creada", className: "bg-coral/15 text-coral" },
+};
 
 export default function WaitlistTable({
   entries,
   inviteCodeSet,
+  emailReady,
   registerUrl,
   landingUrl,
 }: {
   entries: Row[];
   inviteCodeSet: boolean;
+  emailReady: boolean;
   registerUrl: string;
   landingUrl: string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
 
-  async function mark(invited: boolean) {
+  async function run(action: "email" | "invited" | "waiting") {
+    if (action === "email" && !window.confirm(`¿Mandar la invitación por correo a ${selected.size} persona(s)? El correo incluye tu código de invitación.`)) return;
+    setBusy(true);
     const response = await fetch("/api/admin/waitlist", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: Array.from(selected), invited }),
+      body: JSON.stringify({ ids: Array.from(selected), action }),
     });
-    if (!response.ok) return showToast("error", "No se pudo actualizar");
-    showToast("success", invited ? "Invitación marcada como enviada" : "De vuelta en espera");
+    setBusy(false);
+    const body = (await response.json().catch(() => ({}))) as { error?: string; sent?: number; failed?: number };
+    if (!response.ok) return showToast("error", body.error ?? "No se pudo actualizar");
+    if (action === "email") {
+      showToast(body.failed ? "error" : "success", `Invitaciones enviadas: ${body.sent ?? 0}${body.failed ? ` · fallaron: ${body.failed}` : ""}`);
+    } else {
+      showToast("success", action === "invited" ? "Invitación marcada como enviada" : "De vuelta en espera");
+    }
     setSelected(new Set());
     router.refresh();
   }
@@ -67,13 +84,23 @@ export default function WaitlistTable({
             {registerUrl}
           </button>{" "}
           junto con tu código de invitación
-          {inviteCodeSet ? "" : " (todavía no configuraste SIGNUP_INVITE_CODE en Vercel)"} y marca aquí la invitación como enviada.
+          {inviteCodeSet ? "" : " (todavía no configuraste SIGNUP_INVITE_CODE en Vercel)"}, o selecciona personas y toca{" "}
+          <strong>Invitar por correo</strong>: les llega el link y el código.
+          {emailReady ? "" : " (Para mandar correos falta configurar RESEND_API_KEY en Vercel.)"}
         </p>
         <div className="flex flex-wrap gap-sp-2">
-          <button type="button" disabled={!selected.size} onClick={() => mark(true)} className={primaryButtonClass}>
-            Marcar invitación enviada ({selected.size})
+          <button
+            type="button"
+            disabled={!selected.size || busy || !emailReady || !inviteCodeSet}
+            onClick={() => run("email")}
+            className={primaryButtonClass}
+          >
+            {busy ? "Enviando…" : `Invitar por correo (${selected.size})`}
           </button>
-          <button type="button" disabled={!selected.size} onClick={() => mark(false)} className={secondaryButtonClass}>
+          <button type="button" disabled={!selected.size || busy} onClick={() => run("invited")} className={secondaryButtonClass}>
+            Marcar invitación enviada
+          </button>
+          <button type="button" disabled={!selected.size || busy} onClick={() => run("waiting")} className={secondaryButtonClass}>
             Volver a espera
           </button>
           <a href="/api/admin/waitlist" className={secondaryButtonClass}>
@@ -128,8 +155,8 @@ export default function WaitlistTable({
                   <td className="py-sp-2 pr-sp-3 text-ink/60">{r.source || "directo"}</td>
                   <td className="py-sp-2 pr-sp-3 text-ink/60">{new Date(r.createdAt).toLocaleDateString("es")}</td>
                   <td className="py-sp-2">
-                    <span className={`rounded-full px-[8px] py-0.5 font-mono text-[10px] uppercase ${r.invited ? "bg-sage/30 text-cobalt-ink" : "bg-cream text-ink/60"}`}>
-                      {r.invited ? "Invitación enviada" : "En espera"}
+                    <span className={`rounded-full px-[8px] py-0.5 font-mono text-[10px] uppercase ${STATUS[r.status]?.className ?? STATUS.waiting.className}`}>
+                      {STATUS[r.status]?.label ?? r.status}
                     </span>
                   </td>
                 </tr>

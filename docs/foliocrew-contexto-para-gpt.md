@@ -176,7 +176,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | Función | Estado |
 | --- | --- |
 | Planes y pagos con prueba gratis | Próximamente |
-| Correos automáticos (bienvenida, recuperar contraseña) | Próximamente |
+| Correos automáticos (bienvenida, recuperar contraseña, aviso cuando una marca escribe, invitaciones de la lista de espera) | Próximamente (ya programado; se activa al conectar el servicio de correos) |
 | **Publicar automáticamente** en las redes desde el calendario | Futuro (requiere aprobación de cada red) |
 | **Mensajes directos (DM)** de Instagram en la Bandeja | Futuro (requiere aprobación de Meta) |
 | Plan para agencias y managers (varias creadores) | Futuro |

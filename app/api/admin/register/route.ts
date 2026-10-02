@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prismaRoot } from "@/lib/prisma-root";
 import { createCreatorAccount, signupMode, slugProblem, withSession } from "@/lib/creators";
+import { sendWelcomeEmail } from "@/lib/account-emails";
 
 export const dynamic = "force-dynamic";
 
@@ -32,5 +33,10 @@ export async function POST(request: Request) {
   }
 
   const { user } = await createCreatorAccount({ name, slug, email, password });
+  await sendWelcomeEmail(user.id).catch((error) => console.error("No se pudo enviar la bienvenida", error));
+  // Si se anotó en la lista de espera, queda marcada como cuenta creada.
+  await prismaRoot.waitlistEntry
+    .updateMany({ where: { email: email.toLowerCase() }, data: { status: "joined" } })
+    .catch(() => {});
   return withSession(NextResponse.json({ ok: true }, { status: 201 }), user);
 }

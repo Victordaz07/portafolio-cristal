@@ -46,7 +46,7 @@ export async function createCreatorAccount(input: { name: string; slug: string; 
         creatorId: creator.id,
         name: input.name,
         location: "",
-        niche: "Creadora de contenido UGC",
+        niche: "Contenido UGC",
         nicheEn: "UGC Content Creator",
         badgeLabel: "UGC Creator",
         headlinePlain: "Contenido que",
@@ -93,8 +93,16 @@ export async function authenticate(email: string, password: string) {
   return prismaRoot.adminUser.create({ data: { email: normalized, passwordHash: envHash, creatorId: creator.id } });
 }
 
-export async function withSession(response: NextResponse, user: { id: string; email: string; creatorId: string }) {
-  const token = await createSessionToken({ userId: user.id, creatorId: user.creatorId, email: user.email });
+export async function withSession(
+  response: NextResponse,
+  user: { id: string; email: string; creatorId: string; sessionVersion?: number }
+) {
+  const token = await createSessionToken({
+    userId: user.id,
+    creatorId: user.creatorId,
+    email: user.email,
+    sv: user.sessionVersion ?? 0,
+  });
   response.cookies.set(SESSION_COOKIE, token, sessionCookieOptions);
   return response;
 }

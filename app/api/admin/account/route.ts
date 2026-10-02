@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma, prismaRoot } from "@/lib/prisma";
-import { getSession } from "@/lib/tenant";
+import { forgetSessionVersion, getSession } from "@/lib/tenant";
+import { withSession } from "@/lib/creators";
+import { sendPasswordChangedEmail } from "@/lib/account-emails";
 
 export const dynamic = "force-dynamic";
 
@@ -24,16 +26,21 @@ export async function PATCH(request: Request) {
   const user = await prisma.adminUser.findUnique({ where: { id: session.userId } });
   if (!user) return NextResponse.json({ error: "Cuenta no encontrada" }, { status: 404 });
 
-  const data: { name?: string; passwordHash?: string } = {};
+  const data: { name?: string; passwordHash?: string; sessionVersion?: { increment: number } } = {};
   if (name) data.name = name;
   if (newPassword) {
     if (!currentPassword || !(await bcrypt.compare(currentPassword, user.passwordHash))) {
       return NextResponse.json({ error: "La contraseña actual no es correcta" }, { status: 400 });
     }
     data.passwordHash = await bcrypt.hash(newPassword, 12);
+    // Cierra las sesiones de los otros equipos; esta sigue abierta con un token nuevo.
+    data.sessionVersion = { increment: 1 };
   }
-  await prisma.adminUser.update({ where: { id: user.id }, data });
+  const updated = await prisma.adminUser.update({ where: { id: user.id }, data });
   // El nombre de la cuenta dueña es también el nombre de la creadora.
   if (name && user.role === "owner") await prismaRoot.creator.update({ where: { id: session.creatorId }, data: { name } });
-  return NextResponse.json({ ok: true });
+  if (!newPassword) return NextResponse.json({ ok: true });
+  forgetSessionVersion(user.id);
+  await sendPasswordChangedEmail(user.id).catch(() => {});
+  return withSession(NextResponse.json({ ok: true }), updated);
 }

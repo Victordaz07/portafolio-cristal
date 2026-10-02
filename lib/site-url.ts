@@ -38,6 +38,12 @@ export async function appOrigin() {
   return `${h.get("x-forwarded-proto") || protocolFor(host)}://${host}`;
 }
 
+/** Origen de la plataforma para los enlaces de los correos: https://foliocrew.pro (o el de esta petición). */
+export async function platformOrigin() {
+  const root = (process.env.PLATFORM_ROOT_DOMAIN || "").toLowerCase();
+  return root ? `${protocolFor(root)}://${root}` : appOrigin();
+}
+
 /** La dirección "oficial" del sitio de la creadora (para compartir con marcas). */
 export async function creatorSiteUrl(creator: SiteCreator) {
   if (creator.customDomain && creator.customDomainVerifiedAt) return `https://${creator.customDomain}`;

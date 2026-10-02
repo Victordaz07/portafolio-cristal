@@ -2,7 +2,14 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { prismaRoot } from "./prisma-root";
-import { RESERVED_SLUGS, SCOPE_HEADER, SESSION_CREATOR_HEADER, SESSION_USER_HEADER, SITE_SLUG_HEADER } from "./tenant-headers";
+import {
+  RESERVED_SLUGS,
+  SCOPE_HEADER,
+  SESSION_CREATOR_HEADER,
+  SESSION_USER_HEADER,
+  SESSION_VERSION_HEADER,
+  SITE_SLUG_HEADER,
+} from "./tenant-headers";
 
 // ─── ¿De qué creadora es esta petición? ───
 //
@@ -49,7 +56,28 @@ export async function getSession() {
   const h = await requestHeaders();
   const creatorId = h.get(SESSION_CREATOR_HEADER);
   const userId = h.get(SESSION_USER_HEADER);
-  return creatorId && userId ? { creatorId, userId } : null;
+  if (!creatorId || !userId) return null;
+  if (!(await sessionIsCurrent(userId, Number(h.get(SESSION_VERSION_HEADER) || 0)))) return null;
+  return { creatorId, userId };
+}
+
+// Versión de sesión de cada usuario (caché corta). Al cambiar o restablecer la contraseña sube
+// la versión y las sesiones abiertas con la anterior dejan de valer (en ≤30 s en otros servidores).
+const sessionVersions = new Map<string, { version: number | null; expires: number }>();
+
+async function sessionIsCurrent(userId: string, version: number) {
+  let cached = sessionVersions.get(userId);
+  if (!cached || cached.expires <= Date.now()) {
+    const user = await prismaRoot.adminUser.findUnique({ where: { id: userId }, select: { sessionVersion: true } });
+    cached = { version: user?.sessionVersion ?? null, expires: Date.now() + 30_000 };
+    sessionVersions.set(userId, cached);
+  }
+  return cached.version === version;
+}
+
+/** Para borrar la caché cuando cambia la versión de sesión de un usuario. */
+export function forgetSessionVersion(userId: string) {
+  sessionVersions.delete(userId);
 }
 
 // Caché corta de dominio → creadora (evita una consulta por cada consulta).
@@ -101,7 +129,7 @@ export async function currentCreatorId(): Promise<string> {
   const h = await requestHeaders();
   const sessionCreator = h.get(SESSION_CREATOR_HEADER);
   if (h.get(SCOPE_HEADER) === "admin") {
-    if (!sessionCreator) throw new TenantError("No hay sesión iniciada");
+    if (!sessionCreator || !(await getSession())) throw new TenantError("No hay sesión iniciada");
     return sessionCreator;
   }
 

@@ -6,12 +6,13 @@ import {
   SCOPE_HEADER,
   SESSION_CREATOR_HEADER,
   SESSION_USER_HEADER,
+  SESSION_VERSION_HEADER,
   SITE_SLUG_HEADER,
 } from "@/lib/tenant-headers";
 
 // Páginas y APIs del panel que se pueden abrir sin sesión.
-const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/registro"];
-const PUBLIC_API_PATHS = ["/api/admin/login", "/api/admin/register"];
+const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/registro", "/admin/recuperar", "/admin/restablecer"];
+const PUBLIC_API_PATHS = ["/api/admin/login", "/api/admin/register", "/api/admin/password/", "/api/admin/verify-email"];
 
 /** Dirección provisional del sitio de una creadora: /s/<slug>/... */
 const SITE_PATH = /^\/s\/([a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9]))(\/.*)?$/;
@@ -36,6 +37,7 @@ export async function middleware(request: NextRequest) {
   if (session) {
     headers.set(SESSION_CREATOR_HEADER, session.creatorId);
     headers.set(SESSION_USER_HEADER, session.userId);
+    headers.set(SESSION_VERSION_HEADER, String(session.sv ?? 0));
   }
 
   // /s/<slug>/… → el sitio de esa creadora (antes de tener subdominio o dominio propio).

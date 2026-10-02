@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prismaRoot } from "@/lib/prisma-root";
+import { sendEmail } from "@/lib/email";
+import { waitlistJoinedEmail } from "@/lib/email-templates";
+import { platformOrigin } from "@/lib/site-url";
+import { clientIp, tooManyAttempts } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -20,19 +24,9 @@ const waitlistSchema = z.object({
   website: z.string().optional(),
 });
 
-// Límite simple por IP (por instancia): 5 intentos por minuto.
-const attempts = new Map<string, number[]>();
-function tooManyAttempts(ip: string) {
-  const now = Date.now();
-  const recent = (attempts.get(ip) ?? []).filter((t) => now - t < 60_000);
-  recent.push(now);
-  attempts.set(ip, recent);
-  return recent.length > 5;
-}
-
 export async function POST(request: Request) {
-  const ip = (request.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "local";
-  if (tooManyAttempts(ip)) {
+  // Límite simple por IP: 5 intentos por minuto.
+  if (tooManyAttempts(`waitlist:${clientIp(request)}`, 5)) {
     return NextResponse.json({ error: "Demasiados intentos; prueba en un minuto" }, { status: 429 });
   }
   const parsed = waitlistSchema.safeParse(await request.json().catch(() => null));
@@ -46,5 +40,10 @@ export async function POST(request: Request) {
     existing ??
     (await prismaRoot.waitlistEntry.create({ data: { ...data, audience: data.audience ?? null } }));
   const position = await prismaRoot.waitlistEntry.count({ where: { createdAt: { lte: entry.createdAt } } });
+  if (!existing) {
+    const origin = await platformOrigin();
+    const mail = waitlistJoinedEmail({ origin, position, shareUrl: `${origin}/?utm_source=referido` });
+    await sendEmail({ to: entry.email, ...mail }).catch(() => {});
+  }
   return NextResponse.json({ ok: true, position, already: Boolean(existing) });
 }

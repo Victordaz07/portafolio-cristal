@@ -31,7 +31,7 @@
 | | |
 | --- | --- |
 | **Nombre** | Foliocrew |
-| **Dominio** | `foliocrew.app` (disponible el 2 de octubre de 2026: $9.99 el primer año y $15/año al renovar). `foliocrew.com` ya está tomado. Alternativa: `getfoliocrew.com` ($11.25/año). **Cómpralo antes de mostrar la marca en público.** |
+| **Dominio** | `foliocrew.pro`, comprado en Hostinger el 2 de octubre de 2026 (vence el 2 de octubre de 2027, renovación automática). `foliocrew.com` ya está tomado. |
 | **Qué es** | La plataforma donde las creadoras UGC muestran su trabajo a las marcas, organizan sus colaboraciones y hacen crecer su negocio. |
 | **Frase principal** | *Tu talento merece su espacio.* |
 | **Para quién** | Creadoras de contenido UGC hispanohablantes (LatAm y EE. UU.) que quieren conseguir y manejar marcas como un negocio. |
@@ -81,7 +81,7 @@ Precios sugeridos (en USD; ajusta tras hablar con 10 creadoras):
 
 | Plan | Precio | Para quién | Incluye |
 | --- | --- | --- | --- |
-| **Folio** | $9/mes | Empezando | Portafolio + media kit + feed + bandeja de formulario + subdominio `nombre.foliocrew.app` |
+| **Folio** | $9/mes | Empezando | Portafolio + media kit + feed + bandeja de formulario + subdominio `nombre.foliocrew.pro` |
 | **Folio Pro** ⭐ | $19/mes | En crecimiento | Todo + dominio propio + CRM + calendario + IA + reportes + redes conectadas |
 | **Crew** | $49/mes | Agencias / managers | Hasta 5 creadoras, reportes para marcas, soporte prioritario |
 
@@ -309,7 +309,7 @@ Ilustración flat minimalista: una hoja de calendario mensual con stickers de ce
 ### Nombres de usuario (verifica la disponibilidad en cada red)
 1. `@foliocrew` ← ideal, igual en todas
 2. `@folio.crew`
-3. `@foliocrew.app`
+3. `@foliocrew.pro`
 4. `@holafoliocrew`
 
 > Regístralo el mismo día en Instagram, TikTok, YouTube, Facebook, LinkedIn, X y Threads,
@@ -318,7 +318,7 @@ Ilustración flat minimalista: una hoja de calendario mensual con stickers de ce
 ### Instagram (la red principal)
 
 **Configuración:**
-1. Crea la cuenta con un correo de la marca (ej. `hola@foliocrew.app`).
+1. Crea la cuenta con un correo de la marca (ej. `hola@foliocrew.pro`).
 2. Configuración → Tipo de cuenta → **Cuenta profesional → Empresa**, categoría *Software* o *Servicio de Internet*.
 3. Crea una **página de Facebook** de la marca y vincúlala (la necesitas para anuncios y para Meta Business Suite).
 4. Entra a **Meta Business Suite** (business.facebook.com) y agrega la página y el Instagram.
@@ -341,7 +341,7 @@ Hecho por creadoras, para creadoras
 👇 Crea tu folio
 ```
 
-**Enlace:** `foliocrew.app` (con UTM: `?utm_source=instagram&utm_medium=bio`).
+**Enlace:** `foliocrew.pro` (con UTM: `?utm_source=instagram&utm_medium=bio`).
 
 **Destacadas:** ⭐ Empieza aquí · 🔍 Cómo funciona · 💰 Planes · 💬 Testimonios · 💡 Tips UGC · ❓ FAQ
 
@@ -583,8 +583,8 @@ Dame 10 ideas de anuncios en video de 15–30 segundos para Foliocrew, grabados 
 
 ## 16. Legal y operación
 
-- [ ] **Dominio** `foliocrew.app` (y si puedes, `foliocrew.co` o `.app` para protegerlo).
-- [ ] **Correo profesional:** `hola@`, `soporte@` y `legal@foliocrew.app` (Google Workspace, Zoho Mail o el correo de tu proveedor de dominio).
+- [ ] **Dominio** `foliocrew.pro` (y si puedes, `foliocrew.co` o `.app` para protegerlo).
+- [ ] **Correo profesional:** `hola@`, `soporte@` y `legal@foliocrew.pro` (Google Workspace, Zoho Mail o el correo de tu proveedor de dominio).
 - [ ] **Registro de marca:** búscala y regístrala en tu país (ONAPI en República Dominicana, USPTO en EE. UU., IMPI en México, OEPM en España). Clases de Niza sugeridas: **42** (software) y **35** (servicios de marketing). Consulta con un abogado o gestor de marcas.
 - [ ] **Empresa:** para cobrar con Stripe necesitas una persona física o jurídica con cuenta bancaria. En EE. UU., una LLC es lo común; asesórate con un contador.
 - [ ] **Términos y privacidad:** ya existen (`/terminos`, `/privacidad`, `/eliminar-datos`). Revísalos con un abogado antes de cobrar.
@@ -616,7 +616,7 @@ Dame 10 ideas de anuncios en video de 15–30 segundos para Foliocrew, grabados 
 | --- | --- | --- |
 | 1 | Portafolio + panel completo para una creadora (Cristal) | ✅ Hecho (PR #49) |
 | 2 | Marca: logo final ✅, dominio, redes, landing con lista de espera | ⏳ Ahora |
-| 3 | **Multiusuario:** registro, login por creadora, un sitio por creadora (`nombre.foliocrew.app`) | Siguiente |
+| 3 | **Multiusuario:** registro, login por creadora, un sitio por creadora (`nombre.foliocrew.pro`) | Siguiente |
 | 4 | **Pagos con Stripe:** planes, prueba gratis, portal de cliente | Siguiente |
 | 5 | **Dominios propios:** cada creadora conecta su dominio (vía Vercel) | Después |
 | 6 | Publicación automática en redes + DMs de Instagram (requiere aprobación de Meta) | Después |
@@ -627,10 +627,10 @@ Dame 10 ideas de anuncios en video de 15–30 segundos para Foliocrew, grabados 
 ## 19. Checklist maestro
 
 **Esta semana**
-- [ ] Comprar `foliocrew.app` (`foliocrew.com` está tomado)
+- [x] Comprar `foliocrew.pro` (`foliocrew.com` está tomado)
 - [x] Logo hecho con ChatGPT y ya puesto en la plataforma
 - [ ] Reservar `@foliocrew` en Instagram, TikTok, YouTube, Facebook, LinkedIn, X y Threads
-- [ ] Crear el correo `hola@foliocrew.app`
+- [ ] Crear el correo `hola@foliocrew.pro`
 - [ ] Configurar Instagram como cuenta Empresa + página de Facebook + Meta Business Suite
 
 **Próximas 2 semanas**

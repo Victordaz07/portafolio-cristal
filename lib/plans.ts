@@ -16,7 +16,7 @@ export const PLANS: Plan[] = [
     name: "Folio",
     price: 9,
     tagline: "Para empezar a mostrar tu trabajo",
-    features: ["Portafolio bilingüe", "Media kit siempre al día", "Bandeja de mensajes de marcas", "Tu dirección tunombre.foliocrew.app"],
+    features: ["Portafolio bilingüe", "Media kit siempre al día", "Bandeja de mensajes de marcas", "Tu dirección tunombre.foliocrew.pro"],
   },
   {
     id: "pro",

@@ -4,7 +4,7 @@ import { getSession } from "./tenant";
 
 // ─── La dirección pública del sitio de cada creadora ───
 // 1. Su dominio propio, si ya está verificado (https://crisliaugc.com)
-// 2. Su subdominio, si la plataforma ya tiene dominio (PLATFORM_ROOT_DOMAIN → https://cristal.foliocrew.app)
+// 2. Su subdominio, si la plataforma ya tiene dominio (PLATFORM_ROOT_DOMAIN → https://cristal.foliocrew.pro)
 // 3. La dirección provisional en el dominio actual de la app (https://portafolio-cristal.vercel.app/s/cristal)
 
 export interface SiteCreator {
@@ -25,7 +25,7 @@ function protocolFor(host: string) {
 
 /** https://<slug>.<PLATFORM_ROOT_DOMAIN> */
 export function subdomainUrl(slug: string) {
-  const root = (process.env.PLATFORM_ROOT_DOMAIN || "foliocrew.app").toLowerCase();
+  const root = (process.env.PLATFORM_ROOT_DOMAIN || "foliocrew.pro").toLowerCase();
   return `${protocolFor(root)}://${slug}.${root}`;
 }
 

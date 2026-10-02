@@ -60,7 +60,7 @@ function MadeWithFoliocrew() {
   return (
     <p className="py-sp-4 text-center text-xs text-ink/50">
       Hecho con{" "}
-      <a href="https://foliocrew.app" className="font-semibold text-ink/70 hover:text-coral">
+      <a href="https://foliocrew.pro" className="font-semibold text-ink/70 hover:text-coral">
         Foliocrew
       </a>
     </p>

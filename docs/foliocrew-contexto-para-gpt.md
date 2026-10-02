@@ -64,7 +64,7 @@ Todo en un solo lugar, pensado para creadoras.
 
 ### 2. Cómo funciona (paso a paso)
 
-1. **Creas tu cuenta.** Eliges el nombre de tu sitio (por ejemplo, `tunombre.foliocrew.app`). Hoy el registro es por invitación.
+1. **Creas tu cuenta.** Eliges el nombre de tu sitio (por ejemplo, `tunombre.foliocrew.pro`). Hoy el registro es por invitación.
    Un **asistente de bienvenida** arma tu sitio en 4 pasos (unos 10 minutos):
    - tu perfil: foto, nombre y nicho;
    - tus textos: portada, bio, servicios, paquetes y preguntas frecuentes **escritos según tu nicho**, en español e inglés;
@@ -162,7 +162,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Mi dominio:**
   - ves la dirección de tu sitio para compartir;
   - **conectas tu propio dominio** (por ejemplo, `tunombre.com`, que compras y pagas tú donde quieras). El panel te dice exactamente qué registro poner en tu proveedor, comprueba la conexión y el sitio queda con HTTPS.
-  - Cada creadora también tiene su dirección `tunombre.foliocrew.app` (se activa con el lanzamiento del dominio de Foliocrew).
+  - Cada creadora también tiene su dirección `tunombre.foliocrew.pro` (se activa con el lanzamiento del dominio de Foliocrew).
 
 **Ayuda**
 - **Manual de uso** bilingüe dentro del panel.
@@ -253,4 +253,4 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
   - Inter para el texto.
 - **Estilo visual:** creadoras reales y diversas trabajando (celular en trípode, escritorio, productos), luz natural, tonos crema y lavanda, y las páginas superpuestas del logo como decoración en línea fina.
 - **Redes:** @foliocrew (verificar la disponibilidad en cada red).
-- **Web:** página de venta con lista de espera en `portafolio-cristal.vercel.app/foliocrew` (pasará a `foliocrew.app` cuando se active el dominio). Para los links de campañas usa UTM, por ejemplo `?utm_source=instagram&utm_campaign=lanzamiento`.
+- **Web:** página de venta con lista de espera en `portafolio-cristal.vercel.app/foliocrew` (pasará a `foliocrew.pro` cuando se active el dominio). Para los links de campañas usa UTM, por ejemplo `?utm_source=instagram&utm_campaign=lanzamiento`.

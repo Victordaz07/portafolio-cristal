@@ -24,7 +24,7 @@ export function runAsCreator<T>(creatorId: string, fn: () => Promise<T>): Promis
 }
 
 export function platformRootDomain() {
-  return (process.env.PLATFORM_ROOT_DOMAIN || "foliocrew.app").toLowerCase();
+  return (process.env.PLATFORM_ROOT_DOMAIN || "foliocrew.pro").toLowerCase();
 }
 
 export function defaultCreatorSlug() {

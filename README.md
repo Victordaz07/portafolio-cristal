@@ -79,6 +79,10 @@ npm run dev
 Sitio público: [http://localhost:3000](http://localhost:3000)
 Panel admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
 
+## Marca
+
+La plataforma se llama **Vitrina UGC** (`PLATFORM_NAME`). El logo, los colores, las tipografías y la voz están en [`docs/marca.md`](docs/marca.md); los archivos del logo viven en `public/brand/`. El sitio público de cada creadora mantiene su propia identidad.
+
 ## Scripts
 
 - `npm run dev` — servidor de desarrollo
@@ -88,6 +92,7 @@ Panel admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/log
 - `npx prisma migrate dev` — aplica el schema a la base de datos (local)
 - `npx prisma migrate deploy` — aplica las migraciones pendientes (producción)
 - `npm run db:seed` — puebla la base con el contenido de ejemplo (`prisma/seed.ts`)
+- `npm run brand:images` — genera las imágenes de marca con la API de imágenes de OpenAI (DALL·E / gpt-image). Necesita `OPENAI_API_KEY`; ver [`docs/marca.md`](docs/marca.md)
 
 ## Sitio público
 

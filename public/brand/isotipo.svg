@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="Vitrina UGC"><title>Vitrina UGC</title>
+<g transform="translate(0 0)">
+<rect width="96.0" height="96.0" rx="24.0" fill="#241227"/>
+<path d="M16.0 22.0 Q16.0 18.0 20.0 18.0 H76.0 Q80.0 18.0 80.0 22.0 V32.0 A10.666666666666666 10.666666666666666 0 0 1 58.666666666666664 32.0 A10.666666666666666 10.666666666666666 0 0 1 37.333333333333336 32.0 A10.666666666666666 10.666666666666666 0 0 1 16.000000000000007 32.0 Z" fill="#A866BE"/>
+<path d="M37.33333333333333 18.0 h21.333333333333332 v14.0 a10.666666666666666 10.666666666666666 0 0 1 -21.333333333333332 0 Z" fill="#C3ACEA"/>
+<path d="M40.0 49.0 L65.2 63.0 L40.0 77.0 Z" fill="#FBF7F5" stroke="#FBF7F5" stroke-width="5.0" stroke-linejoin="round"/>
+</g>
+</svg>

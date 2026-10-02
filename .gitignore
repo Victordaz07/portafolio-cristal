@@ -35,3 +35,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Fuentes para regenerar el logo (se descargan de Google Fonts)
+scripts/brand/*.ttf

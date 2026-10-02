@@ -4,7 +4,9 @@ import { creatorInfo } from "@/lib/creator-info";
 // el nombre o el dominio sin tocar código (y, más adelante, la versión por suscripción).
 export const siteConfig = {
   /** Nombre comercial de la plataforma (aparece en las páginas legales y en las apps de cada red). */
-  platformName: process.env.PLATFORM_NAME || "Portafolio Cristal",
+  platformName: process.env.PLATFORM_NAME || "Vitrina UGC",
+  /** Frase corta de la marca (login, metadatos y materiales). */
+  platformTagline: "Tu vitrina de contenido UGC",
   /** Persona o empresa responsable del servicio y de los datos. */
   legalOwner: process.env.LEGAL_OWNER_NAME || creatorInfo.name,
   /** Correo para consultas de privacidad y solicitudes de borrado de datos. */

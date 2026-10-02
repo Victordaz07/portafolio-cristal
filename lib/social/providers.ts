@@ -39,7 +39,7 @@ const instagram: SocialProvider = {
     "Editar el texto o la foto de algo ya publicado",
     "Ver la lista de seguidores o las métricas privadas de otras cuentas",
     "Escribir primero por DM a alguien que nunca te escribió",
-    "Usarse con otras creadoras sin la revisión de Meta (en modo desarrollo solo tú y tus testers)",
+    "Usarse con otras cuentas sin la revisión de Meta (en modo desarrollo solo tú y tus testers)",
   ],
   authorizeUrl(redirectUri, state) {
     const params = new URLSearchParams({
@@ -265,11 +265,11 @@ const tiktok: SocialProvider = {
     "Solo con cuenta Business y aprobación de TikTok for Business: leer y responder comentarios y ver métricas avanzadas",
   ],
   cannot: [
-    "Leer ni responder DMs (TikTok no los ofrece a creadoras)",
+    "Leer ni responder DMs (TikTok no los ofrece a creadores)",
     "Responder comentarios con cuenta Creator (solo con cuenta Business)",
     "Usar la música de TikTok desde la API",
     "Publicar más de ~15 veces al día",
-    "Usarse con otras creadoras mientras la app esté en Sandbox (solo cuentas de prueba)",
+    "Usarse con otras cuentas mientras la app esté en Sandbox (solo cuentas de prueba)",
   ],
   authorizeUrl(redirectUri, state) {
     const params = new URLSearchParams({

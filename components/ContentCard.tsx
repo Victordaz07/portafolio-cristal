@@ -69,7 +69,7 @@ export default function ContentCard({
 }: ContentCardProps & { locale?: Locale }) {
   const [open, setOpen] = useState(false);
   const copy = t(locale).feed;
-  const name = displayName || "Creadora";
+  const name = displayName || "UGC";
   const user = handle ? `@${handle.replace(/^@/, "")}` : name;
   const headerTitle = platform === "facebook" ? name : platform === "ugc" ? copy.portafolio : user;
   const headerSub = platform === "facebook" ? `${category} · ${copy.publico}` : category;

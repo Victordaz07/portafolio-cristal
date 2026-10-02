@@ -10,8 +10,8 @@ const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "600", "700"]
 export const metadata: Metadata = {
   title: "Foliocrew — Tu talento merece su espacio",
   description:
-    "La plataforma para creadoras UGC: portafolio profesional y bilingüe, media kit, CRM de marcas, calendario con IA y reportes, en un solo lugar. Únete a la lista de espera.",
-  openGraph: { title: "Foliocrew — Tu talento merece su espacio", description: "Portafolio, media kit y colaboraciones para creadoras UGC, en un solo lugar.", type: "website" },
+    "La plataforma para creadores de contenido UGC: portafolio profesional y bilingüe, media kit, CRM de marcas, calendario con IA y reportes, en un solo lugar. Únete a la lista de espera.",
+  openGraph: { title: "Foliocrew — Tu talento merece su espacio", description: "Portafolio, media kit y colaboraciones para creadores de contenido UGC, en un solo lugar.", type: "website" },
 };
 
 const INK = "#251023";
@@ -42,7 +42,7 @@ const FAQ = [
   { q: "¿Sirve si tengo pocos seguidores?", a: "Sí. El contenido UGC lo publican las marcas en sus propias redes y anuncios: importa la calidad de tu contenido, no cuántos seguidores tienes." },
   { q: "¿Puedo usar mi propio dominio?", a: "Sí. Tienes tu dirección tunombre.foliocrew.pro y, si quieres, conectas un dominio que compres tú (por ejemplo, tunombre.com). El panel te dice exactamente qué configurar." },
   { q: "¿Publica automáticamente en mis redes?", a: "Todavía no. Te ayudamos a planear tu calendario, escribir tus captions con IA y recordarte cuándo publicar; tú publicas. La publicación automática está en nuestros planes." },
-  { q: "¿Cuándo abre y cuánto cuesta?", a: "Estamos abriendo por invitación. Las primeras de la lista entran antes y con precio especial de fundadora. Te avisamos por correo." },
+  { q: "¿Cuándo abre y cuánto cuesta?", a: "Estamos abriendo por invitación. Quienes se anotan primero entran antes y con precio especial de lanzamiento. Te avisamos por correo." },
   { q: "¿Mis datos están seguros?", a: "Tus datos y los de tus marcas son privados: solo tú los ves. Las conexiones con tus redes usan el inicio de sesión oficial de cada red y puedes desconectarlas cuando quieras." },
 ];
 
@@ -77,7 +77,7 @@ function SitePhoneMockup() {
             </div>
           ))}
         </div>
-        <div className="mt-sp-3 rounded-full bg-[#251023] py-sp-2 text-center text-[10px] font-semibold text-[#FBF7F5]">Trabajemos juntas ✦</div>
+        <div className="mt-sp-3 rounded-full bg-[#251023] py-sp-2 text-center text-[10px] font-semibold text-[#FBF7F5]">Colaboremos ✦</div>
         <p className="mt-sp-2 text-center font-mono text-[8px] text-[#251023]/45">valeria.foliocrew.pro</p>
       </div>
       <p className="mt-sp-3 text-center text-[11px] text-[#251023]/45">Ejemplo ilustrativo</p>
@@ -127,7 +127,7 @@ export default async function FoliocrewHome({
         <div className="mx-auto grid max-w-6xl items-center gap-sp-6 px-sp-5 py-sp-6 md:grid-cols-[1.15fr_1fr] md:py-20">
           <div>
             <span className="inline-block rounded-full bg-[#B692E7]/25 px-sp-3 py-1 font-mono text-[11px] uppercase tracking-widest text-[#7F207B]">
-              Para creadoras UGC · Lanzamiento por invitación
+              Para creadores de contenido UGC · Lanzamiento por invitación
             </span>
             <h1 className="mt-sp-4 font-fraunces text-5xl font-semibold leading-[1.02] sm:text-6xl lg:text-7xl">
               Tu talento merece su <em className="text-[#7F207B]">espacio.</em>
@@ -230,7 +230,7 @@ export default async function FoliocrewHome({
           <p className="font-mono text-[11px] uppercase tracking-widest text-[#7F207B]">Planes</p>
           <h2 className="mt-sp-3 font-fraunces text-4xl font-semibold sm:text-5xl">Elige tu espacio</h2>
           <p className="mt-sp-2 text-[#251023]/65">
-            {prices ? "Precios en USD por mes. Cancela cuando quieras." : "Precio especial de fundadora para las primeras de la lista."}
+            {prices ? "Precios en USD por mes. Cancela cuando quieras." : "Precio especial de lanzamiento para quienes se anotan primero."}
           </p>
           <div className="mt-sp-6 grid gap-sp-4 md:grid-cols-3">
             {PLANS.map((plan) => (
@@ -253,7 +253,7 @@ export default async function FoliocrewHome({
                       <span className="text-base font-normal opacity-60">/mes</span>
                     </>
                   ) : (
-                    <span className="text-xl">Precio de fundadora</span>
+                    <span className="text-xl">Precio de lanzamiento</span>
                   )}
                 </p>
                 <ul className="mt-sp-4 flex flex-1 flex-col gap-sp-2 text-sm">
@@ -302,7 +302,7 @@ export default async function FoliocrewHome({
               Las marcas te están buscando. <em className="text-[#B692E7]">Que te encuentren.</em>
             </h2>
             <p className="mt-sp-4 text-lg text-[#FBF7F5]/70">
-              Únete a la lista de espera. Las primeras entran antes y con precio especial de fundadora.
+              Únete a la lista de espera. Quienes se anotan primero entran antes y con precio especial de lanzamiento.
             </p>
           </div>
           <WaitlistForm utm={utm} dark />

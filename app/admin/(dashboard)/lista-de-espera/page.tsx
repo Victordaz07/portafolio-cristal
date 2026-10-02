@@ -12,19 +12,21 @@ export default async function WaitlistPage() {
   for (const e of entries) bySource.set(e.utmSource || "directo", (bySource.get(e.utmSource || "directo") ?? 0) + 1);
   const last7 = entries.filter((e) => Date.now() - e.createdAt.getTime() < 7 * 86_400_000).length;
   const invited = entries.filter((e) => e.status === "invited").length;
+  const root = process.env.PLATFORM_ROOT_DOMAIN;
+  const origin = root ? `https://${root}` : "";
 
   return (
     <div className="flex flex-col gap-sp-5">
       <PageHeader
         eyebrow="Foliocrew"
         title="Lista de espera"
-        description="Las creadoras que se anotaron en la página de venta. Solo tú (la dueña de la plataforma) ves esta sección."
+        description="Las personas que se anotaron en la página de venta. Solo quien administra la plataforma ve esta sección."
       />
       <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
         {[
           ["Total", entries.length],
           ["Últimos 7 días", last7],
-          ["Invitadas", invited],
+          ["Con invitación", invited],
           ["En espera", entries.length - invited],
         ].map(([label, value]) => (
           <Card key={label}>
@@ -59,6 +61,8 @@ export default async function WaitlistPage() {
           createdAt: e.createdAt.toISOString(),
         }))}
         inviteCodeSet={Boolean(process.env.SIGNUP_INVITE_CODE)}
+        registerUrl={`${origin}/admin/registro`}
+        landingUrl={root ? origin : "/foliocrew"}
       />
     </div>
   );

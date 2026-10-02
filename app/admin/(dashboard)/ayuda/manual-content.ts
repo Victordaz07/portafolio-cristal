@@ -20,7 +20,7 @@ export const SECTION_OPTIONS: { value: "primera-vez" | "glosario" | "reels" | "g
 
 const primeraVezEs: ManualBlock[] = [
   {
-    title: "¡Bienvenida a tu panel de Foliocrew!",
+    title: "¡Te damos la bienvenida a tu panel de Foliocrew!",
     paragraphs: [
       "Al crear tu cuenta, el asistente de bienvenida arma tu sitio en 4 pasos: tu perfil (foto, nombre y nicho), tus textos (portada, bio, servicios, paquetes y preguntas frecuentes según tu nicho, en español e inglés), tu mejor contenido (pega hasta 3 links de Instagram, TikTok o Facebook) y tu contacto y color. Después, en el Resumen, la lista \"Completa tu sitio\" te muestra lo que falta.",
       "Este panel es tuyo: desde aquí controlas absolutamente todo lo que se ve en tu sitio público (la dirección está en Ayuda → Mi cuenta) sin necesitar a nadie que toque código.",
@@ -131,7 +131,7 @@ const glosarioEs: GlossaryTerm[] = [
   { term: "Mensajes recibidos", def: "El buzón con los formularios que las marcas te envían desde el sitio." },
   { term: "Campo bilingüe (ES/EN)", def: "Un par de campos — uno en español, otro en inglés — para el mismo texto. El sitio muestra uno u otro según el idioma que elija la persona que visita." },
   { term: "Orden / reordenar", def: "Las flechas ↑ ↓ junto a cada elemento de una lista; controlan en qué posición aparece en el sitio público." },
-  { term: "CTA", def: "\"Call to action\": los botones que invitan a hacer algo, como \"Ver portafolio\" o \"Trabajemos juntas\"." },
+  { term: "CTA", def: "\"Call to action\": los botones que invitan a hacer algo, como \"Ver portafolio\" o \"Colaboremos\"." },
   { term: "Badge / pill", def: "Una etiqueta pequeña y redondeada, como la categoría de una tarjeta del Feed o \"Nuevo\" en Mensajes." },
   { term: "Miniatura", def: "La imagen de vista previa de una tarjeta en la cuadrícula del Feed. TikTok la trae automática. Para Instagram/Facebook, al tocar \"Cargar preview\" se intenta traer sola; si no aparece, se puede subir una manualmente con el campo \"Miniatura (opcional)\"." },
   { term: "Plataforma", def: "TikTok, Instagram o Facebook — de dónde viene el post que agregas al Feed (solo aplica al modo \"Post de red social\")." },

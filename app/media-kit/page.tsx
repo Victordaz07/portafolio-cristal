@@ -22,7 +22,7 @@ const COPY = {
     top: "Contenido destacado",
     views: "vistas",
     brands: "Marcas con las que he trabajado",
-    contact: "¿Trabajamos juntas?",
+    contact: "¿Colaboramos?",
     contactBtn: "Escríbeme",
     portfolio: "Ver portafolio completo",
     switchTo: "EN",
@@ -48,7 +48,7 @@ const NETWORK_LABEL: Record<string, string> = { instagram: "Instagram", tiktok: 
 
 export async function generateMetadata(): Promise<Metadata> {
   const hero = await prisma.hero.findFirst({ select: { name: true, niche: true } });
-  return { title: `Media kit — ${hero?.name ?? "Creadora UGC"}`, description: hero?.niche ?? undefined };
+  return { title: `Media kit — ${hero?.name ?? "Contenido UGC"}`, description: hero?.niche ?? undefined };
 }
 
 /** Media kit público: el link que la creadora le manda a las marcas. Solo datos públicos. */

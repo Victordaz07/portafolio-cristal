@@ -17,7 +17,17 @@ interface Row {
   createdAt: string;
 }
 
-export default function WaitlistTable({ entries, inviteCodeSet }: { entries: Row[]; inviteCodeSet: boolean }) {
+export default function WaitlistTable({
+  entries,
+  inviteCodeSet,
+  registerUrl,
+  landingUrl,
+}: {
+  entries: Row[];
+  inviteCodeSet: boolean;
+  registerUrl: string;
+  landingUrl: string;
+}) {
   const router = useRouter();
   const { showToast } = useToast();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -29,7 +39,7 @@ export default function WaitlistTable({ entries, inviteCodeSet }: { entries: Row
       body: JSON.stringify({ ids: Array.from(selected), invited }),
     });
     if (!response.ok) return showToast("error", "No se pudo actualizar");
-    showToast("success", invited ? "Marcadas como invitadas" : "De vuelta en espera");
+    showToast("success", invited ? "Invitación marcada como enviada" : "De vuelta en espera");
     setSelected(new Set());
     router.refresh();
   }
@@ -47,12 +57,21 @@ export default function WaitlistTable({ entries, inviteCodeSet }: { entries: Row
     <Card>
       <div className="mb-sp-4 flex flex-wrap items-center justify-between gap-sp-3">
         <p className="text-sm text-ink/65">
-          Para invitar: mándales el link de registro (<span className="font-mono">/admin/registro</span>) con tu código de invitación
-          {inviteCodeSet ? "" : " (todavía no configuraste SIGNUP_INVITE_CODE en Vercel)"} y márcalas aquí como invitadas.
+          Para invitar: manda el link de registro{" "}
+          <button
+            type="button"
+            onClick={() => navigator.clipboard?.writeText(registerUrl).then(() => showToast("success", "Link copiado"))}
+            className="font-mono text-coral hover:underline"
+            title="Copiar link"
+          >
+            {registerUrl}
+          </button>{" "}
+          junto con tu código de invitación
+          {inviteCodeSet ? "" : " (todavía no configuraste SIGNUP_INVITE_CODE en Vercel)"} y marca aquí la invitación como enviada.
         </p>
         <div className="flex flex-wrap gap-sp-2">
           <button type="button" disabled={!selected.size} onClick={() => mark(true)} className={primaryButtonClass}>
-            Marcar invitadas ({selected.size})
+            Marcar invitación enviada ({selected.size})
           </button>
           <button type="button" disabled={!selected.size} onClick={() => mark(false)} className={secondaryButtonClass}>
             Volver a espera
@@ -63,7 +82,7 @@ export default function WaitlistTable({ entries, inviteCodeSet }: { entries: Row
         </div>
       </div>
       {entries.length === 0 ? (
-        <p className="text-sm text-ink/55">Todavía nadie se anotó. Comparte tu página de venta: /foliocrew</p>
+        <p className="text-sm text-ink/55">Todavía nadie se anotó. Comparte tu página de venta: {landingUrl}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-left text-sm">
@@ -72,7 +91,7 @@ export default function WaitlistTable({ entries, inviteCodeSet }: { entries: Row
                 <th className="py-sp-2 pr-sp-2">
                   <input
                     type="checkbox"
-                    aria-label="Seleccionar todas"
+                    aria-label="Seleccionar todo"
                     checked={selected.size === entries.length}
                     onChange={(e) => setSelected(e.target.checked ? new Set(entries.map((r) => r.id)) : new Set())}
                   />
@@ -110,7 +129,7 @@ export default function WaitlistTable({ entries, inviteCodeSet }: { entries: Row
                   <td className="py-sp-2 pr-sp-3 text-ink/60">{new Date(r.createdAt).toLocaleDateString("es")}</td>
                   <td className="py-sp-2">
                     <span className={`rounded-full px-[8px] py-0.5 font-mono text-[10px] uppercase ${r.invited ? "bg-sage/30 text-cobalt-ink" : "bg-cream text-ink/60"}`}>
-                      {r.invited ? "Invitada" : "En espera"}
+                      {r.invited ? "Invitación enviada" : "En espera"}
                     </span>
                   </td>
                 </tr>

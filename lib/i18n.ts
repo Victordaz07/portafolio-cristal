@@ -23,7 +23,7 @@ const es = {
     description:
       "Creo contenido UGC auténtico y reseñas honestas que conectan marcas con personas de verdad.",
     ctaPrimary: "Ver portafolio",
-    ctaSecondary: "Trabajemos juntas",
+    ctaSecondary: "Colaboremos",
   },
   contenido: { heading: "Contenido" },
   marcas: { eyebrow: "Marcas y colaboraciones" },
@@ -57,7 +57,7 @@ const es = {
     eyebrow: "Preguntas frecuentes",
     headingPlain: "¿Tienes ",
     headingEmphasis: "dudas?",
-    intro: "Esto es lo que más me preguntan las marcas antes de trabajar juntas.",
+    intro: "Esto es lo que más me preguntan las marcas antes de trabajar conmigo.",
   },
   contacto: {
     headingPrefix: "Conéctate con ",

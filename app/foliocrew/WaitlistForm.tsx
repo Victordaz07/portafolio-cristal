@@ -59,13 +59,13 @@ export default function WaitlistForm({ utm, compact = false, dark = false }: { u
     : "w-full rounded-full border border-[#251023]/15 bg-white px-sp-4 py-sp-3 text-[#251023] placeholder:text-[#251023]/40 outline-none focus:border-[#7F207B]";
 
   if (status === "done") {
-    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}?utm_source=amiga` : "";
+    const shareUrl = typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}?utm_source=referido` : "";
     return (
       <div className={`rounded-[22px] p-sp-5 text-left ${dark ? "bg-cream/10 text-cream" : "bg-white text-[#251023] shadow-[0_8px_30px_rgba(37,16,35,0.08)]"}`} role="status">
         <p className="font-fraunces text-2xl font-semibold">¡Ya estás en la lista! 💜</p>
-        {position && <p className={`mt-sp-1 ${dark ? "text-cream/75" : "text-[#251023]/70"}`}>Eres la número <strong>{position}</strong> de la lista.</p>}
+        {position && <p className={`mt-sp-1 ${dark ? "text-cream/75" : "text-[#251023]/70"}`}>Tienes el puesto <strong>#{position}</strong> de la lista.</p>}
         <p className={`mt-sp-2 text-sm ${dark ? "text-cream/65" : "text-[#251023]/60"}`}>
-          Te escribiremos a tu correo cuando abramos. Las primeras de la lista entran antes y con precio especial de fundadora.
+          Te escribiremos a tu correo cuando abramos. Quienes se anotan primero entran antes y con precio especial de lanzamiento.
         </p>
         <div className="mt-sp-4 flex flex-wrap gap-sp-2">
           <button
@@ -73,10 +73,10 @@ export default function WaitlistForm({ utm, compact = false, dark = false }: { u
             onClick={() => navigator.clipboard.writeText(shareUrl).then(() => setCopied(true))}
             className="rounded-full bg-[#B692E7] px-sp-4 py-sp-2 text-sm font-semibold text-[#251023]"
           >
-            {copied ? "¡Link copiado!" : "Invita a una amiga creadora"}
+            {copied ? "¡Link copiado!" : "Invita a alguien que cree contenido"}
           </button>
           <a
-            href={`https://wa.me/?text=${encodeURIComponent(`Mira Foliocrew, el portafolio para creadoras UGC: ${shareUrl}`)}`}
+            href={`https://wa.me/?text=${encodeURIComponent(`Mira Foliocrew, el portafolio para creadores de contenido UGC: ${shareUrl}`)}`}
             target="_blank"
             rel="noreferrer"
             className={`rounded-full border px-sp-4 py-sp-2 text-sm font-semibold ${dark ? "border-cream/30" : "border-[#251023]/20"}`}

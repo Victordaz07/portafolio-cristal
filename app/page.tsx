@@ -50,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const hero = await prisma.hero.findFirst({ select: { name: true, niche: true, description: true } });
   if (!hero) return {};
   return {
-    title: `${hero.name} — ${hero.niche || "Creadora UGC"}`,
+    title: `${hero.name} — ${hero.niche || "Contenido UGC"}`,
     description: hero.description || `Portafolio de ${hero.name}: contenido UGC, media kit y colaboraciones.`,
   };
 }

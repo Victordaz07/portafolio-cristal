@@ -23,7 +23,7 @@ export async function POST() {
         {
           role: "user",
           content:
-            "Escribe un caption de una sola línea, en español y con tono cercano, para un reel de rutina de skincare de una creadora UGC. Responde solo con el caption.",
+            "Escribe un caption de una sola línea, en español y con tono cercano, para un reel de rutina de skincare de una persona creadora de contenido UGC. Responde solo con el caption.",
         },
       ],
     });

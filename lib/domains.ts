@@ -37,7 +37,7 @@ export function isApexDomain(domain: string) {
 /** Mensaje si el dominio no se puede usar, o null si está bien. */
 export async function domainProblem(domain: string, creatorId: string) {
   if (!DOMAIN_PATTERN.test(domain)) return "Escribe un dominio válido, por ejemplo crisliaugc.com";
-  const root = (process.env.PLATFORM_ROOT_DOMAIN || "foliocrew.app").toLowerCase().split(":")[0];
+  const root = (process.env.PLATFORM_ROOT_DOMAIN || "foliocrew.pro").toLowerCase().split(":")[0];
   if (domain === root || domain.endsWith(`.${root}`)) return "Ese ya es tu dirección de Foliocrew; aquí va un dominio tuyo";
   if (domain.endsWith(".vercel.app") || domain.endsWith("localhost")) return "Ese dominio no se puede usar";
   const bare = domain.replace(/^www\./, "");

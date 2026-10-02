@@ -16,7 +16,7 @@ const PUBLIC_API_PATHS = ["/api/admin/login", "/api/admin/register"];
 /** Dirección provisional del sitio de una creadora: /s/<slug>/... */
 const SITE_PATH = /^\/s\/([a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9]))(\/.*)?$/;
 
-/** Dominios de la plataforma (no son de una creadora): foliocrew.app, www. y app. */
+/** Dominios de la plataforma (no son de una creadora): foliocrew.pro, www. y app. */
 function isPlatformHost(host: string) {
   const root = (process.env.PLATFORM_ROOT_DOMAIN || "").toLowerCase().split(":")[0];
   if (!root) return false;
@@ -63,7 +63,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // En foliocrew.app (y www./app.) la portada es la de Foliocrew, no la de una creadora.
+  // En foliocrew.pro (y www./app.) la portada es la de Foliocrew, no la de una creadora.
   if (pathname === "/" && isPlatformHost(request.headers.get("host") || "")) {
     pathname = "/foliocrew";
     const url = request.nextUrl.clone();

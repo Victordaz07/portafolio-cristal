@@ -33,14 +33,14 @@ const TOOLS = [
   { icon: "🗓️", title: "Calendario + IA", text: "Planea tu mes por red y pide 3 captions escritos con tu estilo y tu nicho." },
   { icon: "📈", title: "Reportes", text: "Tu crecimiento, tu mejor día y hora para publicar, y tus ingresos por marca. Reporte mensual en PDF." },
   { icon: "💬", title: "Bandeja única", text: "Los mensajes de marcas y los comentarios de Instagram en un solo lugar, con respuestas rápidas." },
-  { icon: "🌐", title: "Tu propio dominio", text: "Usa tunombre.foliocrew.app o conecta tu dominio, como tunombre.com." },
+  { icon: "🌐", title: "Tu propio dominio", text: "Usa tunombre.foliocrew.pro o conecta tu dominio, como tunombre.com." },
   { icon: "🔗", title: "Redes conectadas", text: "Instagram, TikTok, Facebook y YouTube con inicio de sesión oficial. Métricas reales, no capturas." },
 ];
 
 const FAQ = [
   { q: "¿Necesito saber de diseño o de código?", a: "No. El asistente arma tu sitio y lo editas desde tu panel con formularios simples. Todo lo que cambias se ve al instante." },
   { q: "¿Sirve si tengo pocos seguidores?", a: "Sí. El contenido UGC lo publican las marcas en sus propias redes y anuncios: importa la calidad de tu contenido, no cuántos seguidores tienes." },
-  { q: "¿Puedo usar mi propio dominio?", a: "Sí. Tienes tu dirección tunombre.foliocrew.app y, si quieres, conectas un dominio que compres tú (por ejemplo, tunombre.com). El panel te dice exactamente qué configurar." },
+  { q: "¿Puedo usar mi propio dominio?", a: "Sí. Tienes tu dirección tunombre.foliocrew.pro y, si quieres, conectas un dominio que compres tú (por ejemplo, tunombre.com). El panel te dice exactamente qué configurar." },
   { q: "¿Publica automáticamente en mis redes?", a: "Todavía no. Te ayudamos a planear tu calendario, escribir tus captions con IA y recordarte cuándo publicar; tú publicas. La publicación automática está en nuestros planes." },
   { q: "¿Cuándo abre y cuánto cuesta?", a: "Estamos abriendo por invitación. Las primeras de la lista entran antes y con precio especial de fundadora. Te avisamos por correo." },
   { q: "¿Mis datos están seguros?", a: "Tus datos y los de tus marcas son privados: solo tú los ves. Las conexiones con tus redes usan el inicio de sesión oficial de cada red y puedes desconectarlas cuando quieras." },
@@ -78,7 +78,7 @@ function SitePhoneMockup() {
           ))}
         </div>
         <div className="mt-sp-3 rounded-full bg-[#251023] py-sp-2 text-center text-[10px] font-semibold text-[#FBF7F5]">Trabajemos juntas ✦</div>
-        <p className="mt-sp-2 text-center font-mono text-[8px] text-[#251023]/45">valeria.foliocrew.app</p>
+        <p className="mt-sp-2 text-center font-mono text-[8px] text-[#251023]/45">valeria.foliocrew.pro</p>
       </div>
       <p className="mt-sp-3 text-center text-[11px] text-[#251023]/45">Ejemplo ilustrativo</p>
     </div>

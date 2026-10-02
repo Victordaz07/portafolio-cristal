@@ -7,8 +7,8 @@ Google al revisar las apps. El sitio público de cada creadora (por ahora, el de
 mantiene su propia identidad.
 
 - **Nombre:** *folio* (la página de un portafolio) + *crew* (tu equipo, tu comunidad).
-- **Dominio sugerido:** `foliocrew.app`, disponible al 2 de octubre de 2026 ($9.99 el primer año, $15 al renovar).
-  `foliocrew.com` ya está tomado. Todavía no se compró nada.
+- **Dominio:** `foliocrew.pro`, comprado en Hostinger el 2 de octubre de 2026 (vence el 2 de octubre de 2027,
+  con renovación automática). `foliocrew.com` ya está tomado.
 - **Frases:** "Tu talento merece su espacio." · "Crea. Conecta. Crece."
 
 ## Logo

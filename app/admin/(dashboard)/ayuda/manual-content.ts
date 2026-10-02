@@ -390,7 +390,7 @@ const guiaEs: ManualBlock[] = [
   {
     title: "Mi dominio",
     paragraphs: [
-      "Aquí ves la dirección de tu sitio para compartir con marcas (con botón para copiarla) y tus otras direcciones: tu subdominio de Foliocrew (tunombre.foliocrew.app) y la dirección provisional.",
+      "Aquí ves la dirección de tu sitio para compartir con marcas (con botón para copiarla) y tus otras direcciones: tu subdominio de Foliocrew (tunombre.foliocrew.pro) y la dirección provisional.",
       "Para usar tu propio dominio (por ejemplo, tunombre.com), cómpralo donde prefieras, escríbelo aquí y toca \"Conectar dominio\". El panel te muestra el registro DNS exacto (tipo, nombre y valor) que tienes que agregar en tu proveedor. Después toca \"Comprobar ahora\": cuando diga \"Conectado ✓\", tu sitio ya se ve en tu dominio con HTTPS. Los cambios de DNS pueden tardar hasta 48 h.",
     ],
   },
@@ -538,7 +538,7 @@ const guiaEn: ManualBlock[] = [
   {
     title: "My domain",
     paragraphs: [
-      "See the address of your site to share with brands (with a copy button) and your other addresses: your Foliocrew subdomain (yourname.foliocrew.app) and the temporary address.",
+      "See the address of your site to share with brands (with a copy button) and your other addresses: your Foliocrew subdomain (yourname.foliocrew.pro) and the temporary address.",
       "To use your own domain (for example, yourname.com), buy it wherever you like, type it here and tap \"Connect domain\". The panel shows the exact DNS record (type, name and value) to add at your provider. Then tap \"Check now\": once it says \"Connected ✓\", your site is live on your domain with HTTPS. DNS changes can take up to 48 h.",
     ],
   },

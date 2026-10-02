@@ -29,10 +29,13 @@ const primeraVezEs: ManualBlock[] = [
   {
     title: "¿Cómo está organizado el menú de la izquierda?",
     list: [
-      "Contenido: Hero (portada), Media kit (tus stats), Feed (fotos y videos), Marcas (con quién has colaborado).",
-      "Confianza: Reseñas destacadas, Cómo trabajo, Paquetes, Testimonios — todo lo que ayuda a una marca a confiar en ti.",
-      "Sitio: FAQ (preguntas frecuentes) y Contacto (tus redes, email, textos del pie de página).",
-      "Mensajes: los mensajes que te escriben las marcas desde el formulario de contacto del sitio.",
+      "Resumen (arriba de todo): tu panorama del día — seguimientos con marcas, pagos, mensajes sin leer y últimas publicaciones.",
+      "Crecimiento: Metas y plan (tus metas con progreso y el plan de la semana) y Bitácora (hitos, aprendizajes y diario).",
+      "Contenido: Feed (fotos y videos de tu portafolio), Calendario (tu plan del mes) y Crear (armar una publicación con ayuda de la IA).",
+      "Landing: Portada (Hero), Media kit (tus stats), Cómo trabajo, Paquetes, FAQ y Contacto y pie — todo lo que se ve en tu sitio público.",
+      "Prueba social: Marcas (tu CRM de tratos y el carrusel de logos), Reseñas destacadas y Testimonios.",
+      "Negocio: Bandeja (mensajes del formulario y comentarios de Instagram), Reportes (tu crecimiento, ingresos y reporte del mes en PDF) y Conectar cuentas.",
+      "Cada grupo se abre y se cierra tocando su título; el panel recuerda cómo lo dejaste.",
     ],
   },
   {
@@ -74,10 +77,13 @@ const primeraVezEn: ManualBlock[] = [
   {
     title: "How is the left-hand menu organized?",
     list: [
-      "Content: Hero (landing), Media kit (your stats), Feed (photos & videos), Brands (who you've collaborated with).",
-      "Trust: Featured reviews, How I work, Packages, Testimonials — everything that helps a brand trust you.",
-      "Site: FAQ (frequently asked questions) and Contact (your socials, email, footer texts).",
-      "Messages: the messages brands send you through the site's contact form.",
+      "Summary (at the very top): your overview for the day — brand follow-ups, payments, unread messages and latest posts.",
+      "Growth: Goals & plan (your goals with progress and the weekly plan) and Log (milestones, learnings and journal).",
+      "Content: Feed (your portfolio photos & videos), Calendar (your monthly plan) and Create (build a post with AI help).",
+      "Landing: Hero, Media kit (your stats), How I work, Packages, FAQ and Contact & footer — everything shown on your public site.",
+      "Social proof: Brands (your deals CRM and the logo carousel), Featured reviews and Testimonials.",
+      "Business: Inbox (contact-form messages and Instagram comments), Reports (your growth, revenue and monthly PDF report) and Connect accounts.",
+      "Tap a group's title to open or close it; the panel remembers how you left it.",
     ],
   },
   {
@@ -314,8 +320,75 @@ const guiaEs: ManualBlock[] = [
   {
     title: "Marcas",
     paragraphs: [
-      "El carrusel de logos. Cada marca tiene nombre, logo, link a su web (opcional) y un estado activo/inactivo — las inactivas dejan de mostrarse en el sitio sin necesidad de borrarlas.",
+      "Marcas tiene dos pestañas: \"Tratos\" (tu CRM de colaboraciones) y \"Carrusel del sitio\" (los logos que se ven en tu sitio público).",
+      "En Tratos, cada marca puede tener un estado (Prospecto, Negociando, Activo, Completado), contacto, valor del trato, paquete, plataformas, próximo paso con fecha límite, estado de pago y notas. Toca una marca de la lista para ver su detalle; desde ahí cambias el estado o el pago con un toque.",
+      "El historial del acuerdo se llena solo cuando cambias el estado o el pago, y también puedes agregar entradas a mano (ej: \"Contraoferta de la marca: $800\"). Al agregar una, la fecha se toma como último contacto.",
+      "Los datos del trato (valor, contacto, notas) son privados: nunca se muestran en el sitio público. Una marca nueva creada como trato queda oculta del carrusel hasta que marques \"Mostrar el logo en el carrusel\".",
+      "Los próximos pasos y los pagos aparecen en el Resumen, con aviso cuando algo está vencido.",
+      "En Carrusel del sitio ordenas los logos con ↑ ↓ y eliges cuáles se muestran u ocultan (sin borrarlos).",
       "También puedes crear una marca nueva sin salir de Feed: al agregar una tarjeta de tipo \"Foto UGC\", el selector de marca tiene la opción \"+ agregar nueva marca\" (nombre + logo).",
+    ],
+  },
+  {
+    title: "Conectar cuentas",
+    paragraphs: [
+      "En Negocio → Conectar cuentas conectas Instagram, Facebook, TikTok y YouTube con su login oficial (el mismo botón \"Iniciar sesión con…\" de cada red). El panel nunca ve tu contraseña.",
+      "Después de conectar, toca \"Probar\": el panel le pide a la red tu perfil y tus 6 publicaciones más recientes, y te muestra lo que respondió o el error exacto.",
+      "Cada tarjeta explica qué se puede y qué no se puede hacer con esa red (por ejemplo, TikTok no permite leer DMs). \"Desconectar\" borra los permisos guardados en el panel.",
+      "Abajo está la prueba de la IA (Claude), que se usará para sugerir captions.",
+      "Si una red dice \"Sin configurar\", faltan las claves de su app de desarrollador: eso lo prepara quien administra el sitio (guía en docs/conectar-cuentas.md).",
+    ],
+  },
+  {
+    title: "Metas y plan",
+    paragraphs: [
+      "Crea metas con un valor actual y un objetivo (ej: \"Publicar 25 piezas este mes\"). La barra muestra tu avance y arriba ves el promedio de todas tus metas, junto a una frase motivadora distinta cada día.",
+      "Algunas metas se actualizan solas: seguidores de Instagram, TikTok, YouTube o Facebook (si conectaste la red) y publicaciones del Feed en el mes. Las manuales las ajustas con los botones − y +.",
+      "El plan de acción es tu lista de tareas de la semana: márcalas al terminarlas. Si te quedaron pendientes de semanas anteriores, el panel te ofrece traerlas a la semana actual.",
+    ],
+  },
+  {
+    title: "Bitácora",
+    paragraphs: [
+      "La línea de hitos guarda tus logros (\"Primera colaboración pagada\") y tus aprendizajes (\"Negociar el brief por escrito evita retrabajos\").",
+      "El diario de contenido es para una reflexión corta cada semana: qué funcionó, qué no y qué vas a probar.",
+      "La racha cuenta los días seguidos en que hiciste algo: una entrada en la bitácora, una tarea del plan completada o una publicación nueva en el Feed. También la ves en el Resumen.",
+    ],
+  },
+  {
+    title: "Crear publicación",
+    paragraphs: [
+      "Elige el tipo (post, carrusel, reel, video largo o historia), en qué redes va y si es para una marca. Escribe el caption o toca \"Sugerir con IA\": la IA te da 3 opciones usando el tema, la marca y tu estilo; toca la que te guste para usarla.",
+      "Mientras escribes ves una vista previa por red y, a la derecha, consejos de la IA para ejecutarlo en cada una. También te avisa si pasas el límite de caracteres o de hashtags de alguna red.",
+      "Elige día y hora y toca \"Programar\" (o guárdala como borrador). Por ahora no se publica sola: la ves en el Calendario y en el Resumen para subirla ese día.",
+    ],
+  },
+  {
+    title: "Calendario",
+    paragraphs: [
+      "Vista del mes con puntos de color por red en cada día que tiene algo programado. Toca un día para ver qué hay y programar algo nuevo ese día.",
+      "Cuando subas la publicación, toca \"Marcar publicada\". Si alguna ya pasó su fecha y no la marcaste, aparece arriba en \"¿Ya las publicaste?\". Marcar publicaciones también suma a tu racha.",
+    ],
+  },
+  {
+    title: "Métricas del Feed",
+    paragraphs: [
+      "Cada tarjeta del Feed muestra 4 números: vistas, likes, comentarios y engagement. El engagement se calcula solo: (likes + comentarios + compartidos + guardados) ÷ vistas.",
+      "Toca \"Métricas\" en una tarjeta para escribir los números a mano y el comentario destacado (\"Lo que dicen\"), con quién lo dijo. También puedes ocultar las métricas de esa pieza en el sitio público.",
+      "Si conectaste Instagram o TikTok, el botón \"↻ Sincronizar métricas\" trae los números de tus publicaciones (las encuentra por el link de cada tarjeta). Instagram todavía no entrega vistas; esas se escriben a mano.",
+      "En las tarjetas con marca, \"☆ Destacar\" elige qué piezas aparecen en la sección Colaboraciones del sitio (hasta 3 por marca). Si no destacas ninguna, se muestran las primeras de esa marca.",
+    ],
+  },
+  {
+    title: "Vista pública",
+    paragraphs: [
+      "Muestra tu sitio tal cual lo ve una marca, dentro del panel. Puedes verlo en modo escritorio o celular y en español o inglés.",
+    ],
+  },
+  {
+    title: "Apariencia",
+    paragraphs: [
+      "Tu foto, tu nombre, tu bio (en español e inglés) y el color de acento. Elige entre 6 colores (lila, rosa, terracota, salvia, azul o dorado) y mira la vista previa antes de guardar. El color cambia los botones, enlaces y detalles de todo el sitio y también de este panel.",
     ],
   },
   {
@@ -343,8 +416,22 @@ const guiaEs: ManualBlock[] = [
     paragraphs: ["El texto \"por qué trabajar conmigo\", el texto de introducción y de agradecimiento del pie de página, y tus datos: email, WhatsApp, email de colaboraciones, sitio web, Instagram, TikTok, YouTube, Facebook y Pinterest."],
   },
   {
-    title: "Mensajes recibidos",
-    paragraphs: ["Los mensajes que las marcas te envían desde el formulario de contacto del sitio. Puedes marcarlos como leídos/no leídos."],
+    title: "Bandeja",
+    paragraphs: [
+      "Todo lo que te escriben en un solo lugar: los mensajes del formulario de contacto del sitio y, si conectaste Instagram, los comentarios de tus últimas publicaciones. Filtra con los chips de arriba: Todas, Por responder, Formulario o Instagram.",
+      "Cada mensaje dice si está Pendiente o Respondido. Si quien escribe es una marca de tu CRM, aparece la etiqueta \"Cliente\". Si un mensaje del formulario lleva más de 24 h sin respuesta, te avisa: las marcas suelen quedarse con quien contesta primero.",
+      "Formulario: toca \"Responder\", elige una respuesta rápida (por ejemplo, la que incluye el enlace a tu media kit) o escribe la tuya, y toca \"Abrir en mi correo\". Se abre tu correo con todo listo para enviar, y el mensaje queda como respondido.",
+      "Instagram: la respuesta se publica directo en el comentario. También puedes ocultar un comentario (solo lo ven tú y quien lo escribió) o borrarlo.",
+      "Los mensajes directos (DM) llegarán más adelante: necesitan la revisión de Meta.",
+    ],
+  },
+  {
+    title: "Reportes",
+    paragraphs: [
+      "Tu crecimiento en números: seguidores totales y de los últimos 30 días, engagement promedio, publicaciones del mes, un gráfico de seguidores mes a mes, el mejor día y horario para publicar (según el engagement de tus publicaciones con fecha y métricas) y tus ingresos por marca.",
+      "\"Actualizar desde redes conectadas\" guarda los seguidores de hoy de cada red conectada. Las que no estén conectadas se pueden cargar a mano. En \"Reporte mensual (PDF)\" elige el mes y toca \"Ver reporte\": usa \"Guardar como PDF\" al imprimir y mándalo a una marca.",
+      "Tu media kit público vive en /media-kit: cópialo desde Reportes con \"Copiar enlace\" y pégalo en tu bio o en tus correos.",
+    ],
   },
 ];
 
@@ -374,8 +461,75 @@ const guiaEn: ManualBlock[] = [
   {
     title: "Brands",
     paragraphs: [
-      "The logo carousel. Each brand has a name, logo, an optional website link, and an active/inactive status — inactive ones stop showing on the site without needing to delete them.",
+      "Brands has two tabs: \"Deals\" (your collaborations CRM) and \"Site carousel\" (the logos shown on your public site).",
+      "In Deals, each brand can have a status (Prospect, Negotiating, Active, Completed), contact, deal value, package, platforms, next step with a due date, payment status and notes. Tap a brand in the list to see its details; from there you change the status or payment with one tap.",
+      "The deal history fills itself in when you change the status or payment, and you can also add entries by hand (e.g. \"Brand counter-offer: $800\"). Adding one also updates the last contact date.",
+      "Deal data (value, contact, notes) is private: it never shows on the public site. A new brand created as a deal stays hidden from the carousel until you check \"Show the logo in the carousel\".",
+      "Next steps and payments show up in the Summary, flagged when something is overdue.",
+      "In Site carousel you reorder logos with ↑ ↓ and choose which ones are shown or hidden (without deleting them).",
       "You can also create a new brand without leaving Feed: when adding a \"UGC photo\" card, the brand dropdown has a \"+ add new brand\" option (name + logo).",
+    ],
+  },
+  {
+    title: "Connect accounts",
+    paragraphs: [
+      "In Business → Connect accounts you connect Instagram, Facebook, TikTok and YouTube with their official login (each network's own \"Sign in with…\" button). The panel never sees your password.",
+      "After connecting, tap \"Test\": the panel asks the network for your profile and your 6 most recent posts, and shows you what it answered or the exact error.",
+      "Each card explains what can and can't be done with that network (for example, TikTok doesn't allow reading DMs). \"Disconnect\" deletes the permissions saved in the panel.",
+      "At the bottom is the AI test (Claude), which will be used to suggest captions.",
+      "If a network says \"Not configured\", its developer app keys are missing: whoever manages the site sets that up (guide in docs/conectar-cuentas.md).",
+    ],
+  },
+  {
+    title: "Goals & plan",
+    paragraphs: [
+      "Create goals with a current value and a target (e.g. \"Publish 25 pieces this month\"). The bar shows your progress and the top shows the average of all your goals, next to a different motivational phrase every day.",
+      "Some goals update themselves: Instagram, TikTok, YouTube or Facebook followers (if you connected the network) and Feed posts this month. You adjust manual ones with the − and + buttons.",
+      "The action plan is your task list for the week: check them off when done. If tasks are left over from previous weeks, the panel offers to bring them into the current week.",
+    ],
+  },
+  {
+    title: "Log",
+    paragraphs: [
+      "The milestones line keeps your achievements (\"First paid collaboration\") and your learnings (\"Agreeing the brief in writing avoids rework\").",
+      "The content journal is for a short reflection every week: what worked, what didn't and what you'll try next.",
+      "The streak counts the consecutive days you did something: a log entry, a completed plan task or a new Feed post. You also see it in the Summary.",
+    ],
+  },
+  {
+    title: "Create post",
+    paragraphs: [
+      "Pick the type (post, carousel, reel, long video or story), which networks it goes to and whether it's for a brand. Write the caption or tap \"Suggest with AI\": the AI gives you 3 options using the topic, the brand and your style; tap the one you like to use it.",
+      "While you write you see a preview per network and, on the right, AI tips to execute it on each one. It also warns you if you go over a network's character or hashtag limit.",
+      "Pick the day and time and tap \"Schedule\" (or save it as a draft). For now it doesn't publish itself: you see it in the Calendar and the Summary so you can upload it that day.",
+    ],
+  },
+  {
+    title: "Calendar",
+    paragraphs: [
+      "Month view with colored dots per network on each day that has something scheduled. Tap a day to see what's there and schedule something new that day.",
+      "When you upload the post, tap \"Mark published\". If one is past its date and you didn't mark it, it shows up at the top under \"Did you publish them?\". Marking posts also adds to your streak.",
+    ],
+  },
+  {
+    title: "Feed metrics",
+    paragraphs: [
+      "Each Feed card shows 4 numbers: views, likes, comments and engagement. Engagement is calculated automatically: (likes + comments + shares + saves) ÷ views.",
+      "Tap \"Metrics\" on a card to type the numbers by hand and the featured comment (\"What people say\"), with who said it. You can also hide that piece's metrics on the public site.",
+      "If you connected Instagram or TikTok, the \"↻ Sync metrics\" button brings in your posts' numbers (it finds them by each card's link). Instagram doesn't provide views yet; type those by hand.",
+      "On cards with a brand, \"☆ Feature\" picks which pieces show in the site's Collaborations section (up to 3 per brand). If you feature none, that brand's first ones are shown.",
+    ],
+  },
+  {
+    title: "Public view",
+    paragraphs: [
+      "Shows your site exactly as a brand sees it, inside the panel. You can view it in desktop or phone mode, in Spanish or English.",
+    ],
+  },
+  {
+    title: "Appearance",
+    paragraphs: [
+      "Your photo, name, bio (in Spanish and English) and accent color. Pick one of 6 colors (lilac, pink, terracotta, sage, blue or gold) and check the preview before saving. The color changes the buttons, links and details across the whole site and this panel too.",
     ],
   },
   {
@@ -403,8 +557,22 @@ const guiaEn: ManualBlock[] = [
     paragraphs: ["The \"why work with me\" text, the footer's intro and thank-you texts, and your details: email, WhatsApp, collab email, website, Instagram, TikTok, YouTube, Facebook and Pinterest."],
   },
   {
-    title: "Messages",
-    paragraphs: ["The messages brands send you through the site's contact form. You can mark them read/unread."],
+    title: "Inbox",
+    paragraphs: [
+      "Everything people write to you in one place: contact-form messages from the site and, if you connected Instagram, the comments on your latest posts. Filter with the chips at the top: All, To reply, Form or Instagram.",
+      "Each message shows whether it's Pending or Replied. If the sender is a brand in your CRM, you'll see a \"Client\" tag. If a form message has gone more than 24 h without a reply, you'll get a heads-up: brands usually go with whoever answers first.",
+      "Form: tap \"Reply\", pick a quick reply (for example, the one with your media kit link) or write your own, and tap \"Open in my email\". Your email app opens with everything ready to send, and the message is marked as replied.",
+      "Instagram: your reply is posted right on the comment. You can also hide a comment (only you and its author can see it) or delete it.",
+      "Direct messages (DMs) are coming later: they need Meta's review.",
+    ],
+  },
+  {
+    title: "Reports",
+    paragraphs: [
+      "Your growth in numbers: total followers and last-30-days growth, average engagement, posts this month, a month-by-month follower chart, the best day and time to post (based on the engagement of your posts with a date and metrics) and your revenue by brand.",
+      "\"Actualizar desde redes conectadas\" (refresh from connected networks) saves today's followers for each connected network. Networks that aren't connected can be entered by hand. Under \"Reporte mensual (PDF)\", pick the month and tap \"Ver reporte\": choose \"Save as PDF\" when printing and send it to a brand.",
+      "Your public media kit lives at /media-kit: copy the link from Reports (\"Copiar enlace\") and put it in your bio or emails.",
+    ],
   },
 ];
 

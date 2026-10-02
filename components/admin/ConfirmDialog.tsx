@@ -5,9 +5,11 @@ export default function ConfirmDialog({
   description,
   onConfirm,
   onCancel,
+  confirmLabel = "Eliminar",
 }: {
   title: string;
   description: string;
+  confirmLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -37,7 +39,7 @@ export default function ConfirmDialog({
             onClick={onConfirm}
             className="rounded-sm bg-red-600 px-sp-4 py-sp-2 text-sm font-medium text-white hover:opacity-90"
           >
-            Eliminar
+            {confirmLabel}
           </button>
         </div>
       </div>

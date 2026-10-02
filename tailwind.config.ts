@@ -12,9 +12,10 @@ const config: Config = {
         cream: "#FBF7F5",
         cobalt: "#4B5320",
         "cobalt-ink": "#2B3013",
-        lime: "#C3ACEA",
-        moss: "#801F82",
-        coral: "#A866BE",
+        // Acento configurable en Apariencia (lib/theme.ts): variables CSS en canales RGB.
+        lime: "rgb(var(--accent-light) / <alpha-value>)",
+        moss: "rgb(var(--accent-dark) / <alpha-value>)",
+        coral: "rgb(var(--accent) / <alpha-value>)",
         sage: "#9FB98E",
         ink: "#241227",
         white: "#FFFFFF",
@@ -29,7 +30,9 @@ const config: Config = {
       },
       spacing: {
         "sp-1": "4px",
+        "sp-1.5": "6px",
         "sp-2": "8px",
+        "sp-2.5": "10px",
         "sp-3": "12px",
         "sp-4": "16px",
         "sp-5": "24px",

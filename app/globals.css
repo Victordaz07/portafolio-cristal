@@ -4,6 +4,10 @@
 
 :root {
   --background: #fbf7f5;
+  /* Acento por defecto (lila); el layout lo reemplaza con el elegido en Apariencia. */
+  --accent: 168 102 190;
+  --accent-dark: 128 31 130;
+  --accent-light: 195 172 234;
   --foreground: #241227;
 }
 
@@ -47,5 +51,12 @@ body {
   :focus-visible {
     outline: 2px solid theme("colors.coral");
     outline-offset: 2px;
+  }
+}
+
+/* Al imprimir (reporte mensual en PDF): sin fondos decorativos ni colores de pantalla. */
+@media print {
+  body {
+    background: #fff !important;
   }
 }

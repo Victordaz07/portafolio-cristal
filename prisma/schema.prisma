@@ -65,6 +65,23 @@ model ContentCard {
   brand           Brand?   @relation(fields: [brandId], references: [id], onDelete: SetNull)
   order           Int      @default(0)
   createdAt       DateTime @default(now())
+
+  // Métricas (panel v2): manuales o sincronizadas desde la red conectada.
+  views            Int?
+  likes            Int?
+  comments         Int?
+  shares           Int?
+  saves            Int?
+  metricsSyncedAt  DateTime?
+  showMetrics      Boolean   @default(true) // mostrarlas en el sitio público
+  // "Lo que dicen": comentario destacado del público.
+  topComment       String?
+  topCommentEn     String?
+  topCommentAuthor String?
+  // Pieza destacada en la sección Colaboraciones de su marca.
+  featured         Boolean   @default(false)
+  // Cuándo se publicó en la red (lo trae la sincronización); alimenta "mejor hora para publicar".
+  postedAt         DateTime?
 }
 
 model Brand {
@@ -77,6 +94,32 @@ model Brand {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   contentCards ContentCard[]
+
+  // CRM de colaboraciones (panel v2). dealStatus null = solo logo de portafolio, sin trato.
+  dealStatus     String? // "prospect" | "negotiating" | "active" | "completed"
+  contactName    String?
+  contactEmail   String?
+  dealValue      Int? // en USD, sin decimales
+  packageDetail  String?
+  platforms      String[]     @default([])
+  paymentStatus  String? // "pending" | "paid"
+  nextAction     String?
+  nextActionDue  DateTime?
+  lastContactAt  DateTime?
+  notes          String?
+  events         BrandEvent[]
+  scheduledPosts ScheduledPost[]
+}
+
+model BrandEvent {
+  id        String   @id @default(cuid())
+  brandId   String
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  note      String
+  createdAt DateTime @default(now())
+
+  @@index([brandId, date])
 }
 
 model Review {
@@ -141,6 +184,7 @@ model ContactMessage {
   collaborationType String
   message           String
   read              Boolean  @default(false)
+  repliedAt         DateTime?
   createdAt         DateTime @default(now())
 }
 
@@ -168,5 +212,102 @@ model SiteSettings {
   footerIntroEn    String?
   supportMessage   String?
   supportMessageEn String?
+  accentColor      String   @default("lila") // paleta de acento (lib/theme.ts)
   updatedAt        DateTime @updatedAt
+}
+
+// Cuentas de redes conectadas por OAuth (panel v2 → Conectar cuentas).
+// Los tokens se guardan cifrados (lib/token-crypto.ts), nunca en texto plano.
+model SocialAccount {
+  id           String    @id @default(cuid())
+  platform     String    @unique // "instagram" | "facebook" | "tiktok" | "youtube"
+  externalId   String
+  username     String?
+  displayName  String?
+  avatarUrl    String?
+  followers    Int?
+  accessToken  String
+  refreshToken String?
+  expiresAt    DateTime?
+  scopes       String[]  @default([])
+  connectedAt  DateTime  @default(now())
+  lastSyncAt   DateTime?
+  lastError    String?
+  updatedAt    DateTime  @updatedAt
+}
+
+// ─── Crecimiento (panel v2): metas, plan semanal y bitácora ───
+
+model Goal {
+  id        String    @id @default(cuid())
+  title     String
+  category  String    @default("content") // "content" | "audience" | "skill" | "habit"
+  current   Float     @default(0)
+  target    Float
+  unit      String? // sufijo opcional para mostrar, ej. "K" o "videos"
+  // De dónde sale el valor actual: "manual" o automático (seguidores de una red, publicaciones del mes).
+  source    String    @default("manual")
+  dueDate   DateTime?
+  archived  Boolean   @default(false)
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model ActionItem {
+  id          String    @id @default(cuid())
+  label       String
+  category    String    @default("content")
+  weekStart   String // lunes de la semana, "YYYY-MM-DD" en la zona horaria de la app
+  done        Boolean   @default(false)
+  completedAt DateTime?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  @@index([weekStart])
+}
+
+model LogEntry {
+  id        String   @id @default(cuid())
+  kind      String // "milestone" | "learning" | "journal"
+  date      String // "YYYY-MM-DD"
+  title     String
+  body      String   @default("")
+  createdAt DateTime @default(now())
+
+  @@index([kind, date])
+}
+
+// ─── Contenido (panel v2): publicaciones planeadas en Calendario / Crear ───
+
+model ScheduledPost {
+  id           String    @id @default(cuid())
+  caption      String    @default("")
+  topic        String? // tema usado para las sugerencias de IA
+  contentType  String    @default("reel") // "post" | "carousel" | "reel" | "long_video" | "story"
+  networks     String[]  @default([]) // "instagram" | "tiktok" | "youtube" | "facebook"
+  brandId      String?
+  brand        Brand?    @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  mediaUrl     String?
+  mediaType    String? // "image" | "video"
+  scheduledFor DateTime
+  status       String    @default("scheduled") // "draft" | "scheduled" | "published"
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([scheduledFor])
+}
+
+// ─── Reportes (panel v2): historial de seguidores por red ───
+
+model FollowerSnapshot {
+  id        String   @id @default(cuid())
+  platform  String // "instagram" | "tiktok" | "youtube" | "facebook"
+  date      String // "YYYY-MM-DD" en APP_TIMEZONE; uno por red y día
+  followers Int
+  source    String   @default("auto") // "auto" (cuenta conectada) | "manual"
+  createdAt DateTime @default(now())
+
+  @@unique([platform, date])
 }

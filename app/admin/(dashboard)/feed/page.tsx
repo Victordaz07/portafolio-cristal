@@ -5,9 +5,11 @@ import PageHeader from "@/components/admin/PageHeader";
 import FeedManager from "./FeedManager";
 
 export default async function AdminFeedPage() {
-  const [cards, brands] = await Promise.all([
+  const [cards, brands, connected] = await Promise.all([
     prisma.contentCard.findMany({ orderBy: { order: "asc" } }),
     prisma.brand.findMany({ orderBy: { order: "asc" }, select: { id: true, name: true, logoUrl: true } }),
+    // Redes conectadas cuyas APIs dan métricas por publicación.
+    prisma.socialAccount.findMany({ where: { platform: { in: ["instagram", "tiktok"] } }, select: { platform: true } }),
   ]);
   const categoryCounts = cards.reduce<Record<string, number>>((acc, card) => {
     acc[card.category] = (acc[card.category] ?? 0) + 1;
@@ -39,10 +41,15 @@ export default async function AdminFeedPage() {
                 .join(" · ")
             : "")
         }
-        title="Feed"
-        description="El contenido que se muestra en la sección de fotos y videos del sitio."
+        title="Feed / Publicaciones"
+        description="El contenido que se muestra en la sección de fotos y videos del sitio, con sus métricas."
       />
-      <FeedManager initialCards={cards} thumbnailsById={thumbnailsById} brands={brands} />
+      <FeedManager
+        initialCards={cards}
+        thumbnailsById={thumbnailsById}
+        brands={brands}
+        syncablePlatforms={connected.map((a) => a.platform)}
+      />
     </div>
   );
 }

@@ -15,13 +15,13 @@ export const dangerLinkClass =
 export const accentLinkClass = "text-sm font-medium text-coral hover:underline";
 
 export const cardClass =
-  "rounded-lg border border-line bg-white p-sp-5 shadow-[0_1px_2px_rgba(36,18,39,0.04)]";
+  "rounded-[18px] border border-line bg-white p-sp-5 shadow-[0_1px_2px_rgba(36,18,39,0.04)]";
 
 export const rowCardClass =
-  "flex items-center gap-sp-4 rounded-lg border border-line bg-white px-sp-4 py-sp-3 shadow-[0_1px_2px_rgba(36,18,39,0.04)] transition hover:border-coral/25 hover:shadow-[0_4px_16px_rgba(36,18,39,0.06)]";
+  "flex items-center gap-sp-4 rounded-[18px] border border-line bg-white px-sp-4 py-sp-3 shadow-[0_1px_2px_rgba(36,18,39,0.04)] transition hover:border-coral/25 hover:shadow-[0_4px_16px_rgba(36,18,39,0.06)]";
 
 export const rowCardStartClass =
-  "flex items-start gap-sp-4 rounded-lg border border-line bg-white px-sp-4 py-sp-3 shadow-[0_1px_2px_rgba(36,18,39,0.04)] transition hover:border-coral/25 hover:shadow-[0_4px_16px_rgba(36,18,39,0.06)]";
+  "flex items-start gap-sp-4 rounded-[18px] border border-line bg-white px-sp-4 py-sp-3 shadow-[0_1px_2px_rgba(36,18,39,0.04)] transition hover:border-coral/25 hover:shadow-[0_4px_16px_rgba(36,18,39,0.06)]";
 
 export const sectionTitleClass =
   "font-bodoni italic font-bold uppercase text-lg text-ink -mb-sp-2";

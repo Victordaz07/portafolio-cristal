@@ -42,6 +42,14 @@ Copia `.env.example` a `.env` y completa:
 | `RESEND_API_KEY` | Opcional. Si falta, el formulario de contacto sigue guardando el mensaje en la base de datos pero no envía el correo (queda como TODO en `app/api/contact/route.ts`). |
 | `NEXT_PUBLIC_FB_APP_ID` | Necesario para mostrar embeds de Facebook. |
 | `PUBLIC_BLOB_READ_WRITE_TOKEN` | Necesario para subir fotos, videos y logos de marcas. Debe ser el token de un Blob Store con acceso **público** (la app siempre sube con `access: "public"`). |
+| `TOKEN_ENCRYPTION_KEY` | Cifra los tokens de redes sociales en la base de datos. Obligatoria para conectar redes. No cambiarla después de conectar cuentas. |
+| `APP_URL` | URL pública fija del sitio, usada para armar las URLs de redirección OAuth. |
+| `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` | App de Meta con Instagram API (Instagram Login). |
+| `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET`, `FACEBOOK_CONFIG_ID` | Facebook Login for Business (páginas). `FACEBOOK_CONFIG_ID` es opcional. |
+| `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` | TikTok Login Kit. |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | OAuth de Google con YouTube Data API v3. |
+| `ANTHROPIC_API_KEY` | Claude, para las sugerencias de IA. |
+| `PLATFORM_NAME`, `LEGAL_OWNER_NAME`, `LEGAL_CONTACT_EMAIL` | Opcionales. Nombre de la plataforma y datos del responsable que aparecen en las páginas legales (`lib/site-config.ts`). |
 
 **Importante:** Next.js expande `$VAR` dentro de los archivos `.env`. El hash
 de bcrypt empieza con `$2b$...`, así que hay que escapar cada `$` como `\$`
@@ -71,6 +79,10 @@ npm run dev
 Sitio público: [http://localhost:3000](http://localhost:3000)
 Panel admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
 
+## Marca
+
+La plataforma se llama **Foliocrew** (`PLATFORM_NAME`). El logo, los colores, las tipografías y la voz están en [`docs/marca.md`](docs/marca.md); el kit completo (redes, campañas y prompts) está en [`docs/foliocrew-kit-de-marca.md`](docs/foliocrew-kit-de-marca.md). Los archivos del logo viven en `public/brand/`. El sitio público de cada creadora mantiene su propia identidad.
+
 ## Scripts
 
 - `npm run dev` — servidor de desarrollo
@@ -80,6 +92,7 @@ Panel admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/log
 - `npx prisma migrate dev` — aplica el schema a la base de datos (local)
 - `npx prisma migrate deploy` — aplica las migraciones pendientes (producción)
 - `npm run db:seed` — puebla la base con el contenido de ejemplo (`prisma/seed.ts`)
+- `npm run brand:images` — genera las imágenes de marca con la API de imágenes de OpenAI (DALL·E / gpt-image). Necesita `OPENAI_API_KEY`; ver [`docs/marca.md`](docs/marca.md)
 
 ## Sitio público
 
@@ -90,8 +103,12 @@ Cada campo de texto editable en la base de datos tiene una columna paralela
 `xxxEn` (nullable, con respaldo automático al español si está vacía); los
 strings de diseño fijos (nav, botones, labels) viven en `lib/i18n.ts`.
 
-Secciones del sitio: Hero, Media kit, Feed (fotos/videos), Marcas, Reseñas
+Secciones del sitio: Hero, Media kit, Feed (tarjetas con estilo de cada red, métricas y "Lo que dicen"), Colaboraciones (por marca, hasta 3 piezas destacadas), Marcas, Reseñas
 destacadas, Cómo trabajo, Paquetes, Testimonios, FAQ y Contacto.
+
+Páginas legales públicas (las piden Meta, TikTok y Google para aprobar las apps):
+`/privacidad`, `/terminos` y `/eliminar-datos`, en español e inglés (`?lang=en`).
+Textos en `lib/legal-content.ts`; enlazadas desde el pie del sitio.
 
 Dos detalles ocultos, pensados como un pequeño gesto para Crislia:
 
@@ -107,8 +124,10 @@ Dos detalles ocultos, pensados como un pequeño gesto para Crislia:
 
 Todas las rutas bajo `/admin/*` y `/api/admin/*` (excepto login) están
 protegidas por `middleware.ts`. El shell (`components/admin/AdminShell.tsx`)
-tiene un sidebar agrupado por íconos, colapsable en mobile, con badge de
-mensajes sin leer.
+tiene un sidebar oscuro con grupos colapsables (Crecimiento, Contenido,
+Landing, Prueba social, Negocio, Ayuda), "Resumen" fijo arriba y badge de mensajes sin leer.
+El Resumen (`/admin`) muestra seguimientos con marcas, pagos, mensajes por
+atender y las últimas publicaciones.
 
 Secciones (cada una con su Manager + formulario):
 
@@ -117,14 +136,23 @@ Secciones (cada una con su Manager + formulario):
 | Hero | Portada: nombre, título, descripción, foto, CTAs. Incluye **vista previa en vivo** mientras se edita. |
 | Media kit | Las cifras junto al Hero (seguidores, colaboraciones, calificación). |
 | Feed | Tarjetas de fotos/videos, en dos modos: "Post de red social" o "Foto UGC de portafolio" (foto propia sin red social, con marca opcional). Ver "el problema conocido con TikTok" abajo. |
-| Marcas | Carrusel de logos, con estado activo/inactivo. También se pueden crear desde el formulario del Feed (modo Foto UGC). |
+| Feed / Publicaciones | Tarjetas con métricas (vistas, likes, comentarios, compartidos, guardados; el engagement se calcula), comentario destacado "Lo que dicen", filtros por tipo, "☆ Destacar" para Colaboraciones y "↻ Sincronizar métricas" desde Instagram/TikTok conectados (`lib/social/metrics-sync.ts`, empareja por el link del post). |
+| Vista pública | El sitio dentro del panel (iframe), en escritorio o celular y ES/EN. |
+| Crear | Composer de publicaciones: tipo, redes, marca, caption con **sugerencias de IA** (Claude, 3 opciones con el contexto de la creadora), avisos de límites por red, vista previa por red, consejos de IA por red y programación por día/hora (`APP_TIMEZONE`). Aún no publica automáticamente. |
+| Calendario | Vista mensual con las publicaciones por red, "¿Ya las publicaste?" para las vencidas, próximas publicaciones y "Marcar publicada". |
+| Metas y plan | Metas con valor actual y objetivo (manuales o automáticas: seguidores de cada red conectada, publicaciones del mes), promedio general con frase motivadora del día y plan de acción semanal con tareas que se pueden traer de semanas anteriores. |
+| Bitácora | Línea de hitos y aprendizajes, diario de contenido y racha de días activos (entradas, tareas completadas y publicaciones nuevas). |
+| Marcas | Dos pestañas: **Tratos** (CRM de colaboraciones: estado del trato, contacto, valor, paquete, plataformas, próximo paso con fecha, pago, notas e historial automático) y **Carrusel del sitio** (orden y visibilidad de los logos). Los datos del trato nunca llegan al sitio público. También se pueden crear marcas desde el formulario del Feed (modo Foto UGC). |
 | Reseñas destacadas | Reseñas de producto con calificación en estrellas. |
 | Cómo trabajo | Servicios ofrecidos, con ícono. |
 | Paquetes | Paquetes de colaboración (sin precios). |
 | Testimonios | Citas de marcas. |
 | FAQ | Preguntas frecuentes (acordeón). |
 | Contacto | Redes, email, WhatsApp y textos del pie de página. |
-| Mensajes | Buzón de mensajes recibidos desde el formulario del sitio. |
+| Bandeja | Mensajes del formulario y comentarios recientes de Instagram (si está conectado) en una sola lista, con filtros, estado Pendiente/Respondido, etiqueta "Cliente" para marcas del CRM, aviso de +24 h y respuestas rápidas. Formulario: abre el correo prellenado (`mailto:`) y lo marca respondido. Instagram: responder, ocultar y borrar comentarios (`lib/social/instagram-comments.ts`, permiso `instagram_business_manage_comments`). Los DMs quedan para después (requieren la revisión de Meta). |
+| Reportes | Seguidores totales y crecimiento de 30 días (historial diario en `FollowerSnapshot`), engagement promedio, publicaciones del mes, mejor día/franja para publicar, ingresos por marca, reporte mensual imprimible (`/admin/reportes/mensual`) y enlace al media kit público (`/media-kit`). |
+| Apariencia | Foto, nombre, bio ES/EN y color de acento del sitio y del panel (6 opciones, `lib/theme.ts`; se aplica con variables CSS `--accent*`). |
+| Conectar cuentas | Login oficial (OAuth) con Instagram, Facebook, TikTok y YouTube, con botón **Probar** que trae el perfil y las publicaciones recientes, y prueba de conexión con Claude (IA). Los tokens se guardan cifrados (`lib/token-crypto.ts`). Guía de configuración: [`docs/conectar-cuentas.md`](docs/conectar-cuentas.md). |
 | **Manual de uso** | Documentación completa del panel, bilingüe (ES/EN): primera vez, glosario, paso a paso de Feed/reels, y guía por sección. Vive en `/admin/ayuda`. |
 
 Notas útiles:

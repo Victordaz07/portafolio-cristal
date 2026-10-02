@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { Platform, ContentType } from "@/lib/embeds";
 import HeroStat from "@/components/HeroStat";
@@ -21,6 +22,7 @@ import {
 import { renderHighlightedText } from "@/lib/highlight";
 import { getThumbnailUrl } from "@/lib/oembed";
 import ContentFeed from "@/components/ContentFeed";
+import CollaborationsSection, { type CollaborationBrand } from "@/components/CollaborationsSection";
 import BrandCard from "@/components/BrandCard";
 import FaqAccordion from "@/components/FaqAccordion";
 import ContactForm from "@/components/ContactForm";
@@ -64,8 +66,16 @@ export default async function HomePage() {
   ] = await Promise.all([
     prisma.hero.findFirst(),
     prisma.stat.findMany({ orderBy: { order: "asc" } }),
-    prisma.contentCard.findMany({ orderBy: { order: "asc" }, include: { brand: true } }),
-    prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
+    prisma.contentCard.findMany({
+      orderBy: { order: "asc" },
+      include: { brand: { select: { id: true, name: true, logoUrl: true, websiteUrl: true, active: true } } },
+    }),
+    // Solo columnas públicas: la marca también guarda datos privados del CRM.
+    prisma.brand.findMany({
+      where: { active: true },
+      orderBy: { order: "asc" },
+      select: { id: true, name: true, logoUrl: true, websiteUrl: true },
+    }),
     prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
     prisma.siteSettings.findFirst(),
     prisma.review.findMany({ orderBy: { order: "asc" } }),
@@ -83,6 +93,13 @@ export default async function HomePage() {
     })
   );
 
+  const firstName = hero?.name?.split(" ")[0] ?? "Crislia";
+  const handles: Record<string, string | null | undefined> = {
+    instagram: settings?.instagramHandle,
+    tiktok: settings?.tiktokHandle,
+    facebook: settings?.facebookHandle,
+  };
+
   const feedCards: ContentCardProps[] = contentCards.map((card, index) => ({
     type: card.type as ContentType,
     platform: card.platform as Platform,
@@ -96,7 +113,40 @@ export default async function HomePage() {
     thumbnailUrl: feedThumbnails[index],
     brandName: card.brand?.name ?? null,
     brandLogoUrl: card.brand?.logoUrl ?? null,
+    metrics: card.showMetrics
+      ? { views: card.views, likes: card.likes, comments: card.comments, shares: card.shares, saves: card.saves }
+      : null,
+    topComment: card.topComment ? pick(locale, card.topComment, card.topCommentEn) : null,
+    topCommentAuthor: card.topCommentAuthor,
+    handle: handles[card.platform] ?? null,
+    displayName: firstName,
   }));
+
+  // Colaboraciones: por marca, hasta 3 piezas; primero las destacadas y, si no hay, las primeras del Feed.
+  const collaborations: CollaborationBrand[] = [];
+  const byFeatured = contentCards
+    .map((card, index) => ({ card, index }))
+    .sort((a, b) => Number(b.card.featured) - Number(a.card.featured));
+  byFeatured.forEach(({ card, index }) => {
+    if (!card.brand || !card.brand.active) return;
+    let entry = collaborations.find((c) => c.name === card.brand!.name);
+    if (!entry) {
+      entry = { name: card.brand.name, logoUrl: card.brand.logoUrl, websiteUrl: card.brand.websiteUrl, pieces: [] };
+      collaborations.push(entry);
+    }
+    if (entry.pieces.length >= 3) return;
+    entry.pieces.push({
+      type: card.type as ContentType,
+      platform: card.platform as Platform,
+      postUrl: card.postUrl ?? "",
+      videoUrl: card.videoUrl,
+      photoUrl: card.photoUrl,
+      thumbnailUrl: feedThumbnails[index],
+      caption: pick(locale, card.caption, card.captionEn),
+      category: pick(locale, card.category, card.categoryEn),
+      views: card.showMetrics ? card.views : null,
+    });
+  });
 
   const hablamosRows = (
     [
@@ -351,6 +401,13 @@ export default async function HomePage() {
           <ContentFeed cards={feedCards} locale={locale} />
         </section>
 
+        {/* COLABORACIONES */}
+        {collaborations.length > 0 && (
+          <section id="colaboraciones" className="mx-auto max-w-content px-sp-5 pb-sp-9">
+            <CollaborationsSection brands={collaborations} locale={locale} />
+          </section>
+        )}
+
         {/* BRANDS */}
         {brands.length > 0 && (
           <section id="marcas" className="pb-sp-3">
@@ -580,9 +637,17 @@ export default async function HomePage() {
 
       <footer className="border-t border-line bg-cream px-sp-5 py-sp-5">
         <div className="mx-auto flex max-w-content items-center justify-between gap-sp-3">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-ink/40">
-            © {new Date().getFullYear()} {hero?.name ?? "Crislia"}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-sp-3 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-ink/40">
+            <p>
+              © {new Date().getFullYear()} {hero?.name ?? "Crislia"}
+            </p>
+            <Link href="/privacidad" className="hover:text-coral">
+              {locale === "en" ? "Privacy" : "Privacidad"}
+            </Link>
+            <Link href="/terminos" className="hover:text-coral">
+              {locale === "en" ? "Terms" : "Términos"}
+            </Link>
+          </div>
           <CreatorCredit locale={locale} />
         </div>
       </footer>

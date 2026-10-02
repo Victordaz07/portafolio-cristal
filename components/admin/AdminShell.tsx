@@ -1,64 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import {
-  DashboardIcon,
-  SparkleIcon,
-  ChartIcon,
-  MenuIcon as FeedIcon,
-  TagIcon,
-  StarIcon,
-  CameraIcon,
-  BoxIcon,
-  QuoteIcon,
-  QuestionIcon,
-  GearIcon,
-  InboxIcon,
-  LogoutIcon,
-  CloseIcon,
-  BookIcon,
-} from "@/components/icons";
+import { MenuIcon, CloseIcon, LogoutIcon } from "@/components/icons";
 
-type NavItem = { href: string; label: string; icon: (props: { className?: string }) => ReactNode };
+type NavItem = { href: string; label: string; badgeKey?: "unread" };
+type NavGroup = { id: string; title: string; items: NavItem[] };
 
-const NAV_GROUPS: { title: string | null; items: NavItem[] }[] = [
+// Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
+// nuevas del diseño (Metas, Bitácora, Calendario, Reportes…) se suman a su
+// grupo a medida que se implementan.
+const NAV_GROUPS: NavGroup[] = [
   {
-    title: null,
-    items: [{ href: "/admin", label: "Panel", icon: DashboardIcon }],
+    id: "crecimiento",
+    title: "Crecimiento",
+    items: [
+      { href: "/admin/metas", label: "Metas y plan" },
+      { href: "/admin/bitacora", label: "Bitácora" },
+    ],
   },
   {
+    id: "contenido",
     title: "Contenido",
     items: [
-      { href: "/admin/hero", label: "Hero", icon: SparkleIcon },
-      { href: "/admin/media-kit", label: "Media kit", icon: ChartIcon },
-      { href: "/admin/feed", label: "Feed", icon: FeedIcon },
-      { href: "/admin/marcas", label: "Marcas", icon: TagIcon },
+      { href: "/admin/feed", label: "Feed / Publicaciones" },
+      { href: "/admin/calendario", label: "Calendario" },
+      { href: "/admin/crear", label: "Crear" },
     ],
   },
   {
-    title: "Confianza",
+    id: "landing",
+    title: "Landing",
     items: [
-      { href: "/admin/resenas", label: "Reseñas destacadas", icon: StarIcon },
-      { href: "/admin/servicios", label: "Cómo trabajo", icon: CameraIcon },
-      { href: "/admin/paquetes", label: "Paquetes", icon: BoxIcon },
-      { href: "/admin/testimonios", label: "Testimonios", icon: QuoteIcon },
+      { href: "/admin/vista-publica", label: "Vista pública" },
+      { href: "/admin/apariencia", label: "Apariencia" },
+      { href: "/admin/hero", label: "Portada (Hero)" },
+      { href: "/admin/media-kit", label: "Media kit" },
+      { href: "/admin/servicios", label: "Cómo trabajo" },
+      { href: "/admin/paquetes", label: "Paquetes" },
+      { href: "/admin/faq", label: "FAQ" },
+      { href: "/admin/contacto", label: "Contacto y pie" },
     ],
   },
   {
-    title: "Sitio",
+    id: "social",
+    title: "Prueba social",
     items: [
-      { href: "/admin/faq", label: "FAQ", icon: QuestionIcon },
-      { href: "/admin/contacto", label: "Contacto", icon: GearIcon },
+      { href: "/admin/marcas", label: "Marcas" },
+      { href: "/admin/resenas", label: "Reseñas destacadas" },
+      { href: "/admin/testimonios", label: "Testimonios" },
     ],
   },
   {
+    id: "negocio",
+    title: "Negocio",
+    items: [
+      { href: "/admin/mensajes", label: "Bandeja", badgeKey: "unread" },
+      { href: "/admin/reportes", label: "Reportes" },
+      { href: "/admin/conectar", label: "Conectar cuentas" },
+    ],
+  },
+  {
+    id: "ayuda",
     title: "Ayuda",
-    items: [{ href: "/admin/ayuda", label: "Manual de uso", icon: BookIcon }],
+    items: [{ href: "/admin/ayuda", label: "Manual de uso" }],
   },
 ];
+
+const OPEN_GROUPS_KEY = "admin-nav-open-groups";
 
 function isActive(pathname: string, href: string) {
   return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
@@ -74,6 +85,30 @@ export default function AdminShell({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(NAV_GROUPS.map((g) => [g.id, true]))
+  );
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(OPEN_GROUPS_KEY);
+      if (saved) setOpenGroups((prev) => ({ ...prev, ...JSON.parse(saved) }));
+    } catch {
+      // Sin acceso a localStorage: todos los grupos quedan abiertos.
+    }
+  }, []);
+
+  function toggleGroup(id: string) {
+    setOpenGroups((prev) => {
+      const next = { ...prev, [id]: !prev[id] };
+      try {
+        window.localStorage.setItem(OPEN_GROUPS_KEY, JSON.stringify(next));
+      } catch {
+        // Ignorado: la preferencia solo dura esta visita.
+      }
+      return next;
+    });
+  }
 
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -81,12 +116,15 @@ export default function AdminShell({
     router.refresh();
   }
 
+  const badges = { unread: unreadMessages };
+  const homeActive = isActive(pathname, "/admin");
+
   return (
     <div className="min-h-screen bg-cream md:flex">
-      <div className="flex items-center justify-between bg-cobalt px-sp-5 py-sp-3 text-cream md:hidden">
-        <Link href="/admin" className="inline-flex items-center gap-sp-1 font-script text-2xl leading-none">
-          Crislia
-          <SparkleIcon className="h-3 w-3 text-lime" />
+      <div className="flex items-center justify-between bg-ink px-sp-5 py-sp-3 text-cream md:hidden print:hidden">
+        <Link href="/admin" aria-label="Foliocrew — inicio del panel">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/logo-claro.svg" alt="Foliocrew" className="h-7 w-auto" />
         </Link>
         <button
           type="button"
@@ -95,108 +133,121 @@ export default function AdminShell({
           aria-expanded={mobileOpen}
           className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/30"
         >
-          {mobileOpen ? <CloseIcon className="h-4 w-4" /> : <FeedIcon className="h-4 w-4" />}
+          {mobileOpen ? <CloseIcon className="h-4 w-4" /> : <MenuIcon className="h-4 w-4" />}
         </button>
       </div>
 
       <aside
         className={`${
           mobileOpen ? "flex" : "hidden"
-        } flex-col justify-between bg-cobalt px-sp-5 py-sp-6 text-cream md:flex md:w-64 md:shrink-0`}
+        } flex-col gap-3.5 bg-ink px-sp-4 py-7 text-cream print:hidden md:sticky md:top-0 md:flex md:h-screen md:w-[250px] md:shrink-0`}
       >
-        <div>
-          <Link
-            href="/admin"
-            className="hidden items-center gap-sp-1 font-script text-3xl leading-none md:inline-flex"
-          >
-            Crislia
-            <SparkleIcon className="h-3.5 w-3.5 text-lime" />
+        <div className="mb-sp-2 hidden md:block">
+          <Link href="/admin" aria-label="Foliocrew — inicio del panel">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/logo-claro.svg" alt="Foliocrew" className="h-8 w-auto" />
           </Link>
-          <p className="hidden mt-sp-1 font-mono text-[10px] uppercase tracking-widest text-cream/50 md:block">
+          <p className="mt-sp-1 font-mono text-[9px] uppercase tracking-[0.16em] text-lime">
             Panel privado
           </p>
-
-          <nav className="flex flex-col gap-sp-5 md:mt-sp-8">
-            {NAV_GROUPS.map((group, index) => (
-              <div key={group.title ?? `group-${index}`}>
-                {group.title && (
-                  <p className="mb-sp-1 px-sp-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-                    {group.title}
-                  </p>
-                )}
-                <div className="flex flex-col gap-sp-1">
-                  {group.items.map((item) => {
-                    const Icon = item.icon;
-                    const active = isActive(pathname, item.href);
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setMobileOpen(false)}
-                        className={`flex items-center gap-sp-3 rounded-md px-sp-3 py-sp-2 text-sm transition ${
-                          active
-                            ? "bg-cream text-cobalt-ink font-medium shadow-sm"
-                            : "text-cream/80 hover:bg-cobalt-ink"
-                        }`}
-                      >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span className="truncate">{item.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-
-            <div>
-              <p className="mb-sp-1 px-sp-3 font-mono text-[10px] uppercase tracking-widest text-cream/40">
-                Mensajes
-              </p>
-              <Link
-                href="/admin/mensajes"
-                onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-sp-3 rounded-md px-sp-3 py-sp-2 text-sm transition ${
-                  isActive(pathname, "/admin/mensajes")
-                    ? "bg-cream text-cobalt-ink font-medium shadow-sm"
-                    : "text-cream/80 hover:bg-cobalt-ink"
-                }`}
-              >
-                <InboxIcon className="h-4 w-4 shrink-0" />
-                <span className="flex-1 truncate">Mensajes recibidos</span>
-                {unreadMessages > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-coral px-1 font-mono text-[10px] text-white">
-                    {unreadMessages}
-                  </span>
-                )}
-              </Link>
-            </div>
-          </nav>
         </div>
 
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="mt-sp-8 flex items-center gap-sp-3 rounded-md border border-cream/25 px-sp-3 py-sp-2 text-left text-sm text-cream/80 hover:bg-cobalt-ink"
+        <Link
+          href="/admin"
+          onClick={() => setMobileOpen(false)}
+          className={`flex items-center gap-sp-2 rounded-[10px] px-sp-3 py-2.5 text-[13px] font-bold transition ${
+            homeActive ? "bg-coral text-white" : "text-cream hover:bg-cream/10"
+          }`}
         >
-          <LogoutIcon className="h-4 w-4 shrink-0" />
-          Cerrar sesión
-        </button>
-      </aside>
+          <span aria-hidden className="text-sm">
+            ⌂
+          </span>
+          Resumen
+        </Link>
 
-      <div className="flex-1">
-        <div className="flex justify-end border-b border-line bg-white px-sp-5 py-sp-3 md:px-sp-8">
+        <nav className="-mx-1 mt-sp-1 flex flex-1 flex-col gap-sp-1 overflow-y-auto px-1">
+          {NAV_GROUPS.map((group) => {
+            const groupActive = group.items.some((item) => isActive(pathname, item.href));
+            const open = openGroups[group.id] !== false;
+            return (
+              <div key={group.id}>
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.id)}
+                  aria-expanded={open}
+                  className="flex w-full items-center justify-between px-2.5 py-2.5"
+                >
+                  <span
+                    className={`font-mono text-[10px] uppercase tracking-[0.1em] ${
+                      groupActive ? "text-cream" : "text-cream/50"
+                    }`}
+                  >
+                    {group.title}
+                  </span>
+                  <span
+                    aria-hidden
+                    className={`text-[10px] text-cream/50 transition-transform ${
+                      open ? "" : "-rotate-90"
+                    }`}
+                  >
+                    ▾
+                  </span>
+                </button>
+                {open && (
+                  <div className="flex flex-col gap-0.5 pb-1.5">
+                    {group.items.map((item) => {
+                      const active = isActive(pathname, item.href);
+                      const badge = item.badgeKey ? badges[item.badgeKey] : 0;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setMobileOpen(false)}
+                          className={`flex items-center justify-between rounded-[10px] px-sp-3 py-2.5 text-[13px] font-medium transition ${
+                            active ? "bg-coral text-white" : "text-cream/85 hover:bg-cream/10"
+                          }`}
+                        >
+                          <span className="truncate">{item.label}</span>
+                          {badge > 0 && (
+                            <span
+                              className={`rounded-full px-[7px] py-px font-mono text-[10px] font-bold ${
+                                active ? "bg-white text-coral" : "bg-coral text-white"
+                              }`}
+                            >
+                              {badge}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+
+        <div className="flex flex-col gap-sp-2">
           <Link
             href="/"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-sp-2 rounded-full border border-line px-sp-4 py-sp-2 text-sm font-medium text-ink hover:border-coral hover:text-coral transition"
+            className="rounded-full border border-cream/25 px-3.5 py-2.5 text-center text-xs font-semibold text-cream transition hover:bg-cream/10"
           >
-            <FeedIcon className="h-4 w-4" />
-            Ver sitio
+            Ver sitio público ↗
           </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center justify-center gap-sp-2 rounded-full border border-cream/25 px-3 py-2 text-[11px] text-cream/80 transition hover:bg-cream/10"
+          >
+            <LogoutIcon className="h-3.5 w-3.5" />
+            Cerrar sesión
+          </button>
         </div>
-        <main className="px-sp-5 py-sp-7 md:px-sp-8 md:py-sp-8">{children}</main>
-      </div>
+      </aside>
+
+      <main className="min-w-0 flex-1 px-sp-5 py-7 md:px-sp-6 md:py-sp-6 print:p-0">{children}</main>
     </div>
   );
 }

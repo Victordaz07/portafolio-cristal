@@ -8,9 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "db:seed": "tsx prisma/run-seed-cli.ts"
+    "db:seed": "tsx prisma/run-seed-cli.ts",
+    "brand:images": "node scripts/brand/generate-images.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
     "@prisma/client": "^6.19.3",
     "@vercel/blob": "^2.6.1",
     "bcryptjs": "^3.0.3",

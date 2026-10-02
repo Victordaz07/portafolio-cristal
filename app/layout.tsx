@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Fraunces, Bodoni_Moda, Inter, Space_Mono, Parisienne } from "next/font/google";
 import { getLocale } from "@/lib/locale";
+import { prisma } from "@/lib/prisma";
+import { accentVars } from "@/lib/theme";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -52,15 +54,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  // El color de acento elegido en Apariencia; si la base no responde, queda el lila por defecto.
+  const settings = await prisma.siteSettings.findFirst({ select: { accentColor: true } }).catch(() => null);
 
   return (
-    <html lang={locale}>
+    <html lang={locale} style={accentVars(settings?.accentColor) as React.CSSProperties}>
       <body
         className={`${fraunces.variable} ${bodoniModa.variable} ${inter.variable} ${spaceMono.variable} ${parisienne.variable} relative font-sans bg-cream text-ink antialiased`}
       >
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed inset-0 -z-10 bg-[url('/images/pattern-bg.webp')] bg-repeat opacity-25"
+          className="pointer-events-none fixed inset-0 -z-10 bg-[url('/images/pattern-bg.webp')] bg-repeat opacity-25 print:hidden"
         />
         {children}
       </body>

@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const messageUpdateSchema = z.object({
-  read: z.boolean(),
-});
+// Cambios parciales: leído y/o respondido (respondido también lo marca como leído).
+const messageUpdateSchema = z
+  .object({ read: z.boolean().optional(), replied: z.boolean().optional() })
+  .refine((data) => data.read !== undefined || data.replied !== undefined);
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -16,7 +17,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
-  const message = await prisma.contactMessage.update({ where: { id }, data: parsed.data });
+  const { read, replied } = parsed.data;
+  const message = await prisma.contactMessage.update({
+    where: { id },
+    data: {
+      ...(read !== undefined ? { read } : {}),
+      ...(replied !== undefined ? { repliedAt: replied ? new Date() : null, ...(replied ? { read: true } : {}) } : {}),
+    },
+  });
   return NextResponse.json(message);
 }
 

@@ -119,8 +119,8 @@ Dos detalles ocultos, pensados como un pequeño gesto para Crislia:
 
 Todas las rutas bajo `/admin/*` y `/api/admin/*` (excepto login) están
 protegidas por `middleware.ts`. El shell (`components/admin/AdminShell.tsx`)
-tiene un sidebar oscuro con grupos colapsables (Contenido, Landing, Prueba
-social, Negocio, Ayuda), "Resumen" fijo arriba y badge de mensajes sin leer.
+tiene un sidebar oscuro con grupos colapsables (Crecimiento, Contenido,
+Landing, Prueba social, Negocio, Ayuda), "Resumen" fijo arriba y badge de mensajes sin leer.
 El Resumen (`/admin`) muestra seguimientos con marcas, pagos, mensajes por
 atender y las últimas publicaciones.
 
@@ -144,7 +144,9 @@ Secciones (cada una con su Manager + formulario):
 | Testimonios | Citas de marcas. |
 | FAQ | Preguntas frecuentes (acordeón). |
 | Contacto | Redes, email, WhatsApp y textos del pie de página. |
-| Mensajes | Buzón de mensajes recibidos desde el formulario del sitio. |
+| Bandeja | Mensajes del formulario y comentarios recientes de Instagram (si está conectado) en una sola lista, con filtros, estado Pendiente/Respondido, etiqueta "Cliente" para marcas del CRM, aviso de +24 h y respuestas rápidas. Formulario: abre el correo prellenado (`mailto:`) y lo marca respondido. Instagram: responder, ocultar y borrar comentarios (`lib/social/instagram-comments.ts`, permiso `instagram_business_manage_comments`). Los DMs quedan para después (requieren la revisión de Meta). |
+| Reportes | Seguidores totales y crecimiento de 30 días (historial diario en `FollowerSnapshot`), engagement promedio, publicaciones del mes, mejor día/franja para publicar, ingresos por marca, reporte mensual imprimible (`/admin/reportes/mensual`) y enlace al media kit público (`/media-kit`). |
+| Apariencia | Foto, nombre, bio ES/EN y color de acento del sitio y del panel (6 opciones, `lib/theme.ts`; se aplica con variables CSS `--accent*`). |
 | Conectar cuentas | Login oficial (OAuth) con Instagram, Facebook, TikTok y YouTube, con botón **Probar** que trae el perfil y las publicaciones recientes, y prueba de conexión con Claude (IA). Los tokens se guardan cifrados (`lib/token-crypto.ts`). Guía de configuración: [`docs/conectar-cuentas.md`](docs/conectar-cuentas.md). |
 | **Manual de uso** | Documentación completa del panel, bilingüe (ES/EN): primera vez, glosario, paso a paso de Feed/reels, y guía por sección. Vive en `/admin/ayuda`. |
 

@@ -34,7 +34,7 @@ const primeraVezEs: ManualBlock[] = [
       "Contenido: Feed (fotos y videos de tu portafolio), Calendario (tu plan del mes) y Crear (armar una publicación con ayuda de la IA).",
       "Landing: Portada (Hero), Media kit (tus stats), Cómo trabajo, Paquetes, FAQ y Contacto y pie — todo lo que se ve en tu sitio público.",
       "Prueba social: Marcas (tu CRM de tratos y el carrusel de logos), Reseñas destacadas y Testimonios.",
-      "Negocio: Bandeja, con los mensajes que te escriben las marcas desde el formulario de contacto del sitio.",
+      "Negocio: Bandeja (mensajes del formulario y comentarios de Instagram), Reportes (tu crecimiento, ingresos y reporte del mes en PDF) y Conectar cuentas.",
       "Cada grupo se abre y se cierra tocando su título; el panel recuerda cómo lo dejaste.",
     ],
   },
@@ -82,7 +82,7 @@ const primeraVezEn: ManualBlock[] = [
       "Content: Feed (your portfolio photos & videos), Calendar (your monthly plan) and Create (build a post with AI help).",
       "Landing: Hero, Media kit (your stats), How I work, Packages, FAQ and Contact & footer — everything shown on your public site.",
       "Social proof: Brands (your deals CRM and the logo carousel), Featured reviews and Testimonials.",
-      "Business: Inbox, with the messages brands send you through the site's contact form.",
+      "Business: Inbox (contact-form messages and Instagram comments), Reports (your growth, revenue and monthly PDF report) and Connect accounts.",
       "Tap a group's title to open or close it; the panel remembers how you left it.",
     ],
   },
@@ -386,6 +386,12 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Apariencia",
+    paragraphs: [
+      "Tu foto, tu nombre, tu bio (en español e inglés) y el color de acento. Elige entre 6 colores (lila, rosa, terracota, salvia, azul o dorado) y mira la vista previa antes de guardar. El color cambia los botones, enlaces y detalles de todo el sitio y también de este panel.",
+    ],
+  },
+  {
     title: "Reseñas destacadas",
     paragraphs: ["Reseñas de producto con foto opcional, categoría, título, descripción y calificación de 1 a 5 estrellas."],
   },
@@ -410,8 +416,22 @@ const guiaEs: ManualBlock[] = [
     paragraphs: ["El texto \"por qué trabajar conmigo\", el texto de introducción y de agradecimiento del pie de página, y tus datos: email, WhatsApp, email de colaboraciones, sitio web, Instagram, TikTok, YouTube, Facebook y Pinterest."],
   },
   {
-    title: "Mensajes recibidos",
-    paragraphs: ["Los mensajes que las marcas te envían desde el formulario de contacto del sitio. Puedes marcarlos como leídos/no leídos."],
+    title: "Bandeja",
+    paragraphs: [
+      "Todo lo que te escriben en un solo lugar: los mensajes del formulario de contacto del sitio y, si conectaste Instagram, los comentarios de tus últimas publicaciones. Filtra con los chips de arriba: Todas, Por responder, Formulario o Instagram.",
+      "Cada mensaje dice si está Pendiente o Respondido. Si quien escribe es una marca de tu CRM, aparece la etiqueta \"Cliente\". Si un mensaje del formulario lleva más de 24 h sin respuesta, te avisa: las marcas suelen quedarse con quien contesta primero.",
+      "Formulario: toca \"Responder\", elige una respuesta rápida (por ejemplo, la que incluye el enlace a tu media kit) o escribe la tuya, y toca \"Abrir en mi correo\". Se abre tu correo con todo listo para enviar, y el mensaje queda como respondido.",
+      "Instagram: la respuesta se publica directo en el comentario. También puedes ocultar un comentario (solo lo ven tú y quien lo escribió) o borrarlo.",
+      "Los mensajes directos (DM) llegarán más adelante: necesitan la revisión de Meta.",
+    ],
+  },
+  {
+    title: "Reportes",
+    paragraphs: [
+      "Tu crecimiento en números: seguidores totales y de los últimos 30 días, engagement promedio, publicaciones del mes, un gráfico de seguidores mes a mes, el mejor día y horario para publicar (según el engagement de tus publicaciones con fecha y métricas) y tus ingresos por marca.",
+      "\"Actualizar desde redes conectadas\" guarda los seguidores de hoy de cada red conectada. Las que no estén conectadas se pueden cargar a mano. En \"Reporte mensual (PDF)\" elige el mes y toca \"Ver reporte\": usa \"Guardar como PDF\" al imprimir y mándalo a una marca.",
+      "Tu media kit público vive en /media-kit: cópialo desde Reportes con \"Copiar enlace\" y pégalo en tu bio o en tus correos.",
+    ],
   },
 ];
 
@@ -507,6 +527,12 @@ const guiaEn: ManualBlock[] = [
     ],
   },
   {
+    title: "Appearance",
+    paragraphs: [
+      "Your photo, name, bio (in Spanish and English) and accent color. Pick one of 6 colors (lilac, pink, terracotta, sage, blue or gold) and check the preview before saving. The color changes the buttons, links and details across the whole site and this panel too.",
+    ],
+  },
+  {
     title: "Featured reviews",
     paragraphs: ["Product reviews with an optional photo, category, title, description and a 1-to-5 star rating."],
   },
@@ -531,8 +557,22 @@ const guiaEn: ManualBlock[] = [
     paragraphs: ["The \"why work with me\" text, the footer's intro and thank-you texts, and your details: email, WhatsApp, collab email, website, Instagram, TikTok, YouTube, Facebook and Pinterest."],
   },
   {
-    title: "Messages",
-    paragraphs: ["The messages brands send you through the site's contact form. You can mark them read/unread."],
+    title: "Inbox",
+    paragraphs: [
+      "Everything people write to you in one place: contact-form messages from the site and, if you connected Instagram, the comments on your latest posts. Filter with the chips at the top: All, To reply, Form or Instagram.",
+      "Each message shows whether it's Pending or Replied. If the sender is a brand in your CRM, you'll see a \"Client\" tag. If a form message has gone more than 24 h without a reply, you'll get a heads-up: brands usually go with whoever answers first.",
+      "Form: tap \"Reply\", pick a quick reply (for example, the one with your media kit link) or write your own, and tap \"Open in my email\". Your email app opens with everything ready to send, and the message is marked as replied.",
+      "Instagram: your reply is posted right on the comment. You can also hide a comment (only you and its author can see it) or delete it.",
+      "Direct messages (DMs) are coming later: they need Meta's review.",
+    ],
+  },
+  {
+    title: "Reports",
+    paragraphs: [
+      "Your growth in numbers: total followers and last-30-days growth, average engagement, posts this month, a month-by-month follower chart, the best day and time to post (based on the engagement of your posts with a date and metrics) and your revenue by brand.",
+      "\"Actualizar desde redes conectadas\" (refresh from connected networks) saves today's followers for each connected network. Networks that aren't connected can be entered by hand. Under \"Reporte mensual (PDF)\", pick the month and tap \"Ver reporte\": choose \"Save as PDF\" when printing and send it to a brand.",
+      "Your public media kit lives at /media-kit: copy the link from Reports (\"Copiar enlace\") and put it in your bio or emails.",
+    ],
   },
 ];
 

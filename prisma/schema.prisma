@@ -184,6 +184,7 @@ model ContactMessage {
   collaborationType String
   message           String
   read              Boolean  @default(false)
+  repliedAt         DateTime?
   createdAt         DateTime @default(now())
 }
 

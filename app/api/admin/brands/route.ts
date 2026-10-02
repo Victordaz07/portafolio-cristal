@@ -1,37 +1,35 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { brandCrmInclude, brandFieldsSchema, toBrandData, autoEventNotes } from "@/lib/brand-crm";
 
 export const dynamic = "force-dynamic";
 
-const brandSchema = z.object({
-  name: z.string().min(1),
-  logoUrl: z.string().url().optional().or(z.literal("")),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
-  active: z.boolean().optional().default(true),
-});
+const brandCreateSchema = brandFieldsSchema.required({ name: true });
 
 export async function GET() {
-  const brands = await prisma.brand.findMany({ orderBy: { order: "asc" } });
+  const brands = await prisma.brand.findMany({ orderBy: { order: "asc" }, include: brandCrmInclude });
   return NextResponse.json(brands);
 }
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
-  const parsed = brandSchema.safeParse(body);
+  const parsed = brandCreateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
   const maxOrder = await prisma.brand.aggregate({ _max: { order: true } });
+  // El orden de una marca nueva siempre va al final del carrusel.
+  const input = { ...parsed.data, order: undefined };
+  const notes = autoEventNotes({ dealStatus: null, paymentStatus: null }, input);
   const brand = await prisma.brand.create({
     data: {
-      name: parsed.data.name,
-      logoUrl: parsed.data.logoUrl || null,
-      websiteUrl: parsed.data.websiteUrl || null,
-      active: parsed.data.active,
+      ...(toBrandData(input) as { name: string }),
+      active: input.active ?? true,
       order: (maxOrder._max.order ?? -1) + 1,
+      events: notes.length ? { create: notes.map((note) => ({ note })) } : undefined,
     },
+    include: brandCrmInclude,
   });
 
   return NextResponse.json(brand, { status: 201 });

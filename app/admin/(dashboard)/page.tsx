@@ -3,6 +3,13 @@ import type { ReactNode } from "react";
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
+import {
+  PAYMENT_STATUS_META,
+  isPaymentStatus,
+  daysUntil,
+  dueLabel,
+  formatMoney,
+} from "@/lib/crm";
 
 // Iniciales y color por red, igual que en el diseño del panel v2.
 const PLATFORM_META: Record<string, { initials: string; className: string }> = {
@@ -31,20 +38,14 @@ function SectionTitle({ children, aside }: { children: ReactNode; aside?: ReactN
 export default async function AdminHomePage() {
   const [
     contentCards,
-    activeBrands,
     unreadMessages,
-    reviews,
-    testimonials,
     pendingMessages,
     latestCards,
     stats,
-    brandsWithContent,
+    deals,
   ] = await Promise.all([
     prisma.contentCard.count(),
-    prisma.brand.count({ where: { active: true } }),
     prisma.contactMessage.count({ where: { read: false } }),
-    prisma.review.count(),
-    prisma.testimonial.count(),
     prisma.contactMessage.findMany({
       where: { read: false },
       orderBy: { createdAt: "asc" },
@@ -57,19 +58,44 @@ export default async function AdminHomePage() {
     }),
     prisma.stat.findMany({ orderBy: { order: "asc" }, take: 3 }),
     prisma.brand.findMany({
-      where: { active: true, contentCards: { some: {} } },
+      where: { dealStatus: { not: null } },
       orderBy: { order: "asc" },
-      take: 5,
-      select: { id: true, name: true, _count: { select: { contentCards: true } } },
+      select: {
+        id: true,
+        name: true,
+        dealStatus: true,
+        dealValue: true,
+        paymentStatus: true,
+        nextAction: true,
+        nextActionDue: true,
+      },
     }),
   ]);
 
+  const openDeals = deals.filter((d) => d.dealStatus === "active" || d.dealStatus === "negotiating");
+  const followUps = deals
+    .filter((d) => d.dealStatus !== "completed" && d.nextAction)
+    .sort(
+      (a, b) =>
+        (a.nextActionDue?.getTime() ?? Infinity) - (b.nextActionDue?.getTime() ?? Infinity)
+    );
+  const overdueCount = followUps.filter((d) => d.nextActionDue && daysUntil(d.nextActionDue) < 0).length;
+  const payments = deals.filter((d) => isPaymentStatus(d.paymentStatus));
+
   const kpis = [
     { label: "Publicaciones en el feed", value: contentCards, href: "/admin/feed" },
-    { label: "Marcas activas", value: activeBrands, href: "/admin/marcas" },
+    {
+      label: "Tratos activos",
+      value: deals.filter((d) => d.dealStatus === "active").length,
+      href: "/admin/marcas",
+    },
     { label: "Mensajes sin leer", value: unreadMessages, href: "/admin/mensajes" },
-    { label: "Reseñas destacadas", value: reviews, href: "/admin/resenas" },
-    { label: "Testimonios", value: testimonials, href: "/admin/testimonios" },
+    { label: "Seguimientos pendientes", value: followUps.length, href: "/admin/marcas" },
+    {
+      label: "Valor en tratos abiertos",
+      value: formatMoney(openDeals.reduce((sum, d) => sum + (d.dealValue ?? 0), 0)),
+      href: "/admin/marcas",
+    },
   ];
 
   const quickActions = [
@@ -84,7 +110,7 @@ export default async function AdminHomePage() {
 
       <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-[repeat(auto-fit,minmax(190px,1fr))]">
         {kpis.map((kpi) => (
-          <Link key={kpi.href} href={kpi.href}>
+          <Link key={kpi.label} href={kpi.href}>
             <Card className="h-full transition hover:-translate-y-0.5 hover:border-coral/30 hover:shadow-[0_8px_24px_rgba(36,18,39,0.08)]">
               <p className="font-fraunces text-3xl font-semibold text-coral">{kpi.value}</p>
               <p className="mt-sp-1 text-sm text-ink/70">{kpi.label}</p>
@@ -95,6 +121,53 @@ export default async function AdminHomePage() {
 
       <div className="mt-sp-5 grid gap-sp-4 lg:grid-cols-[1.3fr_1fr]">
         <div className="flex flex-col gap-sp-4">
+          <Card>
+            <SectionTitle
+              aside={
+                overdueCount > 0 && (
+                  <span className="rounded-full bg-coral px-sp-2 py-0.5 font-mono text-[10px] font-bold text-white">
+                    {overdueCount} {overdueCount === 1 ? "atrasado" : "atrasados"}
+                  </span>
+                )
+              }
+            >
+              Seguimientos pendientes
+            </SectionTitle>
+            {followUps.length === 0 ? (
+              <p className="text-sm text-ink/60">
+                Sin pendientes. Agrega un “próximo paso” a tus tratos en Marcas para verlos aquí.
+              </p>
+            ) : (
+              <ul className="divide-y divide-line">
+                {followUps.slice(0, 5).map((deal) => {
+                  const overdue = deal.nextActionDue && daysUntil(deal.nextActionDue) < 0;
+                  return (
+                    <li key={deal.id}>
+                      <Link
+                        href="/admin/marcas"
+                        className="flex items-center justify-between gap-sp-3 py-2.5 hover:opacity-80"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-ink">{deal.name}</p>
+                          <p className="truncate text-xs text-ink/60">{deal.nextAction}</p>
+                        </div>
+                        {deal.nextActionDue && (
+                          <span
+                            className={`shrink-0 rounded-full px-sp-2 py-0.5 text-[11px] font-semibold ${
+                              overdue ? "bg-coral/15 text-coral" : "bg-lime/30 text-ink"
+                            }`}
+                          >
+                            {dueLabel(deal.nextActionDue)}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </Card>
+
           <Card>
             <SectionTitle
               aside={
@@ -188,22 +261,38 @@ export default async function AdminHomePage() {
           </Link>
 
           <Card>
-            <SectionTitle>Marcas con contenido</SectionTitle>
-            {brandsWithContent.length === 0 ? (
+            <SectionTitle>Pagos de marcas</SectionTitle>
+            {payments.length === 0 ? (
               <p className="text-sm text-ink/60">
-                Vincula una marca a una publicación del feed para verla aquí.
+                Marca un trato como “Pendiente” o “Pagado” en Marcas para seguir tus cobros.
               </p>
             ) : (
               <ul className="flex flex-col gap-2.5">
-                {brandsWithContent.map((brand) => (
-                  <li key={brand.id} className="flex items-center justify-between gap-sp-3">
-                    <span className="truncate text-[13px] font-semibold text-ink">{brand.name}</span>
-                    <span className="shrink-0 rounded-full bg-sage/40 px-2.5 py-0.5 text-[11px] font-bold text-cobalt">
-                      {brand._count.contentCards}{" "}
-                      {brand._count.contentCards === 1 ? "pieza" : "piezas"}
-                    </span>
-                  </li>
-                ))}
+                {payments.map((deal) => {
+                  const meta = isPaymentStatus(deal.paymentStatus)
+                    ? PAYMENT_STATUS_META[deal.paymentStatus]
+                    : null;
+                  return (
+                    <li key={deal.id}>
+                      <Link
+                        href="/admin/marcas"
+                        className="flex items-center justify-between gap-sp-3 hover:opacity-80"
+                      >
+                        <span className="truncate text-[13px] font-semibold text-ink">{deal.name}</span>
+                        <span className="flex shrink-0 items-center gap-sp-2">
+                          {deal.dealValue != null && (
+                            <span className="text-xs text-ink/55">{formatMoney(deal.dealValue)}</span>
+                          )}
+                          {meta && (
+                            <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${meta.className}`}>
+                              {meta.label}
+                            </span>
+                          )}
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </Card>

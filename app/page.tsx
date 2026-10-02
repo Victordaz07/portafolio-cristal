@@ -64,8 +64,16 @@ export default async function HomePage() {
   ] = await Promise.all([
     prisma.hero.findFirst(),
     prisma.stat.findMany({ orderBy: { order: "asc" } }),
-    prisma.contentCard.findMany({ orderBy: { order: "asc" }, include: { brand: true } }),
-    prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
+    prisma.contentCard.findMany({
+      orderBy: { order: "asc" },
+      include: { brand: { select: { name: true, logoUrl: true } } },
+    }),
+    // Solo columnas públicas: la marca también guarda datos privados del CRM.
+    prisma.brand.findMany({
+      where: { active: true },
+      orderBy: { order: "asc" },
+      select: { id: true, name: true, logoUrl: true, websiteUrl: true },
+    }),
     prisma.faqItem.findMany({ orderBy: { order: "asc" } }),
     prisma.siteSettings.findFirst(),
     prisma.review.findMany({ orderBy: { order: "asc" } }),

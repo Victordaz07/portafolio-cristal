@@ -77,6 +77,31 @@ model Brand {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   contentCards ContentCard[]
+
+  // CRM de colaboraciones (panel v2). dealStatus null = solo logo de portafolio, sin trato.
+  dealStatus     String? // "prospect" | "negotiating" | "active" | "completed"
+  contactName    String?
+  contactEmail   String?
+  dealValue      Int? // en USD, sin decimales
+  packageDetail  String?
+  platforms      String[]     @default([])
+  paymentStatus  String? // "pending" | "paid"
+  nextAction     String?
+  nextActionDue  DateTime?
+  lastContactAt  DateTime?
+  notes          String?
+  events         BrandEvent[]
+}
+
+model BrandEvent {
+  id        String   @id @default(cuid())
+  brandId   String
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  note      String
+  createdAt DateTime @default(now())
+
+  @@index([brandId, date])
 }
 
 model Review {

@@ -107,8 +107,10 @@ Dos detalles ocultos, pensados como un pequeño gesto para Crislia:
 
 Todas las rutas bajo `/admin/*` y `/api/admin/*` (excepto login) están
 protegidas por `middleware.ts`. El shell (`components/admin/AdminShell.tsx`)
-tiene un sidebar agrupado por íconos, colapsable en mobile, con badge de
-mensajes sin leer.
+tiene un sidebar oscuro con grupos colapsables (Contenido, Landing, Prueba
+social, Negocio, Ayuda), "Resumen" fijo arriba y badge de mensajes sin leer.
+El Resumen (`/admin`) muestra seguimientos con marcas, pagos, mensajes por
+atender y las últimas publicaciones.
 
 Secciones (cada una con su Manager + formulario):
 
@@ -117,7 +119,7 @@ Secciones (cada una con su Manager + formulario):
 | Hero | Portada: nombre, título, descripción, foto, CTAs. Incluye **vista previa en vivo** mientras se edita. |
 | Media kit | Las cifras junto al Hero (seguidores, colaboraciones, calificación). |
 | Feed | Tarjetas de fotos/videos, en dos modos: "Post de red social" o "Foto UGC de portafolio" (foto propia sin red social, con marca opcional). Ver "el problema conocido con TikTok" abajo. |
-| Marcas | Carrusel de logos, con estado activo/inactivo. También se pueden crear desde el formulario del Feed (modo Foto UGC). |
+| Marcas | Dos pestañas: **Tratos** (CRM de colaboraciones: estado del trato, contacto, valor, paquete, plataformas, próximo paso con fecha, pago, notas e historial automático) y **Carrusel del sitio** (orden y visibilidad de los logos). Los datos del trato nunca llegan al sitio público. También se pueden crear marcas desde el formulario del Feed (modo Foto UGC). |
 | Reseñas destacadas | Reseñas de producto con calificación en estrellas. |
 | Cómo trabajo | Servicios ofrecidos, con ícono. |
 | Paquetes | Paquetes de colaboración (sin precios). |

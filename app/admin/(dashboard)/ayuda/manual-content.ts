@@ -29,10 +29,12 @@ const primeraVezEs: ManualBlock[] = [
   {
     title: "¿Cómo está organizado el menú de la izquierda?",
     list: [
-      "Contenido: Hero (portada), Media kit (tus stats), Feed (fotos y videos), Marcas (con quién has colaborado).",
-      "Confianza: Reseñas destacadas, Cómo trabajo, Paquetes, Testimonios — todo lo que ayuda a una marca a confiar en ti.",
-      "Sitio: FAQ (preguntas frecuentes) y Contacto (tus redes, email, textos del pie de página).",
-      "Mensajes: los mensajes que te escriben las marcas desde el formulario de contacto del sitio.",
+      "Resumen (arriba de todo): tu panorama del día — seguimientos con marcas, pagos, mensajes sin leer y últimas publicaciones.",
+      "Contenido: Feed (fotos y videos).",
+      "Landing: Portada (Hero), Media kit (tus stats), Cómo trabajo, Paquetes, FAQ y Contacto y pie — todo lo que se ve en tu sitio público.",
+      "Prueba social: Marcas (tu CRM de tratos y el carrusel de logos), Reseñas destacadas y Testimonios.",
+      "Negocio: Bandeja, con los mensajes que te escriben las marcas desde el formulario de contacto del sitio.",
+      "Cada grupo se abre y se cierra tocando su título; el panel recuerda cómo lo dejaste.",
     ],
   },
   {
@@ -74,10 +76,12 @@ const primeraVezEn: ManualBlock[] = [
   {
     title: "How is the left-hand menu organized?",
     list: [
-      "Content: Hero (landing), Media kit (your stats), Feed (photos & videos), Brands (who you've collaborated with).",
-      "Trust: Featured reviews, How I work, Packages, Testimonials — everything that helps a brand trust you.",
-      "Site: FAQ (frequently asked questions) and Contact (your socials, email, footer texts).",
-      "Messages: the messages brands send you through the site's contact form.",
+      "Summary (at the very top): your overview for the day — brand follow-ups, payments, unread messages and latest posts.",
+      "Content: Feed (photos & videos).",
+      "Landing: Hero, Media kit (your stats), How I work, Packages, FAQ and Contact & footer — everything shown on your public site.",
+      "Social proof: Brands (your deals CRM and the logo carousel), Featured reviews and Testimonials.",
+      "Business: Inbox, with the messages brands send you through the site's contact form.",
+      "Tap a group's title to open or close it; the panel remembers how you left it.",
     ],
   },
   {
@@ -314,7 +318,12 @@ const guiaEs: ManualBlock[] = [
   {
     title: "Marcas",
     paragraphs: [
-      "El carrusel de logos. Cada marca tiene nombre, logo, link a su web (opcional) y un estado activo/inactivo — las inactivas dejan de mostrarse en el sitio sin necesidad de borrarlas.",
+      "Marcas tiene dos pestañas: \"Tratos\" (tu CRM de colaboraciones) y \"Carrusel del sitio\" (los logos que se ven en tu sitio público).",
+      "En Tratos, cada marca puede tener un estado (Prospecto, Negociando, Activo, Completado), contacto, valor del trato, paquete, plataformas, próximo paso con fecha límite, estado de pago y notas. Toca una marca de la lista para ver su detalle; desde ahí cambias el estado o el pago con un toque.",
+      "El historial del acuerdo se llena solo cuando cambias el estado o el pago, y también puedes agregar entradas a mano (ej: \"Contraoferta de la marca: $800\"). Al agregar una, la fecha se toma como último contacto.",
+      "Los datos del trato (valor, contacto, notas) son privados: nunca se muestran en el sitio público. Una marca nueva creada como trato queda oculta del carrusel hasta que marques \"Mostrar el logo en el carrusel\".",
+      "Los próximos pasos y los pagos aparecen en el Resumen, con aviso cuando algo está vencido.",
+      "En Carrusel del sitio ordenas los logos con ↑ ↓ y eliges cuáles se muestran u ocultan (sin borrarlos).",
       "También puedes crear una marca nueva sin salir de Feed: al agregar una tarjeta de tipo \"Foto UGC\", el selector de marca tiene la opción \"+ agregar nueva marca\" (nombre + logo).",
     ],
   },
@@ -374,7 +383,12 @@ const guiaEn: ManualBlock[] = [
   {
     title: "Brands",
     paragraphs: [
-      "The logo carousel. Each brand has a name, logo, an optional website link, and an active/inactive status — inactive ones stop showing on the site without needing to delete them.",
+      "Brands has two tabs: \"Deals\" (your collaborations CRM) and \"Site carousel\" (the logos shown on your public site).",
+      "In Deals, each brand can have a status (Prospect, Negotiating, Active, Completed), contact, deal value, package, platforms, next step with a due date, payment status and notes. Tap a brand in the list to see its details; from there you change the status or payment with one tap.",
+      "The deal history fills itself in when you change the status or payment, and you can also add entries by hand (e.g. \"Brand counter-offer: $800\"). Adding one also updates the last contact date.",
+      "Deal data (value, contact, notes) is private: it never shows on the public site. A new brand created as a deal stays hidden from the carousel until you check \"Show the logo in the carousel\".",
+      "Next steps and payments show up in the Summary, flagged when something is overdue.",
+      "In Site carousel you reorder logos with ↑ ↓ and choose which ones are shown or hidden (without deleting them).",
       "You can also create a new brand without leaving Feed: when adding a \"UGC photo\" card, the brand dropdown has a \"+ add new brand\" option (name + logo).",
     ],
   },

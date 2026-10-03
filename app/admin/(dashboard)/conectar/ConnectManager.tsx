@@ -294,7 +294,11 @@ export default function ConnectManager({
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-ink">
-                      {account.username ? `@${account.username.replace(/^@/, "")}` : account.displayName ?? "Cuenta conectada"}
+                      {account.displayName && account.username
+                        ? `${account.displayName} · @${account.username.replace(/^@/, "")}`
+                        : account.username
+                          ? `@${account.username.replace(/^@/, "")}`
+                          : account.displayName ?? "Cuenta conectada"}
                     </p>
                     <p className="text-xs text-ink/60">
                       {formatCount(account.followers)} seguidores · conectada el {formatShortDate(account.connectedAt)}

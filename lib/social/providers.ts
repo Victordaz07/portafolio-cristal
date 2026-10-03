@@ -298,20 +298,24 @@ const tiktok: SocialProvider = {
     return tiktokTokens(data, this.scopes);
   },
   async fetchProfile({ accessToken }) {
-    const data = await fetchJson<{ data?: { user?: Json } }>(
-      `https://open.tiktokapis.com/v2/user/info/?fields=${[
-        "open_id",
-        "display_name",
-        "avatar_url",
-        "username",
-        "follower_count",
-        "following_count",
-        "likes_count",
-        "video_count",
-      ].join(",")}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    );
-    const user = data.data?.user ?? {};
+    // Cada grupo de campos necesita su permiso (basic, profile, stats). Si la persona o la app no
+    // dieron alguno, TikTok rechaza todo el pedido: se reintenta sin esos campos en vez de fallar.
+    const basic = ["open_id", "display_name", "avatar_url"];
+    const profile = ["username"];
+    const stats = ["follower_count", "following_count", "likes_count", "video_count"];
+    let user: Json = {};
+    for (const fields of [[...basic, ...profile, ...stats], [...basic, ...stats], [...basic, ...profile], basic]) {
+      try {
+        const data = await fetchJson<{ data?: { user?: Json } }>(
+          `https://open.tiktokapis.com/v2/user/info/?fields=${fields.join(",")}`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+        user = data.data?.user ?? {};
+        break;
+      } catch (error) {
+        if (fields.length === basic.length || !/scope/i.test(error instanceof Error ? error.message : "")) throw error;
+      }
+    }
     return {
       externalId: String(user.open_id),
       username: str(user.username),

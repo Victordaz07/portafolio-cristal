@@ -6,6 +6,7 @@ import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountForm from "./AccountForm";
 import { emailConfigured } from "@/lib/email";
+import { isPlatformAdminEmail } from "@/lib/platform-admin";
 import ShareInsightsButton from "@/components/admin/ShareInsightsButton";
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ correo?: string }> }) {
@@ -83,7 +84,12 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
           )}
         </div>
       </Card>
-      <AccountForm initialName={user?.name ?? creator?.name ?? ""} email={user?.email ?? ""} />
+      <AccountForm
+        initialName={user?.name ?? creator?.name ?? ""}
+        email={user?.email ?? ""}
+        isPlatformAdmin={user ? isPlatformAdminEmail(user.email) : false}
+        impersonating={Boolean(session?.actorId)}
+      />
     </div>
   );
 }

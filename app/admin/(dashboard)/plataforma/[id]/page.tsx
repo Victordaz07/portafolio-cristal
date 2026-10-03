@@ -7,6 +7,7 @@ import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountActions from "./AccountActions";
 import BillingCard from "./BillingCard";
+import OwnerEmailForm from "./OwnerEmailForm";
 import { PLANS } from "@/lib/plans";
 import { creatorPerformance } from "@/lib/platform-analytics";
 import { formatCompact } from "@/lib/metrics";
@@ -25,6 +26,7 @@ const ACTION_LABEL: Record<string, string> = {
   "comp-off": "Quitó la cortesía",
   plan: "Cambió el plan",
   trial: "Extendió la prueba gratis",
+  email: "Cambió el correo de acceso",
 };
 
 const fmt = (d: Date | null | undefined) =>
@@ -165,6 +167,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
                   {u.email} · {u.emailVerifiedAt ? "✓ correo confirmado" : "correo sin confirmar"}
                 </p>
                 <p className="text-xs text-ink/55">Último ingreso: {fmt(u.lastLoginAt)}</p>
+                {!isMine && u.role === "owner" && <OwnerEmailForm creatorId={creator.id} name={creator.name} current={u.email} />}
               </li>
             ))}
           </ul>

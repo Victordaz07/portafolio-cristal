@@ -1,7 +1,7 @@
 import { prismaRoot } from "./prisma-root";
 import { issueAuthToken } from "./auth-tokens";
 import { sendEmail } from "./email";
-import { passwordChangedEmail, verifyEmail, welcomeEmail } from "./email-templates";
+import { emailChangedEmail, passwordChangedEmail, verifyEmail, welcomeEmail } from "./email-templates";
 import { creatorSiteUrl, platformOrigin } from "./site-url";
 
 // Correos de la cuenta (bienvenida, confirmar correo, aviso de contraseña cambiada).
@@ -52,4 +52,10 @@ export async function sendPasswordChangedEmail(userId: string) {
   const origin = await platformOrigin();
   const mail = passwordChangedEmail({ origin, name: user.name, forgotUrl: `${origin}/admin/recuperar` });
   return sendEmail({ to: user.email, ...mail });
+}
+
+/** Aviso de seguridad al correo ANTERIOR: la cuenta ahora entra con otro correo. */
+export async function sendEmailChangedNotice(oldEmail: string, name: string | null, newEmail: string) {
+  const origin = await platformOrigin();
+  return sendEmail({ to: oldEmail, ...emailChangedEmail({ origin, name, newEmail }) });
 }

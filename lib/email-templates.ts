@@ -148,6 +148,28 @@ export function passwordChangedEmail(p: { origin: string; name: string | null; f
   };
 }
 
+export function emailChangedEmail(p: { origin: string; name: string | null; newEmail: string }) {
+  const subject = "El correo de tu cuenta de Foliocrew cambió";
+  return {
+    subject,
+    html: layout({
+      origin: p.origin,
+      preheader: "Aviso de seguridad.",
+      title: "Tu correo de acceso cambió",
+      body: [
+        escapeHtml(hello(p.name)),
+        `Te avisamos que tu cuenta de Foliocrew ahora inicia sesión con <strong>${escapeHtml(p.newEmail)}</strong>. Desde ahora los avisos llegan a ese correo.`,
+        "Si no fuiste tú ni lo pediste, responde este correo cuanto antes y lo revisamos.",
+      ],
+    }),
+    text: text([
+      hello(p.name),
+      `Tu cuenta de Foliocrew ahora inicia sesión con ${p.newEmail}. Desde ahora los avisos llegan a ese correo.`,
+      "Si no fuiste tú ni lo pediste, responde este correo cuanto antes.",
+    ]),
+  };
+}
+
 // ─── Mensajes de marcas ───
 
 export function brandMessageEmail(p: {

@@ -48,7 +48,7 @@ www.crisliaugc.com            → dominio propio de la persona creadora (plan Pr
 | **10. Pagos (Stripe)** | Planes Folio, Folio Pro y Crew, prueba de 14 días, cupones de lanzamiento, portal de cliente y webhooks. Funciones según el plan. | Foliocrew cobra solo |
 | **11. Página de venta** ✅ | `foliocrew.pro` con la landing del kit, lista de espera, precios y FAQ. Píxel de Meta para los anuncios. | Adónde mandar el tráfico de Instagram |
 | **12. Correos** ✅ | Bienvenida, confirmar correo, recuperar contraseña, aviso de contraseña cambiada, aviso de mensajes de marcas y correos de la lista de espera (Resend). Los recordatorios de la prueba y el aviso de pago fallido se hacen con la Fase 10. | Comunicación automática |
-| **13. Tu panel de dueño** | Lista de creadores, plan, estado de pago, uso de IA, soporte e "entrar como" (para ayudar). | Control del negocio |
+| **13. Tu panel de dueño** ✅ | Cuentas con métricas (altas, último ingreso, asistente, correo, uso de IA), ficha con nota interna e historial, pausar y reactivar, y "entrar como" para dar soporte. El plan y el estado de pago se agregan con la Fase 10. | Control del negocio |
 | **14. Apps de redes en producción** | Revisión de Meta (App Review + verificación del negocio), auditoría de TikTok y verificación de Google. Te preparo los videos y textos que piden. | Cualquier creadora puede conectar sus redes |
 
 **Orden recomendado:** 7 → 8 → 9, y con eso ya tienes tu portafolio y el de Cristal en

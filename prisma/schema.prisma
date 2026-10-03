@@ -336,6 +336,8 @@ model SocialAccount {
   creator      Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   platform     String // "instagram" | "facebook" | "tiktok" | "youtube"
   externalId   String
+  /// Id de la persona para esta app (Meta: lo manda al desconectar o pedir borrar datos)
+  scopedId     String?
   username     String?
   displayName  String?
   avatarUrl    String?
@@ -488,4 +490,14 @@ model PlatformAction {
   createdAt  DateTime @default(now())
 
   @@index([creatorId, createdAt])
+}
+
+/// Solicitudes de borrado de datos que manda Meta (callback de "Eliminación de datos").
+model DataDeletionRequest {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  platform        String
+  externalId      String
+  deletedAccounts Int      @default(0)
+  createdAt       DateTime @default(now())
 }

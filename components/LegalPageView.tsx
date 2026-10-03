@@ -39,7 +39,7 @@ function linkify(text: string): ReactNode[] {
 }
 
 /** Página legal pública. El idioma sale de ?lang=es|en (útil para los revisores de cada red) o de la cookie. */
-export default async function LegalPageView({ id, lang }: { id: LegalPageId; lang?: string }) {
+export default async function LegalPageView({ id, lang, notice }: { id: LegalPageId; lang?: string; notice?: ReactNode }) {
   const locale: Locale = lang === "en" || lang === "es" ? lang : await getLocale();
   const page = getLegalPage(id, locale, {
     platformName: siteConfig.platformName,
@@ -83,6 +83,8 @@ export default async function LegalPageView({ id, lang }: { id: LegalPageId; lan
             </Link>
           ))}
         </nav>
+
+        {notice}
 
         <article className="mt-sp-6 rounded-[18px] border border-line bg-white p-sp-5 sm:p-sp-6">
           <h1 className="font-fraunces text-3xl font-medium italic text-ink sm:text-4xl">{page.title}</h1>

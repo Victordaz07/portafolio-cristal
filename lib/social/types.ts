@@ -18,6 +18,8 @@ export interface SocialProfile {
   displayName: string | null;
   avatarUrl: string | null;
   followers: number | null;
+  /** Id de la persona para esta app (Meta lo manda al desconectar o pedir borrar datos). */
+  scopedId?: string | null;
   /** Datos extra para mostrar en la prueba (publicaciones, páginas, etc.). */
   extra: Record<string, string | number | null>;
 }

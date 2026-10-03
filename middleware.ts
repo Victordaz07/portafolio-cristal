@@ -26,6 +26,15 @@ function isPlatformHost(host: string) {
   return hostname === root || hostname === `www.${root}` || hostname === `app.${root}`;
 }
 
+/** Si el panel se abrió en otro dominio (subdominio, dominio propio, vercel.app), el origen correcto; si no, null. */
+function panelHost(host: string) {
+  const root = (process.env.PLATFORM_ROOT_DOMAIN || "").toLowerCase();
+  if (!root || host.toLowerCase() === root) return null;
+  const hostname = root.split(":")[0];
+  const protocol = hostname === "localhost" || hostname.endsWith(".localhost") ? "http" : "https";
+  return `${protocol}://${root}`;
+}
+
 export async function middleware(request: NextRequest) {
   let { pathname } = request.nextUrl;
 
@@ -56,6 +65,15 @@ export async function middleware(request: NextRequest) {
 
   const isApi = pathname.startsWith("/api/admin");
   const isAdmin = isApi || pathname === "/admin" || pathname.startsWith("/admin/");
+
+  // El panel vive en un solo lugar (foliocrew.pro/admin): la sesión y la conexión con las redes
+  // (Instagram, TikTok, YouTube) necesitan una sola dirección de regreso registrada.
+  const canonical = panelHost(request.headers.get("host") || "");
+  if (isAdmin && !isApi && canonical && request.method === "GET") {
+    const url = new URL(`${pathname}${request.nextUrl.search}`, canonical);
+    return NextResponse.redirect(url, 308);
+  }
+
   if (isAdmin) {
     headers.set(SCOPE_HEADER, "admin");
     const isPublic = isApi

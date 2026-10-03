@@ -22,14 +22,15 @@ const instagram: SocialProvider = {
   id: "instagram",
   label: "Instagram",
   envKeys: ["INSTAGRAM_APP_ID", "INSTAGRAM_APP_SECRET"],
-  scopes: ["instagram_business_basic", "instagram_business_manage_comments", "instagram_business_manage_messages"],
+  // Solo lo que la app usa hoy: Meta rechaza en la revisión los permisos que no se usan.
+  scopes: ["instagram_business_basic", "instagram_business_manage_comments"],
   consoleUrl: "https://developers.facebook.com/apps/",
   can: [
     "Leer tu perfil, seguidores y publicaciones con sus likes y comentarios",
     "Leer, responder, ocultar y borrar comentarios",
-    "Leer y responder DMs (hasta 24 h después del último mensaje de la persona)",
   ],
   later: [
+    "Leer y responder DMs (hasta 24 h después del último mensaje de la persona)",
     "Publicar fotos, carruseles, Reels e Historias (hasta 100 por día)",
     "Métricas avanzadas: alcance, vistas, guardados, compartidos y público por edad, país y género",
     "Ver cuándo otras cuentas te mencionan",
@@ -94,6 +95,8 @@ const instagram: SocialProvider = {
       displayName: str(me.name),
       avatarUrl: str(me.profile_picture_url),
       followers: num(me.followers_count),
+      // id de la app (lo manda Meta al desconectar o pedir borrar datos).
+      scopedId: me.id != null ? String(me.id) : null,
       extra: {
         "Tipo de cuenta": str(me.account_type),
         Siguiendo: num(me.follows_count),

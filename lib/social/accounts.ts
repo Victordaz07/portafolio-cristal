@@ -35,6 +35,7 @@ function profileData(profile: SocialProfile) {
     displayName: profile.displayName,
     avatarUrl: profile.avatarUrl,
     followers: profile.followers,
+    scopedId: profile.scopedId ?? null,
   };
 }
 

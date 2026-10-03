@@ -336,6 +336,8 @@ model SiteSettings {
   supportMessage   String?
   supportMessageEn String?
   accentColor      String   @default("lila") // paleta de acento (lib/theme.ts)
+  fontPairing      String   @default("editorial") // combinación tipográfica (lib/theme.ts)
+  backgroundStyle  String   @default("clasico") // intensidad de la textura de fondo (lib/theme.ts)
   updatedAt        DateTime @updatedAt
 }
 

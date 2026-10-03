@@ -7,7 +7,16 @@ import ImageUploadField from "@/components/admin/ImageUploadField";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, primaryButtonClass } from "@/lib/admin-ui";
-import { ACCENTS, accentVars, type AccentId } from "@/lib/theme";
+import {
+  ACCENTS,
+  accentVars,
+  type AccentId,
+  FONT_PAIRINGS,
+  fontVars,
+  type FontPairingId,
+  BACKGROUND_STYLES,
+  type BackgroundStyleId,
+} from "@/lib/theme";
 
 interface Values {
   name: string;
@@ -15,6 +24,8 @@ interface Values {
   description: string;
   descriptionEn: string;
   accentColor: string;
+  fontPairing: string;
+  backgroundStyle: string;
 }
 
 export default function AppearanceForm({ initial, niche }: { initial: Values; niche: string }) {
@@ -64,7 +75,7 @@ export default function AppearanceForm({ initial, niche }: { initial: Values; ni
         <div>
           <p className="text-sm font-medium text-ink">Color de acento</p>
           <p className="text-xs text-ink/55">Botones, enlaces, etiquetas y detalles de todo el sitio y del panel.</p>
-          <div className="mt-sp-3 grid grid-cols-3 gap-sp-3 sm:grid-cols-6">
+          <div className="mt-sp-3 grid grid-cols-4 gap-sp-3 sm:grid-cols-7">
             {(Object.keys(ACCENTS) as AccentId[]).map((id) => {
               const palette = ACCENTS[id];
               const selected = values.accentColor === id;
@@ -91,15 +102,83 @@ export default function AppearanceForm({ initial, niche }: { initial: Values; ni
         </div>
 
         <div>
+          <p className="text-sm font-medium text-ink">Tipografía</p>
+          <p className="text-xs text-ink/55">El estilo de los titulares y del énfasis en cursiva, en todo el sitio.</p>
+          <div className="mt-sp-3 grid grid-cols-2 gap-sp-3">
+            {(Object.keys(FONT_PAIRINGS) as FontPairingId[]).map((id) => {
+              const pairing = FONT_PAIRINGS[id];
+              const selected = values.fontPairing === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => set("fontPairing", id)}
+                  aria-pressed={selected}
+                  style={fontVars(id) as React.CSSProperties}
+                  className={`flex flex-col items-center gap-1 rounded-[14px] border p-sp-3 transition ${
+                    selected ? "border-ink ring-2 ring-ink/20" : "border-line hover:border-ink/40"
+                  }`}
+                >
+                  <span className="font-fraunces text-2xl italic text-ink">{pairing.sample}</span>
+                  <span className="text-[11px] font-semibold text-ink">{pairing.label}</span>
+                  <span className="text-center text-[10px] text-ink/55">{pairing.description}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <p className="text-sm font-medium text-ink">Textura de fondo</p>
+          <p className="text-xs text-ink/55">Qué tan presente se ve el patrón decorativo detrás del sitio.</p>
+          <div className="mt-sp-3 grid grid-cols-4 gap-sp-3">
+            {(Object.keys(BACKGROUND_STYLES) as BackgroundStyleId[]).map((id) => {
+              const style = BACKGROUND_STYLES[id];
+              const selected = values.backgroundStyle === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => set("backgroundStyle", id)}
+                  aria-pressed={selected}
+                  className={`flex flex-col items-center gap-1.5 rounded-[14px] border p-sp-2 transition ${
+                    selected ? "border-ink ring-2 ring-ink/20" : "border-line hover:border-ink/40"
+                  }`}
+                >
+                  <span className="relative block h-9 w-full overflow-hidden rounded-[8px] bg-cream">
+                    <span
+                      aria-hidden="true"
+                      style={{ opacity: style.opacity, backgroundSize: "60px" }}
+                      className="absolute inset-0 bg-[url('/images/pattern-bg.webp')] bg-repeat"
+                    />
+                  </span>
+                  <span className="text-[11px] font-semibold text-ink">{style.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
           <button type="submit" disabled={saving} className={primaryButtonClass}>
             {saving ? "Guardando…" : "Guardar apariencia"}
           </button>
         </div>
       </Card>
 
-      {/* Vista previa con el color elegido, antes de guardar. */}
-      <div style={accentVars(values.accentColor) as React.CSSProperties}>
-        <Card className="flex flex-col items-center gap-sp-3 text-center">
+      {/* Vista previa con el color, la tipografía y el fondo elegidos, antes de guardar. */}
+      <div
+        className="relative overflow-hidden rounded-[28px]"
+        style={{ ...accentVars(values.accentColor), ...fontVars(values.fontPairing) } as React.CSSProperties}
+      >
+        {BACKGROUND_STYLES[values.backgroundStyle as BackgroundStyleId]?.opacity > 0 && (
+          <div
+            aria-hidden="true"
+            style={{ opacity: BACKGROUND_STYLES[values.backgroundStyle as BackgroundStyleId]?.opacity }}
+            className="pointer-events-none absolute inset-0 bg-[url('/images/pattern-bg.webp')] bg-repeat"
+          />
+        )}
+        <Card className="relative flex flex-col items-center gap-sp-3 text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Vista previa</p>
           {values.photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element

@@ -8,7 +8,103 @@
   --accent: 168 102 190;
   --accent-dark: 128 31 130;
   --accent-light: 195 172 234;
+  /* Colores base (estilo Editorial). El sitio público los cambia según el Estudio de diseño. */
+  --c-bg: 251 247 245;
+  --c-surface: 255 255 255;
+  --c-ink: 36 18 39;
+  --c-inverse: 75 83 32;
+  --c-inverse-deep: 43 48 19;
   --foreground: #241227;
+}
+
+/* Títulos de sección del sitio público: la tipografía elegida decide cursiva, mayúsculas y grosor. */
+.site-heading,
+.site-title {
+  font-family: var(--font-bodoni);
+  font-style: var(--heading-style, italic);
+  font-weight: var(--heading-weight, 700);
+}
+.site-heading {
+  text-transform: var(--heading-case, uppercase);
+}
+
+/* Bordes del sitio público (Rectos / Suaves / Redondos): misma forma original multiplicada por una escala. */
+.r-xs {
+  border-radius: calc(4px * var(--r-scale, 1));
+}
+.r-sm {
+  border-radius: calc(6px * var(--r-scale, 1));
+}
+.r-md {
+  border-radius: min(calc(14px * var(--r-scale, 1)), 24px);
+}
+.r-lg {
+  border-radius: min(calc(22px * var(--r-scale, 1)), 32px);
+}
+/* Radios del handoff "link en bio" (sm 12 · md 16 · lg 24), también escalados por los bordes elegidos. */
+.r-12 {
+  border-radius: min(calc(12px * var(--r-scale, 1)), 20px);
+}
+.r-16 {
+  border-radius: min(calc(16px * var(--r-scale, 1)), 26px);
+}
+.r-24 {
+  border-radius: min(calc(24px * var(--r-scale, 1)), 36px);
+}
+
+/* Link en bio: cada tarjeta entra con fade + subida de 12px (450ms), con retraso escalonado (--delay). */
+@keyframes fc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fc-rise {
+  opacity: 0;
+  animation: fc-rise 450ms ease forwards;
+  animation-delay: var(--delay, 0ms);
+}
+/* Franja de brillo diagonal que cruza el HeroCard cada 3.6s. */
+@keyframes fc-shimmer {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  55%,
+  100% {
+    transform: translateX(360%) skewX(-20deg);
+  }
+}
+.fc-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.32), transparent);
+  animation: fc-shimmer 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+/* Toque: se encoge un poco al instante. */
+.fc-press:active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fc-rise {
+    animation: none;
+    opacity: 1;
+  }
+  .fc-shimmer::after {
+    display: none;
+  }
+}
+
+.r-btn {
+  border-radius: var(--r-btn, 9999px);
 }
 
 html {

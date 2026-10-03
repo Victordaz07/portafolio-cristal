@@ -1,5 +1,18 @@
 import type { Metadata } from "next";
-import { Fraunces, Bodoni_Moda, Inter, Space_Mono, Parisienne } from "next/font/google";
+import {
+  Fraunces,
+  Bodoni_Moda,
+  Inter,
+  Space_Mono,
+  Parisienne,
+  Playfair_Display,
+  Space_Grotesk,
+  DM_Sans,
+  Cormorant_Garamond,
+  Fredoka,
+  Nunito,
+  Archivo,
+} from "next/font/google";
 import { getLocale } from "@/lib/locale";
 import { prisma } from "@/lib/prisma";
 import { accentVars } from "@/lib/theme";
@@ -42,6 +55,17 @@ const spaceMono = Space_Mono({
   display: "swap",
 });
 
+// Tipografías del Estudio de diseño (lib/design.ts → FONTS). Sin precarga: el navegador solo
+// descarga las que usa el sitio que está viendo.
+const playfair = Playfair_Display({ subsets: ["latin"], weight: ["500", "600", "700"], style: ["normal", "italic"], variable: "--font-playfair", display: "swap", preload: false });
+const grotesk = Space_Grotesk({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-grotesk", display: "swap", preload: false });
+const dmSans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-dmsans", display: "swap", preload: false });
+const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["500", "600", "700"], style: ["normal", "italic"], variable: "--font-cormorant", display: "swap", preload: false });
+const fredoka = Fredoka({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-fredoka", display: "swap", preload: false });
+const nunito = Nunito({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-nunito", display: "swap", preload: false });
+const archivo = Archivo({ subsets: ["latin"], weight: ["600", "800", "900"], variable: "--font-archivo", display: "swap", preload: false });
+const designFonts = [playfair, grotesk, dmSans, cormorant, fredoka, nunito, archivo].map((f) => f.variable).join(" ");
+
 export const metadata: Metadata = {
   // Cada página pública pone el nombre de su creadora (generateMetadata); esto es el respaldo.
   title: "Foliocrew — Portafolios para creadores de contenido UGC",
@@ -55,12 +79,12 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   // El color de acento elegido en Apariencia; si la base no responde, queda el lila por defecto.
-  const settings = await prisma.siteSettings.findFirst({ select: { accentColor: true } }).catch(() => null);
+  const settings = await prisma.siteSettings.findFirst({ select: { accentColor: true, customAccent: true } }).catch(() => null);
 
   return (
-    <html lang={locale} style={accentVars(settings?.accentColor) as React.CSSProperties}>
+    <html lang={locale} style={accentVars(settings?.accentColor, settings?.customAccent) as React.CSSProperties}>
       <body
-        className={`${fraunces.variable} ${bodoniModa.variable} ${inter.variable} ${spaceMono.variable} ${parisienne.variable} relative font-sans bg-cream text-ink antialiased`}
+        className={`${fraunces.variable} ${bodoniModa.variable} ${inter.variable} ${spaceMono.variable} ${parisienne.variable} ${designFonts} relative font-sans bg-cream text-ink antialiased`}
       >
         <div
           aria-hidden="true"

@@ -9,7 +9,7 @@ export interface TestimonialCardProps {
 
 export default function TestimonialCard({ quote, name, role, photoUrl }: TestimonialCardProps) {
   return (
-    <div className="flex flex-col gap-sp-4 rounded-md border border-line bg-white p-sp-6">
+    <div className="flex flex-col gap-sp-4 r-sm border border-line bg-surface p-sp-6">
       <QuoteIcon className="h-6 w-6 text-lime" />
       <p className="flex-1 text-ink/80 leading-relaxed">{quote}</p>
       <div className="flex items-center gap-sp-3">

@@ -8,18 +8,27 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Sombras del handoff "link en bio" (/enlaces).
+      boxShadow: {
+        "fc-card": "0 4px 14px rgba(75,83,32,.05)",
+        "fc-hero": "0 14px 30px rgba(36,18,39,.18)",
+        "fc-frame": "0 30px 70px rgba(36,18,39,.12)",
+      },
       colors: {
-        cream: "#FBF7F5",
-        cobalt: "#4B5320",
-        "cobalt-ink": "#2B3013",
+        // Colores base: variables CSS con los valores originales por defecto (app/globals.css).
+        // El sitio público las cambia según el estilo del Estudio de diseño (lib/design.ts); el panel no.
+        cream: "rgb(var(--c-bg) / <alpha-value>)",
+        surface: "rgb(var(--c-surface) / <alpha-value>)",
+        cobalt: "rgb(var(--c-inverse) / <alpha-value>)",
+        "cobalt-ink": "rgb(var(--c-inverse-deep) / <alpha-value>)",
         // Acento configurable en Apariencia (lib/theme.ts): variables CSS en canales RGB.
         lime: "rgb(var(--accent-light) / <alpha-value>)",
         moss: "rgb(var(--accent-dark) / <alpha-value>)",
         coral: "rgb(var(--accent) / <alpha-value>)",
         sage: "#9FB98E",
-        ink: "#241227",
+        ink: "rgb(var(--c-ink) / <alpha-value>)",
         white: "#FFFFFF",
-        line: "rgba(36,18,39,0.12)",
+        line: "rgb(var(--c-ink) / 0.12)",
       },
       fontFamily: {
         fraunces: ["var(--font-fraunces)"],

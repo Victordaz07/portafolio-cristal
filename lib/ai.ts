@@ -41,7 +41,7 @@ export async function getCreatorContext() {
 }
 
 /** Guarda una sugerencia de IA pedida por la cuenta actual (panel de dueño y límites por plan). */
-export async function recordAiUsage(kind: "caption" | "tips", usage?: { input_tokens?: number; output_tokens?: number }) {
+export async function recordAiUsage(kind: "caption" | "tips" | "design", usage?: { input_tokens?: number; output_tokens?: number }) {
   try {
     const [{ prismaRoot }, { currentCreatorId }] = await Promise.all([import("@/lib/prisma-root"), import("@/lib/tenant")]);
     await prismaRoot.aiUsage.create({

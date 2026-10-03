@@ -33,7 +33,7 @@ function Avatar({ platform, initial }: { platform: Platform; initial: string }) 
   if (platform === "instagram") {
     return (
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-coral via-lime to-moss p-[2px]">
-        <span className="flex h-full w-full items-center justify-center rounded-full bg-white font-bodoni text-[11px] font-bold italic text-ink">
+        <span className="flex h-full w-full items-center justify-center rounded-full bg-surface font-bodoni text-[11px] font-bold italic text-ink">
           {initial}
         </span>
       </span>
@@ -79,7 +79,7 @@ export default function ContentCard({
 
   return (
     <>
-      <article className="flex flex-col overflow-hidden rounded-[22px] border border-line bg-white shadow-[0_1px_2px_rgba(36,18,39,0.04)]">
+      <article className="flex flex-col overflow-hidden r-lg border border-line bg-surface shadow-[0_1px_2px_rgba(36,18,39,0.04)]">
         <header className={`flex items-center gap-sp-2 px-sp-3 py-2.5 ${dark ? "bg-ink" : ""}`}>
           <Avatar platform={platform} initial={name.charAt(0).toUpperCase()} />
           <div className="min-w-0">
@@ -130,7 +130,7 @@ export default function ContentCard({
                 />
               </span>
             ) : (
-              <span className="h-14 w-14 rounded-md border-2 border-white/80 bg-ink/20 backdrop-blur-sm transition group-hover:scale-105" />
+              <span className="h-14 w-14 r-sm border-2 border-white/80 bg-ink/20 backdrop-blur-sm transition group-hover:scale-105" />
             )}
           </span>
         </button>
@@ -164,7 +164,7 @@ export default function ContentCard({
                 comments: copy.comentarios,
                 engagement: copy.engagement,
               }).map((tile) => (
-                <div key={tile.key} className="rounded-[8px] bg-cream px-1.5 py-1">
+                <div key={tile.key} className="r-sm bg-cream px-1.5 py-1">
                   <p className={`font-mono text-[12px] font-bold ${tile.highlight ? "text-coral" : "text-ink"}`}>{tile.value}</p>
                   <p className="text-[8px] uppercase text-ink/55">{tile.label}</p>
                 </div>
@@ -174,7 +174,7 @@ export default function ContentCard({
             legacyStat && <p className="font-mono text-[11px] uppercase tracking-wide text-ink/55">{legacyStat}</p>
           )}
           {topComment && (
-            <div className="mt-auto rounded-[10px] bg-ink px-2.5 py-sp-2">
+            <div className="mt-auto r-sm bg-ink px-2.5 py-sp-2">
               <p className="font-mono text-[9px] uppercase tracking-wide text-lime">{copy.loQueDicen}</p>
               <p className="mt-0.5 line-clamp-2 text-[11px] text-cream">
                 “{topComment}”{topCommentAuthor && <span className="text-cream/60"> — {topCommentAuthor}</span>}

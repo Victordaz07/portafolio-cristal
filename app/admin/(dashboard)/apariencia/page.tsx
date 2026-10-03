@@ -1,29 +1,44 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/admin/PageHeader";
-import AppearanceForm from "./AppearanceForm";
+import { designFromSettings } from "@/lib/design";
+import { sessionCreatorSite } from "@/lib/site-url";
+import DesignStudio from "./DesignStudio";
 
 export default async function AdminAppearancePage() {
-  const [hero, settings] = await Promise.all([
-    prisma.hero.findFirst({ select: { name: true, photoUrl: true, description: true, descriptionEn: true, niche: true } }),
-    prisma.siteSettings.findFirst({ select: { accentColor: true } }),
+  const [hero, settings, site] = await Promise.all([
+    prisma.hero.findFirst({ select: { name: true, photoUrl: true, description: true, descriptionEn: true } }),
+    prisma.siteSettings.findFirst({
+      select: {
+        accentColor: true,
+        customAccent: true,
+        themeStyle: true,
+        fontPair: true,
+        corners: true,
+        background: true,
+        heroLayout: true,
+        sectionLayout: true,
+      },
+    }),
+    sessionCreatorSite(),
   ]);
 
   return (
     <div>
       <PageHeader
         eyebrow="Landing"
-        title="Apariencia"
-        description="Tu foto, tu nombre, tu bio y el color de acento de todo el sitio (y de este panel)."
+        title="Estudio de diseño"
+        description="Haz que tu sitio se vea como tú: estilo, color, tipografía, portada y orden de las secciones, con vista previa en vivo."
       />
-      <AppearanceForm
-        initial={{
+      <DesignStudio
+        initialProfile={{
           name: hero?.name ?? "",
           photoUrl: hero?.photoUrl ?? "",
           description: hero?.description ?? "",
           descriptionEn: hero?.descriptionEn ?? "",
-          accentColor: settings?.accentColor ?? "lila",
         }}
-        niche={hero?.niche ?? ""}
+        initialDesign={designFromSettings(settings)}
+        previewPath={site?.previewPath ?? "/"}
+        siteUrl={site?.url ?? "/"}
       />
     </div>
   );

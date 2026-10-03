@@ -24,6 +24,16 @@ model Creator {
   status                 String    @default("active") // "active" | "paused"
   /// Nota interna de quien administra Foliocrew (soporte). La persona no la ve.
   adminNote              String?
+  /// Plan contratado: "folio" | "pro" | "crew" (lib/plans.ts)
+  plan                   String    @default("pro")
+  /// Cuenta de cortesía (fundadoras/es, amistades): no paga ni vence
+  comp                   Boolean   @default(false)
+  /// Fin de la prueba gratis (null = sin prueba)
+  trialEndsAt            DateTime?
+  /// Pagado hasta (pagos manuales por PayPal o transferencia)
+  paidUntil              DateTime?
+  /// Último recordatorio de pago enviado (evita mandarlo dos veces), p. ej. "trial-3:2026-10-17"
+  billingReminder        String?
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
@@ -47,6 +57,7 @@ model Creator {
   scheduledPosts    ScheduledPost[]
   followerSnapshots FollowerSnapshot[]
   aiUsage           AiUsage[]
+  payments          Payment[]
 }
 
 model Hero {
@@ -500,4 +511,25 @@ model DataDeletionRequest {
   externalId      String
   deletedAccounts Int      @default(0)
   createdAt       DateTime @default(now())
+}
+
+/// Pagos manuales (PayPal o transferencia). La persona los reporta y quien administra los confirma.
+model Payment {
+  id          String    @id @default(cuid())
+  creatorId   String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  plan        String
+  months      Int       @default(1)
+  amountCents Int
+  currency    String    @default("USD")
+  method      String // "paypal" | "transfer" | "other"
+  reference   String?
+  note        String?
+  status      String    @default("reported") // "reported" | "confirmed" | "rejected"
+  periodEnd   DateTime?
+  confirmedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([creatorId, createdAt])
+  @@index([status])
 }

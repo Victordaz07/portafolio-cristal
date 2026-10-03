@@ -6,6 +6,9 @@ import { creatorSiteUrl } from "@/lib/site-url";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountActions from "./AccountActions";
+import BillingCard from "./BillingCard";
+import { PLANS } from "@/lib/plans";
+import { BILLING_LABEL, PAYMENT_METHODS, billingState, formatMoney, getPlan, type PaymentMethod } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +17,12 @@ const ACTION_LABEL: Record<string, string> = {
   activate: "Reactivó la cuenta",
   impersonate: "Entró como esta cuenta",
   note: "Cambió la nota interna",
+  payment: "Confirmó un pago",
+  "payment-rejected": "Marcó un pago como no encontrado",
+  "comp-on": "Hizo la cuenta de cortesía",
+  "comp-off": "Quitó la cortesía",
+  plan: "Cambió el plan",
+  trial: "Extendió la prueba gratis",
 };
 
 const fmt = (d: Date | null | undefined) =>
@@ -34,11 +43,13 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
   if (!creator) notFound();
 
   const since = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth() - 5, 1));
-  const [usage, actions, siteUrl] = await Promise.all([
+  const [usage, actions, siteUrl, payments] = await Promise.all([
     prismaRoot.aiUsage.findMany({ where: { creatorId: id, createdAt: { gte: since } }, select: { createdAt: true, inputTokens: true, outputTokens: true } }),
     prismaRoot.platformAction.findMany({ where: { creatorId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     creatorSiteUrl(creator),
+    prismaRoot.payment.findMany({ where: { creatorId: id }, orderBy: { createdAt: "desc" }, take: 30 }),
   ]);
+  const billing = billingState(creator);
   const byMonth = new Map<string, { count: number; tokens: number }>();
   for (const u of usage) {
     const key = u.createdAt.toISOString().slice(0, 7);
@@ -78,6 +89,25 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
         note={creator.adminNote ?? ""}
         isMine={isMine}
         siteUrl={siteUrl}
+      />
+      <BillingCard
+        creatorId={creator.id}
+        plan={creator.plan}
+        comp={creator.comp}
+        stateLabel={BILLING_LABEL[billing.state]}
+        until={billing.until?.toISOString() ?? null}
+        plans={PLANS.map((p) => ({ id: p.id, name: p.name, price: p.price }))}
+        payments={payments.map((p) => ({
+          id: p.id,
+          date: p.createdAt.toISOString(),
+          plan: getPlan(p.plan).name,
+          months: p.months,
+          amount: formatMoney(p.amountCents, p.currency),
+          method: PAYMENT_METHODS[p.method as PaymentMethod] ?? p.method,
+          reference: p.reference,
+          status: p.status,
+          periodEnd: p.periodEnd?.toISOString() ?? null,
+        }))}
       />
       <div className="grid gap-sp-4 lg:grid-cols-2">
         <Card>
@@ -141,6 +171,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
                   <span className="text-ink">{ACTION_LABEL[a.action] ?? a.action}</span>
                   <span className="block text-xs text-ink/50">
                     {fmt(a.createdAt)} · {a.actorEmail}
+                  {a.detail && a.action !== "note" ? ` · ${a.detail}` : ""}
                   </span>
                 </li>
               ))}

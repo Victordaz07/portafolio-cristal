@@ -42,6 +42,7 @@ const FAQ = [
   { q: "¿Sirve si tengo pocos seguidores?", a: "Sí. El contenido UGC lo publican las marcas en sus propias redes y anuncios: importa la calidad de tu contenido, no cuántos seguidores tienes." },
   { q: "¿Puedo usar mi propio dominio?", a: "Sí. Tienes tu dirección tunombre.foliocrew.pro y, si quieres, conectas un dominio que compres tú (por ejemplo, tunombre.com). El panel te dice exactamente qué configurar." },
   { q: "¿Publica automáticamente en mis redes?", a: "Todavía no. Te ayudamos a planear tu calendario, escribir tus captions con IA y recordarte cuándo publicar; tú publicas. La publicación automática está en nuestros planes." },
+  { q: "¿Cómo se paga?", a: "Por ahora con PayPal o transferencia bancaria, por 1, 3 o 12 meses (el plan anual trae 2 meses de regalo). No se renueva solo: te avisamos por correo antes de que venza." },
   { q: "¿Cuándo abre y cuánto cuesta?", a: "Estamos abriendo por invitación. Quienes se anotan primero entran antes y con precio especial de lanzamiento. Te avisamos por correo." },
   { q: "¿Mis datos están seguros?", a: "Tus datos y los de tus marcas son privados: solo tú los ves. Las conexiones con tus redes usan el inicio de sesión oficial de cada red y puedes desconectarlas cuando quieras." },
 ];

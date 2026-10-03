@@ -24,6 +24,10 @@ export interface AccountRow {
   aiThisMonth: number;
   status: string;
   hasNote: boolean;
+  plan: string;
+  billing: string;
+  billingState: string;
+  billingUntil: string | null;
   isMine: boolean;
 }
 
@@ -102,13 +106,14 @@ export default function AccountsTable({ rows }: { rows: AccountRow[] }) {
         </p>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[980px] text-left text-sm">
+        <table className="w-full min-w-[1080px] text-left text-sm">
           <thead className="font-mono text-[10px] uppercase tracking-wide text-ink/50">
             <tr>
               <th className="py-sp-2 pr-sp-3">Cuenta</th>
               <th className="py-sp-2 pr-sp-3">Correo</th>
               <th className="py-sp-2 pr-sp-3">Alta</th>
               <th className="py-sp-2 pr-sp-3">Último ingreso</th>
+              <th className="py-sp-2 pr-sp-3">Plan</th>
               <th className="py-sp-2 pr-sp-3">Sitio</th>
               <th className="py-sp-2 pr-sp-3" title="Piezas en el Feed · marcas · mensajes">Uso</th>
               <th className="py-sp-2 pr-sp-3">IA (mes)</th>
@@ -137,6 +142,14 @@ export default function AccountsTable({ rows }: { rows: AccountRow[] }) {
                 </td>
                 <td className="py-sp-2 pr-sp-3 text-ink/70">{date(r.createdAt)}</td>
                 <td className="py-sp-2 pr-sp-3 text-ink/70">{date(r.lastLoginAt)}</td>
+                <td className="py-sp-2 pr-sp-3 text-xs">
+                  <span className="font-semibold text-ink">{r.plan}</span>
+                  <span
+                    className={`block ${r.billingState === "expired" || r.billingState === "none" ? "text-red-600" : "text-ink/55"}`}
+                  >
+                    {r.billingState === "comp" ? "no vence" : `${r.billing}${r.billingUntil ? ` · ${date(r.billingUntil)}` : ""}`}
+                  </span>
+                </td>
                 <td className="py-sp-2 pr-sp-3 text-xs text-ink/70">
                   {r.onboarded ? "Asistente ✓" : "Asistente pendiente"}
                   <span className="block">{r.networks.length ? r.networks.join(", ") : "sin redes"}</span>

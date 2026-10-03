@@ -36,10 +36,10 @@ export default function ContentFeed({
             key={pill}
             type="button"
             onClick={() => setActivePill(pill)}
-            className={`rounded-full border px-sp-4 py-sp-2 font-mono text-xs uppercase tracking-wide transition ${
+            className={`r-btn border px-sp-4 py-sp-2 font-mono text-xs uppercase tracking-wide transition ${
               activePill === pill
                 ? "border-coral bg-coral text-white"
-                : "border-line bg-white text-ink hover:border-coral"
+                : "border-line bg-surface text-ink hover:border-coral"
             }`}
           >
             {pill}

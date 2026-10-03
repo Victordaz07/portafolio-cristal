@@ -32,17 +32,17 @@ export default function CollaborationsSection({ brands, locale }: { brands: Coll
 
   return (
     <>
-      <h2 className="mb-sp-2 font-bodoni text-[clamp(1.8rem,3.4vw,2.6rem)] font-bold uppercase italic text-ink">{copy.heading}</h2>
+      <h2 className="mb-sp-2 site-heading text-[clamp(1.8rem,3.4vw,2.6rem)] text-ink">{copy.heading}</h2>
       <p className="mb-sp-6 text-ink/65">{copy.intro}</p>
       <div className="flex flex-col gap-sp-7">
         {brands.map((brand) => {
           const logo = (
-            <div className="flex h-[96px] w-[96px] items-center justify-center rounded-[18px] border border-line bg-white p-sp-3 sm:h-[110px] sm:w-[110px]">
+            <div className="flex h-[96px] w-[96px] items-center justify-center r-md border border-line bg-surface p-sp-3 sm:h-[110px] sm:w-[110px]">
               {brand.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={brand.logoUrl} alt={brand.name} className="max-h-full max-w-full object-contain" />
               ) : (
-                <span className="font-bodoni text-3xl font-bold italic text-ink/40">{brand.name.charAt(0)}</span>
+                <span className="site-title text-3xl text-ink/40">{brand.name.charAt(0)}</span>
               )}
             </div>
           );
@@ -67,7 +67,7 @@ export default function CollaborationsSection({ brands, locale }: { brands: Coll
                     className="group flex flex-col gap-1.5 text-left"
                   >
                     <span
-                      className={`relative block w-full overflow-hidden rounded-[14px] bg-gradient-to-br from-cobalt to-cobalt-ink ${
+                      className={`relative block w-full overflow-hidden r-md bg-gradient-to-br from-cobalt to-cobalt-ink ${
                         piece.type === "video" ? "aspect-[9/16]" : "aspect-[4/5]"
                       }`}
                     >
@@ -79,7 +79,7 @@ export default function CollaborationsSection({ brands, locale }: { brands: Coll
                           className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105"
                         />
                       )}
-                      <span className="absolute left-1.5 top-1.5 max-w-[88%] truncate rounded-[4px] bg-lime px-1.5 py-0.5 font-mono text-[8px] uppercase text-ink">
+                      <span className="absolute left-1.5 top-1.5 max-w-[88%] truncate r-xs bg-lime px-1.5 py-0.5 font-mono text-[8px] uppercase text-ink">
                         {piece.category}
                       </span>
                     </span>

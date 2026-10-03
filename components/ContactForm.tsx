@@ -57,15 +57,15 @@ export default function ContactForm({
 
   if (status === "success") {
     return (
-      <div className="rounded-md border border-sage bg-white p-sp-6 text-center">
-        <p className="font-bodoni italic font-bold text-xl text-ink">{copy.successTitle}</p>
+      <div className="r-sm border border-sage bg-surface p-sp-6 text-center">
+        <p className="site-title text-xl text-ink">{copy.successTitle}</p>
         <p className="mt-sp-2 text-ink/70">{copy.successBody}</p>
       </div>
     );
   }
 
   return (
-    <div className="relative rounded-md border border-lime/50 bg-white pt-sp-6 pb-sp-6 shadow-sm">
+    <div className="relative r-sm border border-lime/50 bg-surface pt-sp-6 pb-sp-6 shadow-sm">
       <span className="absolute -top-sp-3 left-sp-5 inline-flex items-center gap-sp-2 rounded-full bg-cobalt px-sp-4 py-sp-1 font-mono text-[11px] uppercase tracking-widest text-cream">
         <HeartIcon className="h-3 w-3" />
         {copy.badge}
@@ -140,7 +140,7 @@ export default function ContactForm({
         <button
           type="submit"
           disabled={status === "loading"}
-          className="mt-sp-2 rounded-full bg-coral text-white font-medium py-sp-3 hover:opacity-90 disabled:opacity-60 transition"
+          className="mt-sp-2 r-btn bg-coral text-white font-medium py-sp-3 hover:opacity-90 disabled:opacity-60 transition"
         >
           {status === "loading" ? copy.enviando : copy.enviar}
         </button>

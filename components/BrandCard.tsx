@@ -5,7 +5,7 @@ export interface BrandCardProps {
 }
 
 const cardClass =
-  "flex h-24 w-32 shrink-0 items-center justify-center rounded-2xl border border-line bg-white p-sp-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-lime/60 hover:shadow-md";
+  "flex h-24 w-32 shrink-0 items-center justify-center r-md border border-line bg-surface p-sp-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-lime/60 hover:shadow-md";
 
 export default function BrandCard({ name, logoUrl, websiteUrl }: BrandCardProps) {
   const content = logoUrl ? (

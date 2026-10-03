@@ -42,7 +42,7 @@ export default function EmbedLightbox({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg bg-white p-sp-5"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto r-md bg-surface p-sp-5"
         onClick={(event) => event.stopPropagation()}
       >
         <button
@@ -63,14 +63,14 @@ export default function EmbedLightbox({
             autoPlay
             muted
             playsInline
-            className="mx-auto max-h-[75vh] w-full rounded-md"
+            className="mx-auto max-h-[75vh] w-full r-sm"
           />
         ) : photoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={photoUrl}
             alt={caption}
-            className="mx-auto max-h-[75vh] w-full rounded-md object-contain"
+            className="mx-auto max-h-[75vh] w-full r-sm object-contain"
           />
         ) : (
           <PlatformEmbed platform={platform} url={url} type={type} />

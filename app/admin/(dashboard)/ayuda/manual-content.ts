@@ -395,9 +395,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
-    title: "Apariencia",
+    title: "Estudio de diseño",
     paragraphs: [
-      "Tu foto, tu nombre, tu bio (en español e inglés) y el color de acento. Elige entre 6 colores (lila, rosa, terracota, salvia, azul o dorado) y mira la vista previa antes de guardar. El color cambia los botones, enlaces y detalles de todo el sitio y también de este panel.",
+      "Aquí decides cómo se ve tu sitio, con una vista previa en vivo (en computadora o celular) que cambia mientras eliges. Nada se publica hasta que tocas \"Guardar diseño\".",
+      "Estilo: Editorial, Minimal, Noche, Soft o Bold. Cada uno cambia fondo y colores base, y ajusta de un clic la tipografía, los bordes, el fondo y la portada (después puedes cambiar cada cosa).",
+      "Color de acento: 6 paletas o tu color propio. Si tu color es muy claro, lo oscurecemos un poco para que el texto de los botones se lea. El color también se usa en este panel.",
+      "Tipografía (Editorial, Elegante, Moderna, Clásica, Divertida o Impacto), portada (foto a un lado, foto de fondo, centrada o revista), bordes (rectos, suaves o redondos) y fondo (liso, textura o degradado).",
+      "Orden de las secciones: súbelas, bájalas u ocúltalas. La portada va siempre arriba y el contacto al final.",
+      "\"Diséñalo por mí\": Claude te propone una combinación según tu nicho y tu bio; toca \"Otra idea\" para ver más. También aquí cambias tu foto, tu nombre y tu bio.",
     ],
   },
   {

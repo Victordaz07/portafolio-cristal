@@ -10,7 +10,7 @@ export default function HeroStatCard({ value, label, icon }: HeroStatCardProps) 
   const Icon = STAT_ICONS[icon as StatIconKey] ?? StarIcon;
 
   return (
-    <div className="flex flex-col items-center gap-sp-2 rounded-2xl border border-lime/50 px-sp-3 py-sp-4 text-center">
+    <div className="flex flex-col items-center gap-sp-2 r-md border border-lime/50 px-sp-3 py-sp-4 text-center">
       <span className="flex h-8 w-8 items-center justify-center rounded-full border border-lime text-lime">
         <Icon className="h-4 w-4" />
       </span>

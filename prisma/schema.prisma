@@ -60,6 +60,7 @@ model Creator {
   scheduledPosts    ScheduledPost[]
   followerSnapshots FollowerSnapshot[]
   aiUsage           AiUsage[]
+  bioLinks          BioLink[]
   payments          Payment[]
 }
 
@@ -338,7 +339,15 @@ model SiteSettings {
   footerIntroEn    String?
   supportMessage   String?
   supportMessageEn String?
-  accentColor      String   @default("lila") // paleta de acento (lib/theme.ts)
+  accentColor      String   @default("lila") // paleta de acento (lib/theme.ts) o "custom"
+  // Estudio de diseño (lib/design.ts): solo opciones cerradas, validadas al leer.
+  customAccent     String? // color propio "#RRGGBB" cuando accentColor = "custom"
+  themeStyle       String   @default("editorial")
+  fontPair         String   @default("editorial")
+  heroLayout       String   @default("split")
+  corners          String   @default("suave")
+  background       String   @default("textura")
+  sectionLayout    Json? // [{ id, hidden }] en el orden en que se muestran
   updatedAt        DateTime @updatedAt
 }
 
@@ -486,7 +495,7 @@ model AiUsage {
   id           String   @id @default(cuid())
   creatorId    String
   creator      Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  kind         String // "caption" | "tips"
+  kind         String // "caption" | "tips" | "design"
   inputTokens  Int      @default(0)
   outputTokens Int      @default(0)
   createdAt    DateTime @default(now())
@@ -551,4 +560,21 @@ model NicheInsight {
   playbook    Json?
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Enlaces propios de la página "link en bio" (/enlaces): tienda, cupones, videos, lo que quiera.
+model BioLink {
+  id        String   @id @default(cuid())
+  creatorId String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  title     String
+  titleEn   String?
+  url       String
+  imageUrl  String?
+  pill      String? // etiqueta corta: "Nuevo", "-20%"…
+  wide      Boolean  @default(true) // fila a todo el ancho (true) o tarjeta con imagen (false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([creatorId])
 }

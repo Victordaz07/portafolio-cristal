@@ -634,7 +634,7 @@ export default async function HomePage() {
                 <div className="relative overflow-hidden rounded-lg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/images/contact-photo.webp"
+                    src={settings?.contactPhotoUrl ?? PHOTO_PLACEHOLDER}
                     alt={copy.contacto.photoAlt(hero?.name ?? "")}
                     className="w-full"
                   />

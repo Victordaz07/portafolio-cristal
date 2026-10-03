@@ -20,6 +20,8 @@ const settingsSchema = z.object({
   footerIntroEn: z.string().optional().or(z.literal("")),
   supportMessage: z.string().optional().or(z.literal("")),
   supportMessageEn: z.string().optional().or(z.literal("")),
+  // Acepta URLs absolutas (Blob) o rutas del propio sitio como "/images/foto.png".
+  contactPhotoUrl: z.union([z.string().url(), z.string().regex(/^\/[^\s]*$/), z.literal("")]).optional(),
 });
 
 export async function GET() {
@@ -47,6 +49,7 @@ export async function PUT(request: Request) {
     whyMeTextEn: parsed.data.whyMeTextEn || null,
     footerIntroEn: parsed.data.footerIntroEn || null,
     supportMessageEn: parsed.data.supportMessageEn || null,
+    contactPhotoUrl: parsed.data.contactPhotoUrl || null,
   };
   const existing = await prisma.siteSettings.findFirst();
 

@@ -200,7 +200,13 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
       <Card>
         {step === 0 && (
           <div className="flex flex-col gap-sp-4">
-            <ImageUploadField label="Tu foto (la de la portada de tu sitio)" value={v.photoUrl} onChange={(url) => set("photoUrl", url)} />
+            <ImageUploadField
+              label="Tu foto (la de la portada de tu sitio)"
+              value={v.photoUrl}
+              onChange={(url) => set("photoUrl", url)}
+              aspect={4 / 5}
+              recommendedSize="1200 × 1500 px"
+            />
             <div className="grid gap-sp-4 sm:grid-cols-2">
               <label className={labelClass}>
                 <span className="text-sm font-medium text-ink">Tu nombre (como quieres que aparezca)</span>

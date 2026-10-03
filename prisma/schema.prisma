@@ -335,7 +335,11 @@ model SiteSettings {
   footerIntroEn    String?
   supportMessage   String?
   supportMessageEn String?
+  /// Foto de la sección de contacto/pie (app/page.tsx); null = placeholder genérico (public/images/contact-photo.webp)
+  contactPhotoUrl  String?
   accentColor      String   @default("lila") // paleta de acento (lib/theme.ts)
+  fontPairing      String   @default("editorial") // combinación tipográfica (lib/theme.ts)
+  backgroundStyle  String   @default("clasico") // intensidad de la textura de fondo (lib/theme.ts)
   updatedAt        DateTime @updatedAt
 }
 

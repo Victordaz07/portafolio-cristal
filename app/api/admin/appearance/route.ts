@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { ACCENTS } from "@/lib/theme";
+import { ACCENTS, FONT_PAIRINGS, BACKGROUND_STYLES } from "@/lib/theme";
 
 export const dynamic = "force-dynamic";
 
@@ -12,13 +12,15 @@ const schema = z.object({
   description: z.string().trim().max(1000),
   descriptionEn: z.string().trim().max(1000),
   accentColor: z.enum(Object.keys(ACCENTS) as [string, ...string[]]),
+  fontPairing: z.enum(Object.keys(FONT_PAIRINGS) as [string, ...string[]]),
+  backgroundStyle: z.enum(Object.keys(BACKGROUND_STYLES) as [string, ...string[]]),
 });
 
-/** Guarda el perfil público (nombre, foto, bio) y el color de acento del sitio. */
+/** Guarda el perfil público (nombre, foto, bio) y el estilo visual (color, tipografía, fondo) del sitio. */
 export async function PATCH(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Revisa el nombre y la foto" }, { status: 400 });
-  const { accentColor, ...profile } = parsed.data;
+  const { accentColor, fontPairing, backgroundStyle, ...profile } = parsed.data;
 
   const [hero, settings] = await Promise.all([
     prisma.hero.findFirst({ select: { id: true } }),
@@ -37,7 +39,7 @@ export async function PATCH(request: Request) {
         descriptionEn: profile.descriptionEn || null,
       },
     }),
-    prisma.siteSettings.update({ where: { id: settings.id }, data: { accentColor } }),
+    prisma.siteSettings.update({ where: { id: settings.id }, data: { accentColor, fontPairing, backgroundStyle } }),
   ]);
   return NextResponse.json({ ok: true });
 }

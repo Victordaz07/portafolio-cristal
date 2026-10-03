@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { useToast } from "./ToastContext";
+import ImageCropModal, { type AspectOption } from "./ImageCropModal";
 import { MAX_PHOTO_BYTES, formatMb } from "@/lib/upload-limits";
 
 const DIACRITICS_PATTERN = new RegExp("[\\u0300-\\u036f]", "g");
@@ -15,20 +16,38 @@ function sanitizePathname(fileName: string) {
   return `site-images/${Date.now()}-${sanitized}`;
 }
 
+function toAspectOptions(aspect: number | AspectOption[] | undefined): AspectOption[] | null {
+  if (aspect == null) return null;
+  return Array.isArray(aspect) ? aspect : [{ label: "Recorte", value: aspect }];
+}
+
 export default function ImageUploadField({
   label,
   value,
   onChange,
+  aspect,
+  recommendedSize,
+  outputFormat = "jpeg",
 }: {
   label: string;
   value: string;
   onChange: (url: string) => void;
+  /** Si se da, al elegir la foto se abre un recorte antes de subirla. Un número fija la forma (ej. 4/5); una lista deja elegir entre varias (ej. logos). */
+  aspect?: number | AspectOption[];
+  /** Texto corto de la medida ideal, ej. "1200 × 1500 px". */
+  recommendedSize?: string;
+  /** "png" conserva transparencia (logos); "jpeg" (por defecto) pesa menos para fotos. */
+  outputFormat?: "jpeg" | "png";
 }) {
   const { showToast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [cropIsNewFile, setCropIsNewFile] = useState(false);
 
-  async function handleFile(file: File) {
+  const aspectOptions = toAspectOptions(aspect);
+
+  async function uploadFile(file: File) {
     if (file.size > MAX_PHOTO_BYTES) {
       showToast(
         "error",
@@ -50,6 +69,39 @@ export default function ImageUploadField({
     } finally {
       setUploading(false);
     }
+  }
+
+  function handleFile(file: File) {
+    if (file.size > MAX_PHOTO_BYTES) {
+      showToast(
+        "error",
+        `La imagen pesa demasiado (máximo ${formatMb(MAX_PHOTO_BYTES)}). Comprímela o achícala e inténtalo de nuevo.`
+      );
+      return;
+    }
+    if (aspectOptions) {
+      setCropIsNewFile(true);
+      setCropSrc(URL.createObjectURL(file));
+      return;
+    }
+    uploadFile(file);
+  }
+
+  function openCropForExisting() {
+    if (!value) return;
+    setCropIsNewFile(false);
+    setCropSrc(value);
+  }
+
+  function closeCrop() {
+    if (cropIsNewFile && cropSrc) URL.revokeObjectURL(cropSrc);
+    setCropSrc(null);
+  }
+
+  async function confirmCrop(blob: Blob) {
+    const ext = outputFormat === "png" ? "png" : "jpg";
+    await uploadFile(new File([blob], `recorte-${Date.now()}.${ext}`, { type: blob.type }));
+    closeCrop();
   }
 
   return (
@@ -89,7 +141,7 @@ export default function ImageUploadField({
             {uploading ? "Subiendo…" : value ? "Cambiar foto" : "Elegir foto"}
           </span>
           <span className="text-xs text-ink/55">
-            o arrástrala aquí · JPG, PNG o WebP · máx. {formatMb(MAX_PHOTO_BYTES)}
+            o arrástrala aquí · {recommendedSize ? `ideal ${recommendedSize} · ` : ""}JPG, PNG o WebP · máx. {formatMb(MAX_PHOTO_BYTES)}
           </span>
         </span>
         <input
@@ -105,9 +157,26 @@ export default function ImageUploadField({
         />
       </label>
       {value && !uploading && (
-        <button type="button" onClick={() => onChange("")} className="w-fit text-xs text-ink/50 hover:text-red-600">
-          Quitar foto
-        </button>
+        <div className="flex gap-sp-4">
+          {aspectOptions && (
+            <button type="button" onClick={openCropForExisting} className="w-fit text-xs text-ink/55 hover:text-coral">
+              Ajustar encuadre
+            </button>
+          )}
+          <button type="button" onClick={() => onChange("")} className="w-fit text-xs text-ink/50 hover:text-red-600">
+            Quitar foto
+          </button>
+        </div>
+      )}
+
+      {cropSrc && aspectOptions && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          aspectOptions={aspectOptions}
+          mimeType={outputFormat === "png" ? "image/png" : "image/jpeg"}
+          onCancel={closeCrop}
+          onConfirm={confirmCrop}
+        />
       )}
     </div>
   );

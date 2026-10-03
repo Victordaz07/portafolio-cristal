@@ -5,7 +5,7 @@ import AppearanceForm from "./AppearanceForm";
 export default async function AdminAppearancePage() {
   const [hero, settings] = await Promise.all([
     prisma.hero.findFirst({ select: { name: true, photoUrl: true, description: true, descriptionEn: true, niche: true } }),
-    prisma.siteSettings.findFirst({ select: { accentColor: true } }),
+    prisma.siteSettings.findFirst({ select: { accentColor: true, fontPairing: true, backgroundStyle: true } }),
   ]);
 
   return (
@@ -22,6 +22,8 @@ export default async function AdminAppearancePage() {
           description: hero?.description ?? "",
           descriptionEn: hero?.descriptionEn ?? "",
           accentColor: settings?.accentColor ?? "lila",
+          fontPairing: settings?.fontPairing ?? "editorial",
+          backgroundStyle: settings?.backgroundStyle ?? "clasico",
         }}
         niche={hero?.niche ?? ""}
       />

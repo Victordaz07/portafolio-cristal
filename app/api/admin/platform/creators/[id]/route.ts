@@ -4,6 +4,7 @@ import { prismaRoot } from "@/lib/prisma-root";
 import { logPlatformAction, platformAdminUser } from "@/lib/platform-admin";
 import { forgetHost, forgetSessionVersion } from "@/lib/tenant";
 import { PLANS } from "@/lib/plans";
+import { changeAccountEmail } from "@/lib/account-email-change";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,8 @@ const schema = z.object({
   plan: z.enum(PLANS.map((p) => p.id) as [string, ...string[]]).optional(),
   /** Alarga (o da) la prueba gratis N días desde hoy o desde su fin actual. */
   extendTrialDays: z.number().int().min(1).max(90).optional(),
+  /** Soporte: corrige el correo con el que entra la dueña de la cuenta (p. ej. se registró con uno ajeno). */
+  ownerEmail: z.string().trim().email().max(200).optional(),
 });
 
 /** Pausar o reactivar una cuenta, o guardar la nota interna de soporte. */
@@ -24,13 +27,33 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
-  const { status, adminNote, comp, plan, extendTrialDays } = parsed.data;
+  const { status, adminNote, comp, plan, extendTrialDays, ownerEmail } = parsed.data;
 
   const creator = await prismaRoot.creator.findUnique({
     where: { id },
-    select: { id: true, slug: true, customDomain: true, status: true, trialEndsAt: true, users: { select: { id: true } } },
+    select: {
+      id: true,
+      slug: true,
+      customDomain: true,
+      status: true,
+      trialEndsAt: true,
+      users: { select: { id: true, role: true }, orderBy: { createdAt: "asc" } },
+    },
   });
   if (!creator) return NextResponse.json({ error: "La cuenta no existe" }, { status: 404 });
+
+  if (ownerEmail) {
+    // Tu propia cuenta se cambia desde Mi cuenta (pide tu contraseña y avisa si pierdes el panel de dueño).
+    if (creator.id === admin.creatorId) {
+      return NextResponse.json({ error: "Tu propio correo se cambia desde Mi cuenta" }, { status: 400 });
+    }
+    const owner = creator.users.find((u) => u.role === "owner") ?? creator.users[0];
+    if (!owner) return NextResponse.json({ error: "La cuenta no tiene usuaria" }, { status: 400 });
+    const result = await changeAccountEmail(owner.id, ownerEmail);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
+    await logPlatformAction(admin.email, "email", id, `${result.previous} → ${result.user.email}`);
+    return NextResponse.json({ ok: true, email: result.user.email });
+  }
   if (status === "paused" && creator.id === admin.creatorId) {
     return NextResponse.json({ error: "No puedes pausar tu propia cuenta" }, { status: 400 });
   }

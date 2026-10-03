@@ -92,8 +92,13 @@ export async function authenticate(email: string, password: string) {
   const envEmail = process.env.ADMIN_EMAIL?.toLowerCase();
   const envHash = process.env.ADMIN_PASSWORD_HASH;
   if (!envEmail || !envHash || normalized !== envEmail || !(await bcrypt.compare(password, envHash))) return null;
-  const creator = await prismaRoot.creator.findUnique({ where: { slug: defaultCreatorSlug() } });
-  if (!creator) return null;
+  const creator = await prismaRoot.creator.findUnique({
+    where: { slug: defaultCreatorSlug() },
+    select: { id: true, _count: { select: { users: true } } },
+  });
+  // Solo la primera vez: si la cuenta ya tiene usuaria (p. ej. se cambió su correo), el correo de las
+  // variables de entorno no vuelve a darle acceso.
+  if (!creator || creator._count.users > 0) return null;
   return prismaRoot.adminUser.create({ data: { email: normalized, passwordHash: envHash, creatorId: creator.id } });
 }
 

@@ -18,6 +18,19 @@ import ContentCardForm, { type ContentCardFormValues, type BrandOption } from ".
 const API_BASE = "/api/admin/content-cards";
 
 type TypeFilter = "all" | "video" | "photo";
+type PlatformFilter = "all" | Platform;
+
+const PLATFORM_FILTERS: { id: Platform; label: string }[] = [
+  { id: "tiktok", label: "TikTok" },
+  { id: "instagram", label: "Instagram" },
+  { id: "facebook", label: "Facebook" },
+  { id: "ugc", label: "Fotos UGC" },
+];
+
+const chipClass = (active: boolean) =>
+  `rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
+    active ? "bg-coral text-white" : "border border-line bg-white text-ink/70 hover:border-coral"
+  }`;
 
 const ADMIN_METRIC_LABELS = { views: "Vistas", likes: "Likes", comments: "Coment.", engagement: "Engag." };
 
@@ -35,6 +48,7 @@ export default function FeedManager({
   const router = useRouter();
   const { showToast } = useToast();
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const [platformFilter, setPlatformFilter] = useState<PlatformFilter>("all");
   const [metricsFor, setMetricsFor] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [cards, setCards] = useState(initialCards);
@@ -134,7 +148,13 @@ export default function FeedManager({
     }
   }
 
-  const visibleCards = cards.filter((card) => typeFilter === "all" || card.type === typeFilter);
+  const byType = cards.filter((card) => typeFilter === "all" || card.type === typeFilter);
+  const visibleCards = byType.filter((card) => platformFilter === "all" || card.platform === platformFilter);
+  // Solo se muestran las redes que tienen publicaciones (con el filtro de tipo aplicado), con su cantidad.
+  const platformCounts = PLATFORM_FILTERS.map((p) => ({ ...p, count: byType.filter((card) => card.platform === p.id).length })).filter(
+    (p) => p.count > 0 || p.id === platformFilter
+  );
+  const filtering = typeFilter !== "all" || platformFilter !== "all";
 
   return (
     <div>
@@ -151,9 +171,8 @@ export default function FeedManager({
               key={filter.id}
               type="button"
               onClick={() => setTypeFilter(filter.id)}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
-                typeFilter === filter.id ? "bg-coral text-white" : "border border-line bg-white text-ink/70 hover:border-coral"
-              }`}
+              aria-pressed={typeFilter === filter.id}
+              className={chipClass(typeFilter === filter.id)}
             >
               {filter.label}
             </button>
@@ -174,8 +193,28 @@ export default function FeedManager({
           </button>
         </div>
       </div>
+      {platformCounts.length > 1 && (
+        <div className="mb-sp-4 flex flex-wrap items-center gap-sp-2" role="group" aria-label="Filtrar por red">
+          <span className="mr-1 text-[11px] font-semibold uppercase tracking-wider text-ink/45">Red</span>
+          <button type="button" onClick={() => setPlatformFilter("all")} aria-pressed={platformFilter === "all"} className={chipClass(platformFilter === "all")}>
+            Todas
+          </button>
+          {platformCounts.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => setPlatformFilter(p.id)}
+              aria-pressed={platformFilter === p.id}
+              className={chipClass(platformFilter === p.id)}
+            >
+              {p.label} <span className="opacity-70">· {p.count}</span>
+            </button>
+          ))}
+        </div>
+      )}
       <p className="mb-sp-4 text-xs text-ink/55">
         {visibleCards.length} {visibleCards.length === 1 ? "publicación" : "publicaciones"}
+        {filtering && " · Para reordenar, vuelve a \"Todas\" en ambos filtros"}
         {syncablePlatforms.length === 0 &&
           " · Conecta Instagram o TikTok en Conectar cuentas para traer las métricas solas."}
       </p>
@@ -302,7 +341,7 @@ export default function FeedManager({
               )}
 
               <div className="flex flex-wrap items-center gap-sp-3 border-t border-line pt-sp-2 text-sm">
-                {typeFilter === "all" && (
+                {!filtering && (
                   <ReorderButtons
                     onUp={() => handleMove(index, "up")}
                     onDown={() => handleMove(index, "down")}

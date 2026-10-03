@@ -8,7 +8,8 @@ import BilingualTextField from "@/components/admin/BilingualTextField";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
-import { ACCENTS, paletteFromHex, type AccentId } from "@/lib/theme";
+import { ACCENTS, accentVars, paletteFromHex, type AccentId } from "@/lib/theme";
+import { LINK_PATTERNS, type LinkPatternId } from "@/lib/bio-links";
 import {
   BACKGROUNDS,
   CORNERS,
@@ -204,6 +205,34 @@ export default function DesignStudio({
               {custom.adjusted && <span>Lo oscurecimos un poco ({custom.accent}) para que el texto blanco de los botones se lea.</span>}
             </div>
           )}
+        </Card>
+
+        <Card>
+          <p className={eyebrow}>Fondo decorativo · link en bio</p>
+          <p className="mt-1 text-xs text-ink/55">Textura de tu página de enlaces, pintada con tu color de acento.</p>
+          <div className="mt-sp-3 grid grid-cols-3 gap-sp-3 sm:grid-cols-6" style={accentVars(design.accent, design.customAccent) as React.CSSProperties}>
+            {(Object.keys(LINK_PATTERNS) as LinkPatternId[]).map((id) => {
+              const p = LINK_PATTERNS[id];
+              return (
+                <button key={id} type="button" aria-pressed={design.pattern === id} onClick={() => set("pattern", id)} className={`${tile(design.pattern === id)} items-center`}>
+                  <span className="relative h-14 w-full overflow-hidden rounded-[10px] border border-line bg-[#FAF6F0]">
+                    {p.mask ? (
+                      <span
+                        className="absolute inset-0 bg-coral opacity-40"
+                        style={{ maskImage: p.mask, WebkitMaskImage: p.mask, maskSize: "120px", WebkitMaskSize: "120px" }}
+                      />
+                    ) : (
+                      <>
+                        <span className="absolute -left-3 -top-3 h-10 w-10 rounded-full bg-lime opacity-70 blur-md" />
+                        <span className="absolute -bottom-3 -right-3 h-10 w-10 rounded-full bg-sage opacity-60 blur-md" />
+                      </>
+                    )}
+                  </span>
+                  <span className="text-center text-[11px] font-semibold leading-tight text-ink">{p.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </Card>
 
         <Card>

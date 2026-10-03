@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { linkSchema } from "@/lib/bio-links";
 import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { OPTIONAL_TEXT, linkSchema } from "@/lib/bio-links";
 
 export const dynamic = "force-dynamic";
 
@@ -17,9 +17,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     where: { id },
     data: {
       ...d,
-      ...(d.titleEn !== undefined ? { titleEn: d.titleEn || null } : {}),
-      ...(d.imageUrl !== undefined ? { imageUrl: d.imageUrl || null } : {}),
-      ...(d.pill !== undefined ? { pill: d.pill || null } : {}),
+      ...(d.section !== undefined ? { section: d.section ?? "" } : {}),
+      ...Object.fromEntries(OPTIONAL_TEXT.filter((k) => d[k] !== undefined).map((k) => [k, d[k] || null])),
     },
   });
   return NextResponse.json(link);

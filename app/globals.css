@@ -8,6 +8,9 @@
   --accent: 168 102 190;
   --accent-dark: 128 31 130;
   --accent-light: 195 172 234;
+  /* Anillo del avatar del link en bio (2 tonos exactos del preset). */
+  --ring-from: 195 172 234;
+  --ring-to: 168 102 190;
   /* Colores base (estilo Editorial). El sitio público los cambia según el Estudio de diseño. */
   --c-bg: 251 247 245;
   --c-surface: 255 255 255;
@@ -68,14 +71,13 @@
   animation: fc-rise 450ms ease forwards;
   animation-delay: var(--delay, 0ms);
 }
-/* Franja de brillo diagonal que cruza el HeroCard cada 3.6s. */
+/* Franja de brillo diagonal que cruza el HeroCard cada 3.6s (shimmerMove del diseño). */
 @keyframes fc-shimmer {
   0% {
-    transform: translateX(-160%) skewX(-20deg);
+    transform: translateX(-130%) skewX(-12deg);
   }
-  55%,
   100% {
-    transform: translateX(360%) skewX(-20deg);
+    transform: translateX(230%) skewX(-12deg);
   }
 }
 .fc-shimmer::after {
@@ -84,8 +86,8 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: 35%;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.32), transparent);
+  width: 40%;
+  background: linear-gradient(115deg, transparent, rgb(255 255 255 / 0.3), transparent);
   animation: fc-shimmer 3.6s ease-in-out infinite;
   pointer-events: none;
 }

@@ -22,6 +22,8 @@ model Creator {
   /// Cuándo terminó (o saltó) el asistente de bienvenida; null = todavía no
   onboardedAt            DateTime?
   status                 String    @default("active") // "active" | "paused"
+  /// Nota interna de quien administra Foliocrew (soporte). La persona no la ve.
+  adminNote              String?
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
@@ -44,6 +46,7 @@ model Creator {
   logEntries        LogEntry[]
   scheduledPosts    ScheduledPost[]
   followerSnapshots FollowerSnapshot[]
+  aiUsage           AiUsage[]
 }
 
 model Hero {
@@ -279,6 +282,8 @@ model AdminUser {
   emailVerifiedAt DateTime?
   /// Sube al cambiar o restablecer la contraseña: cierra las sesiones abiertas en otros equipos
   sessionVersion  Int         @default(0)
+  /// Último inicio de sesión (panel de dueño)
+  lastLoginAt     DateTime?
   createdAt       DateTime    @default(now())
   tokens          AuthToken[]
 
@@ -458,4 +463,29 @@ model WaitlistEntry {
   createdAt   DateTime  @default(now())
 
   @@index([createdAt])
+}
+
+/// Cada sugerencia de IA que pide una cuenta (para el panel de dueño y los límites por plan).
+model AiUsage {
+  id           String   @id @default(cuid())
+  creatorId    String
+  creator      Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  kind         String // "caption" | "tips"
+  inputTokens  Int      @default(0)
+  outputTokens Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([creatorId, createdAt])
+}
+
+/// Acciones de quien administra la plataforma (pausar, reactivar, entrar como, notas).
+model PlatformAction {
+  id         String   @id @default(cuid())
+  actorEmail String
+  action     String // "pause" | "activate" | "impersonate" | "note"
+  creatorId  String?
+  detail     String?
+  createdAt  DateTime @default(now())
+
+  @@index([creatorId, createdAt])
 }

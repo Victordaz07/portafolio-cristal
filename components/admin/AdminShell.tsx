@@ -73,11 +73,14 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-// Solo para la dueña de la plataforma.
+// Solo para quien administra la plataforma.
 const PLATFORM_GROUP: NavGroup = {
   id: "foliocrew",
   title: "Foliocrew",
-  items: [{ href: "/admin/lista-de-espera", label: "Lista de espera" }],
+  items: [
+    { href: "/admin/plataforma", label: "Cuentas" },
+    { href: "/admin/lista-de-espera", label: "Lista de espera" },
+  ],
 };
 
 const OPEN_GROUPS_KEY = "admin-nav-open-groups";
@@ -97,7 +100,7 @@ export default function AdminShell({
   unreadMessages?: number;
   creatorName?: string;
   siteUrl?: string;
-  /** Dueña de Foliocrew: ve el grupo "Foliocrew" (lista de espera). */
+  /** Quien administra Foliocrew: ve el grupo "Foliocrew" (cuentas y lista de espera). */
   platformAdmin?: boolean;
 }) {
   const pathname = usePathname();

@@ -8,6 +8,7 @@ import {
   SESSION_CREATOR_HEADER,
   SESSION_USER_HEADER,
   SESSION_VERSION_HEADER,
+  SESSION_ACTOR_HEADER,
   SITE_SLUG_HEADER,
 } from "./tenant-headers";
 
@@ -57,27 +58,44 @@ export async function getSession() {
   const creatorId = h.get(SESSION_CREATOR_HEADER);
   const userId = h.get(SESSION_USER_HEADER);
   if (!creatorId || !userId) return null;
-  if (!(await sessionIsCurrent(userId, Number(h.get(SESSION_VERSION_HEADER) || 0)))) return null;
-  return { creatorId, userId };
+  const actorId = h.get(SESSION_ACTOR_HEADER) || null;
+  const state = await sessionState(userId);
+  // Contraseña cambiada (versión vieja), cuenta borrada o de otra creadora: la sesión ya no vale.
+  if (state.version !== Number(h.get(SESSION_VERSION_HEADER) || 0) || state.creatorId !== creatorId) return null;
+  // Cuenta pausada: solo quien administra Foliocrew puede verla ("Entrar como").
+  if (state.creatorStatus !== "active" && !actorId) return null;
+  return { creatorId, userId, actorId };
 }
 
-// Versión de sesión de cada usuario (caché corta). Al cambiar o restablecer la contraseña sube
-// la versión y las sesiones abiertas con la anterior dejan de valer (en ≤30 s en otros servidores).
-const sessionVersions = new Map<string, { version: number | null; expires: number }>();
+// Estado de cada usuario (caché corta): versión de sesión y estado de su cuenta. Al cambiar la
+// contraseña sube la versión y al pausar la cuenta cambia el estado: las sesiones abiertas dejan
+// de valer al momento en este servidor y en ≤30 s en los demás.
+const sessionStates = new Map<
+  string,
+  { version: number | null; creatorId: string | null; creatorStatus: string | null; expires: number }
+>();
 
-async function sessionIsCurrent(userId: string, version: number) {
-  let cached = sessionVersions.get(userId);
+async function sessionState(userId: string) {
+  let cached = sessionStates.get(userId);
   if (!cached || cached.expires <= Date.now()) {
-    const user = await prismaRoot.adminUser.findUnique({ where: { id: userId }, select: { sessionVersion: true } });
-    cached = { version: user?.sessionVersion ?? null, expires: Date.now() + 30_000 };
-    sessionVersions.set(userId, cached);
+    const user = await prismaRoot.adminUser.findUnique({
+      where: { id: userId },
+      select: { sessionVersion: true, creatorId: true, creator: { select: { status: true } } },
+    });
+    cached = {
+      version: user?.sessionVersion ?? null,
+      creatorId: user?.creatorId ?? null,
+      creatorStatus: user?.creator.status ?? null,
+      expires: Date.now() + 30_000,
+    };
+    sessionStates.set(userId, cached);
   }
-  return cached.version === version;
+  return cached;
 }
 
-/** Para borrar la caché cuando cambia la versión de sesión de un usuario. */
-export function forgetSessionVersion(userId: string) {
-  sessionVersions.delete(userId);
+/** Para borrar la caché cuando cambia la contraseña de un usuario o el estado de su cuenta. */
+export function forgetSessionVersion(...userIds: string[]) {
+  for (const id of userIds) sessionStates.delete(id);
 }
 
 // Caché corta de dominio → creadora (evita una consulta por cada consulta).

@@ -1,0 +1,155 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { prismaRoot } from "@/lib/prisma-root";
+import { platformAdminUser } from "@/lib/platform-admin";
+import { creatorSiteUrl } from "@/lib/site-url";
+import PageHeader from "@/components/admin/PageHeader";
+import Card from "@/components/admin/Card";
+import AccountActions from "./AccountActions";
+
+export const dynamic = "force-dynamic";
+
+const ACTION_LABEL: Record<string, string> = {
+  pause: "Pausó la cuenta",
+  activate: "Reactivó la cuenta",
+  impersonate: "Entró como esta cuenta",
+  note: "Cambió la nota interna",
+};
+
+const fmt = (d: Date | null | undefined) =>
+  d ? d.toLocaleString("es", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+
+export default async function PlatformAccountPage({ params }: { params: Promise<{ id: string }> }) {
+  const admin = await platformAdminUser();
+  if (!admin) notFound();
+  const { id } = await params;
+  const creator = await prismaRoot.creator.findUnique({
+    where: { id },
+    include: {
+      users: { orderBy: { createdAt: "asc" }, select: { email: true, name: true, role: true, emailVerifiedAt: true, lastLoginAt: true, createdAt: true } },
+      socialAccounts: { select: { platform: true, username: true, followers: true } },
+      _count: { select: { contentCards: true, brands: true, contactMessages: true, scheduledPosts: true, goals: true } },
+    },
+  });
+  if (!creator) notFound();
+
+  const since = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth() - 5, 1));
+  const [usage, actions, siteUrl] = await Promise.all([
+    prismaRoot.aiUsage.findMany({ where: { creatorId: id, createdAt: { gte: since } }, select: { createdAt: true, inputTokens: true, outputTokens: true } }),
+    prismaRoot.platformAction.findMany({ where: { creatorId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
+    creatorSiteUrl(creator),
+  ]);
+  const byMonth = new Map<string, { count: number; tokens: number }>();
+  for (const u of usage) {
+    const key = u.createdAt.toISOString().slice(0, 7);
+    const row = byMonth.get(key) ?? { count: 0, tokens: 0 };
+    row.count += 1;
+    row.tokens += u.inputTokens + u.outputTokens;
+    byMonth.set(key, row);
+  }
+  const months = Array.from(byMonth.entries()).sort((a, b) => b[0].localeCompare(a[0]));
+  const isMine = creator.id === admin.creatorId;
+
+  const facts: [string, string][] = [
+    ["Dirección", siteUrl.replace(/^https?:\/\//, "")],
+    ["Dominio propio", creator.customDomain ? `${creator.customDomain}${creator.customDomainVerifiedAt ? " ✓" : " (pendiente)"}` : "—"],
+    ["Alta", fmt(creator.createdAt)],
+    ["Asistente de bienvenida", creator.onboardedAt ? `Terminado ${fmt(creator.onboardedAt)}` : "Pendiente"],
+    ["Feed / marcas / mensajes", `${creator._count.contentCards} / ${creator._count.brands} / ${creator._count.contactMessages}`],
+    ["Publicaciones programadas / metas", `${creator._count.scheduledPosts} / ${creator._count.goals}`],
+    [
+      "Redes conectadas",
+      creator.socialAccounts.length
+        ? creator.socialAccounts.map((s) => `${s.platform}${s.username ? ` @${s.username.replace(/^@/, "")}` : ""}`).join(", ")
+        : "Ninguna",
+    ],
+  ];
+
+  return (
+    <div className="flex flex-col gap-sp-5">
+      <PageHeader eyebrow="Foliocrew · Cuentas" title={creator.name} description={`Ficha de soporte de ${creator.slug}.`} />
+      <Link href="/admin/plataforma" className="-mt-sp-3 text-sm font-medium text-coral hover:underline">
+        ← Todas las cuentas
+      </Link>
+      <AccountActions
+        creatorId={creator.id}
+        name={creator.name}
+        status={creator.status}
+        note={creator.adminNote ?? ""}
+        isMine={isMine}
+        siteUrl={siteUrl}
+      />
+      <div className="grid gap-sp-4 lg:grid-cols-2">
+        <Card>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">La cuenta</p>
+          <dl className="grid gap-sp-2 text-sm">
+            {facts.map(([label, value]) => (
+              <div key={label} className="grid grid-cols-[11rem_1fr] gap-sp-2">
+                <dt className="text-ink/55">{label}</dt>
+                <dd className="break-words text-ink">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </Card>
+        <Card>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Usuarios</p>
+          <ul className="flex flex-col gap-sp-3 text-sm">
+            {creator.users.map((u) => (
+              <li key={u.email}>
+                <p className="font-semibold text-ink">
+                  {u.name ?? "—"} <span className="font-normal text-ink/50">({u.role === "owner" ? "dueño/a" : u.role})</span>
+                </p>
+                <p className="break-all">
+                  {u.email} · {u.emailVerifiedAt ? "✓ correo confirmado" : "correo sin confirmar"}
+                </p>
+                <p className="text-xs text-ink/55">Último ingreso: {fmt(u.lastLoginAt)}</p>
+              </li>
+            ))}
+          </ul>
+        </Card>
+        <Card>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Uso de IA (últimos 6 meses)</p>
+          {months.length ? (
+            <table className="w-full text-sm">
+              <thead className="font-mono text-[10px] uppercase text-ink/50">
+                <tr>
+                  <th className="py-1 text-left">Mes</th>
+                  <th className="py-1 text-right">Sugerencias</th>
+                  <th className="py-1 text-right">Tokens</th>
+                </tr>
+              </thead>
+              <tbody>
+                {months.map(([month, row]) => (
+                  <tr key={month} className="border-t border-line">
+                    <td className="py-1">{month}</td>
+                    <td className="py-1 text-right font-mono">{row.count}</td>
+                    <td className="py-1 text-right font-mono">{row.tokens.toLocaleString("es")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-sm text-ink/55">Todavía no pidió sugerencias de IA.</p>
+          )}
+        </Card>
+        <Card>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Historial de administración</p>
+          {actions.length ? (
+            <ul className="flex flex-col gap-sp-2 text-sm">
+              {actions.map((a) => (
+                <li key={a.id}>
+                  <span className="text-ink">{ACTION_LABEL[a.action] ?? a.action}</span>
+                  <span className="block text-xs text-ink/50">
+                    {fmt(a.createdAt)} · {a.actorEmail}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-ink/55">Sin acciones todavía.</p>
+          )}
+        </Card>
+      </div>
+    </div>
+  );
+}

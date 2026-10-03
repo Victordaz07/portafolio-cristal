@@ -18,6 +18,9 @@ const accountSchema = z.object({
 export async function PATCH(request: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (session.actorId) {
+    return NextResponse.json({ error: "Desde \"Entrar como\" no se pueden cambiar el nombre ni la contraseña" }, { status: 403 });
+  }
   const parsed = accountSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Revisa los datos" }, { status: 400 });

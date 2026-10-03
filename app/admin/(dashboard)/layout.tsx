@@ -8,6 +8,7 @@ import { sessionCreatorSite } from "@/lib/site-url";
 import { isPlatformAdmin } from "@/lib/platform-admin";
 import { emailConfigured } from "@/lib/email";
 import EmailVerifyNotice from "@/components/admin/EmailVerifyNotice";
+import ImpersonationBanner from "@/components/admin/ImpersonationBanner";
 import { redirect } from "next/navigation";
 
 // El panel lee siempre el estado más reciente de la base de datos: nunca debe
@@ -27,11 +28,12 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     isPlatformAdmin(),
     prismaRoot.adminUser.findUnique({ where: { id: session.userId }, select: { email: true, emailVerifiedAt: true } }),
   ]);
-  const needsVerification = Boolean(user && !user.emailVerifiedAt && emailConfigured());
+  const needsVerification = Boolean(user && !user.emailVerifiedAt && emailConfigured() && !session.actorId);
 
   return (
     <ToastProvider>
       <AdminShell unreadMessages={unreadMessages} creatorName={creator?.name ?? ""} siteUrl={site?.url ?? "/"} platformAdmin={platformAdmin}>
+        {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
         {needsVerification && user && (
           <div className="mb-sp-4">
             <EmailVerifyNotice email={user.email} compact />

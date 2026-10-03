@@ -15,6 +15,8 @@ export interface SessionPayload {
   email: string;
   /** AdminUser.sessionVersion al iniciar sesión: si cambia la contraseña, la sesión deja de valer. */
   sv?: number;
+  /** Quien administra Foliocrew y entró "como" esta cuenta para dar soporte (su userId). */
+  actorId?: string;
 }
 
 export async function createSessionToken(session: SessionPayload) {

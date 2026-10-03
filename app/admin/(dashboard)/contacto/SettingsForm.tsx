@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { SiteSettings } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import BilingualTextField from "@/components/admin/BilingualTextField";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 import { inputClass, primaryButtonClass, cardClass, sectionTitleClass } from "@/lib/admin-ui";
 
 export default function SettingsForm({
@@ -28,6 +29,7 @@ export default function SettingsForm({
     footerIntroEn: initialSettings?.footerIntroEn ?? "",
     supportMessage: initialSettings?.supportMessage ?? "",
     supportMessageEn: initialSettings?.supportMessageEn ?? "",
+    contactPhotoUrl: initialSettings?.contactPhotoUrl ?? "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -65,6 +67,15 @@ export default function SettingsForm({
       <h2 className={sectionTitleClass}>
         Pie de página — &quot;Conéctate conmigo&quot;
       </h2>
+
+      <ImageUploadField
+        label="Foto de la sección de contacto"
+        value={form.contactPhotoUrl}
+        onChange={(url) => setForm((c) => ({ ...c, contactPhotoUrl: url }))}
+      />
+      <p className="-mt-sp-3 text-xs text-ink/55">
+        Es la foto grande detrás de tus datos de contacto, al final del sitio. Si no subes una, se muestra un marcador genérico.
+      </p>
 
       <BilingualTextField
         label="Texto de introducción"

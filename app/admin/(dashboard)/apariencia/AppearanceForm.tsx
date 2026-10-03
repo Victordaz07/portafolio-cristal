@@ -54,7 +54,13 @@ export default function AppearanceForm({ initial, niche }: { initial: Values; ni
     <form onSubmit={save} className="grid items-start gap-sp-4 xl:grid-cols-[1.2fr_1fr]">
       <Card className="flex flex-col gap-sp-5">
         <div className="grid gap-sp-4 sm:grid-cols-[160px_1fr]">
-          <ImageUploadField label="Foto de perfil" value={values.photoUrl} onChange={(url) => set("photoUrl", url)} />
+          <ImageUploadField
+            label="Foto de perfil"
+            value={values.photoUrl}
+            onChange={(url) => set("photoUrl", url)}
+            aspect={4 / 5}
+            recommendedSize="1200 × 1500 px"
+          />
           <div className="flex flex-col gap-sp-4">
             <label className="flex flex-col gap-sp-1">
               <span className="text-sm font-medium text-ink">Nombre público</span>

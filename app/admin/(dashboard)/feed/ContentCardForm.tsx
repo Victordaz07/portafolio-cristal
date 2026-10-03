@@ -9,6 +9,7 @@ import BilingualTextField from "@/components/admin/BilingualTextField";
 import { useToast } from "@/components/admin/ToastContext";
 import { TikTokIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
+import { LOGO_ASPECT_OPTIONS } from "@/lib/image-crop";
 
 type SocialPlatform = Exclude<Platform, "ugc">;
 
@@ -239,7 +240,14 @@ export default function ContentCardForm({
                   className={inputClass}
                 />
               </label>
-              <ImageUploadField label="Logo (opcional)" value={newBrandLogoUrl} onChange={setNewBrandLogoUrl} />
+              <ImageUploadField
+                label="Logo (opcional)"
+                value={newBrandLogoUrl}
+                onChange={setNewBrandLogoUrl}
+                aspect={LOGO_ASPECT_OPTIONS}
+                outputFormat="png"
+                recommendedSize="fondo transparente"
+              />
               <div className="flex gap-sp-3">
                 <button
                   type="button"
@@ -348,6 +356,7 @@ export default function ContentCardForm({
           }
           value={videoUrl}
           onChange={setVideoUrl}
+          recommendedSize="1080 × 1920 px (vertical, 9:16)"
         />
       )}
 
@@ -356,6 +365,8 @@ export default function ContentCardForm({
           label="Miniatura (opcional): sube una foto/screenshot para la vista previa en la cuadrícula. TikTok normalmente ya trae una automática; Instagram y Facebook no, así que se recomienda subir una aquí."
           value={thumbnailUrl}
           onChange={setThumbnailUrl}
+          aspect={9 / 16}
+          recommendedSize="900 × 1600 px"
         />
       )}
 
@@ -369,6 +380,8 @@ export default function ContentCardForm({
           }
           value={photoUrl}
           onChange={setPhotoUrl}
+          aspect={4 / 5}
+          recommendedSize="1080 × 1350 px"
         />
       )}
 

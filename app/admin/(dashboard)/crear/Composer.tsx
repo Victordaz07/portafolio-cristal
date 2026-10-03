@@ -319,6 +319,8 @@ export default function Composer({
             value={mediaUrl}
             onChange={setMediaUrl}
             kind={mediaType === "video" ? "video" : "photo"}
+            aspect={mediaType === "video" ? undefined : 4 / 5}
+            recommendedSize={mediaType === "video" ? "1080 × 1920 px (vertical, 9:16)" : "1080 × 1350 px"}
           />
         </div>
 

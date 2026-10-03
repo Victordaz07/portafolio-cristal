@@ -72,6 +72,8 @@ export default function SettingsForm({
         label="Foto de la sección de contacto"
         value={form.contactPhotoUrl}
         onChange={(url) => setForm((c) => ({ ...c, contactPhotoUrl: url }))}
+        aspect={9 / 16}
+        recommendedSize="900 × 1600 px"
       />
       <p className="-mt-sp-3 text-xs text-ink/55">
         Es la foto grande detrás de tus datos de contacto, al final del sitio. Si no subes una, se muestra un marcador genérico.

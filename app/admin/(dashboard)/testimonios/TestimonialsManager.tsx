@@ -142,6 +142,8 @@ export default function TestimonialsManager({
           label="Foto (opcional)"
           value={form.photoUrl}
           onChange={(url) => set("photoUrl", url)}
+          aspect={1}
+          recommendedSize="400 × 400 px"
         />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
           {saving ? "Agregando..." : "+ agregar testimonio"}

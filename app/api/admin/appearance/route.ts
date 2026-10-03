@@ -4,6 +4,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ACCENTS } from "@/lib/theme";
 import { BACKGROUNDS, CORNERS, FONTS, HEROES, SECTION_IDS, STYLES, normalizeSections } from "@/lib/design";
+import { LINK_PATTERNS } from "@/lib/bio-links";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,7 @@ const schema = z.object({
   corners: z.enum(keys(CORNERS)).optional(),
   background: z.enum(keys(BACKGROUNDS)).optional(),
   hero: z.enum(keys(HEROES)).optional(),
+  pattern: z.enum(keys(LINK_PATTERNS)).optional(),
   sections: z
     .array(z.object({ id: z.enum(SECTION_IDS as [string, ...string[]]), hidden: z.boolean() }))
     .max(SECTION_IDS.length)
@@ -63,6 +65,7 @@ export async function PATCH(request: Request) {
         ...(d.corners ? { corners: d.corners } : {}),
         ...(d.background ? { background: d.background } : {}),
         ...(d.hero ? { heroLayout: d.hero } : {}),
+        ...(d.pattern ? { linksPattern: d.pattern } : {}),
         ...(d.sections ? { sectionLayout: normalizeSections(d.sections) as unknown as Prisma.InputJsonValue } : {}),
       },
     }),

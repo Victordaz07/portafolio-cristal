@@ -3,13 +3,16 @@
 // Todas tienen contraste de texto blanco sobre el acento ≥ 3.9:1 (igual o mejor que la paleta original).
 // Además se puede elegir un color propio ("custom"): los otros dos tonos se calculan solos.
 
+// "ring" son los 2 tonos exactos del handoff del link en bio (anillo del avatar). "light" y "dark" usan los
+// mismos hex del handoff; "accent" es el tono de los botones con texto blanco (contraste ≥ 3.5:1), por eso en
+// Terracota, Salvia y Dorado es un poco más oscuro que el segundo tono del anillo.
 export const ACCENTS = {
-  lila: { label: "Lila", accent: "#A866BE", dark: "#801F82", light: "#C3ACEA" },
-  rosa: { label: "Rosa", accent: "#C2507F", dark: "#8E2453", light: "#F2B8CF" },
-  terracota: { label: "Terracota", accent: "#C4613F", dark: "#8F3A1F", light: "#F4C4B0" },
-  salvia: { label: "Salvia", accent: "#5A8A5E", dark: "#33553A", light: "#C3DCC2" },
-  azul: { label: "Azul", accent: "#4A74B8", dark: "#254A86", light: "#BFD0EF" },
-  dorado: { label: "Dorado", accent: "#A9741C", dark: "#6F4A0E", light: "#EED9A8" },
+  lila: { label: "Lila", accent: "#A866BE", dark: "#801F82", light: "#C3ACEA", ring: ["#C3ACEA", "#A866BE"] },
+  rosa: { label: "Rosa", accent: "#D6336C", dark: "#9C2963", light: "#F3B4D0", ring: ["#F3B4D0", "#D6336C"] },
+  terracota: { label: "Terracota", accent: "#C4613F", dark: "#B5533C", light: "#F0C3A0", ring: ["#F0C3A0", "#D9794F"] },
+  salvia: { label: "Salvia", accent: "#5A8A5E", dark: "#3F6B4A", light: "#BFE0B0", ring: ["#BFE0B0", "#6E9B6E"] },
+  azul: { label: "Azul", accent: "#3B6FD1", dark: "#1F4E8C", light: "#BFD9F7", ring: ["#BFD9F7", "#3B6FD1"] },
+  dorado: { label: "Dorado", accent: "#A9741C", dark: "#8A6A1E", light: "#E8CE8D", ring: ["#E8CE8D", "#C9A227"] },
 } as const;
 
 export type AccentId = keyof typeof ACCENTS;
@@ -51,10 +54,12 @@ export function paletteFromHex(hex: string) {
     steps++;
   }
   const accent = toHex(rgb);
+  const light = toHex(mix(rgb, [255, 255, 255], 0.6));
   return {
     accent,
     dark: toHex(mix(rgb, [0, 0, 0], 0.35)),
-    light: toHex(mix(rgb, [255, 255, 255], 0.6)),
+    light,
+    ring: [light, hex.toUpperCase()] as const,
     adjusted: accent !== hex.toUpperCase(),
   };
 }
@@ -70,5 +75,7 @@ export function accentVars(id: string | null | undefined, custom?: string | null
     "--accent": channels(palette.accent),
     "--accent-dark": channels(palette.dark),
     "--accent-light": channels(palette.light),
+    "--ring-from": channels(palette.ring[0]),
+    "--ring-to": channels(palette.ring[1]),
   };
 }

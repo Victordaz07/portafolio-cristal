@@ -27,7 +27,7 @@ descarga solo las del sitio que está viendo. Los títulos usan `.site-heading` 
   estructurada con enums); sin clave o si falla, una propuesta por nicho (`fallbackDesign`).
 - **Imagen para compartir:** `/api/og` (1200×630) con nombre, nicho, foto y colores del diseño; la declaran `og:image` y `twitter:image`.
 
-## Link en bio (`/enlaces`, panel en `/admin/enlaces`)
+## Link en bio (`/links` y `/enlaces`, panel en `/admin/enlaces`)
 Página corta para la bio de Instagram/TikTok según el handoff de diseño (`components/links/LinkInBio.tsx`):
 Avatar con anillo en degradado, SocialRow, HeroCard con brillo diagonal (3.6 s), SectionDivider, LinkCard (fila o tarjeta),
 Pill y ES/EN. Entrada escalonada (fade + 12 px, 450 ms, +60 ms por tarjeta desde los 300 ms) y toque `scale(0.97)`;
@@ -35,3 +35,17 @@ todo se apaga con "reducir movimiento". Usa el mismo diseño del sitio (estilo, 
 
 Sale sola: foto, nombre, nicho, bio, redes, portafolio, media kit, contacto, WhatsApp/correo y 4 publicaciones del Feed.
 Más los enlaces propios (`BioLink`: título ES/EN, URL `https://` o `mailto:`, imagen, etiqueta, fila o tarjeta; máx. 30).
+
+### Versión 2 (diseño "Crislia Links")
+- **Grupos**: cada enlace tiene `section`/`sectionEn` ("Colabora conmigo", "Mis favoritos", "Más"); se muestran en el orden
+  de los enlaces, con divisor ondulado y título en la tipografía de títulos.
+- **Tarjetas**: `kicker` (palabra de acción: "Comprar", "Únete"), `badge` en el acento ("Abierto ahora"), `pill` de descuento
+  ("15% OFF"). Sin imagen, el ícono sale del tipo de enlace (PayPal, tienda, redes, correo, WhatsApp).
+- **Clics**: `POST /api/links/click` (sendBeacon, 1 por enlace por minuto por IP, solo enlaces de la cuenta del sitio).
+  El más visitado con 10+ clics lleva "Más clics" si no tiene otra etiqueta. El panel muestra los clics.
+- **Fondo decorativo** (en el Estudio de diseño, `SiteSettings.linksPattern`): blobs difuminados (por defecto), acuarela,
+  punteado, pétalos, ramitas o enredadera; los patrones son SVG usados como máscara, pintados con el acento al 15%.
+- **Acentos**: los 6 presets usan los hex del handoff (`ring` = anillo del avatar, `light` = eyebrow, `dark` = sólido);
+  el tono de botones con texto blanco se mantiene con contraste ≥ 3.5:1.
+- Frase bajo el nombre (`linksTagline`), "Copiar mi enlace", y bloques automáticos que se pueden apagar
+  (`linksShowBrandKit`, `linksShowRecent`). `content-visibility:auto` en las tarjetas.

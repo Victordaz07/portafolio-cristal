@@ -12,14 +12,14 @@ export default function LocaleSwitch({ locale }: { locale: Locale }) {
     router.refresh();
   }
   return (
-    <div role="group" aria-label="Idioma / Language" className="flex rounded-full border border-line bg-surface p-0.5 font-mono text-[10px] font-bold uppercase tracking-widest shadow-fc-card">
+    <div role="group" aria-label="Idioma / Language" className="flex gap-0.5 rounded-full border border-cobalt/15 bg-surface/65 p-[3px] text-[11px] font-bold">
       {(["es", "en"] as const).map((l) => (
         <button
           key={l}
           type="button"
           aria-pressed={locale === l}
           onClick={() => choose(l)}
-          className={`rounded-full px-sp-3 py-1 uppercase transition-colors ${locale === l ? "bg-coral text-white" : "text-ink/55 hover:text-ink"}`}
+          className={`rounded-full px-[11px] py-[5px] uppercase transition-colors ${locale === l ? "bg-moss text-white" : "text-cobalt hover:bg-cobalt/5"}`}
         >
           {l}
         </button>

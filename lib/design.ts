@@ -1,4 +1,5 @@
 import { ACCENTS, accentVars, isAccentId, isHexColor } from "./theme";
+import { isLinkPattern, type LinkPatternId } from "./bio-links";
 
 // ─── Estudio de diseño ───
 // Cada perfil elige entre opciones cerradas (nunca CSS libre): así ningún sitio queda roto o ilegible.
@@ -124,6 +125,8 @@ export interface Design {
   background: BackgroundId;
   hero: HeroId;
   sections: SectionEntry[];
+  /** Fondo decorativo del link en bio (lib/bio-links.ts → LINK_PATTERNS). */
+  pattern: LinkPatternId;
 }
 
 const has = <T extends object>(obj: T, key: unknown): key is keyof T => typeof key === "string" && key in obj;
@@ -152,6 +155,7 @@ export const DEFAULT_DESIGN: Design = {
   background: "textura",
   hero: "split",
   sections: normalizeSections([]),
+  pattern: "blobs",
 };
 
 /** Lee el diseño guardado (o uno de vista previa) y descarta cualquier valor que no sea una opción válida. */
@@ -168,6 +172,7 @@ export function parseDesign(raw: Partial<Record<keyof Design, unknown>> | null |
     background: has(BACKGROUNDS, r.background) ? r.background : base.background,
     hero: has(HEROES, r.hero) ? r.hero : base.hero,
     sections: r.sections !== undefined ? normalizeSections(r.sections) : base.sections,
+    pattern: isLinkPattern(r.pattern) ? r.pattern : base.pattern,
   };
 }
 
@@ -182,6 +187,7 @@ export function designFromSettings(
     background?: string | null;
     heroLayout?: string | null;
     sectionLayout?: unknown;
+    linksPattern?: string | null;
   } | null
 ): Design {
   if (!s) return DEFAULT_DESIGN;
@@ -194,6 +200,7 @@ export function designFromSettings(
     background: s.background,
     hero: s.heroLayout,
     sections: s.sectionLayout ?? undefined,
+    pattern: s.linksPattern,
   });
 }
 

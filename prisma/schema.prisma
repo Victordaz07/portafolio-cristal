@@ -348,6 +348,12 @@ model SiteSettings {
   corners          String   @default("suave")
   background       String   @default("textura")
   sectionLayout    Json? // [{ id, hidden }] en el orden en que se muestran
+  // Link en bio (/enlaces)
+  linksTagline       String? // frase bajo el nombre: "Mis favoritos y más ✨"
+  linksTaglineEn     String?
+  linksPattern       String   @default("blobs") // fondo: blobs, punteado, petalos, ramitas, enredadera
+  linksShowBrandKit  Boolean  @default(true) // bloque automático: media kit, contacto, WhatsApp, correo
+  linksShowRecent    Boolean  @default(true) // bloque automático: contenido reciente del Feed
   updatedAt        DateTime @updatedAt
 }
 
@@ -571,8 +577,15 @@ model BioLink {
   titleEn   String?
   url       String
   imageUrl  String?
-  pill      String? // etiqueta corta: "Nuevo", "-20%"…
+  pill      String? // etiqueta corta arriba a la derecha: "15% OFF", "Nuevo"…
   wide      Boolean  @default(true) // fila a todo el ancho (true) o tarjeta con imagen (false)
+  section   String   @default("") // grupo donde aparece ("Colabora conmigo", "Mis favoritos"…)
+  sectionEn String?
+  kicker    String? // palabra de acción sobre el título de la tarjeta: "Comprar", "Únete"
+  kickerEn  String?
+  badge     String? // etiqueta destacada en el acento: "Abierto ahora"
+  badgeEn   String?
+  clicks    Int      @default(0) // clics en la página pública (el más visitado lleva "Más clics")
   order     Int      @default(0)
   createdAt DateTime @default(now())
 

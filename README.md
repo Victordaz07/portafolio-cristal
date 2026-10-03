@@ -16,7 +16,7 @@ editar absolutamente todo el contenido sin tocar código.
 - Subida de imágenes/video: Vercel Blob (requiere un store con acceso **público**, ver nota abajo)
 - Envío de correo del formulario de contacto: Resend (opcional)
 - Embeds reales de TikTok / Instagram / Facebook, con opción de subir video propio
-- Feed con dos tipos de tarjeta: post de red social, o foto UGC propia sin red social (con marca opcional)
+- Feed con dos tipos de tarjeta: post de red social, o foto de portafolio propia sin red social (con marca opcional)
 - Miniatura de tarjetas: automática por oEmbed en TikTok; para Instagram/Facebook se
   intenta traer el `og:image` del post (`/api/admin/resolve-thumbnail`) con opción de
   subir una manualmente si falla
@@ -144,6 +144,7 @@ Cada persona creadora tiene su espacio (`Creator`) y **todas** las tablas tienen
   - imagen Open Graph y píxel de Meta opcional (`NEXT_PUBLIC_META_PIXEL_ID`);
   - quien administra la plataforma (`PLATFORM_ADMIN_EMAILS`) ve **Lista de espera** en el panel: totales, origen, CSV y marcar invitaciones enviadas.
 - **Pagos manuales** ([`docs/pagos.md`](docs/pagos.md)): prueba gratis (`TRIAL_DAYS`), **Mi plan** (`/admin/plan`) con PayPal.me y datos de transferencia, aviso "Ya pagué" (`Payment` con estado reportado/confirmado/rechazado), confirmación desde **Cuentas** (extiende `Creator.paidUntil`), cuentas de cortesía (`comp`) y recordatorios diarios por correo (`/api/cron/billing`, Vercel Cron, `CRON_SECRET`).
+- **Tipo de creador** (`Creator.creatorKind`, `lib/creator-kind.ts`): Foliocrew es para creadores de contenido y UGC. Cada cuenta elige "creador/a de contenido", "UGC" o "las dos cosas" en el asistente (o después en Mi cuenta); eso cambia las plantillas de bio, servicios, paquetes y preguntas (`lib/onboarding.ts`) y el contexto de la IA.
 - **Estudio de diseño y Link en bio** ([`docs/estudio-de-diseno.md`](docs/estudio-de-diseno.md)): 5 estilos, 6 tipografías, color propio con contraste garantizado, 4 portadas, bordes, fondo, orden de secciones, vista previa en vivo, "Diséñalo por mí" con Claude, imagen para compartir (`/api/og`) y página `/enlaces` para la bio.
 - **Miniaturas de Instagram/Facebook** (`lib/social/thumbnail.ts`): el link de portada que devuelven Instagram/Facebook caduca y bloquea el "hotlinking", así que en vez de guardarlo tal cual se descarga una vez y se resube a nuestro propio Blob Store. Además de pasar por ahí cada vez que se resuelve a mano ("Cargar preview") o se guarda una tarjeta, la tarea diaria `/api/cron/insights` (Vercel Cron, mismo `CRON_SECRET`) revisa todas las cuentas y rellena o renueva sola la miniatura de cualquier tarjeta que la tenga vacía o vencida — sin que nadie tenga que entrar al panel.
 - **Revisión de las apps de redes** (Fase 14, [`docs/revision-de-apps.md`](docs/revision-de-apps.md)): textos en inglés, guiones de video y direcciones para Meta, TikTok y Google. El panel siempre abre en `PLATFORM_ROOT_DOMAIN/admin` (una sola dirección de regreso para OAuth). Callbacks de Meta: `/api/social/meta/deauthorize` y `/api/social/meta/data-deletion` (firma `signed_request`; borra la conexión y da un código para ver el estado en `/eliminar-datos?codigo=…`).
@@ -175,7 +176,7 @@ Secciones (cada una con su Manager + formulario):
 | --- | --- |
 | Hero | Portada: nombre, título, descripción, foto, CTAs. Incluye **vista previa en vivo** mientras se edita. |
 | Media kit | Las cifras junto al Hero (seguidores, colaboraciones, calificación). |
-| Feed | Tarjetas de fotos/videos, en dos modos: "Post de red social" o "Foto UGC de portafolio" (foto propia sin red social, con marca opcional). Ver "el problema conocido con TikTok" abajo. |
+| Feed | Tarjetas de fotos/videos, en dos modos: "Post de red social" o "Foto de portafolio" (foto propia sin red social, con marca opcional). Ver "el problema conocido con TikTok" abajo. |
 | Feed / Publicaciones | Tarjetas con métricas (vistas, likes, comentarios, compartidos, guardados; el engagement se calcula), comentario destacado "Lo que dicen", filtros por tipo, "☆ Destacar" para Colaboraciones y "↻ Sincronizar métricas" desde Instagram/TikTok/Facebook conectados (`lib/social/metrics-sync.ts`, empareja por el link del post; de paso rellena o renueva la miniatura si está vacía o caducada). |
 | Vista pública | El sitio dentro del panel (iframe), en escritorio o celular y ES/EN. |
 | Crear | Composer de publicaciones: tipo, redes, marca, caption con **sugerencias de IA** (Claude, 3 opciones con el contexto de la persona creadora), avisos de límites por red, vista previa por red, consejos de IA por red y programación por día/hora (`APP_TIMEZONE`). Aún no publica automáticamente. |

@@ -25,14 +25,21 @@ export async function getCreatorContext() {
   const [hero, cards, creator] = await Promise.all([
     prisma.hero.findFirst({ select: { name: true, niche: true } }),
     prisma.contentCard.findMany({ orderBy: { createdAt: "desc" }, take: 8, select: { caption: true, category: true } }),
-    prismaRoot.creator.findUnique({ where: { id: await currentCreatorId() }, select: { shareInsights: true } }),
+    prismaRoot.creator.findUnique({ where: { id: await currentCreatorId() }, select: { shareInsights: true, creatorKind: true } }),
   ]);
   // Quien participa en la inteligencia de Foliocrew recibe sugerencias basadas en resultados reales de su nicho.
   const insight = creator?.shareInsights ? await insightForNiche(hero?.niche).catch(() => null) : null;
   const recent = cards.map((c) => `- ${c.caption} (${c.category})`).join("\n");
+  const { kindInfo } = await import("@/lib/creator-kind");
+  const kind = kindInfo(creator?.creatorKind);
   return [
-    `Creador(a) de contenido: ${hero?.name ?? "creador(a) UGC"}.`,
-    `Nicho: ${hero?.niche ?? "UGC de belleza y estilo de vida"}.`,
+    `Persona: ${hero?.name ?? "sin nombre"}, ${kind.role}.`,
+    kind.id === "ugc"
+      ? "Crea contenido para que las marcas lo publiquen en sus propias redes y anuncios."
+      : kind.id === "ambos"
+        ? "Publica en sus propias redes para su comunidad y también crea contenido UGC para que las marcas lo publiquen."
+        : "Publica en sus propias redes para su comunidad; las marcas le pagan por mostrar sus productos a esa audiencia.",
+    `Nicho: ${hero?.niche ?? "estilo de vida"}.`,
     recent ? `Publicaciones recientes de su portafolio:\n${recent}` : "",
     insight ? `${insightPromptText(insight)}\nUsa estos datos para orientar tus sugerencias (sin citarlos textualmente).` : "",
   ]

@@ -48,6 +48,6 @@ export function platformLabel(platform: Platform): string {
     case "facebook":
       return "PIC";
     case "ugc":
-      return "UGC";
+      return "PORTAFOLIO";
   }
 }

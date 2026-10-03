@@ -3,7 +3,7 @@ import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { AI_MODEL, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
 import { CONTENT_TYPE_LABEL, NETWORK_META, type ContentType, type PlanNetwork } from "@/lib/content-plan";
 
-const SYSTEM = `Eres asistente de una persona creadora de contenido UGC que trabaja con marcas.
+const SYSTEM = `Eres asistente de una persona creadora de contenido que trabaja con marcas (el contexto dice si publica en sus redes, hace UGC o ambas cosas).
 Escribes en español neutro latino, con tono cercano, auténtico y nada exagerado.
 No inventas datos sobre productos ni prometes resultados. Respeta las reglas y límites de cada red.`;
 
@@ -35,7 +35,7 @@ export async function suggestCaptions(input: {
         content: `${context}
 
 Escribe 3 opciones de caption para: ${CONTENT_TYPE_LABEL[input.contentType]} en ${networks}.
-Tema: ${input.topic || "contenido UGC de belleza y estilo de vida"}.
+Tema: ${input.topic || "contenido de su nicho"}.
 ${input.brandName ? `Es una colaboración con la marca ${input.brandName}: menciónala de forma natural y agrega #publi o #ad al final.` : ""}
 ${input.draft ? `Borrador actual (mejóralo, no lo repitas): ${input.draft}` : ""}
 Cada opción: gancho en la primera línea, máximo 3 líneas cortas y 3 a 5 hashtags relevantes al final.`,
@@ -67,7 +67,7 @@ export async function suggestNetworkTips(input: { caption: string; contentType: 
     messages: [
       {
         role: "user",
-        content: `Una persona creadora de contenido UGC va a publicar este ${CONTENT_TYPE_LABEL[input.contentType]} en: ${labels.join(", ")}.
+        content: `Una persona creadora de contenido va a publicar este ${CONTENT_TYPE_LABEL[input.contentType]} en: ${labels.join(", ")}.
 Caption:
 """
 ${input.caption}

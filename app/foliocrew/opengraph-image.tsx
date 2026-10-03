@@ -20,7 +20,7 @@ export default async function OpengraphImage() {
           <span style={{ color: "#B692E7", fontStyle: "italic" }}>su espacio.</span>
         </div>
         <div style={{ display: "flex", marginTop: 32, fontSize: 30, color: "rgba(251,247,245,0.75)" }}>
-          Portafolio, media kit y colaboraciones para creadores de contenido UGC.
+          Portafolio, media kit y colaboraciones para creadores de contenido y UGC.
         </div>
         <div style={{ display: "flex", position: "absolute", right: -80, top: 60, width: 380, height: 500, border: "4px solid rgba(182,146,231,0.5)", borderRadius: 48, transform: "rotate(-12deg)" }} />
       </div>

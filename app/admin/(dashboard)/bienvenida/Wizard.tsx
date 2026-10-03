@@ -11,6 +11,7 @@ import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from
 import { ACCENTS, type AccentId } from "@/lib/theme";
 import { siteTemplate, suggestedBio, type Niche } from "@/lib/onboarding";
 import { parseEmbedUrl } from "@/lib/embeds";
+import { CREATOR_KINDS, type CreatorKind } from "@/lib/creator-kind";
 
 const STEPS = ["Tu perfil", "Tus textos", "Tu mejor contenido", "Contacto y color"];
 const eyebrow = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
@@ -24,6 +25,7 @@ interface Initial {
   tiktok: string;
   whatsapp: string;
   accentColor: string;
+  creatorKind: CreatorKind;
 }
 
 export default function Wizard({ niches, initial }: { niches: Niche[]; initial: Initial }) {
@@ -47,17 +49,17 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
   });
 
   const niche = niches.find((n) => n.id === v.niche);
-  const template = useMemo(() => (niche ? siteTemplate(niche) : null), [niche]);
+  const template = useMemo(() => (niche ? siteTemplate(niche, v.creatorKind) : null), [niche, v.creatorKind]);
   const firstName = v.displayName.trim().split(" ")[0] || "…";
 
   function set<K extends keyof typeof v>(key: K, value: (typeof v)[K]) {
     setV((current) => {
       const next = { ...current, [key]: value };
       // La bio sugerida sigue al nicho y al nombre hasta que la creadora la edita.
-      if ((key === "niche" || key === "displayName") && !current.bioEdited) {
+      if ((key === "niche" || key === "displayName" || key === "creatorKind") && !current.bioEdited) {
         const n = niches.find((x) => x.id === next.niche);
         if (n) {
-          const bio = suggestedBio(n, next.displayName.trim().split(" ")[0] || "");
+          const bio = suggestedBio(n, next.displayName.trim().split(" ")[0] || "", next.creatorKind);
           next.bio = bio.es;
           next.bioEn = bio.en;
         }
@@ -99,6 +101,7 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
         photoUrl: v.photoUrl,
         location: v.location,
         niche: v.niche,
+        creatorKind: v.creatorKind,
         bio: v.bio,
         bioEn: v.bioEn,
         useTemplates: v.useTemplates,
@@ -217,6 +220,26 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
                 <span className="text-sm font-medium text-ink">Ciudad / país (opcional)</span>
                 <input value={v.location} onChange={(e) => set("location", e.target.value)} placeholder="Santo Domingo, RD" className={inputClass} />
               </label>
+            </div>
+            <div>
+              <p className="mb-sp-2 text-sm font-medium text-ink">¿Cómo trabajas con marcas?</p>
+              <div className="grid gap-sp-2 sm:grid-cols-3" role="radiogroup" aria-label="¿Cómo trabajas con marcas?">
+                {CREATOR_KINDS.map((k) => (
+                  <button
+                    key={k.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={v.creatorKind === k.id}
+                    onClick={() => set("creatorKind", k.id)}
+                    className={`flex flex-col gap-1 rounded-[14px] border p-sp-3 text-left transition ${
+                      v.creatorKind === k.id ? "border-ink bg-ink text-cream" : "border-line bg-white text-ink hover:border-coral"
+                    }`}
+                  >
+                    <span className="text-sm font-semibold">{k.label}</span>
+                    <span className={`text-xs ${v.creatorKind === k.id ? "text-cream/75" : "text-ink/55"}`}>{k.hint}</span>
+                  </button>
+                ))}
+              </div>
             </div>
             <div>
               <p className="mb-sp-2 text-sm font-medium text-ink">¿De qué es tu contenido?</p>

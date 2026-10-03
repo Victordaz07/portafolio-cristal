@@ -37,6 +37,8 @@ model Creator {
   /// Suma sus resultados, de forma anónima y agregada, a la inteligencia de Foliocrew (y recibe comparativas de su nicho)
   shareInsights          Boolean   @default(false)
   shareInsightsAt        DateTime?
+  /// Cómo trabaja con marcas: "contenido" (publica en sus redes) | "ugc" (crea para que la marca publique) | "ambos"
+  creatorKind            String    @default("contenido")
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 

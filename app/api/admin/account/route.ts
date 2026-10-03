@@ -7,6 +7,7 @@ import { withSession } from "@/lib/creators";
 import { sendPasswordChangedEmail } from "@/lib/account-emails";
 import { changeAccountEmail } from "@/lib/account-email-change";
 import { isPlatformAdminEmail } from "@/lib/platform-admin";
+import { CREATOR_KINDS, type CreatorKind } from "@/lib/creator-kind";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ const accountSchema = z.object({
   email: z.string().trim().email("Escribe un correo válido").max(200).optional(),
   /** Confirma que, al dejar el correo de administración, esta cuenta pierde el panel de dueño. */
   confirmLoseAdmin: z.boolean().optional(),
+  creatorKind: z.enum(CREATOR_KINDS.map((k) => k.id) as [CreatorKind, ...CreatorKind[]]).optional(),
 });
 
 /** Cambiar el nombre, la contraseña o el correo de acceso de la cuenta con sesión iniciada. */
@@ -30,9 +32,15 @@ export async function PATCH(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Revisa los datos" }, { status: 400 });
   }
-  const { name, currentPassword, newPassword, email, confirmLoseAdmin } = parsed.data;
+  const { name, currentPassword, newPassword, email, confirmLoseAdmin, creatorKind } = parsed.data;
   const user = await prisma.adminUser.findUnique({ where: { id: session.userId } });
   if (!user) return NextResponse.json({ error: "Cuenta no encontrada" }, { status: 404 });
+
+  // Tipo de creador (contenido, UGC o ambos): orienta la IA y las plantillas.
+  if (creatorKind) {
+    await prismaRoot.creator.update({ where: { id: session.creatorId }, data: { creatorKind } });
+    return NextResponse.json({ ok: true, creatorKind });
+  }
 
   // Cambiar el correo de acceso: pide la contraseña actual, como cambiar la contraseña.
   if (email) {

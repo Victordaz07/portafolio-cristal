@@ -5,6 +5,8 @@ import { sessionCreatorSite } from "@/lib/site-url";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountForm from "./AccountForm";
+import CreatorKindPicker from "./CreatorKindPicker";
+import { creatorKind } from "@/lib/creator-kind";
 import { emailConfigured } from "@/lib/email";
 import { isPlatformAdminEmail } from "@/lib/platform-admin";
 import ShareInsightsButton from "@/components/admin/ShareInsightsButton";
@@ -15,7 +17,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   const [user, creator] = session
     ? await Promise.all([
         prisma.adminUser.findUnique({ where: { id: session.userId }, select: { name: true, email: true, emailVerifiedAt: true } }),
-        prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true, slug: true, customDomain: true, shareInsights: true, shareInsightsAt: true } }),
+        prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true, slug: true, customDomain: true, shareInsights: true, shareInsightsAt: true, creatorKind: true } }),
       ])
     : [null, null];
   const siteUrl = (await sessionCreatorSite())?.url ?? "";
@@ -62,6 +64,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
           <p className="mt-sp-1 text-xs text-ink/55">Los correos automáticos todavía no están activos en Foliocrew.</p>
         )}
       </Card>
+      {creator && <CreatorKindPicker initial={creatorKind(creator.creatorKind)} />}
       <Card>
         <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Inteligencia Foliocrew</p>
         <p className="text-sm text-ink">

@@ -138,7 +138,7 @@ const glosarioEs: GlossaryTerm[] = [
   { term: "Miniatura", def: "La imagen de vista previa de una tarjeta en la cuadrícula del Feed. TikTok la trae automática. Para Instagram/Facebook se trae sola al tocar \"Cargar preview\" y, si la cuenta está conectada, también se renueva sola todos los días por si el link de Instagram/Facebook caduca; si nunca llega, se puede subir una manualmente con el campo \"Miniatura (opcional)\"." },
   { term: "Plataforma", def: "TikTok, Instagram o Facebook — de dónde viene el post que agregas al Feed (solo aplica al modo \"Post de red social\")." },
   { term: "Video propio", def: "Un archivo de video que subes tú directamente (en vez de depender del embed de la plataforma). Explicado a fondo en \"Paso a paso: Reels\"." },
-  { term: "Foto UGC de portafolio", def: "El otro tipo de tarjeta del Feed: una foto propia sin ningún link a red social. Solo pide la foto, una descripción y opcionalmente la marca para la que hiciste el trabajo (con su logo)." },
+  { term: "Foto de portafolio", def: "El otro tipo de tarjeta del Feed: una foto propia sin ningún link a red social. Solo pide la foto, una descripción y opcionalmente la marca para la que hiciste el trabajo (con su logo)." },
   { term: "Vista previa en vivo", def: "El panel que aparece junto al formulario del Hero mostrando cómo se ve tu portada mientras escribes, antes de guardar." },
   { term: "Ver sitio", def: "El botón arriba del panel que abre tu sitio público en una pestaña nueva." },
   { term: "Idioma del sitio (ES/EN)", def: "El botón que ven tus visitantes para cambiar entre español e inglés — no afecta al admin, solo al sitio público." },
@@ -166,7 +166,7 @@ const glosarioEn: GlossaryTerm[] = [
   { term: "Thumbnail", def: "The preview image for a card in the Feed grid. TikTok fetches it automatically. For Instagram/Facebook, tapping \"Load preview\" fetches it and stores a permanent copy (Instagram/Facebook links expire); if your account is connected it is also renewed automatically every day. If it never shows up, you can upload one manually with the \"Thumbnail (optional)\" field." },
   { term: "Platform", def: "TikTok, Instagram or Facebook — where the post you add to the Feed comes from (only applies to the \"Social post\" card type)." },
   { term: "Own video", def: "A video file you upload directly (instead of relying on the platform's embed). Fully explained in \"Reels step by step\"." },
-  { term: "UGC portfolio photo", def: "The other Feed card type: your own photo with no link to any social post. It only asks for the photo, a description, and optionally the brand you made it for (with its logo)." },
+  { term: "Portfolio photo", def: "The other Feed card type: your own photo with no link to any social post. It only asks for the photo, a description, and optionally the brand you made it for (with its logo)." },
   { term: "Live preview", def: "The panel next to the Hero form showing how your landing looks while you type, before saving." },
   { term: "View site", def: "The button at the top of the panel that opens your public site in a new tab." },
   { term: "Site language (ES/EN)", def: "The toggle your visitors see to switch between Spanish and English — it doesn't affect the admin, only the public site." },
@@ -180,16 +180,16 @@ const reelsEs: ManualBlock[] = [
   {
     title: "2. Elige el tipo de tarjeta",
     paragraphs: [
-      "Arriba del formulario hay dos opciones: \"Post de red social\" (para un reel, TikTok, o un post existente de Instagram/Facebook) y \"Foto UGC de portafolio\" (una foto propia, sin ningún link a red social).",
+      "Arriba del formulario hay dos opciones: \"Post de red social\" (para un reel, TikTok, o un post existente de Instagram/Facebook) y \"Foto de portafolio\" (una foto propia, sin ningún link a red social).",
       "Si vas a agregar un reel o video, sigue con \"Post de red social\" (pasos 3 en adelante). Si solo quieres subir una foto de un trabajo que hiciste, sin post asociado, ve directo al siguiente bloque.",
     ],
   },
   {
-    title: "📷 3. Si elegiste \"Foto UGC de portafolio\"",
+    title: "📷 3. Si elegiste \"Foto de portafolio\"",
     paragraphs: [
       "Este modo es el más simple: solo pide la foto (obligatoria), una descripción y una categoría.",
       "Opcionalmente puedes marcar la marca para la que hiciste ese trabajo — elige una existente del menú, o toca \"+ agregar nueva marca\" para crear una nueva ahí mismo (nombre + logo) sin salir del Feed. Si la marca tiene logo, se muestra sobre la foto en el sitio en vez de un ícono de red social.",
-      "Con esto termina el flujo de UGC: puedes saltar directo al paso \"Completa el resto de la tarjeta\" más abajo.",
+      "Con esto termina el flujo de la foto de portafolio: puedes saltar directo al paso \"Completa el resto de la tarjeta\" más abajo.",
     ],
   },
   {
@@ -226,7 +226,7 @@ const reelsEs: ManualBlock[] = [
     list: [
       "Caption (ES/EN): la descripción corta que se ve en el sitio.",
       "Categoría (ES/EN): puedes reusar una categoría existente o escribir una nueva.",
-      "Estadísticas (opcional, ES/EN): por ejemplo \"120K vistas\" / \"120K views\", o \"3.2K me gusta\" / \"3.2K likes\" (no aplica al modo Foto UGC).",
+      "Estadísticas (opcional, ES/EN): por ejemplo \"120K vistas\" / \"120K views\", o \"3.2K me gusta\" / \"3.2K likes\" (no aplica al modo Foto de portafolio).",
     ],
   },
   {
@@ -245,16 +245,16 @@ const reelsEn: ManualBlock[] = [
   {
     title: "2. Choose the card type",
     paragraphs: [
-      "At the top of the form there are two options: \"Social post\" (for a reel, TikTok, or an existing Instagram/Facebook post) and \"UGC portfolio photo\" (your own photo, with no link to any social post).",
+      "At the top of the form there are two options: \"Social post\" (for a reel, TikTok, or an existing Instagram/Facebook post) and \"Portfolio photo\" (your own photo, with no link to any social post).",
       "If you're adding a reel or video, keep going with \"Social post\" (step 3 onward). If you just want to upload a photo from a job you did, with no associated post, skip straight to the next block.",
     ],
   },
   {
-    title: "📷 3. If you chose \"UGC portfolio photo\"",
+    title: "📷 3. If you chose \"Portfolio photo\"",
     paragraphs: [
       "This mode is the simplest: it only asks for the photo (required), a description and a category.",
       "You can optionally tag the brand you made that work for — pick an existing one from the dropdown, or tap \"+ add new brand\" to create one right there (name + logo) without leaving the Feed. If the brand has a logo, it's shown over the photo on the site instead of a social platform icon.",
-      "That's the whole UGC flow — you can jump straight to \"Fill in the rest of the card\" below.",
+      "That's the whole portfolio-photo flow — you can jump straight to \"Fill in the rest of the card\" below.",
     ],
   },
   {
@@ -290,7 +290,7 @@ const reelsEn: ManualBlock[] = [
     list: [
       "Caption (ES/EN): the short description shown on the site.",
       "Category (ES/EN): you can reuse an existing category or write a new one.",
-      "Stats (optional, ES/EN): for example \"120K vistas\" / \"120K views\", or \"3.2K me gusta\" / \"3.2K likes\" (doesn't apply to UGC mode).",
+      "Stats (optional, ES/EN): for example \"120K vistas\" / \"120K views\", or \"3.2K me gusta\" / \"3.2K likes\" (doesn't apply to portfolio-photo mode).",
     ],
   },
   {
@@ -320,7 +320,7 @@ const guiaEs: ManualBlock[] = [
   {
     title: "Feed",
     paragraphs: [
-      "El contenido de fotos y videos. Cada tarjeta puede ser un \"Post de red social\" (vinculado a TikTok, Instagram o Facebook) o una \"Foto UGC de portafolio\" (una foto propia, sin ningún link, con marca opcional).",
+      "El contenido de fotos y videos. Cada tarjeta puede ser un \"Post de red social\" (vinculado a TikTok, Instagram o Facebook) o una \"Foto de portafolio\" (una foto propia, sin ningún link, con marca opcional).",
       "Ver la guía completa en \"Paso a paso: Reels y videos\" para el detalle de cómo agregar cada tipo correctamente, incluida la miniatura para Instagram/Facebook.",
     ],
   },
@@ -333,7 +333,7 @@ const guiaEs: ManualBlock[] = [
       "Los datos del trato (valor, contacto, notas) son privados: nunca se muestran en el sitio público. Una marca nueva creada como trato queda oculta del carrusel hasta que marques \"Mostrar el logo en el carrusel\".",
       "Los próximos pasos y los pagos aparecen en el Resumen, con aviso cuando algo está vencido.",
       "En Carrusel del sitio ordenas los logos con ↑ ↓ y eliges cuáles se muestran u ocultan (sin borrarlos).",
-      "También puedes crear una marca nueva sin salir de Feed: al agregar una tarjeta de tipo \"Foto UGC\", el selector de marca tiene la opción \"+ agregar nueva marca\" (nombre + logo).",
+      "También puedes crear una marca nueva sin salir de Feed: al agregar una tarjeta de tipo \"Foto de portafolio\", el selector de marca tiene la opción \"+ agregar nueva marca\" (nombre + logo).",
     ],
   },
   {
@@ -482,7 +482,7 @@ const guiaEn: ManualBlock[] = [
   {
     title: "Feed",
     paragraphs: [
-      "The photo and video content. Each card can be a \"Social post\" (linked to TikTok, Instagram or Facebook) or a \"UGC portfolio photo\" (your own photo, no link, with an optional brand tag).",
+      "The photo and video content. Each card can be a \"Social post\" (linked to TikTok, Instagram or Facebook) or a \"Portfolio photo\" (your own photo, no link, with an optional brand tag).",
       "See the full guide under \"Reels & videos step by step\" for the details on adding each type correctly, including the Instagram/Facebook thumbnail.",
     ],
   },
@@ -495,7 +495,7 @@ const guiaEn: ManualBlock[] = [
       "Deal data (value, contact, notes) is private: it never shows on the public site. A new brand created as a deal stays hidden from the carousel until you check \"Show the logo in the carousel\".",
       "Next steps and payments show up in the Summary, flagged when something is overdue.",
       "In Site carousel you reorder logos with ↑ ↓ and choose which ones are shown or hidden (without deleting them).",
-      "You can also create a new brand without leaving Feed: when adding a \"UGC photo\" card, the brand dropdown has a \"+ add new brand\" option (name + logo).",
+      "You can also create a new brand without leaving Feed: when adding a \"Portfolio photo\" card, the brand dropdown has a \"+ add new brand\" option (name + logo).",
     ],
   },
   {

@@ -16,12 +16,12 @@ const es = {
     pinterest: "Pinterest",
   },
   hero: {
-    badge: "UGC Creator • Brand Reviews",
+    badge: "Creación de contenido",
     headlinePlain: "Reseñas que",
     headlineEmphasis: "inspiran",
     headlineSuffix: "confianza.",
     description:
-      "Creo contenido UGC auténtico y reseñas honestas que conectan marcas con personas de verdad.",
+      "Creo contenido auténtico y reseñas honestas que conectan marcas con personas de verdad.",
     ctaPrimary: "Ver portafolio",
     ctaSecondary: "Colaboremos",
   },
@@ -128,12 +128,12 @@ const en: typeof es = {
     pinterest: "Pinterest",
   },
   hero: {
-    badge: "UGC Creator • Brand Reviews",
+    badge: "Content Creator",
     headlinePlain: "Reviews that",
     headlineEmphasis: "inspire",
     headlineSuffix: "trust.",
     description:
-      "I create authentic UGC content and honest reviews that connect brands with real people.",
+      "I create authentic content and honest reviews that connect brands with real people.",
     ctaPrimary: "View portfolio",
     ctaSecondary: "Let's work together",
   },

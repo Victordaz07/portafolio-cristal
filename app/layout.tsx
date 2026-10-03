@@ -68,7 +68,7 @@ const designFonts = [playfair, grotesk, dmSans, cormorant, fredoka, nunito, arch
 
 export const metadata: Metadata = {
   // Cada página pública pone el nombre de su creadora (generateMetadata); esto es el respaldo.
-  title: "Foliocrew — Portafolios para creadores de contenido UGC",
+  title: "Foliocrew — Portafolios para creadores de contenido",
   description: "Tu talento merece su espacio: portafolio, media kit y colaboraciones en un solo lugar.",
 };
 

@@ -7,7 +7,7 @@ import Card from "./Card";
 import ShareInsightsButton from "./ShareInsightsButton";
 
 const eyebrowClass = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
-const PLATFORM_NAMES: Record<string, string> = { tiktok: "TikTok", instagram: "Instagram", facebook: "Facebook", ugc: "UGC" };
+const PLATFORM_NAMES: Record<string, string> = { tiktok: "TikTok", instagram: "Instagram", facebook: "Facebook", ugc: "Fotos de portafolio" };
 
 /** "Lo que funciona en tu nicho": comparativa con resultados reales y anónimos de otras cuentas (solo si participas). */
 export default async function InsightsCard() {

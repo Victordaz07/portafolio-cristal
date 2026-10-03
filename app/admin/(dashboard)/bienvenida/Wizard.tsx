@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Card from "@/components/admin/Card";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import { HERO_PHOTO_ASPECT_OPTIONS } from "@/lib/image-crop";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { ACCENTS, type AccentId } from "@/lib/theme";
@@ -200,7 +201,13 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
       <Card>
         {step === 0 && (
           <div className="flex flex-col gap-sp-4">
-            <ImageUploadField label="Tu foto (la de la portada de tu sitio)" value={v.photoUrl} onChange={(url) => set("photoUrl", url)} />
+            <ImageUploadField
+              label="Tu foto (la de la portada de tu sitio)"
+              value={v.photoUrl}
+              onChange={(url) => set("photoUrl", url)}
+              aspect={HERO_PHOTO_ASPECT_OPTIONS}
+              recommendedSize="1200 × 1500 px (vertical) o 1920 × 1080 px (horizontal)"
+            />
             <div className="grid gap-sp-4 sm:grid-cols-2">
               <label className={labelClass}>
                 <span className="text-sm font-medium text-ink">Tu nombre (como quieres que aparezca)</span>

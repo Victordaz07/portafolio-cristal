@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
+import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "@/lib/social/thumbnail";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (data.statSecondary === "") data.statSecondary = null;
   if (data.statSecondaryEn === "") data.statSecondaryEn = null;
   if (data.brandId === "") data.brandId = null;
+
+  // Red de seguridad: si llega un link de miniatura temporal de Meta (p. ej. pegado a mano), se resube a Blob antes de guardarlo.
+  if (data.thumbnailUrl && isEphemeralCdnUrl(data.thumbnailUrl)) {
+    const platform = data.platform ?? (await prisma.contentCard.findUnique({ where: { id }, select: { platform: true } }))?.platform;
+    data.thumbnailUrl = await ensurePermanentThumbnail(data.thumbnailUrl, `content-cards/thumbnails/${platform ?? "instagram"}`);
+  }
 
   const card = await prisma.contentCard.update({ where: { id }, data });
   return NextResponse.json(card);

@@ -133,7 +133,8 @@ const glosarioEs: GlossaryTerm[] = [
   { term: "Orden / reordenar", def: "Las flechas ↑ ↓ junto a cada elemento de una lista; controlan en qué posición aparece en el sitio público." },
   { term: "CTA", def: "\"Call to action\": los botones que invitan a hacer algo, como \"Ver portafolio\" o \"Colaboremos\"." },
   { term: "Badge / pill", def: "Una etiqueta pequeña y redondeada, como la categoría de una tarjeta del Feed o \"Nuevo\" en Mensajes." },
-  { term: "Miniatura", def: "La imagen de vista previa de una tarjeta en la cuadrícula del Feed. TikTok la trae automática. Para Instagram/Facebook, al tocar \"Cargar preview\" se intenta traer sola; si no aparece, se puede subir una manualmente con el campo \"Miniatura (opcional)\"." },
+  { term: "Ajustar encuadre", def: "Al elegir una foto, el panel abre \"Ajusta tu foto\": arrástrala y usa el zoom para encuadrarla en la forma en que se verá en tu sitio (cada campo indica su medida ideal). Puedes tocar \"Subir sin recortar\" para dejarla como está, y \"Ajustar encuadre\" para volver a encuadrar una foto ya subida." },
+  { term: "Miniatura", def: "La imagen de vista previa de una tarjeta en la cuadrícula del Feed. TikTok la trae automática. Para Instagram/Facebook se trae sola al tocar \"Cargar preview\" y, si la cuenta está conectada, también se renueva sola todos los días por si el link de Instagram/Facebook caduca; si nunca llega, se puede subir una manualmente con el campo \"Miniatura (opcional)\"." },
   { term: "Plataforma", def: "TikTok, Instagram o Facebook — de dónde viene el post que agregas al Feed (solo aplica al modo \"Post de red social\")." },
   { term: "Video propio", def: "Un archivo de video que subes tú directamente (en vez de depender del embed de la plataforma). Explicado a fondo en \"Paso a paso: Reels\"." },
   { term: "Foto UGC de portafolio", def: "El otro tipo de tarjeta del Feed: una foto propia sin ningún link a red social. Solo pide la foto, una descripción y opcionalmente la marca para la que hiciste el trabajo (con su logo)." },
@@ -159,7 +160,8 @@ const glosarioEn: GlossaryTerm[] = [
   { term: "Order / reorder", def: "The ↑ ↓ arrows next to each item in a list; they control the position it appears in on the public site." },
   { term: "CTA", def: "\"Call to action\": the buttons that invite someone to do something, like \"View portfolio\" or \"Let's work together\"." },
   { term: "Badge / pill", def: "A small rounded label, like a Feed card's category or \"New\" in Messages." },
-  { term: "Thumbnail", def: "The preview image for a card in the Feed grid. TikTok fetches it automatically. For Instagram/Facebook, tapping \"Load preview\" tries to fetch it automatically; if it doesn't show up, you can upload one manually with the \"Thumbnail (optional)\" field." },
+  { term: "Adjust framing", def: "When you pick a photo, the panel opens \"Adjust your photo\": drag and zoom to frame it in the shape it will have on your site (each field shows its ideal size). Tap \"Upload without cropping\" to keep it as is, or \"Adjust framing\" to reframe a photo you already uploaded." },
+  { term: "Thumbnail", def: "The preview image for a card in the Feed grid. TikTok fetches it automatically. For Instagram/Facebook, tapping \"Load preview\" fetches it and stores a permanent copy (Instagram/Facebook links expire); if your account is connected it is also renewed automatically every day. If it never shows up, you can upload one manually with the \"Thumbnail (optional)\" field." },
   { term: "Platform", def: "TikTok, Instagram or Facebook — where the post you add to the Feed comes from (only applies to the \"Social post\" card type)." },
   { term: "Own video", def: "A video file you upload directly (instead of relying on the platform's embed). Fully explained in \"Reels step by step\"." },
   { term: "UGC portfolio photo", def: "The other Feed card type: your own photo with no link to any social post. It only asks for the photo, a description, and optionally the brand you made it for (with its logo)." },
@@ -212,8 +214,9 @@ const reelsEs: ManualBlock[] = [
   {
     title: "🖼️ 7. La miniatura para Instagram y Facebook",
     paragraphs: [
-      "A diferencia de TikTok, Instagram y Facebook no dejan traer una miniatura automática de forma confiable. Al tocar \"Cargar preview\" el panel intenta traerla sola de todos modos; si lo logra, se precarga en el campo \"Miniatura (opcional)\" que aparece debajo del video.",
-      "Si no la trae (a veces Instagram bloquea el intento), sube ahí mismo una captura de pantalla o foto liviana como miniatura — no hace falta resubir el video completo, solo una imagen de portada para que la tarjeta se vea bien en la cuadrícula.",
+      "A diferencia de TikTok, Instagram y Facebook no siempre dejan traer la miniatura al toque. Al tocar \"Cargar preview\" el panel intenta traerla sola; si lo logra, la guarda en nuestro propio almacenamiento (no como un link directo de Instagram/Facebook, que caduca) y se precarga en el campo \"Miniatura (opcional)\" que aparece debajo del video.",
+      "Además, si tienes la cuenta conectada en 'Conectar cuentas', todos los días el sistema revisa solo las tarjetas sin miniatura (o con una que ya caducó) y la rellena automáticamente — sin que tengas que entrar a hacer nada.",
+      "Si aun así no llega (a veces Instagram bloquea el intento y la cuenta no está conectada), sube ahí mismo una captura de pantalla o foto liviana como miniatura — no hace falta resubir el video completo, solo una imagen de portada para que la tarjeta se vea bien en la cuadrícula.",
     ],
   },
   {

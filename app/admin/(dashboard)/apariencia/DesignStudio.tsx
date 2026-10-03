@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Card from "@/components/admin/Card";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import { HERO_PHOTO_ASPECT_OPTIONS } from "@/lib/image-crop";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import ReorderButtons from "@/components/admin/ReorderButtons";
 import { useToast } from "@/components/admin/ToastContext";
@@ -368,7 +369,13 @@ export default function DesignStudio({
         <Card className="flex flex-col gap-sp-4">
           <p className={eyebrow}>Tu perfil</p>
           <div className="grid gap-sp-4 sm:grid-cols-[160px_1fr]">
-            <ImageUploadField label="Foto de perfil" value={profile.photoUrl} onChange={(url) => setP("photoUrl", url)} />
+            <ImageUploadField
+              label="Foto de perfil"
+              value={profile.photoUrl}
+              onChange={(url) => setP("photoUrl", url)}
+              aspect={HERO_PHOTO_ASPECT_OPTIONS}
+              recommendedSize="1200 × 1500 px"
+            />
             <div className="flex flex-col gap-sp-4">
               <label className="flex flex-col gap-sp-1">
                 <span className="text-sm font-medium text-ink">Nombre público</span>
@@ -387,11 +394,23 @@ export default function DesignStudio({
           </div>
           <div className="grid gap-sp-4 sm:grid-cols-2">
             <div>
-              <ImageUploadField label="Foto de la sección Contacto" value={profile.contactPhotoUrl} onChange={(url) => setP("contactPhotoUrl", url)} />
+              <ImageUploadField
+                label="Foto de la sección Contacto"
+                value={profile.contactPhotoUrl}
+                onChange={(url) => setP("contactPhotoUrl", url)}
+                aspect={9 / 16}
+                recommendedSize="900 × 1600 px"
+              />
               <p className="mt-1 text-xs text-ink/50">Vertical, como fondo de tus datos de contacto. Sin foto: un panel en tu color.</p>
             </div>
             <div>
-              <ImageUploadField label="Imagen sobre tus marcas" value={profile.brandsBannerUrl} onChange={(url) => setP("brandsBannerUrl", url)} />
+              <ImageUploadField
+                label="Imagen sobre tus marcas"
+                value={profile.brandsBannerUrl}
+                onChange={(url) => setP("brandsBannerUrl", url)}
+                aspect={5 / 2}
+                recommendedSize="2000 × 800 px"
+              />
               <p className="mt-1 text-xs text-ink/50">Horizontal (5:2), arriba de la cinta de logos. Sin imagen: solo la cinta.</p>
             </div>
           </div>

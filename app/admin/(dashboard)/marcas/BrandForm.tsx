@@ -4,6 +4,7 @@ import { useState } from "react";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { CRM_PLATFORMS, DEAL_STATUSES, DEAL_STATUS_META, type DealStatus } from "@/lib/crm";
+import { LOGO_ASPECT_OPTIONS } from "@/lib/image-crop";
 
 export interface BrandFormValues {
   name: string;
@@ -204,7 +205,14 @@ export default function BrandForm({
       )}
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
-        <ImageUploadField label="Logo (opcional)" value={values.logoUrl} onChange={(url) => set("logoUrl", url)} />
+        <ImageUploadField
+          label="Logo (opcional)"
+          value={values.logoUrl}
+          onChange={(url) => set("logoUrl", url)}
+          aspect={LOGO_ASPECT_OPTIONS}
+          outputFormat="png"
+          recommendedSize="fondo transparente"
+        />
         <div className="flex flex-col gap-sp-4">
           <Field label="Sitio web (opcional)" hint="Si lo agregas, el logo será clickeable en el sitio.">
             <input

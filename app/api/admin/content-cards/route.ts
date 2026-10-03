@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
+import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "@/lib/social/thumbnail";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
+  // Red de seguridad: si llega un link de miniatura temporal de Meta (p. ej. pegado a mano), se resube a Blob antes de guardarlo.
+  const thumbnailUrl =
+    parsed.data.thumbnailUrl && isEphemeralCdnUrl(parsed.data.thumbnailUrl)
+      ? await ensurePermanentThumbnail(parsed.data.thumbnailUrl, `content-cards/thumbnails/${parsed.data.platform}`)
+      : parsed.data.thumbnailUrl || null;
+
   const maxOrder = await prisma.contentCard.aggregate({ _max: { order: true } });
   const card = await prisma.contentCard.create({
     data: {
@@ -47,7 +54,7 @@ export async function POST(request: Request) {
       postUrl: parsed.data.postUrl || null,
       videoUrl: parsed.data.videoUrl || null,
       photoUrl: parsed.data.photoUrl || null,
-      thumbnailUrl: parsed.data.thumbnailUrl || null,
+      thumbnailUrl,
       captionEn: parsed.data.captionEn || null,
       categoryEn: parsed.data.categoryEn || null,
       statPrimary: parsed.data.statPrimary || null,

@@ -178,19 +178,21 @@ export interface LinkItem {
   kicker?: string | null;
   badge?: string | null;
   span?: 1 | 2;
+  hidden?: boolean;
 }
 
 const surface =
   "border border-cobalt/10 bg-surface shadow-fc-card transition duration-150 hover:-translate-y-0.5 hover:border-coral/30 active:scale-[0.97]";
 
-export function LinkTile({ item, style }: { item: LinkItem; style: CSSProperties }) {
+export function LinkTile({ item, style, editTarget, ghost = false }: { item: LinkItem; style: CSSProperties; editTarget?: string; ghost?: boolean }) {
   const span = item.span ?? (item.variant === "row" ? 2 : 1);
   const target = item.external === false ? {} : { target: "_blank", rel: "noreferrer" };
   return (
     // content-visibility: las tarjetas fuera de la pantalla no se dibujan hasta que llegas a ellas.
     <div
-      className={`fc-rise [content-visibility:auto] ${item.variant === "row" ? "[contain-intrinsic-size:auto_66px]" : "[contain-intrinsic-size:auto_150px]"} ${span === 2 ? "col-span-2" : "col-span-1"}`}
+      className={`fc-rise [content-visibility:auto] ${item.variant === "row" ? "[contain-intrinsic-size:auto_66px]" : "[contain-intrinsic-size:auto_150px]"} ${span === 2 ? "col-span-2" : "col-span-1"} ${ghost ? "opacity-40 [filter:grayscale(0.6)]" : ""}`}
       style={style}
+      {...(editTarget ? { "data-edit": editTarget } : {})}
     >
       {item.variant === "row" ? (
         <a

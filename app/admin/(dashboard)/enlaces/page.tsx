@@ -1,14 +1,29 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/admin/PageHeader";
 import { sessionCreatorSite } from "@/lib/site-url";
-import LinksManager from "./LinksManager";
-import { isLinkPattern } from "@/lib/bio-links";
+import { ensureLinkGroups } from "@/lib/link-page";
+import LinkEditor from "./LinkEditor";
 
 export default async function AdminLinksPage() {
-  const [links, site, settings] = await Promise.all([
-    prisma.bioLink.findMany({ orderBy: { order: "asc" } }),
+  const [groups, site, settings, hero] = await Promise.all([
+    ensureLinkGroups(),
     sessionCreatorSite(),
-    prisma.siteSettings.findFirst({ select: { linksTagline: true, linksTaglineEn: true, linksPattern: true, linksShowBrandKit: true, linksShowRecent: true } }),
+    prisma.siteSettings.findFirst({
+      select: {
+        linksTagline: true,
+        linksTaglineEn: true,
+        linksShowCopy: true,
+        linksShowSocials: true,
+        linksHeroShow: true,
+        linksHeroEyebrow: true,
+        linksHeroEyebrowEn: true,
+        linksHeroTitle: true,
+        linksHeroTitleEn: true,
+        linksHeroImage: true,
+        linksHeroUrl: true,
+      },
+    }),
+    prisma.hero.findFirst({ select: { photoUrl: true } }),
   ]);
   const base = (site?.url ?? "").replace(/\/$/, "");
 
@@ -17,17 +32,27 @@ export default async function AdminLinksPage() {
       <PageHeader
         eyebrow="Landing"
         title="Link en bio"
-        description="Tu página para la bio de Instagram y TikTok: tus marcas, favoritos, cupones y PayPal en grupos, con clics contados. Usa el color y la tipografía de tu sitio."
+        description="Tu página para la bio de Instagram y TikTok. Decide qué se ve, en qué orden y cómo: toca cualquier parte de la vista previa para editarla."
       />
-      <LinksManager
-        initialLinks={links}
-        initialSettings={{
+      <LinkEditor
+        initialGroups={groups}
+        initialPage={{
           linksTagline: settings?.linksTagline ?? "",
           linksTaglineEn: settings?.linksTaglineEn ?? "",
-          linksPattern: isLinkPattern(settings?.linksPattern) ? settings.linksPattern : "blobs",
-          linksShowBrandKit: settings?.linksShowBrandKit ?? true,
-          linksShowRecent: settings?.linksShowRecent ?? true,
-        }} pageUrl={`${base}/enlaces`} previewPath={`${site?.previewPath ?? ""}/enlaces`} />
+          linksShowCopy: settings?.linksShowCopy ?? true,
+          linksShowSocials: settings?.linksShowSocials ?? true,
+          linksHeroShow: settings?.linksHeroShow ?? true,
+          linksHeroEyebrow: settings?.linksHeroEyebrow ?? "",
+          linksHeroEyebrowEn: settings?.linksHeroEyebrowEn ?? "",
+          linksHeroTitle: settings?.linksHeroTitle ?? "",
+          linksHeroTitleEn: settings?.linksHeroTitleEn ?? "",
+          linksHeroImage: settings?.linksHeroImage ?? "",
+          linksHeroUrl: settings?.linksHeroUrl ?? "",
+        }}
+        pageUrl={`${base}/links`}
+        previewPath={`${(site?.previewPath ?? "").replace(/\/$/, "")}/links`}
+        heroPhoto={hero?.photoUrl ?? null}
+      />
     </div>
   );
 }

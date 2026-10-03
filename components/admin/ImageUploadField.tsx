@@ -68,7 +68,7 @@ export default function ImageUploadField({
           if (file && file.type.startsWith("image/")) handleFile(file);
           else if (file) showToast("error", "Ese archivo no es una imagen");
         }}
-        className={`group flex cursor-pointer items-center gap-sp-4 rounded-[14px] border border-dashed p-sp-3 transition ${
+        className={`group flex cursor-pointer flex-wrap items-center gap-sp-3 rounded-[14px] border border-dashed p-sp-3 transition ${
           dragging ? "border-coral bg-coral/5" : "border-line bg-white hover:border-coral"
         } ${uploading ? "pointer-events-none opacity-70" : ""}`}
       >
@@ -84,8 +84,9 @@ export default function ImageUploadField({
             </svg>
           )}
         </span>
-        <span className="flex min-w-0 flex-col gap-1">
-          <span className="inline-flex w-fit items-center rounded-full bg-ink px-sp-4 py-1.5 text-xs font-semibold text-cream group-hover:bg-coral">
+        {/* Si no cabe al lado de la foto (columnas angostas), el texto baja debajo en vez de apretarse. */}
+        <span className="flex min-w-[150px] flex-1 flex-col gap-1">
+          <span className="inline-flex w-fit items-center whitespace-nowrap rounded-full bg-ink px-sp-4 py-1.5 text-xs font-semibold text-cream group-hover:bg-coral">
             {uploading ? "Subiendo…" : value ? "Cambiar foto" : "Elegir foto"}
           </span>
           <span className="text-xs text-ink/55">

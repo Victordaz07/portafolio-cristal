@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Hero } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import { HERO_PHOTO_ASPECT_OPTIONS } from "@/lib/image-crop";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import HeroPreview from "@/components/admin/HeroPreview";
 import { inputClass, labelClass, primaryButtonClass, cardClass } from "@/lib/admin-ui";
@@ -202,12 +203,16 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
         label="Foto (escritorio)"
         value={form.photoUrl}
         onChange={(url) => set("photoUrl", url)}
+        aspect={HERO_PHOTO_ASPECT_OPTIONS}
+        recommendedSize="1200 × 1500 px (vertical) o 1920 × 1080 px (horizontal)"
       />
 
       <ImageUploadField
         label="Foto (mobile)"
         value={form.photoUrlMobile}
         onChange={(url) => set("photoUrlMobile", url)}
+        aspect={1}
+        recommendedSize="1200 × 1200 px"
       />
       <p className="-mt-sp-4 text-xs text-ink/50">
         Se usa aparte para pantallas de teléfono — puede ser un recorte o composición distinta a la

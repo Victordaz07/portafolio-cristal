@@ -6,6 +6,7 @@ import Card from "@/components/admin/Card";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import { LINK_IMAGE_ASPECT_OPTIONS } from "@/lib/image-crop";
 import { useToast } from "@/components/admin/ToastContext";
 import { POPULAR_MIN_CLICKS } from "@/lib/bio-links";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
@@ -312,7 +313,13 @@ export default function LinkEditor({
             />
           </div>
           <div className="grid gap-sp-4 sm:grid-cols-[180px_1fr]">
-            <ImageUploadField label="Imagen de fondo" value={page.linksHeroImage} onChange={(url) => savePage({ linksHeroImage: url })} />
+            <ImageUploadField
+              label="Imagen de fondo"
+              value={page.linksHeroImage}
+              onChange={(url) => savePage({ linksHeroImage: url })}
+              aspect={5 / 2}
+              recommendedSize="1500 × 600 px"
+            />
             <div className="flex flex-col gap-sp-2">
               <label className="flex flex-col gap-sp-1">
                 <span className="text-sm font-medium text-ink">Lleva a</span>
@@ -752,7 +759,13 @@ function LinkForm({
       </label>
       <p className="-mt-sp-3 text-xs text-ink/50">PayPal, tiendas, redes y correo llevan su ícono solo si no subes imagen.</p>
       <div className="grid gap-sp-4 sm:grid-cols-[170px_1fr]">
-        <ImageUploadField label="Imagen o logo" value={form.imageUrl} onChange={(url) => set("imageUrl", url)} />
+        <ImageUploadField
+          label="Imagen o logo"
+          value={form.imageUrl}
+          onChange={(url) => set("imageUrl", url)}
+          aspect={form.wide ? [...LINK_IMAGE_ASPECT_OPTIONS].reverse() : LINK_IMAGE_ASPECT_OPTIONS}
+          recommendedSize={form.wide ? "1200 × 400 px" : "600 × 600 px"}
+        />
         <fieldset className="flex flex-col gap-sp-2">
           <legend className="text-sm font-medium text-ink">Cómo se ve</legend>
           <label className="flex items-center gap-sp-2 text-sm text-ink/80">

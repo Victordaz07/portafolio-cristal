@@ -68,6 +68,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Ayuda",
     items: [
       { href: "/admin/ayuda", label: "Manual de uso" },
+      { href: "/admin/plan", label: "Mi plan" },
       { href: "/admin/cuenta", label: "Mi cuenta" },
     ],
   },

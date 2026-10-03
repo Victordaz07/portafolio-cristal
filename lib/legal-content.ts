@@ -158,7 +158,18 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
         ],
       },
       {
-        heading: "8. Cambios y contacto",
+        heading: "8. Planes y pagos",
+        list: [
+          "Las cuentas nuevas pueden tener un período de prueba gratis. Al terminar, para seguir usando el servicio hay que pagar un plan.",
+          "Por ahora los pagos son manuales, por PayPal o transferencia bancaria, en dólares estadounidenses (USD), por 1, 3 o 12 meses. No hay renovación automática: avisamos por correo antes del vencimiento.",
+          "El plan queda activo cuando confirmamos que recibimos el pago. Incluye tu referencia en el concepto para identificarlo.",
+          "Si el plan vence, tus datos se conservan. Podemos pausar el sitio y el panel de las cuentas vencidas hasta que se renueven.",
+          `Los pagos no son reembolsables, salvo error nuestro o cobro duplicado. Si tienes un problema con un pago, escríbenos a ${legalEmail}.`,
+          "Los precios pueden cambiar; los cambios no afectan los períodos que ya pagaste.",
+        ],
+      },
+      {
+        heading: "9. Cambios y contacto",
         paragraphs: [
           `Podemos actualizar estos términos; la fecha de esta página indica la versión vigente. Dudas: ${legalEmail}.`,
         ],
@@ -315,7 +326,18 @@ const EN: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
         ],
       },
       {
-        heading: "8. Changes and contact",
+        heading: "8. Plans and payments",
+        list: [
+          "New accounts may include a free trial. When it ends, a paid plan is required to keep using the service.",
+          "For now payments are manual, via PayPal or bank transfer, in US dollars (USD), for 1, 3 or 12 months. There is no automatic renewal: we email you before your plan expires.",
+          "Your plan becomes active once we confirm we received the payment. Include your reference in the payment note so we can identify it.",
+          "If your plan expires, your data is kept. We may pause the site and dashboard of expired accounts until they renew.",
+          `Payments are non-refundable, except in case of our error or a duplicate charge. If you have a problem with a payment, write to ${legalEmail}.`,
+          "Prices may change; changes do not affect periods you have already paid for.",
+        ],
+      },
+      {
+        heading: "9. Changes and contact",
         paragraphs: [
           `We may update these terms; the date on this page shows the current version. Questions: ${legalEmail}.`,
         ],

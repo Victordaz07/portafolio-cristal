@@ -3,12 +3,18 @@ import { z } from "zod";
 import { prismaRoot } from "@/lib/prisma-root";
 import { logPlatformAction, platformAdminUser } from "@/lib/platform-admin";
 import { forgetHost, forgetSessionVersion } from "@/lib/tenant";
+import { PLANS } from "@/lib/plans";
 
 export const dynamic = "force-dynamic";
 
 const schema = z.object({
   status: z.enum(["active", "paused"]).optional(),
   adminNote: z.string().max(2000).optional(),
+  /** Cuenta de cortesía: no paga ni vence. */
+  comp: z.boolean().optional(),
+  plan: z.enum(PLANS.map((p) => p.id) as [string, ...string[]]).optional(),
+  /** Alarga (o da) la prueba gratis N días desde hoy o desde su fin actual. */
+  extendTrialDays: z.number().int().min(1).max(90).optional(),
 });
 
 /** Pausar o reactivar una cuenta, o guardar la nota interna de soporte. */
@@ -18,11 +24,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
-  const { status, adminNote } = parsed.data;
+  const { status, adminNote, comp, plan, extendTrialDays } = parsed.data;
 
   const creator = await prismaRoot.creator.findUnique({
     where: { id },
-    select: { id: true, slug: true, customDomain: true, status: true, users: { select: { id: true } } },
+    select: { id: true, slug: true, customDomain: true, status: true, trialEndsAt: true, users: { select: { id: true } } },
   });
   if (!creator) return NextResponse.json({ error: "La cuenta no existe" }, { status: 404 });
   if (status === "paused" && creator.id === admin.creatorId) {
@@ -31,8 +37,24 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   await prismaRoot.creator.update({
     where: { id },
-    data: { ...(status ? { status } : {}), ...(adminNote !== undefined ? { adminNote: adminNote.trim() || null } : {}) },
+    data: {
+      ...(status ? { status } : {}),
+      ...(adminNote !== undefined ? { adminNote: adminNote.trim() || null } : {}),
+      ...(comp !== undefined ? { comp } : {}),
+      ...(plan ? { plan } : {}),
+      ...(extendTrialDays
+        ? {
+            trialEndsAt: new Date(
+              Math.max(Date.now(), creator.trialEndsAt?.getTime() ?? 0) + extendTrialDays * 86_400_000
+            ),
+            billingReminder: null,
+          }
+        : {}),
+    },
   });
+  if (comp !== undefined) await logPlatformAction(admin.email, comp ? "comp-on" : "comp-off", id);
+  if (plan) await logPlatformAction(admin.email, "plan", id, plan);
+  if (extendTrialDays) await logPlatformAction(admin.email, "trial", id, `+${extendTrialDays} días`);
 
   if (status && status !== creator.status) {
     // Que el cambio se note ya: sesiones y sitio público.

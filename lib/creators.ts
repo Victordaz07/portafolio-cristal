@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { trialDays } from "./billing";
 import { NextResponse } from "next/server";
 import { prismaRoot } from "./prisma-root";
 import { createSessionToken, sessionCookieOptions, SESSION_COOKIE } from "./auth";
@@ -37,7 +38,10 @@ export async function createCreatorAccount(input: { name: string; slug: string; 
   const passwordHash = await bcrypt.hash(input.password, 12);
   const firstName = input.name.split(" ")[0];
   return prismaRoot.$transaction(async (tx) => {
-    const creator = await tx.creator.create({ data: { slug: input.slug, name: input.name } });
+    const days = trialDays();
+    const creator = await tx.creator.create({
+      data: { slug: input.slug, name: input.name, trialEndsAt: days ? new Date(Date.now() + days * 86_400_000) : null },
+    });
     const user = await tx.adminUser.create({
       data: { email: input.email.toLowerCase(), passwordHash, name: input.name, creatorId: creator.id, lastLoginAt: new Date() },
     });

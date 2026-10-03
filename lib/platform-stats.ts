@@ -20,6 +20,10 @@ export async function platformAccounts() {
         customDomainVerifiedAt: true,
         onboardedAt: true,
         adminNote: true,
+        plan: true,
+        comp: true,
+        trialEndsAt: true,
+        paidUntil: true,
         createdAt: true,
         users: {
           where: { role: "owner" },

@@ -235,3 +235,115 @@ export function waitlistInviteEmail(p: { origin: string; name: string | null; re
     ]),
   };
 }
+
+// ─── Pagos (manuales: PayPal o transferencia) ───
+
+export function paymentReportedAdminEmail(p: {
+  origin: string;
+  creatorName: string;
+  email: string;
+  plan: string;
+  months: number;
+  amount: string;
+  method: string;
+  reference: string | null;
+  note: string | null;
+  accountUrl: string;
+}) {
+  const subject = `Pago reportado: ${p.creatorName} — ${p.amount} (${p.method})`;
+  return {
+    subject,
+    html: layout({
+      origin: p.origin,
+      preheader: `${p.creatorName} dice que pagó ${p.amount}.`,
+      title: "Revisa este pago",
+      body: [
+        `<strong>${escapeHtml(p.creatorName)}</strong> (${escapeHtml(p.email)}) avisó que pagó <strong>${escapeHtml(p.amount)}</strong> por <strong>${escapeHtml(p.plan)}</strong> (${p.months} ${p.months === 1 ? "mes" : "meses"}) por ${escapeHtml(p.method)}.`,
+        `Referencia o ID: ${escapeHtml(p.reference || "—")}${p.note ? `<br>Nota: ${escapeHtml(p.note)}` : ""}`,
+        "Cuando veas el dinero en tu PayPal o en tu banco, confírmalo en el panel: su plan se activa y le llega un correo.",
+      ],
+      button: { label: "Revisar y confirmar", url: p.accountUrl },
+    }),
+    text: text([
+      `${p.creatorName} (${p.email}) avisó que pagó ${p.amount} por ${p.plan} (${p.months} meses) por ${p.method}.`,
+      `Referencia: ${p.reference || "—"}${p.note ? `\nNota: ${p.note}` : ""}`,
+      `Confírmalo aquí: ${p.accountUrl}`,
+    ]),
+  };
+}
+
+export function paymentConfirmedEmail(p: { origin: string; name: string | null; plan: string; amount: string; paidUntil: string; planUrl: string }) {
+  const subject = "Recibimos tu pago 💜";
+  return {
+    subject,
+    html: layout({
+      origin: p.origin,
+      preheader: `Tu plan ${p.plan} está activo hasta el ${p.paidUntil}.`,
+      title: "¡Gracias! Tu pago está confirmado",
+      body: [
+        escapeHtml(hello(p.name)),
+        `Recibimos tu pago de <strong>${escapeHtml(p.amount)}</strong>. Tu plan <strong>${escapeHtml(p.plan)}</strong> está activo hasta el <strong>${escapeHtml(p.paidUntil)}</strong>.`,
+        "No se renueva solo: unos días antes de que venza te mandamos un recordatorio.",
+      ],
+      button: { label: "Ver mi plan", url: p.planUrl },
+    }),
+    text: text([
+      hello(p.name),
+      `Recibimos tu pago de ${p.amount}. Tu plan ${p.plan} está activo hasta el ${p.paidUntil}.`,
+      `Ver tu plan: ${p.planUrl}`,
+    ]),
+  };
+}
+
+export function paymentRejectedEmail(p: { origin: string; name: string | null; amount: string; planUrl: string }) {
+  const subject = "No encontramos tu pago";
+  return {
+    subject,
+    html: layout({
+      origin: p.origin,
+      preheader: "Revisemos juntos el pago que reportaste.",
+      title: "No encontramos tu pago",
+      body: [
+        escapeHtml(hello(p.name)),
+        `Revisamos y todavía no vemos el pago de <strong>${escapeHtml(p.amount)}</strong> que reportaste. Puede que falte la referencia o que la transferencia tarde un poco más.`,
+        "Responde este correo con el comprobante (captura o PDF) y lo revisamos enseguida.",
+      ],
+      button: { label: "Ver mi plan", url: p.planUrl },
+    }),
+    text: text([hello(p.name), `No encontramos el pago de ${p.amount} que reportaste. Responde este correo con el comprobante.`, p.planUrl]),
+  };
+}
+
+export type ReminderKind = "trial-ending" | "renewal-due" | "expired";
+
+export function billingReminderEmail(p: { origin: string; name: string | null; kind: ReminderKind; date: string; days: number; planUrl: string }) {
+  const copy = {
+    "trial-ending": {
+      subject: `Tu prueba de Foliocrew termina en ${p.days} ${p.days === 1 ? "día" : "días"}`,
+      title: "Tu prueba gratis está por terminar",
+      line: `Tu prueba gratis termina el <strong>${escapeHtml(p.date)}</strong>. Para seguir con tu portafolio, tu media kit y tu panel, elige tu plan y paga por PayPal o transferencia.`,
+    },
+    "renewal-due": {
+      subject: `Tu plan de Foliocrew vence en ${p.days} ${p.days === 1 ? "día" : "días"}`,
+      title: "Tu plan está por vencer",
+      line: `Tu plan vence el <strong>${escapeHtml(p.date)}</strong>. No se renueva solo: renuévalo por PayPal o transferencia para que todo siga igual.`,
+    },
+    expired: {
+      subject: "Tu plan de Foliocrew venció",
+      title: "Tu plan venció",
+      line: `Tu plan venció el <strong>${escapeHtml(p.date)}</strong>. Tus datos están a salvo; renueva para seguir usando Foliocrew sin cortes.`,
+    },
+  }[p.kind];
+  return {
+    subject: copy.subject,
+    html: layout({
+      origin: p.origin,
+      preheader: copy.subject,
+      title: copy.title,
+      body: [escapeHtml(hello(p.name)), copy.line],
+      button: { label: "Ver cómo pagar", url: p.planUrl },
+      note: "¿Dudas o quieres otro método de pago? Responde este correo.",
+    }),
+    text: text([hello(p.name), copy.line.replace(/<[^>]+>/g, ""), `Cómo pagar: ${p.planUrl}`]),
+  };
+}

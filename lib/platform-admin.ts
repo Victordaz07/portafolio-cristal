@@ -3,7 +3,7 @@ import { getSession } from "./tenant";
 
 // Quien administra la plataforma Foliocrew (ve Cuentas y Lista de espera).
 // PLATFORM_ADMIN_EMAILS="tu@correo.com,otro@correo.com"; si no está, se usa ADMIN_EMAIL.
-function adminEmails() {
+export function adminEmails() {
   const list = process.env.PLATFORM_ADMIN_EMAILS || process.env.ADMIN_EMAIL || "";
   return list
     .split(",")

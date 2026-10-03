@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -8,10 +9,10 @@ const contentCardUpdateSchema = z
   .object({
     type: z.enum(["video", "photo"]).optional(),
     platform: z.enum(["tiktok", "instagram", "facebook", "ugc"]).optional(),
-    postUrl: z.string().url().nullable().optional().or(z.literal("")),
-    videoUrl: z.string().url().nullable().optional().or(z.literal("")),
-    photoUrl: z.string().url().nullable().optional().or(z.literal("")),
-    thumbnailUrl: z.string().url().nullable().optional().or(z.literal("")),
+    postUrl: httpUrl().nullable().optional().or(z.literal("")),
+    videoUrl: httpUrl().nullable().optional().or(z.literal("")),
+    photoUrl: httpUrl().nullable().optional().or(z.literal("")),
+    thumbnailUrl: httpUrl().nullable().optional().or(z.literal("")),
     caption: z.string().min(1).optional(),
     captionEn: z.string().nullable().optional().or(z.literal("")),
     category: z.string().min(1).optional(),

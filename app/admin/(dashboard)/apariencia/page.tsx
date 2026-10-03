@@ -18,6 +18,9 @@ export default async function AdminAppearancePage() {
         heroLayout: true,
         sectionLayout: true,
         linksPattern: true,
+        secondaryColor: true,
+        contactPhotoUrl: true,
+        brandsBannerUrl: true,
       },
     }),
     sessionCreatorSite(),
@@ -36,6 +39,8 @@ export default async function AdminAppearancePage() {
           photoUrl: hero?.photoUrl ?? "",
           description: hero?.description ?? "",
           descriptionEn: hero?.descriptionEn ?? "",
+          contactPhotoUrl: settings?.contactPhotoUrl ?? "",
+          brandsBannerUrl: settings?.brandsBannerUrl ?? "",
         }}
         initialDesign={designFromSettings(settings)}
         previewPath={site?.previewPath ?? "/"}

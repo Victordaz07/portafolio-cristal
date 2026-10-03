@@ -1,19 +1,23 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { httpUrl } from "@/lib/validators";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ACCENTS } from "@/lib/theme";
-import { BACKGROUNDS, CORNERS, FONTS, HEROES, SECTION_IDS, STYLES, normalizeSections } from "@/lib/design";
+import { BACKGROUNDS, CORNERS, FONTS, HEROES, SECONDARY, SECTION_IDS, STYLES, normalizeSections } from "@/lib/design";
 import { LINK_PATTERNS } from "@/lib/bio-links";
 
 export const dynamic = "force-dynamic";
 
 const keys = <T extends object>(obj: T) => Object.keys(obj) as [string, ...string[]];
 
+// Imagen subida (Blob) o ruta del propio sitio; "" la quita.
+const imageUrl = z.union([httpUrl(), z.string().regex(/^\/[^\s]*$/), z.literal("")]).nullable();
+
 const schema = z.object({
   name: z.string().trim().min(1).max(120),
   // Acepta URLs absolutas (Blob) o rutas del propio sitio como "/images/foto.png".
-  photoUrl: z.union([z.string().url(), z.string().regex(/^\/[^\s]*$/), z.literal("")]).nullable(),
+  photoUrl: z.union([httpUrl(), z.string().regex(/^\/[^\s]*$/), z.literal("")]).nullable(),
   description: z.string().trim().max(1000),
   descriptionEn: z.string().trim().max(1000),
   accentColor: z.enum([...keys(ACCENTS), "custom"]),
@@ -25,6 +29,9 @@ const schema = z.object({
   background: z.enum(keys(BACKGROUNDS)).optional(),
   hero: z.enum(keys(HEROES)).optional(),
   pattern: z.enum(keys(LINK_PATTERNS)).optional(),
+  secondary: z.enum(keys(SECONDARY)).optional(),
+  contactPhotoUrl: imageUrl.optional(),
+  brandsBannerUrl: imageUrl.optional(),
   sections: z
     .array(z.object({ id: z.enum(SECTION_IDS as [string, ...string[]]), hidden: z.boolean() }))
     .max(SECTION_IDS.length)
@@ -66,6 +73,9 @@ export async function PATCH(request: Request) {
         ...(d.background ? { background: d.background } : {}),
         ...(d.hero ? { heroLayout: d.hero } : {}),
         ...(d.pattern ? { linksPattern: d.pattern } : {}),
+        ...(d.secondary ? { secondaryColor: d.secondary } : {}),
+        ...(d.contactPhotoUrl !== undefined ? { contactPhotoUrl: d.contactPhotoUrl || null } : {}),
+        ...(d.brandsBannerUrl !== undefined ? { brandsBannerUrl: d.brandsBannerUrl || null } : {}),
         ...(d.sections ? { sectionLayout: normalizeSections(d.sections) as unknown as Prisma.InputJsonValue } : {}),
       },
     }),

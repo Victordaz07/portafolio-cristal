@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { LINK_PATTERNS, PATTERN_IMAGE_OPACITY, PATTERN_TILE, patternImage, type LinkIconKind, type LinkPatternId } from "@/lib/bio-links";
 import { InstagramIcon, MailIcon, SparkleIcon, TikTokIcon, WhatsAppIcon } from "@/components/icons";
+import { safeHref } from "@/lib/validators";
 
 // Piezas de la página "link en bio" (/enlaces), según el diseño "Crislia Links".
 // Un solo acento (el del Estudio de diseño) tiñe el anillo del avatar, la flecha del hero, la etiqueta "PORTAFOLIO",
@@ -79,7 +80,7 @@ export function SocialRow({ items }: { items: { icon: ReactNode; href: string; l
       {items.map((item) => (
         <li key={item.href}>
           <a
-            href={item.href}
+            href={safeHref(item.href)}
             target="_blank"
             rel="noreferrer"
             aria-label={item.label}
@@ -96,7 +97,7 @@ export function SocialRow({ items }: { items: { icon: ReactNode; href: string; l
 export function HeroCard({ eyebrow, title, bgSrc, href }: { eyebrow: string; title: string; bgSrc: string | null; href: string }) {
   return (
     <a
-      href={href}
+      href={safeHref(href)}
       className="r-24 fc-shimmer relative block h-[168px] w-full overflow-hidden bg-cobalt shadow-fc-hero transition-transform active:scale-[0.98] sm:h-[180px]"
     >
       {bgSrc && (
@@ -196,7 +197,7 @@ export function LinkTile({ item, style, editTarget, ghost = false }: { item: Lin
     >
       {item.variant === "row" ? (
         <a
-          href={item.href}
+          href={safeHref(item.href)}
           {...target}
           data-link-id={item.id}
           className={`r-16 flex min-h-[62px] items-center gap-[10px] px-3 py-[9px] hover:bg-cream/60 sm:min-h-[66px] sm:gap-3 sm:px-[14px] sm:py-[10px] ${surface}`}
@@ -218,7 +219,7 @@ export function LinkTile({ item, style, editTarget, ghost = false }: { item: Lin
           )}
         </a>
       ) : (
-        <a href={item.href} {...target} data-link-id={item.id} className={`r-16 relative flex h-full flex-col overflow-hidden ${surface}`}>
+        <a href={safeHref(item.href)} {...target} data-link-id={item.id} className={`r-16 relative flex h-full flex-col overflow-hidden ${surface}`}>
           {item.badge && (
             <span className="absolute left-1.5 top-1.5 z-[1] max-w-[60%] truncate rounded-full bg-moss px-[7px] py-[3px] text-[9px] font-bold text-white">{item.badge}</span>
           )}

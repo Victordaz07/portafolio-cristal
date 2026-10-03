@@ -68,3 +68,14 @@ Más los enlaces propios (`BioLink`: título ES/EN, URL `https://` o `mailto:`, 
 - Grupos: `POST /api/admin/links/groups`, `PATCH|DELETE /api/admin/links/groups/[id]` (borrar un grupo borra sus enlaces;
   los automáticos solo se ocultan). Enlaces: `hidden` para pausarlos sin borrarlos.
 - La migración `20261003170000_editor_link_en_bio` convirtió las secciones de texto en grupos y creó los bloques automáticos.
+
+### Sin nada fijo de Cristal (sitio de cada cuenta)
+- **Color secundario** (`SiteSettings.secondaryColor`): el de "Por qué yo", el botón "Colaboremos" y las etiquetas del
+  contacto. `acento` (por defecto: un tono profundo del acento, cambia con él), `oliva`, `tinta` o `estilo`.
+  El sitio de Cristal conserva `oliva` (migración `20261003180000_sin_hardcodeados`).
+- **Fotos propias**: `contactPhotoUrl` (fondo de los datos de contacto; sin foto, un panel en el color del acento) y
+  `brandsBannerUrl` (sobre la cinta de marcas; sin imagen, solo la cinta). Antes eran las fotos de Cristal para todas.
+- **Fondos del sitio**: además de liso y degradado, las "estrellitas" ahora son una máscara (`public/images/pattern-mask.webp`)
+  pintada con el acento, y se pueden usar los 5 fondos botánicos (imagen en el color del preset o SVG teñido).
+- **Seguridad**: todas las URLs que se guardan pasan por `httpUrl()` (lib/validators.ts; `z.string().url()` aceptaba
+  `javascript:`), y los enlaces públicos se muestran con `safeHref()`.

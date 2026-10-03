@@ -349,6 +349,9 @@ model SiteSettings {
   corners          String   @default("suave")
   background       String   @default("textura")
   sectionLayout    Json? // [{ id, hidden }] en el orden en que se muestran
+  secondaryColor     String   @default("acento") // bloques y botones oscuros: acento, oliva, tinta o estilo
+  contactPhotoUrl    String? // foto de la sección de contacto (vacía: sin foto)
+  brandsBannerUrl    String? // imagen sobre la cinta de marcas (vacía: sin imagen)
   // Link en bio (/enlaces)
   linksTagline       String? // frase bajo el nombre: "Mis favoritos y más ✨"
   linksTaglineEn     String?

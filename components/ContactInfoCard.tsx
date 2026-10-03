@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { HeartIcon } from "@/components/icons";
+import { safeHref } from "@/lib/validators";
 
 export interface ContactInfoRow {
   icon: ReactNode;
@@ -34,7 +35,7 @@ export default function ContactInfoCard({
               <p className="text-xs uppercase tracking-wide text-ink/50">{row.label}</p>
               {row.href ? (
                 <a
-                  href={row.href}
+                  href={safeHref(row.href)}
                   target={row.href.startsWith("http") ? "_blank" : undefined}
                   rel={row.href.startsWith("http") ? "noopener noreferrer" : undefined}
                   className="truncate text-sm font-medium text-ink hover:text-coral transition"

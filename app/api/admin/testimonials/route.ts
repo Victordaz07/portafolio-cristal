@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ const testimonialSchema = z.object({
   name: z.string().min(1),
   role: z.string().min(1),
   roleEn: z.string().optional().or(z.literal("")),
-  photoUrl: z.string().url().optional().or(z.literal("")),
+  photoUrl: httpUrl().optional().or(z.literal("")),
 });
 
 export async function GET() {

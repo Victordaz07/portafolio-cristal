@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +14,7 @@ const settingsSchema = z.object({
   facebookHandle: z.string().optional().or(z.literal("")),
   whatsapp: z.string().optional().or(z.literal("")),
   collabsEmail: z.string().email().optional().or(z.literal("")),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: httpUrl().optional().or(z.literal("")),
   youtubeHandle: z.string().optional().or(z.literal("")),
   pinterestHandle: z.string().optional().or(z.literal("")),
   footerIntro: z.string().optional().or(z.literal("")),

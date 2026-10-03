@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { httpUrl } from "./validators";
 import type { Prisma } from "@prisma/client";
 import { DEAL_STATUSES, PAYMENT_STATUSES, DEAL_STATUS_META, PAYMENT_STATUS_META, dateInputToDate } from "@/lib/crm";
 
@@ -23,8 +24,8 @@ const optionalDate = z
 
 export const brandFieldsSchema = z.object({
   name: z.string().trim().min(1).optional(),
-  logoUrl: z.string().url().nullable().optional().or(z.literal("")),
-  websiteUrl: z.string().url().nullable().optional().or(z.literal("")),
+  logoUrl: httpUrl().nullable().optional().or(z.literal("")),
+  websiteUrl: httpUrl().nullable().optional().or(z.literal("")),
   order: z.number().int().optional(),
   active: z.boolean().optional(),
   dealStatus: z.enum(DEAL_STATUSES).nullable().optional(),

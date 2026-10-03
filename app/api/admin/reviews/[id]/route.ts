@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 const reviewUpdateSchema = z.object({
-  photoUrl: z.string().url().nullable().optional().or(z.literal("")),
+  photoUrl: httpUrl().nullable().optional().or(z.literal("")),
   category: z.string().min(1).optional(),
   categoryEn: z.string().nullable().optional().or(z.literal("")),
   title: z.string().min(1).optional(),

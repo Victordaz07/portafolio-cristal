@@ -9,14 +9,16 @@ import ReorderButtons from "@/components/admin/ReorderButtons";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { ACCENTS, accentVars, paletteFromHex, type AccentId } from "@/lib/theme";
-import { LINK_PATTERNS, patternImage, type LinkPatternId } from "@/lib/bio-links";
+import { LINK_PATTERNS, isLinkPattern, patternImage, type LinkPatternId } from "@/lib/bio-links";
 import {
   BACKGROUNDS,
   CORNERS,
   DEFAULT_DESIGN,
   FONTS,
   HEROES,
+  SECONDARY,
   SECTIONS,
+  designVars,
   STYLES,
   encodePreview,
   type BackgroundId,
@@ -24,6 +26,7 @@ import {
   type Design,
   type FontId,
   type HeroId,
+  type SecondaryId,
   type StyleDef,
   type StyleId,
 } from "@/lib/design";
@@ -31,6 +34,8 @@ import {
 interface Profile {
   name: string;
   photoUrl: string;
+  contactPhotoUrl: string;
+  brandsBannerUrl: string;
   description: string;
   descriptionEn: string;
 }
@@ -208,6 +213,26 @@ export default function DesignStudio({
         </Card>
 
         <Card>
+          <p className={eyebrow}>Color secundario</p>
+          <p className="mt-1 text-xs text-ink/55">El de los bloques y botones oscuros: &quot;Por qué yo&quot;, &quot;Colaboremos&quot; y las etiquetas del contacto.</p>
+          <div className="mt-sp-3 grid grid-cols-2 gap-sp-3 sm:grid-cols-4">
+            {(Object.keys(SECONDARY) as SecondaryId[]).map((id) => {
+              const preview = { ...design, secondary: id };
+              const v = designVars(preview);
+              return (
+                <button key={id} type="button" aria-pressed={design.secondary === id} onClick={() => set("secondary", id)} className={tile(design.secondary === id)}>
+                  <span className="flex h-9 items-center justify-center rounded-[10px] text-[10px] font-bold text-white" style={{ background: `rgb(${v["--c-inverse"]})` }}>
+                    Colaboremos
+                  </span>
+                  <span className="text-xs font-semibold text-ink">{SECONDARY[id].label}</span>
+                  <span className="text-[11px] leading-tight text-ink/55">{SECONDARY[id].hint}</span>
+                </button>
+              );
+            })}
+          </div>
+        </Card>
+
+        <Card>
           <p className={eyebrow}>Fondo decorativo · link en bio</p>
           <p className="mt-1 text-xs text-ink/55">Textura de tu página de enlaces, pintada con tu color de acento.</p>
           <div className="mt-sp-3 grid grid-cols-3 gap-sp-3 sm:grid-cols-6" style={accentVars(design.accent, design.customAccent) as React.CSSProperties}>
@@ -290,15 +315,26 @@ export default function DesignStudio({
           </Card>
           <Card>
             <p className={eyebrow}>Fondo</p>
-            <div className="mt-sp-3 grid grid-cols-3 gap-sp-2">
-              {(Object.keys(BACKGROUNDS) as BackgroundId[]).map((id) => (
-                <button key={id} type="button" aria-pressed={design.background === id} onClick={() => set("background", id)} className={`${tile(design.background === id)} items-center`}>
-                  <span
-                    className={`h-8 w-12 rounded-[6px] border border-line ${id === "textura" ? "bg-[url('/images/pattern-bg.webp')] bg-cream" : id === "degradado" ? "bg-gradient-to-b from-lime/60 to-cream" : "bg-cream"}`}
-                  />
-                  <span className="text-[11px] font-semibold text-ink">{BACKGROUNDS[id].label}</span>
-                </button>
-              ))}
+            <div className="mt-sp-3 grid grid-cols-4 gap-sp-2">
+              {(Object.keys(BACKGROUNDS) as BackgroundId[]).map((id) => {
+                const mini = isLinkPattern(id) ? patternImage(id, design.accent, { mini: true, dark: (STYLES[design.style] as StyleDef).dark }) : null;
+                const mask = isLinkPattern(id) ? LINK_PATTERNS[id].mask : id === "textura" ? "url('/images/pattern-mask.webp')" : null;
+                return (
+                  <button key={id} type="button" aria-pressed={design.background === id} onClick={() => set("background", id)} className={`${tile(design.background === id)} items-center`}>
+                    <span
+                      className={`relative h-8 w-12 overflow-hidden rounded-[6px] border border-line ${id === "degradado" ? "bg-gradient-to-b from-lime/60 to-cream" : "bg-cream"}`}
+                      style={accentVars(design.accent, design.customAccent) as React.CSSProperties}
+                    >
+                      {mini ? (
+                        <span className="absolute inset-0 bg-cover" style={{ backgroundImage: `url(${mini})` }} />
+                      ) : mask ? (
+                        <span className="absolute inset-0 bg-coral opacity-50" style={{ maskImage: mask, WebkitMaskImage: mask, maskSize: "60px", WebkitMaskSize: "60px" }} />
+                      ) : null}
+                    </span>
+                    <span className="text-[11px] font-semibold text-ink">{BACKGROUNDS[id].label}</span>
+                  </button>
+                );
+              })}
             </div>
           </Card>
         </div>
@@ -349,7 +385,17 @@ export default function DesignStudio({
               />
             </div>
           </div>
-          <p className="text-xs text-ink/50">La foto, el nombre y la bio aparecen en la vista previa cuando guardas.</p>
+          <div className="grid gap-sp-4 sm:grid-cols-2">
+            <div>
+              <ImageUploadField label="Foto de la sección Contacto" value={profile.contactPhotoUrl} onChange={(url) => setP("contactPhotoUrl", url)} />
+              <p className="mt-1 text-xs text-ink/50">Vertical, como fondo de tus datos de contacto. Sin foto: un panel en tu color.</p>
+            </div>
+            <div>
+              <ImageUploadField label="Imagen sobre tus marcas" value={profile.brandsBannerUrl} onChange={(url) => setP("brandsBannerUrl", url)} />
+              <p className="mt-1 text-xs text-ink/50">Horizontal (5:2), arriba de la cinta de logos. Sin imagen: solo la cinta.</p>
+            </div>
+          </div>
+          <p className="text-xs text-ink/50">Las fotos, el nombre y la bio aparecen en la vista previa cuando guardas.</p>
         </Card>
 
         <div className="sticky bottom-sp-3 z-10 flex flex-wrap items-center gap-sp-3 rounded-[16px] border border-line bg-white/95 p-sp-3 shadow-lg backdrop-blur">

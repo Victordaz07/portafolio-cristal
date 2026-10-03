@@ -7,6 +7,7 @@ import {
   SESSION_CREATOR_HEADER,
   SESSION_USER_HEADER,
   SESSION_VERSION_HEADER,
+  SESSION_ACTOR_HEADER,
   SITE_SLUG_HEADER,
 } from "@/lib/tenant-headers";
 
@@ -38,6 +39,7 @@ export async function middleware(request: NextRequest) {
     headers.set(SESSION_CREATOR_HEADER, session.creatorId);
     headers.set(SESSION_USER_HEADER, session.userId);
     headers.set(SESSION_VERSION_HEADER, String(session.sv ?? 0));
+    if (session.actorId) headers.set(SESSION_ACTOR_HEADER, session.actorId);
   }
 
   // /s/<slug>/… → el sitio de esa creadora (antes de tener subdominio o dominio propio).

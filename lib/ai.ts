@@ -31,6 +31,23 @@ export async function getCreatorContext() {
     .join("\n");
 }
 
+/** Guarda una sugerencia de IA pedida por la cuenta actual (panel de dueño y límites por plan). */
+export async function recordAiUsage(kind: "caption" | "tips", usage?: { input_tokens?: number; output_tokens?: number }) {
+  try {
+    const [{ prismaRoot }, { currentCreatorId }] = await Promise.all([import("@/lib/prisma-root"), import("@/lib/tenant")]);
+    await prismaRoot.aiUsage.create({
+      data: {
+        creatorId: await currentCreatorId(),
+        kind,
+        inputTokens: usage?.input_tokens ?? 0,
+        outputTokens: usage?.output_tokens ?? 0,
+      },
+    });
+  } catch (error) {
+    console.error("No se pudo registrar el uso de IA", error);
+  }
+}
+
 /** Mensaje de error legible para el panel a partir de un error de la API de Claude. */
 export function aiErrorMessage(error: unknown) {
   if (error instanceof Anthropic.AuthenticationError) return "La ANTHROPIC_API_KEY no es válida";

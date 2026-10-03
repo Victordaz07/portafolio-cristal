@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 export async function POST() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (session.actorId) return NextResponse.json({ error: "Desde \"Entrar como\" no se mandan correos a la cuenta" }, { status: 403 });
   if (!emailConfigured()) return NextResponse.json({ error: "Los correos todavía no están configurados" }, { status: 503 });
   const user = await prismaRoot.adminUser.findUnique({ where: { id: session.userId }, select: { emailVerifiedAt: true } });
   if (user?.emailVerifiedAt) return NextResponse.json({ ok: true, already: true });

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, getAiClient, getCreatorContext } from "@/lib/ai";
+import { AI_MODEL, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
 import { CONTENT_TYPE_LABEL, NETWORK_META, type ContentType, type PlanNetwork } from "@/lib/content-plan";
 
 const SYSTEM = `Eres asistente de una persona creadora de contenido UGC que trabaja con marcas.
@@ -42,6 +42,7 @@ Cada opción: gancho en la primera línea, máximo 3 líneas cortas y 3 a 5 hash
       },
     ],
   });
+  await recordAiUsage("caption", response.usage);
   if (response.stop_reason === "refusal") throw new Error("La IA no pudo generar esta sugerencia");
   return response.parsed_output?.captions.slice(0, 3) ?? [];
 }
@@ -76,6 +77,7 @@ gancho de los primeros segundos, ajuste del texto o hashtags, y mejor hora si ap
       },
     ],
   });
+  await recordAiUsage("tips", response.usage);
   if (response.stop_reason === "refusal") throw new Error("La IA no pudo analizar este caption");
   const byLabel = new Map(response.parsed_output?.networks.map((n) => [n.network.toLowerCase(), n.tips]) ?? []);
   return input.networks.map((network) => ({

@@ -36,8 +36,9 @@ export default function AdminLoginForm({
       return;
     }
 
+    const body = (await response.json().catch(() => ({}))) as { paused?: boolean; error?: string };
     setStatus("error");
-    setErrorMessage(copy.error);
+    setErrorMessage(body.paused && body.error ? body.error : copy.error);
   }
 
   return (

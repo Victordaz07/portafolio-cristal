@@ -39,7 +39,7 @@ export async function createCreatorAccount(input: { name: string; slug: string; 
   return prismaRoot.$transaction(async (tx) => {
     const creator = await tx.creator.create({ data: { slug: input.slug, name: input.name } });
     const user = await tx.adminUser.create({
-      data: { email: input.email.toLowerCase(), passwordHash, name: input.name, creatorId: creator.id },
+      data: { email: input.email.toLowerCase(), passwordHash, name: input.name, creatorId: creator.id, lastLoginAt: new Date() },
     });
     await tx.hero.create({
       data: {
@@ -95,13 +95,16 @@ export async function authenticate(email: string, password: string) {
 
 export async function withSession(
   response: NextResponse,
-  user: { id: string; email: string; creatorId: string; sessionVersion?: number }
+  user: { id: string; email: string; creatorId: string; sessionVersion?: number },
+  /** Quien administra Foliocrew, si entra "como" esta cuenta. */
+  actorId?: string
 ) {
   const token = await createSessionToken({
     userId: user.id,
     creatorId: user.creatorId,
     email: user.email,
     sv: user.sessionVersion ?? 0,
+    ...(actorId ? { actorId } : {}),
   });
   response.cookies.set(SESSION_COOKIE, token, sessionCookieOptions);
   return response;

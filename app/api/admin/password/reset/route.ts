@@ -35,6 +35,7 @@ export async function POST(request: Request) {
       sessionVersion: { increment: 1 },
       // Abrió el enlace que llegó a su correo: el correo queda confirmado.
       emailVerifiedAt: new Date(),
+      lastLoginAt: new Date(),
     },
   });
   forgetSessionVersion(user.id);

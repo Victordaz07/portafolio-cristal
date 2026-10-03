@@ -1,14 +1,16 @@
 import { prisma, prismaRoot } from "@/lib/prisma";
 import { getSession } from "@/lib/tenant";
 import { NICHES } from "@/lib/onboarding";
+import { creatorKind } from "@/lib/creator-kind";
 import Wizard from "./Wizard";
 
 export default async function WelcomePage() {
   const session = await getSession();
-  const [hero, settings, user] = await Promise.all([
+  const [hero, settings, user, creator] = await Promise.all([
     prisma.hero.findFirst({ select: { name: true, photoUrl: true, location: true } }),
     prisma.siteSettings.findFirst({ select: { contactEmail: true, instagramHandle: true, tiktokHandle: true, whatsapp: true, accentColor: true } }),
     session ? prismaRoot.adminUser.findUnique({ where: { id: session.userId }, select: { email: true } }) : null,
+    session ? prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { creatorKind: true } }) : null,
   ]);
 
   return (
@@ -23,6 +25,7 @@ export default async function WelcomePage() {
         tiktok: settings?.tiktokHandle ?? "",
         whatsapp: settings?.whatsapp ?? "",
         accentColor: settings?.accentColor ?? "lila",
+        creatorKind: creatorKind(creator?.creatorKind),
       }}
     />
   );

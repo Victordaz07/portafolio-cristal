@@ -1,6 +1,8 @@
-// Plantillas del asistente de bienvenida: con el nicho y el nombre de la creadora se arma
-// un sitio completo (portada, bio, servicios, paquetes y preguntas frecuentes) en español e
-// inglés, que después puede editar todo desde el panel.
+// Plantillas del asistente de bienvenida: con el nicho, el nombre y el tipo de creador
+// (contenido, UGC o ambos) se arma un sitio completo (portada, bio, servicios, paquetes y
+// preguntas frecuentes) en español e inglés, que después se puede editar todo desde el panel.
+
+import type { CreatorKind } from "./creator-kind";
 
 export interface Niche {
   id: string;
@@ -33,27 +35,46 @@ export function getNiche(id: string) {
 }
 
 /** Bio sugerida (editable en el asistente). */
-export function suggestedBio(niche: Niche, firstName: string) {
+export function suggestedBio(niche: Niche, firstName: string, kind: CreatorKind = "contenido") {
+  if (kind === "ugc") {
+    return {
+      es: `Hola, soy ${firstName}. Creo contenido UGC de ${niche.product} para marcas que quieren conectar con su audiencia de forma auténtica.`,
+      en: `Hi, I'm ${firstName}. I create UGC content about ${niche.productEn} for brands that want to connect with their audience authentically.`,
+    };
+  }
+  if (kind === "ambos") {
+    return {
+      es: `Hola, soy ${firstName}. Creo contenido de ${niche.product} para mi comunidad y también contenido UGC para que las marcas lo usen en sus redes y anuncios.`,
+      en: `Hi, I'm ${firstName}. I create ${niche.productEn} content for my community, plus UGC that brands can use on their own social media and ads.`,
+    };
+  }
   return {
-    es: `Hola, soy ${firstName}. Creo contenido UGC de ${niche.product} para marcas que quieren conectar con su audiencia de forma auténtica.`,
-    en: `Hi, I'm ${firstName}. I create UGC content about ${niche.productEn} for brands that want to connect with their audience authentically.`,
+    es: `Hola, soy ${firstName}. Comparto contenido de ${niche.product} con una comunidad que confía en mis recomendaciones, y colaboro con marcas que encajan con ella.`,
+    en: `Hi, I'm ${firstName}. I share ${niche.productEn} content with a community that trusts my recommendations, and I partner with brands that fit it.`,
   };
 }
 
-export function siteTemplate(niche: Niche) {
+const BADGE: Record<CreatorKind, [string, string]> = {
+  contenido: ["Creación de contenido", "Content Creator"],
+  ugc: ["Contenido UGC", "UGC Creator"],
+  ambos: ["Contenido y UGC", "Content & UGC Creator"],
+};
+
+const DELIVERY_FAQ = {
+  question: "¿Cuánto tardas en entregar?",
+  questionEn: "How long does delivery take?",
+  answer: "Normalmente entre 5 y 10 días después de recibir el producto, según el paquete.",
+  answerEn: "Usually 5 to 10 days after receiving the product, depending on the package.",
+};
+const START_FAQ = {
+  question: "¿Cómo empezamos?",
+  questionEn: "How do we start?",
+  answer: "Escríbeme desde el formulario de contacto con tu marca, el producto y lo que buscas, y te envío una propuesta.",
+  answerEn: "Write to me through the contact form with your brand, the product and what you're looking for, and I'll send you a proposal.",
+};
+
+function ugcBlocks(niche: Niche) {
   return {
-    hero: {
-      niche: niche.label,
-      nicheEn: niche.labelEn,
-      badgeLabel: `Contenido UGC • ${niche.label}`,
-      badgeLabelEn: `UGC Creator • ${niche.labelEn}`,
-      headlinePlain: niche.headline[0],
-      headlineEmphasis: niche.headline[1],
-      headlineSuffix: niche.headline[2],
-      headlinePlainEn: niche.headlineEn[0],
-      headlineEmphasisEn: niche.headlineEn[1],
-      headlineSuffixEn: niche.headlineEn[2],
-    },
     whyMe: {
       es: `Creo contenido de ${niche.product} que se siente real para tu audiencia: videos que la gente ve hasta el final, entregas puntuales y comunicación clara en todo el proceso.`,
       en: `I create ${niche.productEn} content that feels real to your audience: videos people watch to the end, on-time delivery and clear communication throughout.`,
@@ -71,9 +92,73 @@ export function siteTemplate(niche: Niche) {
     ],
     faq: [
       { question: "¿Necesito que tengas muchos seguidores?", questionEn: "Do you need a lot of followers?", answer: "No. El contenido UGC es para que tu marca lo publique en sus redes y anuncios: lo que importa es la calidad y la autenticidad del video.", answerEn: "No. UGC is content your brand posts on its own social media and ads: what matters is the quality and authenticity of the video." },
-      { question: "¿Cuánto tardas en entregar?", questionEn: "How long does delivery take?", answer: "Normalmente entre 5 y 10 días después de recibir el producto, según el paquete.", answerEn: "Usually 5 to 10 days after receiving the product, depending on the package." },
+      DELIVERY_FAQ,
       { question: "¿Puedo usar el contenido en anuncios?", questionEn: "Can I use the content in ads?", answer: "Sí. Cada paquete incluye derechos de uso; para anuncios pagados acordamos el plazo en la propuesta.", answerEn: "Yes. Every package includes usage rights; for paid ads we agree on the usage period in the proposal." },
-      { question: "¿Cómo empezamos?", questionEn: "How do we start?", answer: "Escríbeme desde el formulario de contacto con tu marca, el producto y lo que buscas, y te envío una propuesta.", answerEn: "Write to me through the contact form with your brand, the product and what you're looking for, and I'll send you a proposal." },
+      START_FAQ,
     ],
+  };
+}
+
+function contentBlocks(niche: Niche) {
+  return {
+    whyMe: {
+      es: `Mi comunidad me sigue por ${niche.product}: le hablo con honestidad, así que cuando recomiendo algo, lo prueba. Integro tu marca de forma natural, entrego a tiempo y te comparto los resultados.`,
+      en: `My community follows me for ${niche.productEn}: I'm honest with them, so when I recommend something, they try it. I feature your brand naturally, deliver on time and share the results with you.`,
+    },
+    services: [
+      { icon: "camera", title: "Publicaciones patrocinadas", titleEn: "Sponsored posts", description: `Reels y TikToks en mis redes presentando tu marca de ${niche.product} a mi comunidad, con mi estilo.`, descriptionEn: `Reels and TikToks on my channels introducing your ${niche.productEn} brand to my community, in my own style.` },
+      { icon: "phone", title: "Historias con enlace", titleEn: "Stories with link", description: "Historias con tu enlace o código de descuento para llevar a mi audiencia directo a tu tienda.", descriptionEn: "Stories with your link or discount code to send my audience straight to your store." },
+      { icon: "chat", title: "Reseñas honestas", titleEn: "Honest reviews", description: "Cuento mi experiencia real con tu producto: qué me gustó, cómo se usa y para quién es.", descriptionEn: "I share my real experience with your product: what I liked, how to use it and who it's for." },
+      { icon: "box", title: "Alianzas de largo plazo", titleEn: "Long-term partnerships", description: "Colaboraciones de varios meses para que mi comunidad conozca y recuerde tu marca.", descriptionEn: "Multi-month collaborations so my community gets to know and remember your brand." },
+    ],
+    packages: [
+      { emoji: "✨", name: "Básico", nameEn: "Starter", items: ["1 Reel o TikTok en mis redes", "3 historias con tu enlace", "Reporte de resultados"], itemsEn: ["1 Reel or TikTok on my channels", "3 stories with your link", "Results report"] },
+      { emoji: "🚀", name: "Crecimiento", nameEn: "Growth", items: ["2 publicaciones en mis redes", "Historias con enlace y código de descuento", "Reporte con alcance y clics"], itemsEn: ["2 posts on my channels", "Stories with link and discount code", "Report with reach and clicks"] },
+      { emoji: "💜", name: "Alianza mensual", nameEn: "Monthly partnership", items: ["4 publicaciones al mes", "Historias semanales", "Exclusividad en tu categoría", "Reporte mensual"], itemsEn: ["4 posts per month", "Weekly stories", "Category exclusivity", "Monthly report"] },
+    ],
+    faq: [
+      { question: "¿Cuánta gente ve tus publicaciones?", questionEn: "How many people see your posts?", answer: "En mi media kit están mis seguidores, alcance y engagement actualizados. Si quieres datos de una red en particular, pídemelos.", answerEn: "My media kit has my up-to-date followers, reach and engagement. If you'd like stats for a specific platform, just ask." },
+      DELIVERY_FAQ,
+      { question: "¿Puedo usar el contenido en mis anuncios?", questionEn: "Can I use the content in my ads?", answer: "Sí. Los derechos de uso para tus redes o anuncios se suman a la propuesta, con el plazo que acordemos.", answerEn: "Yes. Usage rights for your channels or ads are added to the proposal, for the period we agree on." },
+      START_FAQ,
+    ],
+  };
+}
+
+function bothBlocks(niche: Niche) {
+  const content = contentBlocks(niche);
+  const ugc = ugcBlocks(niche);
+  return {
+    whyMe: {
+      es: `Tengo una comunidad que confía en mis recomendaciones de ${niche.product} y también sé crear contenido para que tu marca lo publique: publico en mis redes, te entrego videos listos para tus anuncios y te comparto los resultados.`,
+      en: `I have a community that trusts my ${niche.productEn} recommendations, and I also create content for your brand to post: I publish on my channels, deliver ad-ready videos and share the results with you.`,
+    },
+    services: [content.services[0], ugc.services[0], content.services[1], content.services[2]],
+    packages: [
+      ugc.packages[0],
+      { emoji: "🚀", name: "Combo", nameEn: "Combo", items: ["1 Reel o TikTok en mis redes", "2 videos UGC para tus anuncios", "Historias con tu enlace", "Reporte de resultados"], itemsEn: ["1 Reel or TikTok on my channels", "2 UGC videos for your ads", "Stories with your link", "Results report"] },
+      content.packages[2],
+    ],
+    faq: [content.faq[0], DELIVERY_FAQ, ugc.faq[2], START_FAQ],
+  };
+}
+
+export function siteTemplate(niche: Niche, kind: CreatorKind = "contenido") {
+  const blocks = kind === "ugc" ? ugcBlocks(niche) : kind === "ambos" ? bothBlocks(niche) : contentBlocks(niche);
+  const [badge, badgeEn] = BADGE[kind];
+  return {
+    hero: {
+      niche: niche.label,
+      nicheEn: niche.labelEn,
+      badgeLabel: `${badge} • ${niche.label}`,
+      badgeLabelEn: `${badgeEn} • ${niche.labelEn}`,
+      headlinePlain: niche.headline[0],
+      headlineEmphasis: niche.headline[1],
+      headlineSuffix: niche.headline[2],
+      headlinePlainEn: niche.headlineEn[0],
+      headlineEmphasisEn: niche.headlineEn[1],
+      headlineSuffixEn: niche.headlineEn[2],
+    },
+    ...blocks,
   };
 }

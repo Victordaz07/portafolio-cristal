@@ -45,7 +45,7 @@ const PLATFORM_INITIALS: Record<string, { initials: string; className: string }>
   instagram: { initials: "IG", className: "bg-coral text-white" },
   tiktok: { initials: "TK", className: "bg-ink text-white" },
   facebook: { initials: "FB", className: "bg-moss text-white" },
-  ugc: { initials: "UGC", className: "bg-lime text-ink" },
+  ugc: { initials: "📷", className: "bg-lime text-ink" },
 };
 
 const eyebrowClass = "font-mono text-[10px] uppercase tracking-[0.12em] text-ink/55";

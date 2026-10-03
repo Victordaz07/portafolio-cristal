@@ -24,7 +24,7 @@ export async function GET(request: Request) {
       <div style={{ display: "flex", width: "100%", height: "100%", background: style.colors.bg, padding: 56, gap: 56, alignItems: "center" }}>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 22 }}>
           <div style={{ display: "flex", alignSelf: "flex-start", border: `2px solid ${palette.light}`, color: style.colors.ink, borderRadius: 999, padding: "10px 22px", fontSize: 22, letterSpacing: 3, textTransform: "uppercase" }}>
-            {hero?.niche || hero?.badgeLabel || "Creadora UGC"}
+            {hero?.niche || hero?.badgeLabel || "Creación de contenido"}
           </div>
           <div style={{ display: "flex", fontSize: 76, fontWeight: 700, lineHeight: 1.05, color: style.colors.ink }}>{hero?.name || "Portafolio"}</div>
           <div style={{ display: "flex", fontSize: 30, color: style.colors.ink, opacity: 0.7 }}>Portafolio · Media kit · Colaboraciones</div>

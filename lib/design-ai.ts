@@ -46,7 +46,7 @@ export async function suggestDesign(input: { name: string; niche: string; bio: s
     output_config: { effort: "low", format: betaZodOutputFormat(SuggestionSchema) },
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",
-    system: `Eres directora de arte de Foliocrew, una plataforma de portafolios para creadores de contenido UGC.
+    system: `Eres directora de arte de Foliocrew, una plataforma de portafolios para creadores de contenido (incluidos creadores UGC).
 Eliges una combinación de diseño coherente para el sitio de una persona creadora: que transmita su nicho y su personalidad
 y que las marcas la vean profesional. Respondes en español neutro.`,
     messages: [
@@ -55,7 +55,7 @@ y que las marcas la vean profesional. Respondes en español neutro.`,
         content: `Opciones disponibles:
 ${catalog()}
 
-Persona creadora: ${input.name || "sin nombre"}. Nicho: ${input.niche || "UGC general"}.
+Persona creadora: ${input.name || "sin nombre"}. Nicho: ${input.niche || "contenido general"}.
 Bio: ${input.bio.slice(0, 600) || "(sin bio)"}
 ${input.current ? `Ya vio esta propuesta y quiere otra distinta: ${JSON.stringify(input.current)}` : ""}
 

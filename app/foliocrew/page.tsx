@@ -10,8 +10,8 @@ const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "600", "700"]
 export const metadata: Metadata = {
   title: "Foliocrew — Tu talento merece su espacio",
   description:
-    "La plataforma para creadores de contenido UGC: portafolio profesional y bilingüe, media kit, CRM de marcas, calendario con IA y reportes, en un solo lugar. Únete a la lista de espera.",
-  openGraph: { title: "Foliocrew — Tu talento merece su espacio", description: "Portafolio, media kit y colaboraciones para creadores de contenido UGC, en un solo lugar.", type: "website" },
+    "La plataforma para creadores de contenido y creadores UGC: portafolio profesional y bilingüe, media kit, link en bio, CRM de marcas, calendario con IA y reportes, en un solo lugar. Únete a la lista de espera.",
+  openGraph: { title: "Foliocrew — Tu talento merece su espacio", description: "Portafolio, media kit y colaboraciones con marcas para creadores de contenido y UGC, en un solo lugar.", type: "website" },
 };
 
 const INK = "#251023";
@@ -39,7 +39,8 @@ const TOOLS = [
 
 const FAQ = [
   { q: "¿Necesito saber de diseño o de código?", a: "No. El asistente arma tu sitio y lo editas desde tu panel con formularios simples. Todo lo que cambias se ve al instante." },
-  { q: "¿Sirve si tengo pocos seguidores?", a: "Sí. El contenido UGC lo publican las marcas en sus propias redes y anuncios: importa la calidad de tu contenido, no cuántos seguidores tienes." },
+  { q: "¿Es para influencers o para UGC?", a: "Para los dos. Si publicas en tus redes, tu media kit muestra tu comunidad y tus números reales; si haces UGC, tu portafolio muestra la calidad de tu trabajo. Al crear tu cuenta eliges cómo trabajas y el asistente arma tus textos, servicios y paquetes para eso." },
+  { q: "¿Sirve si tengo pocos seguidores?", a: "Sí. Si haces UGC, las marcas publican tu contenido en sus propias redes: importa la calidad, no los seguidores. Y si estás creciendo tu comunidad, un portafolio profesional te ayuda a cerrar tus primeras colaboraciones." },
   { q: "¿Puedo usar mi propio dominio?", a: "Sí. Tienes tu dirección tunombre.foliocrew.pro y, si quieres, conectas un dominio que compres tú (por ejemplo, tunombre.com). El panel te dice exactamente qué configurar." },
   { q: "¿Publica automáticamente en mis redes?", a: "Todavía no. Te ayudamos a planear tu calendario, escribir tus captions con IA y recordarte cuándo publicar; tú publicas. La publicación automática está en nuestros planes." },
   { q: "¿Cómo se paga?", a: "Por ahora con PayPal o transferencia bancaria, por 1, 3 o 12 meses (el plan anual trae 2 meses de regalo). No se renueva solo: te avisamos por correo antes de que venza." },
@@ -54,7 +55,7 @@ function SitePhoneMockup() {
       <div className="rounded-[40px] border-[10px] border-[#251023] bg-[#FBF7F5] p-sp-3 shadow-[0_30px_60px_rgba(37,16,35,0.35)]">
         <div className="mb-sp-3 flex items-center justify-between">
           <span className="font-fraunces text-base font-semibold italic text-[#251023]">Valeria</span>
-          <span className="rounded-full bg-[#B692E7]/30 px-sp-2 py-0.5 font-mono text-[8px] uppercase text-[#7F207B]">UGC · Skincare</span>
+          <span className="rounded-full bg-[#B692E7]/30 px-sp-2 py-0.5 font-mono text-[8px] uppercase text-[#7F207B]">Creadora · Skincare</span>
         </div>
         <p className="font-fraunces text-xl font-semibold leading-tight text-[#251023]">
           Piel real, <em className="text-[#7F207B]">resultados</em> reales.
@@ -128,14 +129,14 @@ export default async function FoliocrewHome({
         <div className="mx-auto grid max-w-6xl items-center gap-sp-6 px-sp-5 py-sp-6 md:grid-cols-[1.15fr_1fr] md:py-20">
           <div>
             <span className="inline-block rounded-full bg-[#B692E7]/25 px-sp-3 py-1 font-mono text-[11px] uppercase tracking-widest text-[#7F207B]">
-              Para creadores de contenido UGC · Lanzamiento por invitación
+              Para creadores de contenido y UGC · Lanzamiento por invitación
             </span>
             <h1 className="mt-sp-4 font-fraunces text-5xl font-semibold leading-[1.02] sm:text-6xl lg:text-7xl">
               Tu talento merece su <em className="text-[#7F207B]">espacio.</em>
             </h1>
             <p className="mt-sp-5 max-w-xl text-lg text-[#251023]/70">
               Tu portafolio, tu media kit y tus colaboraciones con marcas, en un solo lugar. Un sitio profesional en español e inglés, y un
-              panel para manejar tu negocio UGC.
+              panel para manejar tu negocio como creador.
             </p>
             <div className="mt-sp-5 max-w-xl">
               <WaitlistForm utm={utm} compact />

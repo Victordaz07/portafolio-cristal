@@ -48,8 +48,8 @@ const PHOTO_PLACEHOLDER = "/images/placeholder-creadora.svg";
 export async function generateMetadata(): Promise<Metadata> {
   const hero = await prisma.hero.findFirst({ select: { name: true, niche: true, description: true, updatedAt: true } });
   if (!hero) return {};
-  const title = `${hero.name} — ${hero.niche || "Contenido UGC"}`;
-  const description = hero.description || `Portafolio de ${hero.name}: contenido UGC, media kit y colaboraciones.`;
+  const title = `${hero.name} — ${hero.niche || "Creación de contenido"}`;
+  const description = hero.description || `Portafolio de ${hero.name}: contenido, media kit y colaboraciones con marcas.`;
   // Imagen para compartir con los colores del Estudio de diseño (app/api/og).
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");

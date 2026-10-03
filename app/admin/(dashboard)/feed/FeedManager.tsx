@@ -24,7 +24,7 @@ const PLATFORM_FILTERS: { id: Platform; label: string }[] = [
   { id: "tiktok", label: "TikTok" },
   { id: "instagram", label: "Instagram" },
   { id: "facebook", label: "Facebook" },
-  { id: "ugc", label: "Fotos UGC" },
+  { id: "ugc", label: "Fotos propias" },
 ];
 
 const chipClass = (active: boolean) =>

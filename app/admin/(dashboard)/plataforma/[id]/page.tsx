@@ -8,6 +8,7 @@ import Card from "@/components/admin/Card";
 import AccountActions from "./AccountActions";
 import BillingCard from "./BillingCard";
 import OwnerEmailForm from "./OwnerEmailForm";
+import { kindInfo } from "@/lib/creator-kind";
 import { PLANS } from "@/lib/plans";
 import { creatorPerformance } from "@/lib/platform-analytics";
 import { formatCompact } from "@/lib/metrics";
@@ -69,6 +70,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
   const facts: [string, string][] = [
     ["Dirección", siteUrl.replace(/^https?:\/\//, "")],
     ["Dominio propio", creator.customDomain ? `${creator.customDomain}${creator.customDomainVerifiedAt ? " ✓" : " (pendiente)"}` : "—"],
+    ["Tipo de creador", kindInfo(creator.creatorKind).label],
     ["Alta", fmt(creator.createdAt)],
     ["Asistente de bienvenida", creator.onboardedAt ? `Terminado ${fmt(creator.onboardedAt)}` : "Pendiente"],
     ["Feed / marcas / mensajes", `${creator._count.contentCards} / ${creator._count.brands} / ${creator._count.contactMessages}`],

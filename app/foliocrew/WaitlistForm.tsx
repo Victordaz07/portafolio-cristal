@@ -76,7 +76,7 @@ export default function WaitlistForm({ utm, compact = false, dark = false }: { u
             {copied ? "¡Link copiado!" : "Invita a alguien que cree contenido"}
           </button>
           <a
-            href={`https://wa.me/?text=${encodeURIComponent(`Mira Foliocrew, el portafolio para creadores de contenido UGC: ${shareUrl}`)}`}
+            href={`https://wa.me/?text=${encodeURIComponent(`Mira Foliocrew, el portafolio para creadores de contenido y UGC: ${shareUrl}`)}`}
             target="_blank"
             rel="noreferrer"
             className={`rounded-full border px-sp-4 py-sp-2 text-sm font-semibold ${dark ? "border-cream/30" : "border-[#251023]/20"}`}

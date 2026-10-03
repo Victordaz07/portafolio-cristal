@@ -125,7 +125,7 @@ async function writePlaybook(label: string, posts: Post[], stats: InsightStats):
     output_config: { effort: "medium", format: betaZodOutputFormat(PlaybookSchema) },
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",
-    system: `Eres analista de contenido de Foliocrew, una plataforma para creadores de contenido UGC.
+    system: `Eres analista de contenido de Foliocrew, una plataforma para creadores de contenido (incluidos creadores UGC).
 Analizas resultados reales y anónimos de un nicho y explicas qué funciona, en español neutro, claro y concreto.
 Básate solo en los datos: si una conclusión tiene pocas publicaciones detrás, dilo. No inventes cifras.
 No copies captions ni menciones marcas o personas: describe patrones (tipo de gancho, estructura, tono, duración, llamada a la acción).`,

@@ -189,7 +189,7 @@ export default function ContentCardForm({
               mode === "ugc" ? "border-coral bg-coral/10 text-ink" : "border-line text-ink/60 hover:border-coral"
             }`}
           >
-            Foto UGC de portafolio (sin red social)
+            Foto de portafolio (sin red social)
           </button>
         </div>
         <span className="text-xs text-ink/50">

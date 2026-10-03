@@ -79,7 +79,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = h.get("x-forwarded-host") ?? h.get("host");
   const proto = h.get("x-forwarded-proto") ?? (host?.startsWith("localhost") ? "http" : "https");
   const image = host ? `${proto}://${host}${await sitePathPrefix()}/api/og?v=${hero.updatedAt.getTime()}` : undefined;
-  const title = `${hero.name} · ${hero.niche || "UGC"}`;
+  const title = `${hero.name} · ${hero.niche || "Creación de contenido"}`;
   const description = settings?.linksTagline || hero.description || undefined;
   return {
     title,

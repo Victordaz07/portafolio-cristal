@@ -6,6 +6,7 @@ import { getSession } from "@/lib/tenant";
 import { parseEmbedUrl } from "@/lib/embeds";
 import { ACCENTS } from "@/lib/theme";
 import { getNiche, siteTemplate } from "@/lib/onboarding";
+import { CREATOR_KINDS, type CreatorKind } from "@/lib/creator-kind";
 import { sessionCreatorSite } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ const onboardingSchema = z.object({
   photoUrl: z.union([httpUrl(), z.string().regex(/^\/[^\s]*$/), z.literal("")]),
   location: z.string().trim().max(80),
   niche: z.string(),
+  creatorKind: z.enum(CREATOR_KINDS.map((k) => k.id) as [CreatorKind, ...CreatorKind[]]).default("contenido"),
   bio: z.string().trim().min(10).max(600),
   bioEn: z.string().trim().max(600),
   useTemplates: z.object({ services: z.boolean(), packages: z.boolean(), faq: z.boolean() }),
@@ -46,7 +48,7 @@ export async function POST(request: Request) {
     }
   }
   const niche = getNiche(d.niche);
-  const template = siteTemplate(niche);
+  const template = siteTemplate(niche, d.creatorKind);
 
   const [hero, settings, services, packages, faqs, cards] = await Promise.all([
     prisma.hero.findFirst({ select: { id: true } }),
@@ -108,7 +110,7 @@ export async function POST(request: Request) {
       });
     }),
   ]);
-  await prismaRoot.creator.update({ where: { id: session.creatorId }, data: { onboardedAt: new Date() } });
+  await prismaRoot.creator.update({ where: { id: session.creatorId }, data: { onboardedAt: new Date(), creatorKind: d.creatorKind } });
   return NextResponse.json({ ok: true, siteUrl: (await sessionCreatorSite())?.url ?? "" });
 }
 

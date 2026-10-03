@@ -98,6 +98,31 @@ export async function syncFeedMetrics(): Promise<{ results: SyncResult[]; update
 }
 
 /**
+ * Miniatura de un post de Instagram/Facebook usando la cuenta conectada (API oficial de Meta):
+ * mucho más confiable que raspar la página pública del post (lib/social/thumbnail.ts), que
+ * Instagram bloquea cada vez más. Null si no hay cuenta conectada o no se encuentra el post
+ * entre sus publicaciones recientes (p. ej. uno muy viejo).
+ */
+export async function resolveThumbnailViaAccount(
+  platform: "instagram" | "facebook",
+  postUrl: string
+): Promise<string | null> {
+  const account = await prisma.socialAccount.findFirst({ where: { platform } });
+  if (!account) return null;
+  const key = postKey(platform, postUrl);
+  if (!key) return null;
+  try {
+    const { tokens } = await getFreshTokens(account);
+    const items = await PROVIDERS[platform].fetchRecent(tokens, 50);
+    const match = items.find((item) => postKey(platform, item.url) === key);
+    if (!match?.thumbnailUrl) return null;
+    return ensurePermanentThumbnail(match.thumbnailUrl, `content-cards/thumbnails/${platform}`);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Corre `syncFeedMetrics` para cada cuenta activa (tarea periódica, ver app/api/cron/sync-thumbnails
  * y vercel.json): así las miniaturas de Instagram/Facebook se renuevan solas, sin que nadie tenga
  * que entrar al panel ni tocar "↻ Sincronizar métricas".

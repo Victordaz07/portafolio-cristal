@@ -17,15 +17,24 @@ export function getAiClient() {
 /** Contexto de la creadora para las sugerencias: nicho y captions recientes del Feed. */
 export async function getCreatorContext() {
   const { prisma } = await import("@/lib/prisma");
-  const [hero, cards] = await Promise.all([
+  const [{ prismaRoot }, { currentCreatorId }, { insightForNiche, insightPromptText }] = await Promise.all([
+    import("@/lib/prisma-root"),
+    import("@/lib/tenant"),
+    import("@/lib/insights"),
+  ]);
+  const [hero, cards, creator] = await Promise.all([
     prisma.hero.findFirst({ select: { name: true, niche: true } }),
     prisma.contentCard.findMany({ orderBy: { createdAt: "desc" }, take: 8, select: { caption: true, category: true } }),
+    prismaRoot.creator.findUnique({ where: { id: await currentCreatorId() }, select: { shareInsights: true } }),
   ]);
+  // Quien participa en la inteligencia de Foliocrew recibe sugerencias basadas en resultados reales de su nicho.
+  const insight = creator?.shareInsights ? await insightForNiche(hero?.niche).catch(() => null) : null;
   const recent = cards.map((c) => `- ${c.caption} (${c.category})`).join("\n");
   return [
     `Creador(a) de contenido: ${hero?.name ?? "creador(a) UGC"}.`,
     `Nicho: ${hero?.niche ?? "UGC de belleza y estilo de vida"}.`,
     recent ? `Publicaciones recientes de su portafolio:\n${recent}` : "",
+    insight ? `${insightPromptText(insight)}\nUsa estos datos para orientar tus sugerencias (sin citarlos textualmente).` : "",
   ]
     .filter(Boolean)
     .join("\n");

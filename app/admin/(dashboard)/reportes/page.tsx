@@ -16,6 +16,7 @@ import {
   monthLabel,
 } from "@/lib/reports";
 import ReportActions from "./ReportActions";
+import InsightsCard from "@/components/admin/InsightsCard";
 import { sessionCreatorSite } from "@/lib/site-url";
 
 const eyebrowClass = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
@@ -71,6 +72,8 @@ export default async function AdminReportsPage() {
           </Card>
         ))}
       </div>
+
+      <InsightsCard />
 
       <div className="grid gap-sp-4 xl:grid-cols-2">
         <Card>

@@ -79,7 +79,7 @@ const PLATFORM_GROUP: NavGroup = {
   id: "foliocrew",
   title: "Foliocrew",
   items: [
-    { href: "/admin/plataforma", label: "Cuentas" },
+    { href: "/admin/plataforma", label: "Centro de mando" },
     { href: "/admin/lista-de-espera", label: "Lista de espera" },
   ],
 };

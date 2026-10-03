@@ -6,6 +6,7 @@ import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountForm from "./AccountForm";
 import { emailConfigured } from "@/lib/email";
+import ShareInsightsButton from "@/components/admin/ShareInsightsButton";
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ correo?: string }> }) {
   const { correo } = await searchParams;
@@ -13,7 +14,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   const [user, creator] = session
     ? await Promise.all([
         prisma.adminUser.findUnique({ where: { id: session.userId }, select: { name: true, email: true, emailVerifiedAt: true } }),
-        prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true, slug: true, customDomain: true } }),
+        prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true, slug: true, customDomain: true, shareInsights: true, shareInsightsAt: true } }),
       ])
     : [null, null];
   const siteUrl = (await sessionCreatorSite())?.url ?? "";
@@ -59,6 +60,28 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         {!emailConfigured() && (
           <p className="mt-sp-1 text-xs text-ink/55">Los correos automáticos todavía no están activos en Foliocrew.</p>
         )}
+      </Card>
+      <Card>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Inteligencia Foliocrew</p>
+        <p className="text-sm text-ink">
+          {creator?.shareInsights
+            ? `Participas desde el ${creator.shareInsightsAt?.toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) ?? "inicio"}. Tus métricas cuentan de forma anónima y agregada, y ves la comparativa de tu nicho en Reportes.`
+            : "No participas. Si te sumas, ves qué funciona en tu nicho (horarios, formatos, ganchos) y tus métricas ayudan, de forma anónima, a las demás."}
+        </p>
+        <p className="mt-sp-1 text-xs text-ink/55">
+          Nunca se muestra tu nombre, usuario ni marcas. Más detalles en la{" "}
+          <Link href="/privacidad" className="font-semibold text-coral hover:underline">
+            política de privacidad
+          </Link>
+          .
+        </p>
+        <div className="mt-sp-3">
+          {creator?.shareInsights ? (
+            <ShareInsightsButton share={false} label="Dejar de participar" variant="ghost" />
+          ) : (
+            <ShareInsightsButton share label="Sumarme" />
+          )}
+        </div>
       </Card>
       <AccountForm initialName={user?.name ?? creator?.name ?? ""} email={user?.email ?? ""} />
     </div>

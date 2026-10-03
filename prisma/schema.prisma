@@ -34,6 +34,9 @@ model Creator {
   paidUntil              DateTime?
   /// Último recordatorio de pago enviado (evita mandarlo dos veces), p. ej. "trial-3:2026-10-17"
   billingReminder        String?
+  /// Suma sus resultados, de forma anónima y agregada, a la inteligencia de Foliocrew (y recibe comparativas de su nicho)
+  shareInsights          Boolean   @default(false)
+  shareInsightsAt        DateTime?
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
@@ -532,4 +535,20 @@ model Payment {
 
   @@index([creatorId, createdAt])
   @@index([status])
+}
+
+/// Lo que aprende Foliocrew de cada nicho (agregado y anónimo, solo de cuentas que aceptaron participar).
+model NicheInsight {
+  id          String   @id @default(cuid())
+  /// Id del nicho (lib/onboarding.ts) o "global"
+  niche       String   @unique
+  label       String
+  creators    Int
+  posts       Int
+  /// Medianas, mejores franjas, formatos, redes y precios
+  stats       Json
+  /// Lo que escribe Claude: qué funciona, qué no, ganchos y recomendaciones
+  playbook    Json?
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

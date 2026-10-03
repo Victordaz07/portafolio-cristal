@@ -58,7 +58,9 @@ export default function EmbedUrlInput({
     if (onThumbnailResolved && (platform === "instagram" || platform === "facebook")) {
       setFetchingThumbnail(true);
       try {
-        const response = await fetch(`/api/admin/resolve-thumbnail?url=${encodeURIComponent(resolvedUrl)}`);
+        const response = await fetch(
+          `/api/admin/resolve-thumbnail?url=${encodeURIComponent(resolvedUrl)}&platform=${platform}`
+        );
         const data = await response.json();
         onThumbnailResolved(response.ok ? data.thumbnailUrl ?? null : null);
       } catch {

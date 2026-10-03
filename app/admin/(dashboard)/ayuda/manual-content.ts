@@ -133,7 +133,7 @@ const glosarioEs: GlossaryTerm[] = [
   { term: "Orden / reordenar", def: "Las flechas ↑ ↓ junto a cada elemento de una lista; controlan en qué posición aparece en el sitio público." },
   { term: "CTA", def: "\"Call to action\": los botones que invitan a hacer algo, como \"Ver portafolio\" o \"Colaboremos\"." },
   { term: "Badge / pill", def: "Una etiqueta pequeña y redondeada, como la categoría de una tarjeta del Feed o \"Nuevo\" en Mensajes." },
-  { term: "Miniatura", def: "La imagen de vista previa de una tarjeta en la cuadrícula del Feed. TikTok la trae automática. Para Instagram/Facebook, al tocar \"Cargar preview\" se intenta traer sola; si no aparece, se puede subir una manualmente con el campo \"Miniatura (opcional)\"." },
+  { term: "Miniatura", def: "La imagen de vista previa de una tarjeta en la cuadrícula del Feed. TikTok la trae automática. Para Instagram/Facebook se trae sola al tocar \"Cargar preview\" y, si la cuenta está conectada, también se renueva sola todos los días por si el link de Instagram/Facebook caduca; si nunca llega, se puede subir una manualmente con el campo \"Miniatura (opcional)\"." },
   { term: "Plataforma", def: "TikTok, Instagram o Facebook — de dónde viene el post que agregas al Feed (solo aplica al modo \"Post de red social\")." },
   { term: "Video propio", def: "Un archivo de video que subes tú directamente (en vez de depender del embed de la plataforma). Explicado a fondo en \"Paso a paso: Reels\"." },
   { term: "Foto UGC de portafolio", def: "El otro tipo de tarjeta del Feed: una foto propia sin ningún link a red social. Solo pide la foto, una descripción y opcionalmente la marca para la que hiciste el trabajo (con su logo)." },
@@ -212,8 +212,9 @@ const reelsEs: ManualBlock[] = [
   {
     title: "🖼️ 7. La miniatura para Instagram y Facebook",
     paragraphs: [
-      "A diferencia de TikTok, Instagram y Facebook no dejan traer una miniatura automática de forma confiable. Al tocar \"Cargar preview\" el panel intenta traerla sola de todos modos; si lo logra, se precarga en el campo \"Miniatura (opcional)\" que aparece debajo del video.",
-      "Si no la trae (a veces Instagram bloquea el intento), sube ahí mismo una captura de pantalla o foto liviana como miniatura — no hace falta resubir el video completo, solo una imagen de portada para que la tarjeta se vea bien en la cuadrícula.",
+      "A diferencia de TikTok, Instagram y Facebook no siempre dejan traer la miniatura al toque. Al tocar \"Cargar preview\" el panel intenta traerla sola; si lo logra, la guarda en nuestro propio almacenamiento (no como un link directo de Instagram/Facebook, que caduca) y se precarga en el campo \"Miniatura (opcional)\" que aparece debajo del video.",
+      "Además, si tienes la cuenta conectada en 'Conectar cuentas', todos los días el sistema revisa solo las tarjetas sin miniatura (o con una que ya caducó) y la rellena automáticamente — sin que tengas que entrar a hacer nada.",
+      "Si aun así no llega (a veces Instagram bloquea el intento y la cuenta no está conectada), sube ahí mismo una captura de pantalla o foto liviana como miniatura — no hace falta resubir el video completo, solo una imagen de portada para que la tarjeta se vea bien en la cuadrícula.",
     ],
   },
   {

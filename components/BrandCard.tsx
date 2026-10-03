@@ -1,3 +1,5 @@
+import { safeHref } from "@/lib/validators";
+
 export interface BrandCardProps {
   name: string;
   logoUrl?: string | null;
@@ -17,7 +19,7 @@ export default function BrandCard({ name, logoUrl, websiteUrl }: BrandCardProps)
 
   if (websiteUrl) {
     return (
-      <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className={cardClass}>
+      <a href={safeHref(websiteUrl)} target="_blank" rel="noopener noreferrer" className={cardClass}>
         {content}
       </a>
     );

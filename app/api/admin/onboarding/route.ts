@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { httpUrl } from "@/lib/validators";
 import { prisma, prismaRoot } from "@/lib/prisma";
 import { getSession } from "@/lib/tenant";
 import { parseEmbedUrl } from "@/lib/embeds";
@@ -13,7 +14,7 @@ const handle = z.string().trim().max(60).transform((h) => h.replace(/^@/, ""));
 
 const onboardingSchema = z.object({
   displayName: z.string().trim().min(2).max(80),
-  photoUrl: z.union([z.string().url(), z.string().regex(/^\/[^\s]*$/), z.literal("")]),
+  photoUrl: z.union([httpUrl(), z.string().regex(/^\/[^\s]*$/), z.literal("")]),
   location: z.string().trim().max(80),
   niche: z.string(),
   bio: z.string().trim().min(10).max(600),

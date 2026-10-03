@@ -68,9 +68,19 @@ function channels(hex: string) {
   return toRgb(hex).join(" ");
 }
 
+/** Mezcla un color hacia negro (t > 0) o blanco (t < 0). */
+export function shade(hex: string, t: number) {
+  return toHex(mix(toRgb(hex), t >= 0 ? [0, 0, 0] : [255, 255, 255], Math.abs(t)));
+}
+
+/** Los 3 tonos del acento elegido (preset o color propio). */
+export function resolvePalette(id: string | null | undefined, custom?: string | null) {
+  return id === "custom" && isHexColor(custom) ? paletteFromHex(custom) : ACCENTS[isAccentId(id) ? id : DEFAULT_ACCENT];
+}
+
 /** Variables CSS que usan los colores coral / moss / lime de Tailwind. */
 export function accentVars(id: string | null | undefined, custom?: string | null): Record<string, string> {
-  const palette = id === "custom" && isHexColor(custom) ? paletteFromHex(custom) : ACCENTS[isAccentId(id) ? id : DEFAULT_ACCENT];
+  const palette = resolvePalette(id, custom);
   return {
     "--accent": channels(palette.accent),
     "--accent-dark": channels(palette.dark),

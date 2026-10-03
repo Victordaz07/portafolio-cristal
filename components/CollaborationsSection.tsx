@@ -5,6 +5,7 @@ import type { Platform, ContentType } from "@/lib/embeds";
 import { formatCompact } from "@/lib/metrics";
 import { t, type Locale } from "@/lib/i18n";
 import EmbedLightbox from "./EmbedLightbox";
+import { safeHref } from "@/lib/validators";
 
 export interface CollaborationPiece {
   type: ContentType;
@@ -50,7 +51,7 @@ export default function CollaborationsSection({ brands, locale }: { brands: Coll
             <div key={brand.name} className="grid items-center gap-sp-4 sm:grid-cols-[150px_1fr] sm:gap-sp-5">
               <div className="flex items-center gap-sp-3 sm:flex-col sm:text-center">
                 {brand.websiteUrl ? (
-                  <a href={brand.websiteUrl} target="_blank" rel="noreferrer">
+                  <a href={safeHref(brand.websiteUrl)} target="_blank" rel="noreferrer">
                     {logo}
                   </a>
                 ) : (

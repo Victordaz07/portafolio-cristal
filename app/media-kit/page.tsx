@@ -8,6 +8,7 @@ import { getThumbnailUrl } from "@/lib/oembed";
 import type { Platform } from "@/lib/embeds";
 import { followerGrowth } from "@/lib/reports";
 import { sitePathPrefix } from "@/lib/tenant";
+import { safeHref } from "@/lib/validators";
 
 export const dynamic = "force-dynamic";
 
@@ -141,7 +142,7 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
             <h2 className="mb-sp-3 font-bodoni text-2xl font-bold uppercase italic text-ink">{copy.top}</h2>
             <div className="grid grid-cols-3 gap-sp-3">
               {top.map((card, i) => (
-                <a key={card.id} href={card.postUrl ?? "#"} target="_blank" rel="noreferrer" className="group flex flex-col gap-1.5">
+                <a key={card.id} href={safeHref(card.postUrl) ?? "#"} target="_blank" rel="noreferrer" className="group flex flex-col gap-1.5">
                   <span className={`relative block overflow-hidden rounded-[14px] bg-gradient-to-br from-cobalt to-cobalt-ink ${card.type === "video" ? "aspect-[9/16]" : "aspect-[4/5]"}`}>
                     {thumbs[i] && (
                       // eslint-disable-next-line @next/next/no-img-element

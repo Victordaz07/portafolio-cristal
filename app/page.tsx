@@ -284,12 +284,11 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 {copy.marcas.eyebrow}
               </p>
 
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/brands-banner.png"
-                alt={hero?.name ?? ""}
-                className="aspect-[5/2] w-full object-cover object-top"
-              />
+              {/* Imagen propia sobre la cinta de marcas (Estudio de diseño → Tu perfil); sin imagen, solo la cinta. */}
+              {settings?.brandsBannerUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={settings.brandsBannerUrl} alt={hero?.name ?? ""} className="aspect-[5/2] w-full object-cover object-top" />
+              )}
 
               <div className="relative overflow-hidden bg-surface py-sp-4">
                 <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-surface to-transparent sm:w-32" />
@@ -520,19 +519,22 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               <ContactForm locale={locale} endpoint={`${sitePrefix}/api/contact`} />
 
               <div>
-                <div className="r-md relative overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/images/contact-photo.webp"
-                    alt={copy.contacto.photoAlt(hero?.name ?? "")}
-                    className="w-full"
-                  />
-
-                  <div className="absolute inset-x-sp-4 top-sp-5 flex flex-col gap-sp-4 sm:inset-x-sp-6">
+                {/* Foto propia de contacto (Estudio de diseño → Tu perfil). Sin foto: las tarjetas sobre un panel del acento. */}
+                {settings?.contactPhotoUrl ? (
+                  <div className="r-md relative overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={settings.contactPhotoUrl} alt={copy.contacto.photoAlt(hero?.name ?? "")} className="w-full" />
+                    <div className="absolute inset-x-sp-4 top-sp-5 flex flex-col gap-sp-4 sm:inset-x-sp-6">
+                      <ContactInfoCard title={copy.contacto.hablamos} rows={hablamosRows} />
+                      <ContactInfoCard title={copy.contacto.sigueme} rows={siguemeRows} />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="r-md flex flex-col gap-sp-4 bg-gradient-to-br from-lime/35 via-lime/15 to-coral/10 px-sp-4 pb-sp-9 pt-sp-5 sm:px-sp-6">
                     <ContactInfoCard title={copy.contacto.hablamos} rows={hablamosRows} />
                     <ContactInfoCard title={copy.contacto.sigueme} rows={siguemeRows} />
                   </div>
-                </div>
+                )}
 
                 <div className="relative z-10 mx-sp-5 -mt-sp-7 flex flex-col items-center gap-sp-2 r-sm border border-line bg-cream p-sp-5 text-center shadow-lg">
                   <MotivationTrigger

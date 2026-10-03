@@ -1,4 +1,4 @@
-import { ACCENTS, accentVars, isAccentId, isHexColor } from "./theme";
+import { ACCENTS, accentVars, isAccentId, isHexColor, resolvePalette, shade } from "./theme";
 import { isLinkPattern, type LinkPatternId } from "./bio-links";
 
 // ─── Estudio de diseño ───
@@ -81,11 +81,29 @@ export const CORNERS = {
 } as const;
 export type CornerId = keyof typeof CORNERS;
 
+/** Fondos del sitio: lisos, la textura de estrellitas teñida y los 5 botánicos pintados (lib/bio-links.ts). */
 export const BACKGROUNDS = {
   liso: { label: "Liso" },
-  textura: { label: "Textura" },
+  textura: { label: "Estrellitas" },
   degradado: { label: "Degradado" },
+  acuarela: { label: "Acuarela" },
+  punteado: { label: "Punteado" },
+  petalos: { label: "Pétalos" },
+  ramitas: { label: "Ramitas" },
+  enredadera: { label: "Enredadera" },
 } as const;
+
+/**
+ * Color secundario: el de los bloques y botones oscuros ("Por qué yo", "Colaboremos", etiquetas del contacto).
+ * "acento" lo saca del color de acento (cambia junto con él); "estilo" usa el del estilo elegido.
+ */
+export const SECONDARY = {
+  acento: { label: "Del acento", hint: "Cambia junto con tu color" },
+  oliva: { label: "Oliva", hint: "El verde original" },
+  tinta: { label: "Tinta", hint: "Casi negro, elegante" },
+  estilo: { label: "Del estilo", hint: "El que trae el estilo" },
+} as const;
+export type SecondaryId = keyof typeof SECONDARY;
 export type BackgroundId = keyof typeof BACKGROUNDS;
 
 export const HEROES = {
@@ -127,6 +145,7 @@ export interface Design {
   sections: SectionEntry[];
   /** Fondo decorativo del link en bio (lib/bio-links.ts → LINK_PATTERNS). */
   pattern: LinkPatternId;
+  secondary: SecondaryId;
 }
 
 const has = <T extends object>(obj: T, key: unknown): key is keyof T => typeof key === "string" && key in obj;
@@ -156,6 +175,7 @@ export const DEFAULT_DESIGN: Design = {
   hero: "split",
   sections: normalizeSections([]),
   pattern: "blobs",
+  secondary: "acento",
 };
 
 /** Lee el diseño guardado (o uno de vista previa) y descarta cualquier valor que no sea una opción válida. */
@@ -173,6 +193,7 @@ export function parseDesign(raw: Partial<Record<keyof Design, unknown>> | null |
     hero: has(HEROES, r.hero) ? r.hero : base.hero,
     sections: r.sections !== undefined ? normalizeSections(r.sections) : base.sections,
     pattern: isLinkPattern(r.pattern) ? r.pattern : base.pattern,
+    secondary: has(SECONDARY, r.secondary) ? r.secondary : base.secondary,
   };
 }
 
@@ -188,6 +209,7 @@ export function designFromSettings(
     heroLayout?: string | null;
     sectionLayout?: unknown;
     linksPattern?: string | null;
+    secondaryColor?: string | null;
   } | null
 ): Design {
   if (!s) return DEFAULT_DESIGN;
@@ -201,6 +223,7 @@ export function designFromSettings(
     hero: s.heroLayout,
     sections: s.sectionLayout ?? undefined,
     pattern: s.linksPattern,
+    secondary: s.secondaryColor,
   });
 }
 
@@ -227,12 +250,29 @@ function channels(hex: string) {
   return [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(" ");
 }
 
+/** Los 2 tonos del color secundario (bloques oscuros y botones) según la opción elegida. */
+function secondaryColors(design: Design, style: StyleDef): { inverse: string; deep: string } {
+  const palette = resolvePalette(design.accent, design.customAccent);
+  switch (design.secondary) {
+    case "acento":
+      // En estilos claros, un tono profundo del acento; en oscuros, uno muy claro (el bloque se lee al revés).
+      return style.dark ? { inverse: shade(palette.light, -0.45), deep: palette.light } : { inverse: shade(palette.dark, 0.3), deep: shade(palette.dark, 0.55) };
+    case "oliva":
+      return style.dark ? { inverse: "#DDE2BF", deep: "#B9C190" } : { inverse: "#4B5320", deep: "#2B3013" };
+    case "tinta":
+      return style.dark ? { inverse: "#F4EEF3", deep: "#CFC2D4" } : { inverse: "#241227", deep: "#120812" };
+    default:
+      return { inverse: style.colors.inverse, deep: style.colors.inverseDeep };
+  }
+}
+
 /** Variables CSS del sitio público para un diseño (colores, acento, tipografías y bordes). */
 export function designVars(design: Design): Record<string, string> {
   const style: StyleDef = STYLES[design.style];
   const font: FontDef = FONTS[design.font];
   const corners = CORNERS[design.corners];
   const accent = accentVars(design.accent, design.customAccent);
+  const secondary = secondaryColors(design, style);
   return {
     ...accent,
     "--accent-deep": accent["--accent-dark"],
@@ -241,8 +281,8 @@ export function designVars(design: Design): Record<string, string> {
     "--c-bg": channels(style.colors.bg),
     "--c-surface": channels(style.colors.surface),
     "--c-ink": channels(style.colors.ink),
-    "--c-inverse": channels(style.colors.inverse),
-    "--c-inverse-deep": channels(style.colors.inverseDeep),
+    "--c-inverse": channels(secondary.inverse),
+    "--c-inverse-deep": channels(secondary.deep),
     // Solo se reemplaza la fuente que cambia: "--font-x: var(--font-x)" sería un ciclo inválido.
     ...(font.display !== "--font-fraunces" ? { "--font-fraunces": `var(${font.display})` } : {}),
     ...(font.heading !== "--font-bodoni" ? { "--font-bodoni": `var(${font.heading})` } : {}),

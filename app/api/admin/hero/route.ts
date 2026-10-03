@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -19,8 +20,8 @@ const heroSchema = z.object({
   headlineSuffixEn: z.string().optional().or(z.literal("")),
   description: z.string().optional().default(""),
   descriptionEn: z.string().optional().or(z.literal("")),
-  photoUrl: z.string().url().optional().or(z.literal("")),
-  photoUrlMobile: z.string().url().optional().or(z.literal("")),
+  photoUrl: httpUrl().optional().or(z.literal("")),
+  photoUrlMobile: httpUrl().optional().or(z.literal("")),
   ctaPrimaryLabel: z.string().min(1),
   ctaPrimaryLabelEn: z.string().optional().or(z.literal("")),
   ctaPrimaryHref: z.string().min(1),

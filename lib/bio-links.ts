@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { httpUrl } from "./validators";
 
 // Enlaces de la página "link en bio" (/enlaces). Solo http(s) o mailto: nada de javascript: ni rutas raras.
 export const MAX_LINKS = 30;
@@ -17,7 +18,7 @@ export const linkSchema = z.object({
   title: z.string().trim().min(1, "Escribe un título").max(80),
   titleEn: short(80),
   url: linkUrl,
-  imageUrl: z.union([z.string().url(), z.string().regex(/^\/[^\s]*$/), z.literal("")]).nullable().optional(),
+  imageUrl: z.union([httpUrl(), z.string().regex(/^\/[^\s]*$/), z.literal("")]).nullable().optional(),
   pill: short(14),
   wide: z.boolean().default(true),
   section: short(40),

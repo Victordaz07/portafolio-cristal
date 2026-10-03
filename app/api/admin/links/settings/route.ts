@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 import { LINK_PATTERNS } from "@/lib/bio-links";
 
@@ -21,7 +22,7 @@ const schema = z.object({
   linksHeroEyebrowEn: text(24),
   linksHeroTitle: text(60),
   linksHeroTitleEn: text(60),
-  linksHeroImage: z.union([z.string().url(), z.string().regex(/^\/[^\s]*$/), z.literal("")]).optional(),
+  linksHeroImage: z.union([httpUrl(), z.string().regex(/^\/[^\s]*$/), z.literal("")]).optional(),
   linksHeroUrl: z
     .string()
     .trim()

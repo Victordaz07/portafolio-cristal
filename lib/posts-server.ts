@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { httpUrl } from "./validators";
 import { CONTENT_TYPES, PLAN_NETWORKS, zonedToUtc } from "@/lib/content-plan";
 import { appTimeZone } from "@/lib/growth-server";
 
@@ -9,7 +10,7 @@ export const postUpdateSchema = z.object({
   contentType: z.enum(CONTENT_TYPES),
   networks: z.array(z.enum(PLAN_NETWORKS)).min(1, "Elige al menos una red"),
   brandId: z.string().nullable().optional(),
-  mediaUrl: z.string().url().nullable().optional().or(z.literal("")),
+  mediaUrl: httpUrl().nullable().optional().or(z.literal("")),
   mediaType: z.enum(["image", "video"]).nullable().optional(),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   time: z.string().regex(/^\d{2}:\d{2}$/),

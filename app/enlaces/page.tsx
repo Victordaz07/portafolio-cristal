@@ -6,7 +6,7 @@ import { pick } from "@/lib/i18n";
 import { sitePathPrefix } from "@/lib/tenant";
 import { getThumbnailUrl } from "@/lib/oembed";
 import type { Platform } from "@/lib/embeds";
-import { decodePreview, designFromSettings, parseDesign } from "@/lib/design";
+import { STYLES, decodePreview, designFromSettings, parseDesign, type StyleDef } from "@/lib/design";
 import { POPULAR_MIN_CLICKS, groupLinks, iconKindForUrl } from "@/lib/bio-links";
 import SiteFrame from "@/components/site/SiteFrame";
 import LocaleSwitch from "@/components/links/LocaleSwitch";
@@ -176,7 +176,7 @@ export default async function LinksPage({ searchParams }: { searchParams: Promis
 
   return (
     <SiteFrame design={{ ...design, background: "liso" }}>
-      <LinksBackground pattern={design.pattern} />
+      <LinksBackground pattern={design.pattern} accent={design.accent} dark={Boolean((STYLES[design.style] as StyleDef).dark)} />
       <ClickTracker endpoint={`${prefix}/api/links/click`} />
       <main className="mx-auto flex min-h-screen max-w-[480px] flex-col items-center px-[18px] pb-9 pt-5 sm:px-6 sm:pb-14 sm:pt-10">
         <div className="mb-2 flex w-full justify-end">

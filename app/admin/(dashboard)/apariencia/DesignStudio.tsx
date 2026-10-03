@@ -9,7 +9,7 @@ import ReorderButtons from "@/components/admin/ReorderButtons";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { ACCENTS, accentVars, paletteFromHex, type AccentId } from "@/lib/theme";
-import { LINK_PATTERNS, type LinkPatternId } from "@/lib/bio-links";
+import { LINK_PATTERNS, patternImage, type LinkPatternId } from "@/lib/bio-links";
 import {
   BACKGROUNDS,
   CORNERS,
@@ -216,7 +216,12 @@ export default function DesignStudio({
               return (
                 <button key={id} type="button" aria-pressed={design.pattern === id} onClick={() => set("pattern", id)} className={`${tile(design.pattern === id)} items-center`}>
                   <span className="relative h-14 w-full overflow-hidden rounded-[10px] border border-line bg-[#FAF6F0]">
-                    {p.mask ? (
+                    {patternImage(id, design.accent, { mini: true, dark: (STYLES[design.style] as StyleDef).dark }) ? (
+                      <span
+                        className="absolute inset-0 bg-cover"
+                        style={{ backgroundImage: `url(${patternImage(id, design.accent, { mini: true })})` }}
+                      />
+                    ) : p.mask ? (
                       <span
                         className="absolute inset-0 bg-coral opacity-40"
                         style={{ maskImage: p.mask, WebkitMaskImage: p.mask, maskSize: "120px", WebkitMaskSize: "120px" }}

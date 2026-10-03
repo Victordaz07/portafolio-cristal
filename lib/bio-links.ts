@@ -63,7 +63,7 @@ export const LINK_PATTERNS = {
     size: 260,
   },
   petalos: { label: "Pétalos", mask: svg(petal(50, 60, 14) + petal(180, 40, 10) + petal(120, 150, 16) + petal(30, 210, 9) + petal(215, 200, 12)), size: 260 },
-  ramitas: { label: "Ramitas", mask: svg(sprig(40, 90, -20) + sprig(170, 70, 25) + sprig(110, 200, -5) + sprig(230, 230, 40)), size: 260 },
+  ramitas: { label: "Ramitas (sprigs)", mask: svg(sprig(40, 90, -20) + sprig(170, 70, 25) + sprig(110, 200, -5) + sprig(230, 230, 40)), size: 260 },
   enredadera: {
     label: "Enredadera",
     mask: svg(
@@ -77,6 +77,29 @@ export const LINK_PATTERNS = {
   },
 } as const;
 export type LinkPatternId = keyof typeof LINK_PATTERNS;
+
+/** Fondos pintados a mano (public/backgrounds, 960px en WebP; mosaico de 640px como pide el README del diseño). */
+const PATTERN_FILES: Partial<Record<LinkPatternId, string>> = {
+  acuarela: "blobs",
+  punteado: "punteado",
+  petalos: "petalos",
+  ramitas: "sprigs",
+  enredadera: "enredadera",
+};
+const PAINTED_ACCENTS = ["lila", "rosa", "terracota", "salvia", "azul", "dorado"];
+
+/**
+ * La imagen del fondo para un acento de los 6 presets (o null: color propio o estilo oscuro → patrón SVG teñido,
+ * porque las imágenes traen el fondo crema).
+ */
+export function patternImage(pattern: LinkPatternId, accent: string, opts: { dark?: boolean; mini?: boolean } = {}) {
+  const file = PATTERN_FILES[pattern];
+  if (!file || opts.dark || !PAINTED_ACCENTS.includes(accent)) return null;
+  return `/backgrounds/${opts.mini ? "mini/" : ""}bg-${file}-${accent}.webp`;
+}
+/** Tamaño del mosaico y opacidad final sobre el crema del sitio. */
+export const PATTERN_TILE = 640;
+export const PATTERN_IMAGE_OPACITY = 0.15;
 export const isLinkPattern = (v: unknown): v is LinkPatternId => typeof v === "string" && v in LINK_PATTERNS;
 
 // ─── Ícono automático según el enlace ───

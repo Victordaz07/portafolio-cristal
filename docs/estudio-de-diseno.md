@@ -49,3 +49,10 @@ Más los enlaces propios (`BioLink`: título ES/EN, URL `https://` o `mailto:`, 
   el tono de botones con texto blanco se mantiene con contraste ≥ 3.5:1.
 - Frase bajo el nombre (`linksTagline`), "Copiar mi enlace", y bloques automáticos que se pueden apagar
   (`linksShowBrandKit`, `linksShowRecent`). `content-visibility:auto` en las tarjetas.
+
+### Fondos pintados (FolioCrew 25 fondos botánicos + dorado)
+- 30 imágenes en `public/backgrounds/` (5 texturas × 6 colores), convertidas de PNG 1254 px a **WebP 960 px** (~23 KB c/u)
+  y miniaturas de 240 px en `public/backgrounds/mini/` para el selector del Estudio.
+- Se usan como mosaico de 640 px con opacidad 0.15 sobre el crema (como pide el handoff), cuando el acento es uno de los
+  6 presets y el estilo es claro. Con color propio o estilo oscuro se usa el patrón SVG teñido (las imágenes traen fondo crema).
+- Mapa: acuarela → `bg-blobs-*`, punteado, petalos, ramitas → `bg-sprigs-*`, enredadera.

@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { LINK_PATTERNS, type LinkIconKind, type LinkPatternId } from "@/lib/bio-links";
+import { LINK_PATTERNS, PATTERN_IMAGE_OPACITY, PATTERN_TILE, patternImage, type LinkIconKind, type LinkPatternId } from "@/lib/bio-links";
 import { InstagramIcon, MailIcon, SparkleIcon, TikTokIcon, WhatsAppIcon } from "@/components/icons";
 
 // Piezas de la página "link en bio" (/enlaces), según el diseño "Crislia Links".
@@ -16,11 +16,17 @@ const NOISE = `url("data:image/svg+xml,${encodeURIComponent(
 )}")`;
 
 /** Fondo: blobs difuminados (acento claro + oliva) o un patrón teñido del acento, y un grano muy sutil encima. */
-export function LinksBackground({ pattern }: { pattern: LinkPatternId }) {
+export function LinksBackground({ pattern, accent, dark = false }: { pattern: LinkPatternId; accent: string; dark?: boolean }) {
   const p = LINK_PATTERNS[pattern];
+  const image = patternImage(pattern, accent, { dark });
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      {p.mask ? (
+      {image ? (
+        <div
+          className="absolute inset-0 bg-repeat"
+          style={{ backgroundImage: `url(${image})`, backgroundSize: `${PATTERN_TILE}px ${PATTERN_TILE}px`, opacity: PATTERN_IMAGE_OPACITY }}
+        />
+      ) : p.mask ? (
         <div
           className="absolute inset-0 bg-coral opacity-[0.15]"
           style={{ maskImage: p.mask, WebkitMaskImage: p.mask, maskSize: `${p.size}px`, WebkitMaskSize: `${p.size}px`, maskRepeat: "repeat" }}

@@ -8,6 +8,8 @@ import Card from "@/components/admin/Card";
 import AccountActions from "./AccountActions";
 import BillingCard from "./BillingCard";
 import { PLANS } from "@/lib/plans";
+import { creatorPerformance } from "@/lib/platform-analytics";
+import { formatCompact } from "@/lib/metrics";
 import { BILLING_LABEL, PAYMENT_METHODS, billingState, formatMoney, getPlan, type PaymentMethod } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
@@ -43,11 +45,12 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
   if (!creator) notFound();
 
   const since = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth() - 5, 1));
-  const [usage, actions, siteUrl, payments] = await Promise.all([
+  const [usage, actions, siteUrl, payments, perf] = await Promise.all([
     prismaRoot.aiUsage.findMany({ where: { creatorId: id, createdAt: { gte: since } }, select: { createdAt: true, inputTokens: true, outputTokens: true } }),
     prismaRoot.platformAction.findMany({ where: { creatorId: id }, orderBy: { createdAt: "desc" }, take: 20 }),
     creatorSiteUrl(creator),
     prismaRoot.payment.findMany({ where: { creatorId: id }, orderBy: { createdAt: "desc" }, take: 30 }),
+    creatorPerformance(id),
   ]);
   const billing = billingState(creator);
   const byMonth = new Map<string, { count: number; tokens: number }>();
@@ -109,6 +112,35 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
           periodEnd: p.periodEnd?.toISOString() ?? null,
         }))}
       />
+      <Card>
+        <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Rendimiento del contenido</p>
+        <div className="grid gap-3 sm:grid-cols-4">
+          {[
+            ["Engagement mediano", perf.medianEr == null ? "—" : `${perf.medianEr}%`],
+            ["Mediana de su nicho", perf.nicheMedianEr == null ? "—" : `${perf.nicheMedianEr}%`],
+            ["Mediana de la plataforma", perf.platformMedianEr == null ? "—" : `${perf.platformMedianEr}%`],
+            ["Publicaciones medidas", String(perf.posts)],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-[14px] bg-cream p-sp-3">
+              <p className="font-fraunces text-2xl font-semibold text-ink">{value}</p>
+              <p className="text-xs text-ink/60">{label}</p>
+            </div>
+          ))}
+        </div>
+        {perf.top.length > 0 && (
+          <ul className="mt-sp-3 flex flex-col gap-1 text-sm">
+            {perf.top.map((p) => (
+              <li key={p.id} className="flex flex-wrap items-baseline gap-x-sp-2">
+                <strong className="font-mono text-ink">{p.er}%</strong>
+                <span className="text-xs text-ink/50">
+                  {formatCompact(p.views)} vistas · {p.platform}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-ink/75">{p.caption || "(sin texto)"}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
       <div className="grid gap-sp-4 lg:grid-cols-2">
         <Card>
           <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">La cuenta</p>

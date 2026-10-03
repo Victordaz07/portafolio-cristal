@@ -12,7 +12,7 @@ export const siteConfig = {
   /** Correo para consultas de privacidad y solicitudes de borrado de datos. */
   legalEmail: process.env.LEGAL_CONTACT_EMAIL || creatorInfo.email,
   /** Fecha de la última actualización de las páginas legales. */
-  legalUpdatedAt: "2026-10-02",
+  legalUpdatedAt: "2026-10-03",
 };
 
 export function getPublicAppUrl() {

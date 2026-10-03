@@ -13,6 +13,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const parsed = updateSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Datos inválidos" }, { status: 400 });
   const d = parsed.data;
+  if (d.groupId && !(await prisma.bioLinkGroup.findFirst({ where: { id: d.groupId, kind: "custom" }, select: { id: true } }))) {
+    return NextResponse.json({ error: "Ese grupo no existe" }, { status: 400 });
+  }
   const link = await prisma.bioLink.update({
     where: { id },
     data: {

@@ -61,6 +61,7 @@ model Creator {
   followerSnapshots FollowerSnapshot[]
   aiUsage           AiUsage[]
   bioLinks          BioLink[]
+  bioLinkGroups     BioLinkGroup[]
   payments          Payment[]
 }
 
@@ -354,6 +355,15 @@ model SiteSettings {
   linksPattern       String   @default("blobs") // fondo: blobs, punteado, petalos, ramitas, enredadera
   linksShowBrandKit  Boolean  @default(true) // bloque automático: media kit, contacto, WhatsApp, correo
   linksShowRecent    Boolean  @default(true) // bloque automático: contenido reciente del Feed
+  linksShowCopy      Boolean  @default(true) // botón "Copiar mi enlace"
+  linksShowSocials   Boolean  @default(true) // fila de íconos de redes
+  linksHeroShow      Boolean  @default(true) // tarjeta principal (hacia el portafolio)
+  linksHeroEyebrow   String?
+  linksHeroEyebrowEn String?
+  linksHeroTitle     String?
+  linksHeroTitleEn   String?
+  linksHeroImage     String? // vacía: la foto de la portada
+  linksHeroUrl       String? // vacía: el portafolio
   updatedAt        DateTime @updatedAt
 }
 
@@ -586,8 +596,28 @@ model BioLink {
   badge     String? // etiqueta destacada en el acento: "Abierto ahora"
   badgeEn   String?
   clicks    Int      @default(0) // clics en la página pública (el más visitado lleva "Más clics")
+  hidden    Boolean  @default(false) // pausado: no se muestra pero no se borra
+  groupId   String?
+  group     BioLinkGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
   order     Int      @default(0)
   createdAt DateTime @default(now())
+
+  @@index([creatorId])
+}
+
+// Bloques del link en bio, en orden: grupos propios ("Colabora conmigo"…) y los automáticos
+// ("brandkit": media kit y contacto; "recent": contenido del Feed).
+model BioLinkGroup {
+  id        String    @id @default(cuid())
+  creatorId String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  kind      String    @default("custom") // "custom" | "brandkit" | "recent"
+  title     String    @default("")
+  titleEn   String?
+  hidden    Boolean   @default(false)
+  order     Int       @default(0)
+  links     BioLink[]
+  createdAt DateTime  @default(now())
 
   @@index([creatorId])
 }

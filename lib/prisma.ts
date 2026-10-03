@@ -11,7 +11,7 @@ import { TenantError, currentCreatorId } from "./tenant";
 const TENANT_MODELS = new Set<string>([
   "Hero", "Stat", "ContentCard", "Brand", "BrandEvent", "Review", "Service", "Testimonial", "Package",
   "FaqItem", "ContactMessage", "AdminUser", "SiteSettings", "SocialAccount", "Goal", "ActionItem",
-  "LogEntry", "ScheduledPost", "FollowerSnapshot", "Payment", "BioLink",
+  "LogEntry", "ScheduledPost", "FollowerSnapshot", "Payment", "BioLink", "BioLinkGroup",
 ]);
 
 /** Modelos que apuntan a una Brand: el brandId tiene que ser de la misma creadora. */

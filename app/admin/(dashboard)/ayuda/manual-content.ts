@@ -406,6 +406,15 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Link en bio",
+    paragraphs: [
+      "Tu página para la bio de Instagram y TikTok (tusitio/links). A la derecha ves la página real; toca cualquier parte (el encabezado, la tarjeta principal, un grupo o un enlace) y se abre su edición a la izquierda. Los cambios se guardan solos.",
+      "La página se arma con bloques en orden: el encabezado y la tarjeta principal van siempre arriba; debajo, tus grupos (\"Colabora conmigo\", \"Mis favoritos\"…) y dos bloques automáticos: \"Trabaja conmigo\" (media kit y contacto) y \"Contenido reciente\" (tu Feed). Súbelos o bájalos con las flechas o arrastrándolos (⋮⋮), y ocúltalos con el ojo sin borrarlos.",
+      "En cada grupo agregas enlaces con título en español e inglés, imagen o logo, fila o tarjeta, palabra de acción (\"Comprar\"), etiqueta destacada (\"Abierto ahora\") y descuento (\"15% OFF\"). Puedes moverlos de grupo, reordenarlos u ocultarlos un tiempo. El más visitado lleva \"Más clics\" solo.",
+      "En la tarjeta principal cambias la etiqueta, el título, la imagen y a dónde lleva (por defecto, tu portafolio). En el encabezado, la frase bajo tu nombre y si se ven \"Copiar mi enlace\" y tus redes. Colores, tipografía y fondo se eligen en Estudio de diseño.",
+    ],
+  },
+  {
     title: "Reseñas destacadas",
     paragraphs: ["Reseñas de producto con foto opcional, categoría, título, descripción y calificación de 1 a 5 estrellas."],
   },

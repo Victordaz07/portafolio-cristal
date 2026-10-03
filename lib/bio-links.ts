@@ -26,6 +26,14 @@ export const linkSchema = z.object({
   kickerEn: short(18),
   badge: short(18),
   badgeEn: short(18),
+  groupId: z.string().min(1).max(40).optional(),
+  hidden: z.boolean().optional(),
+});
+
+/** Grupo propio del link en bio. */
+export const groupSchema = z.object({
+  title: z.string().trim().min(1, "Ponle un título al grupo").max(40),
+  titleEn: short(40),
 });
 
 /** Campos de texto opcionales: "" se guarda como null. */

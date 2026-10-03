@@ -56,3 +56,15 @@ Más los enlaces propios (`BioLink`: título ES/EN, URL `https://` o `mailto:`, 
 - Se usan como mosaico de 640 px con opacidad 0.15 sobre el crema (como pide el handoff), cuando el acento es uno de los
   6 presets y el estilo es claro. Con color propio o estilo oscuro se usa el patrón SVG teñido (las imágenes traen fondo crema).
 - Mapa: acuarela → `bg-blobs-*`, punteado, petalos, ramitas → `bg-sprigs-*`, enredadera.
+
+### Editor visual (`/admin/enlaces`)
+- La página se arma con **bloques** (`BioLinkGroup`, en orden): grupos propios (`kind = custom`) y automáticos
+  (`brandkit`, `recent`). El encabezado y la tarjeta principal van fijos arriba (opciones en `SiteSettings.links*`).
+- El editor muestra la página real en un iframe con `?editor=1`: `EditorBridge` marca cada bloque (`data-edit`) y al
+  tocarlo avisa al panel por `postMessage` (mismo origen); el panel también pide a la vista previa desplazarse al bloque.
+  En ese modo lo oculto se ve tenue para poder volver a mostrarlo. La página pública no tiene nada de esto.
+- Cada cambio se guarda solo. Orden completo (mover bloques, arrastrar enlaces, cambiar de grupo):
+  `PUT /api/admin/links/layout`, que solo acepta ids de la cuenta y enlaces en grupos propios.
+- Grupos: `POST /api/admin/links/groups`, `PATCH|DELETE /api/admin/links/groups/[id]` (borrar un grupo borra sus enlaces;
+  los automáticos solo se ocultan). Enlaces: `hidden` para pausarlos sin borrarlos.
+- La migración `20261003170000_editor_link_en_bio` convirtió las secciones de texto en grupos y creó los bloques automáticos.

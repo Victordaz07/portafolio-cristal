@@ -19,7 +19,8 @@ export function parseEmbedUrl(rawUrl: string): ParsedEmbedUrl {
   const path = url.pathname;
 
   if (host === "tiktok.com" || host.endsWith(".tiktok.com")) {
-    return { platform: "tiktok", inferredType: "video" };
+    // Los posts de fotos (carruseles) usan /photo/<id>; los videos, /video/<id>.
+    return { platform: "tiktok", inferredType: path.includes("/photo/") ? "photo" : "video" };
   }
 
   if (host === "instagram.com" || host.endsWith(".instagram.com")) {
@@ -49,5 +50,26 @@ export function platformLabel(platform: Platform): string {
       return "PIC";
     case "ugc":
       return "PORTAFOLIO";
+  }
+}
+
+/** Id de un post de TikTok, sea video (/video/<id>) o de fotos (/photo/<id>). */
+export function tiktokPostId(url: string): string | null {
+  return url.match(/\/(?:video|photo)\/(\d+)/)?.[1] ?? null;
+}
+
+/**
+ * Link de TikTok sin los parámetros de rastreo (?is_from_webapp=…&sender_device=…). Los posts de
+ * fotos se piden como /video/<id>: el oEmbed de TikTok solo reconoce esa forma, y el id es el mismo.
+ */
+export function tiktokCanonicalUrl(url: string): string {
+  try {
+    const parsed = new URL(url.trim());
+    parsed.search = "";
+    parsed.hash = "";
+    parsed.pathname = parsed.pathname.replace("/photo/", "/video/");
+    return parsed.toString();
+  } catch {
+    return url;
   }
 }

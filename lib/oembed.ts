@@ -1,4 +1,4 @@
-import type { Platform } from "@/lib/embeds";
+import { tiktokCanonicalUrl, type Platform } from "@/lib/embeds";
 
 const OEMBED_ENDPOINTS: Partial<Record<Platform, string>> = {
   tiktok: "https://www.tiktok.com/oembed",
@@ -10,7 +10,8 @@ export async function getThumbnailUrl(platform: Platform, postUrl: string): Prom
   if (!endpoint) return null;
 
   try {
-    const response = await fetch(`${endpoint}?url=${encodeURIComponent(postUrl)}`, {
+    const target = platform === "tiktok" ? tiktokCanonicalUrl(postUrl) : postUrl;
+    const response = await fetch(`${endpoint}?url=${encodeURIComponent(target)}`, {
       next: { revalidate: 3600 },
     });
     if (!response.ok) return null;

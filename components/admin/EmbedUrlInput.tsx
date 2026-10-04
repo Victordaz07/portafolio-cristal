@@ -10,7 +10,7 @@ function isUnresolvedTikTokShortLink(rawUrl: string): boolean {
     const parsed = new URL(rawUrl);
     const host = parsed.hostname.replace(/^www\./, "");
     if (!(host === "tiktok.com" || host.endsWith(".tiktok.com"))) return false;
-    return !/\/video\/\d+/.test(parsed.pathname);
+    return !/\/(?:video|photo)\/\d+/.test(parsed.pathname);
   } catch {
     return false;
   }
@@ -51,6 +51,18 @@ export default function EmbedUrlInput({
         }
       } finally {
         setResolving(false);
+      }
+    }
+    // Quita los parámetros de rastreo que TikTok agrega al copiar el link (?is_from_webapp=…).
+    if (platform === "tiktok" && /[?#]/.test(resolvedUrl)) {
+      try {
+        const clean = new URL(resolvedUrl);
+        clean.search = "";
+        clean.hash = "";
+        resolvedUrl = clean.toString();
+        onUrlChange(resolvedUrl, parseEmbedUrl(resolvedUrl));
+      } catch {
+        // URL inválida: se deja como está.
       }
     }
     setShowPreview(true);

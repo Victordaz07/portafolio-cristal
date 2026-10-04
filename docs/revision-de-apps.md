@@ -7,9 +7,9 @@ Instagram, TikTok o YouTube, cada red tiene que **revisar y aprobar** la app.
 Esta guía tiene todo lo que piden: direcciones, textos en inglés para copiar y pegar, guiones de los
 videos y la cuenta de prueba para quien revisa.
 
-> **Orden recomendado:** 1) Instagram (es lo que más usan quienes crean contenido UGC), 2) TikTok, 3) YouTube.
+> **Orden recomendado:** 1) Instagram (es lo que más usan quienes crean contenido), 2) TikTok, 3) YouTube.
 > **Facebook (páginas):** déjalo para después. Pide verificar el negocio y revisar dos permisos más, y
-> casi nadie lo usa para UGC. Mientras tanto sigue funcionando solo para cuentas evaluadoras.
+> casi nadie lo usa para colaborar con marcas. Mientras tanto sigue funcionando solo para cuentas evaluadoras.
 
 ---
 
@@ -89,7 +89,7 @@ Revisa los nombres exactos en `.env.example`.
 
 **instagram_business_basic: "How will your app use this permission?"**
 ```
-Foliocrew is a portfolio and business-management web app for UGC (user-generated content) creators.
+Foliocrew is a portfolio and business-management web app for content creators (including UGC creators).
 After a creator logs in to Foliocrew and connects their own Instagram professional account, we use
 instagram_business_basic to read the creator's profile (username, profile picture, follower count,
 media count) and their recent media with like and comment counts.
@@ -146,7 +146,7 @@ The dashboard is in Spanish; the screencast includes English captions for every 
 Graba la pantalla en 1080p, con **subtítulos o notas en inglés** en cada paso (el panel está en español).
 Duración ideal: 1–3 minutos.
 
-1. **(0:00)** Abre `https://foliocrew.pro`. Subtítulo: *"Foliocrew: portfolio and business dashboard for UGC creators."*
+1. **(0:00)** Abre `https://foliocrew.pro`. Subtítulo: *"Foliocrew: portfolio and business dashboard for content creators."*
 2. **(0:10)** Entra a `https://foliocrew.pro/admin/login` con la cuenta de prueba. Subtítulo: *"Creator logs in to Foliocrew."*
 3. **(0:20)** Menú → **Conectar cuentas** → tarjeta Instagram → **Conectar Instagram**. Subtítulo: *"The creator connects their own Instagram professional account."*
 4. **(0:30)** Pantalla de Instagram: inicia sesión y **muestra con calma la lista de permisos** antes de aceptar. Subtítulo: *"Permissions requested: instagram_business_basic, instagram_business_manage_comments."*
@@ -178,7 +178,7 @@ faltó: pégame el mensaje y lo corregimos.
 - **App name:** Foliocrew · **Category:** Business / Productivity
 - **Description** (máx. 120 caracteres):
   ```
-  Portfolio and business dashboard for UGC creators: showcase your TikTok videos and track your stats.
+  Portfolio and business dashboard for content creators: showcase your TikTok videos and track your stats.
   ```
 - **Icon:** `public/brand/icono-1024.png`
 - **Terms of Service URL:** `https://foliocrew.pro/terminos?lang=en`
@@ -204,7 +204,7 @@ Agrega **Login Kit** y **Display API** (o los nombres equivalentes que muestre e
 
 **"Explain how each product and scope works in your app"**
 ```
-Foliocrew is a portfolio and business dashboard for UGC creators. A creator logs in to Foliocrew and
+Foliocrew is a portfolio and business dashboard for content creators. A creator logs in to Foliocrew and
 connects their own TikTok account with Login Kit.
 
 - user.info.basic and user.info.profile: we show the creator's display name, avatar and username on
@@ -267,7 +267,7 @@ pueden conectar hasta 100 personas, pero verán el aviso "Google no verificó es
 
 **"How will the scopes be used?" (youtube.readonly)**
 ```
-Foliocrew is a portfolio and business dashboard for UGC creators. A creator signs in to Foliocrew and
+Foliocrew is a portfolio and business dashboard for content creators. A creator signs in to Foliocrew and
 connects their own YouTube channel. We use youtube.readonly to read the creator's channel information
 (title, thumbnail, subscriber count) and their own recent videos with view, like and comment counts.
 

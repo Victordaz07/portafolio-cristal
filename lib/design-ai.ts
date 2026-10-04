@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, getAiClient, recordAiUsage } from "./ai";
+import { AI_MODEL, assertAiQuota, getAiClient, recordAiUsage } from "./ai";
 import { ACCENTS } from "./theme";
 import { BACKGROUNDS, CORNERS, FONTS, HEROES, STYLES, type BackgroundId, type CornerId, type FontId, type HeroId, type StyleId } from "./design";
 import { nicheOf } from "./platform-analytics";
@@ -40,6 +40,7 @@ const catalog = () =>
   ].join("\n");
 
 export async function suggestDesign(input: { name: string; niche: string; bio: string; current?: Partial<DesignSuggestion> }): Promise<DesignSuggestion> {
+  await assertAiQuota();
   const response = await getAiClient().beta.messages.parse({
     model: AI_MODEL,
     max_tokens: 3000,

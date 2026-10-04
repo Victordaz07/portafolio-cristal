@@ -15,6 +15,7 @@ import {
   type PaymentMethod,
 } from "@/lib/billing";
 import PayForm from "./PayForm";
+import { aiQuota } from "@/lib/ai";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,7 @@ export default async function PlanPage() {
     prisma.payment.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
   ]);
   if (!creator) return null;
+  const ai = await aiQuota().catch(() => null);
   const { state, until, daysLeft } = billingState(creator);
   const plan = getPlan(creator.plan);
   const instructions = paymentInstructions();
@@ -72,6 +74,17 @@ export default async function PlanPage() {
           </p>
         )}
       </Card>
+      {ai && (
+        <Card>
+          <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Sugerencias de IA este mes</p>
+          <p className="text-sm text-ink">
+            <strong>{ai.used}</strong> de {ai.limit} usadas · captions, consejos y “Diséñalo por mí” cuentan 1 cada uno. Se renueva el día 1.
+          </p>
+          <div className="mt-sp-2 h-2 overflow-hidden rounded-full bg-cream" aria-hidden>
+            <div className="h-full rounded-full bg-coral" style={{ width: `${Math.min(100, Math.round((ai.used / ai.limit) * 100))}%` }} />
+          </div>
+        </Card>
+      )}
 
       {state !== "comp" && (
         <>

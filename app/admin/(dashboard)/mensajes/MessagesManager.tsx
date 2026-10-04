@@ -85,6 +85,7 @@ export default function InboxManager({
   const { showToast } = useToast();
   const [messages, setMessages] = useState(initialMessages);
   const [comments, setComments] = useState<InboxComment[]>([]);
+  const [igStats, setIgStats] = useState<{ reported: number; own: number } | null>(null);
   const [igState, setIgState] = useState<"off" | "loading" | "ready" | "error">(instagramUsername === null ? "off" : "loading");
   const [igError, setIgError] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
@@ -109,6 +110,7 @@ export default function InboxManager({
       return;
     }
     setComments(data.comments);
+    setIgStats(data.stats ?? null);
     setIgState("ready");
   }
 
@@ -267,6 +269,15 @@ export default function InboxManager({
           <button type="button" onClick={loadComments} className={accentLinkClass}>
             Reintentar
           </button>
+        </Card>
+      )}
+
+      {igState === "ready" && comments.length === 0 && igStats && igStats.reported > igStats.own && (
+        <Card className="border-coral/40 text-sm text-ink/70">
+          Instagram dice que tus publicaciones recientes tienen {igStats.reported} comentario{igStats.reported === 1 ? "" : "s"}, pero no
+          entregó ninguno de otras cuentas. Mientras la app de Meta esté en <strong>modo desarrollo</strong>, solo llegan los comentarios de
+          cuentas agregadas como evaluadoras (Instagram testers); cuando Meta apruebe la app, aparecerán los de cualquier persona.
+          {igStats.own > 0 && ` (${igStats.own} son tuyos y no se muestran aquí.)`}
         </Card>
       )}
 

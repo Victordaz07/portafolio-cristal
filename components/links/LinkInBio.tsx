@@ -205,7 +205,7 @@ export function LinkTile({ item, style, editTarget, ghost = false }: { item: Lin
           <span className="r-12 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden bg-lime/20 text-cobalt sm:h-[42px] sm:w-[42px]">
             {item.thumbSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={item.thumbSrc} alt="" className="h-full w-full object-cover" />
+              <img loading="lazy" decoding="async" src={item.thumbSrc} alt="" className="h-full w-full object-cover" />
             ) : (
               item.icon
             )}
@@ -230,7 +230,7 @@ export function LinkTile({ item, style, editTarget, ghost = false }: { item: Lin
           )}
           {item.thumbSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={item.thumbSrc} alt="" className="h-[76px] w-full object-cover sm:h-[84px]" />
+            <img loading="lazy" decoding="async" src={item.thumbSrc} alt="" className="h-[76px] w-full object-cover sm:h-[84px]" />
           ) : (
             <span className="flex h-[76px] w-full items-center justify-center bg-sage/20 text-cobalt sm:h-[84px]">{item.icon}</span>
           )}

@@ -287,7 +287,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               {/* Imagen propia sobre la cinta de marcas (Estudio de diseño → Tu perfil); sin imagen, solo la cinta. */}
               {settings?.brandsBannerUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={settings.brandsBannerUrl} alt={hero?.name ?? ""} className="aspect-[5/2] w-full object-cover object-top" />
+                <img loading="lazy" decoding="async" src={settings.brandsBannerUrl} alt={hero?.name ?? ""} className="aspect-[5/2] w-full object-cover object-top" />
               )}
 
               <div className="relative overflow-hidden bg-surface py-sp-4">
@@ -523,7 +523,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 {settings?.contactPhotoUrl ? (
                   <div className="r-md relative overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={settings.contactPhotoUrl} alt={copy.contacto.photoAlt(hero?.name ?? "")} className="w-full" />
+                    <img loading="lazy" decoding="async" src={settings.contactPhotoUrl} alt={copy.contacto.photoAlt(hero?.name ?? "")} className="w-full" />
                     <div className="absolute inset-x-sp-4 top-sp-5 flex flex-col gap-sp-4 sm:inset-x-sp-6">
                       <ContactInfoCard title={copy.contacto.hablamos} rows={hablamosRows} />
                       <ContactInfoCard title={copy.contacto.sigueme} rows={siguemeRows} />

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { authenticate, withSession } from "@/lib/creators";
 import { prismaRoot } from "@/lib/prisma-root";
+import { clientIp, tooManyAttempts } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,11 @@ const loginSchema = z.object({
 export async function POST(request: Request) {
   const parsed = loginSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  // Frena el adivinar contraseñas: por IP y por correo (10 intentos cada 15 min).
+  const email = parsed.data.email.toLowerCase();
+  if (tooManyAttempts(`login-ip:${clientIp(request)}`, 20, 15 * 60_000) || tooManyAttempts(`login:${email}`, 10, 15 * 60_000)) {
+    return NextResponse.json({ error: "Demasiados intentos. Espera unos minutos e inténtalo de nuevo." }, { status: 429 });
+  }
 
   const user = await authenticate(parsed.data.email, parsed.data.password);
   if (!user) return NextResponse.json({ error: "Correo o contraseña incorrectos" }, { status: 401 });

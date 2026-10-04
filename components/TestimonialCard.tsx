@@ -16,7 +16,7 @@ export default function TestimonialCard({ quote, name, role, photoUrl }: Testimo
         <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-cream">
           {photoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={photoUrl} alt={name} className="h-full w-full object-cover" />
+            <img loading="lazy" decoding="async" src={photoUrl} alt={name} className="h-full w-full object-cover" />
           )}
         </div>
         <div>

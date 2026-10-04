@@ -41,7 +41,7 @@ export default function CollaborationsSection({ brands, locale }: { brands: Coll
             <div className="flex h-[96px] w-[96px] items-center justify-center r-md border border-line bg-surface p-sp-3 sm:h-[110px] sm:w-[110px]">
               {brand.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={brand.logoUrl} alt={brand.name} className="max-h-full max-w-full object-contain" />
+                <img loading="lazy" decoding="async" src={brand.logoUrl} alt={brand.name} className="max-h-full max-w-full object-contain" />
               ) : (
                 <span className="site-title text-3xl text-ink/40">{brand.name.charAt(0)}</span>
               )}

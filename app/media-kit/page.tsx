@@ -95,7 +95,7 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
         <header className="flex flex-col items-center gap-sp-4 text-center sm:flex-row sm:text-left">
           {hero?.photoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={hero.photoUrl} alt={hero.name} className="h-28 w-28 shrink-0 rounded-full object-cover ring-4 ring-white" />
+            <img loading="lazy" decoding="async" src={hero.photoUrl} alt={hero.name} className="h-28 w-28 shrink-0 rounded-full object-cover ring-4 ring-white" />
           )}
           <div>
             <h1 className="font-fraunces text-4xl font-medium italic text-ink">{hero?.name}</h1>
@@ -146,7 +146,7 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
                   <span className={`relative block overflow-hidden rounded-[14px] bg-gradient-to-br from-cobalt to-cobalt-ink ${card.type === "video" ? "aspect-[9/16]" : "aspect-[4/5]"}`}>
                     {thumbs[i] && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={thumbs[i]!} alt="" className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105" />
+                      <img loading="lazy" decoding="async" src={thumbs[i]!} alt="" className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105" />
                     )}
                   </span>
                   <span className="line-clamp-2 text-[12px] font-semibold text-ink">{pick(locale, card.caption, card.captionEn)}</span>
@@ -167,7 +167,7 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
                 <div key={brand.id} className="flex h-16 w-16 items-center justify-center rounded-[14px] border border-line bg-white p-sp-2" title={brand.name}>
                   {brand.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={brand.logoUrl} alt={brand.name} className="max-h-full max-w-full object-contain" />
+                    <img loading="lazy" decoding="async" src={brand.logoUrl} alt={brand.name} className="max-h-full max-w-full object-contain" />
                   ) : (
                     <span className="text-center text-[10px] font-semibold text-ink/60">{brand.name}</span>
                   )}

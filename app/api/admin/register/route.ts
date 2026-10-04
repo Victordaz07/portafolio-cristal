@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prismaRoot } from "@/lib/prisma-root";
 import { createCreatorAccount, signupMode, slugProblem, withSession } from "@/lib/creators";
 import { sendWelcomeEmail } from "@/lib/account-emails";
+import { clientIp, tooManyAttempts } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,10 @@ const registerSchema = z.object({
 export async function POST(request: Request) {
   if (signupMode() === "closed") {
     return NextResponse.json({ error: "El registro todavía no está abierto" }, { status: 403 });
+  }
+  // Frena el adivinar el código de invitación y la creación masiva de cuentas.
+  if (tooManyAttempts(`register:${clientIp(request)}`, 10, 60 * 60_000)) {
+    return NextResponse.json({ error: "Demasiados intentos. Espera un rato e inténtalo de nuevo." }, { status: 429 });
   }
   const parsed = registerSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {

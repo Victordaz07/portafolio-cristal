@@ -14,7 +14,7 @@ export default function ReviewCard({ photoUrl, category, title, description, rat
       <div className="h-20 w-20 shrink-0 overflow-hidden r-sm bg-cream">
         {photoUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={photoUrl} alt={title} className="h-full w-full object-cover" />
+          <img loading="lazy" decoding="async" src={photoUrl} alt={title} className="h-full w-full object-cover" />
         )}
       </div>
       <div className="min-w-0 flex-1">

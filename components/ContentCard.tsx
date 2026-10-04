@@ -88,7 +88,7 @@ export default function ContentCard({
           </div>
           {platform === "ugc" && brandLogoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={brandLogoUrl} alt={brandName ?? ""} className="ml-auto h-7 w-7 rounded-full border border-line object-contain p-1" />
+            <img loading="lazy" decoding="async" src={brandLogoUrl} alt={brandName ?? ""} className="ml-auto h-7 w-7 rounded-full border border-line object-contain p-1" />
           ) : platform === "ugc" ? (
             <CameraIcon className="ml-auto h-4 w-4 text-ink/50" />
           ) : (

@@ -12,7 +12,7 @@ const cardClass =
 export default function BrandCard({ name, logoUrl, websiteUrl }: BrandCardProps) {
   const content = logoUrl ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={logoUrl} alt={name} className="max-h-10 w-auto object-contain" />
+    <img loading="lazy" decoding="async" src={logoUrl} alt={name} className="max-h-10 w-auto object-contain" />
   ) : (
     <span className="text-center text-sm font-medium text-ink">{name}</span>
   );

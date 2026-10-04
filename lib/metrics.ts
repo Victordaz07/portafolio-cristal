@@ -8,9 +8,12 @@ export interface CardMetrics {
   saves: number | null;
 }
 
+/** Con menos vistas el porcentaje no dice nada (1 vista y 2 likes = 200 %) y ensucia promedios. */
+export const MIN_VIEWS_FOR_ENGAGEMENT = 10;
+
 /** Engagement = (likes + comentarios + compartidos + guardados) / vistas, en %. */
 export function engagementRate(m: CardMetrics) {
-  if (!m.views) return null;
+  if (!m.views || m.views < MIN_VIEWS_FOR_ENGAGEMENT) return null;
   const interactions = (m.likes ?? 0) + (m.comments ?? 0) + (m.shares ?? 0) + (m.saves ?? 0);
   if (interactions === 0) return null;
   return Math.round((interactions / m.views) * 1000) / 10;

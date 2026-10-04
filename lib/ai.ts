@@ -47,6 +47,47 @@ export async function getCreatorContext() {
     .join("\n");
 }
 
+/** Se alcanzó el tope de sugerencias de IA del mes (por plan). */
+export class AiQuotaError extends Error {
+  constructor(public limit: number) {
+    super(`Llegaste al límite de ${limit} sugerencias de IA de este mes. Se renueva el día 1.`);
+  }
+}
+
+// Sugerencias de IA por mes según el plan (cada caption, consejo o diseño cuenta 1). Se pueden
+// cambiar sin tocar código con AI_MONTHLY_LIMIT_FOLIO / _PRO / _CREW en Vercel.
+const DEFAULT_AI_LIMITS: Record<string, number> = { folio: 60, pro: 300, crew: 1000 };
+
+export function aiMonthlyLimit(plan: string, comp = false) {
+  const key = comp ? "crew" : plan in DEFAULT_AI_LIMITS ? plan : "pro";
+  const fromEnv = Number(process.env[`AI_MONTHLY_LIMIT_${key.toUpperCase()}`]);
+  return Number.isFinite(fromEnv) && fromEnv > 0 ? fromEnv : DEFAULT_AI_LIMITS[key];
+}
+
+/** Uso de IA del mes de la cuenta actual y su tope. */
+export async function aiQuota() {
+  const [{ prismaRoot }, { currentCreatorId }] = await Promise.all([import("@/lib/prisma-root"), import("@/lib/tenant")]);
+  const creatorId = await currentCreatorId();
+  const monthStart = new Date();
+  monthStart.setUTCDate(1);
+  monthStart.setUTCHours(0, 0, 0, 0);
+  const [creator, used] = await Promise.all([
+    prismaRoot.creator.findUnique({ where: { id: creatorId }, select: { plan: true, comp: true } }),
+    prismaRoot.aiUsage.count({ where: { creatorId, createdAt: { gte: monthStart } } }),
+  ]);
+  return { used, limit: aiMonthlyLimit(creator?.plan ?? "pro", creator?.comp ?? false), creatorId };
+}
+
+/** Lanza AiQuotaError si la cuenta ya usó todas sus sugerencias del mes (o abusa en ráfaga). */
+export async function assertAiQuota() {
+  const [{ used, limit, creatorId }, { tooManyAttempts }] = await Promise.all([aiQuota(), import("@/lib/rate-limit")]);
+  if (used >= limit) throw new AiQuotaError(limit);
+  // Además, como freno de abuso: no más de 30 pedidos por hora.
+  if (tooManyAttempts(`ai:${creatorId}`, 30, 60 * 60_000)) {
+    throw new Error("Demasiadas sugerencias seguidas. Espera un rato e inténtalo de nuevo.");
+  }
+}
+
 /** Guarda una sugerencia de IA pedida por la cuenta actual (panel de dueño y límites por plan). */
 export async function recordAiUsage(kind: "caption" | "tips" | "design", usage?: { input_tokens?: number; output_tokens?: number }) {
   try {
@@ -66,6 +107,7 @@ export async function recordAiUsage(kind: "caption" | "tips" | "design", usage?:
 
 /** Mensaje de error legible para el panel a partir de un error de la API de Claude. */
 export function aiErrorMessage(error: unknown) {
+  if (error instanceof AiQuotaError) return error.message;
   if (error instanceof Anthropic.AuthenticationError) return "La ANTHROPIC_API_KEY no es válida";
   if (error instanceof Anthropic.PermissionDeniedError) return "La clave no tiene permiso para este modelo";
   if (error instanceof Anthropic.RateLimitError) return "Límite de uso alcanzado; intenta en un momento";

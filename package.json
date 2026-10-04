@@ -9,7 +9,8 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "db:seed": "tsx prisma/run-seed-cli.ts",
-    "brand:images": "node scripts/brand/generate-images.mjs"
+    "brand:images": "node scripts/brand/generate-images.mjs",
+    "test": "tsx --test tests/*.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",

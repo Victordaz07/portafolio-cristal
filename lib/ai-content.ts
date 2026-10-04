@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
+import { AI_MODEL, assertAiQuota, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
 import { CONTENT_TYPE_LABEL, NETWORK_META, type ContentType, type PlanNetwork } from "@/lib/content-plan";
 
 const SYSTEM = `Eres asistente de una persona creadora de contenido que trabaja con marcas (el contexto dice si publica en sus redes, hace UGC o ambas cosas).
@@ -21,6 +21,7 @@ export async function suggestCaptions(input: {
   brandName?: string | null;
   draft?: string;
 }) {
+  await assertAiQuota();
   const context = await getCreatorContext();
   const networks = input.networks.map((n) => NETWORK_META[n].label).join(", ") || "Instagram";
   const response = await getAiClient().beta.messages.parse({
@@ -57,6 +58,7 @@ const TipsSchema = z.object({
 });
 
 export async function suggestNetworkTips(input: { caption: string; contentType: ContentType; networks: PlanNetwork[] }) {
+  await assertAiQuota();
   const labels = input.networks.map((n) => NETWORK_META[n].label);
   const response = await getAiClient().beta.messages.parse({
     model: AI_MODEL,

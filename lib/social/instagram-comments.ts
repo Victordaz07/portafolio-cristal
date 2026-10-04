@@ -50,8 +50,14 @@ export async function isInstagramConnected() {
   return (await prisma.socialAccount.count({ where: { platform: "instagram" } })) > 0;
 }
 
+/** Para diagnosticar una Bandeja vacía: cuántos comentarios dice Instagram que hay y cuántos son propios. */
+export interface CommentStats {
+  reported: number;
+  own: number;
+}
+
 /** Comentarios recientes de las últimas `mediaLimit` publicaciones, del más nuevo al más viejo. */
-export async function fetchInstagramComments(mediaLimit = 8): Promise<InboxComment[]> {
+export async function fetchInstagramComments(mediaLimit = 8, stats?: CommentStats): Promise<InboxComment[]> {
   const auth = await instagramToken();
   if (!auth) return [];
   const media = await fetchJson<GraphList<GraphMedia>>(
@@ -62,6 +68,7 @@ export async function fetchInstagramComments(mediaLimit = 8): Promise<InboxComme
     })}`
   );
   const withComments = (media.data ?? []).filter((m) => (m.comments_count ?? 0) > 0);
+  if (stats) stats.reported = withComments.reduce((sum, m) => sum + (m.comments_count ?? 0), 0);
 
   const perMedia = await Promise.all(
     withComments.map(async (m) => {
@@ -72,9 +79,12 @@ export async function fetchInstagramComments(mediaLimit = 8): Promise<InboxComme
           access_token: auth.token,
         })}`
       );
-      return (list.data ?? [])
+      const all = list.data ?? [];
+      const others = all
         // Sus propios comentarios no son mensajes por responder.
-        .filter((c) => (c.username ?? "").toLowerCase() !== auth.username)
+        .filter((c) => (c.username ?? "").toLowerCase() !== auth.username);
+      if (stats) stats.own += all.length - others.length;
+      return others
         .map<InboxComment>((c) => {
           const replies = (c.replies?.data ?? []).map((r) => ({
             id: r.id,

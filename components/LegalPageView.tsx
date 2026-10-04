@@ -51,7 +51,7 @@ export default async function LegalPageView({ id, lang, notice }: { id: LegalPag
   const otherLocale: Locale = locale === "es" ? "en" : "es";
 
   return (
-    <div className="min-h-screen bg-cream px-sp-5 py-sp-7">
+    <div lang={locale} className="min-h-screen bg-cream px-sp-5 py-sp-7">
       <div className="mx-auto max-w-3xl">
         <div className="flex flex-wrap items-center justify-between gap-sp-3">
           <Link href="/" className="font-bodoni text-lg font-bold uppercase italic text-ink">

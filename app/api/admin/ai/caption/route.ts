@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { aiErrorMessage, isAiConfigured } from "@/lib/ai";
+import { AiQuotaError, aiErrorMessage, isAiConfigured } from "@/lib/ai";
 import { suggestCaptions } from "@/lib/ai-content";
 import { CONTENT_TYPES, PLAN_NETWORKS } from "@/lib/content-plan";
 
@@ -24,6 +24,6 @@ export async function POST(request: Request) {
   try {
     return NextResponse.json({ captions: await suggestCaptions(parsed.data) });
   } catch (error) {
-    return NextResponse.json({ error: aiErrorMessage(error) }, { status: 502 });
+    return NextResponse.json({ error: aiErrorMessage(error) }, { status: error instanceof AiQuotaError ? 429 : 502 });
   }
 }

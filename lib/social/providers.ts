@@ -281,6 +281,9 @@ const tiktok: SocialProvider = {
       response_type: "code",
       redirect_uri: redirectUri,
       state,
+      // Siempre muestra la pantalla de permisos, aunque la cuenta ya haya autorizado antes: así la
+      // persona ve qué acepta y con qué cuenta (y la revisión de TikTok la ve en el video demo).
+      disable_auto_auth: "1",
     });
     return `https://www.tiktok.com/v2/auth/authorize/?${params}`;
   },

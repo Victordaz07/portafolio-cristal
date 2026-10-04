@@ -49,6 +49,9 @@ const instagram: SocialProvider = {
       response_type: "code",
       scope: this.scopes.join(","),
       state,
+      // Pide de nuevo el inicio de sesión y muestra los permisos aunque la cuenta ya haya autorizado
+      // (así se elige la cuenta correcta, y la revisión de Meta ve la pantalla en el video demo).
+      force_reauth: "true",
     });
     return `https://www.instagram.com/oauth/authorize?${params}`;
   },

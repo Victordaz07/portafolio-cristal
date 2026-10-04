@@ -1,5 +1,8 @@
+import { tiktokPostId } from "@/lib/embeds";
+
 export default function TikTokEmbed({ url }: { url: string }) {
-  const videoId = url.match(/\/video\/(\d+)/)?.[1] ?? "";
+  // Sirve igual para videos y para posts de fotos: el reproductor de TikTok acepta ambos ids.
+  const videoId = tiktokPostId(url) ?? "";
 
   if (!videoId) {
     return (

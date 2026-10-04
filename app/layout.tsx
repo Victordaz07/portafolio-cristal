@@ -6,13 +6,13 @@ import {
   Space_Mono,
   Parisienne,
   Playfair_Display,
-  Space_Grotesk,
   DM_Sans,
   Cormorant_Garamond,
   Fredoka,
   Nunito,
   Archivo,
 } from "next/font/google";
+import localFont from "next/font/local";
 import { getLocale } from "@/lib/locale";
 import { prisma } from "@/lib/prisma";
 import { accentVars } from "@/lib/theme";
@@ -58,7 +58,8 @@ const spaceMono = Space_Mono({
 // Tipografías del Estudio de diseño (lib/design.ts → FONTS). Sin precarga: el navegador solo
 // descarga las que usa el sitio que está viendo.
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["500", "600", "700"], style: ["normal", "italic"], variable: "--font-playfair", display: "swap", preload: false });
-const grotesk = Space_Grotesk({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-grotesk", display: "swap", preload: false });
+// Alojada en el proyecto: Google Fonts a veces responde mal a los builds de producción con esta fuente.
+const grotesk = localFont({ src: "./fonts/space-grotesk-latin.woff2", weight: "500 700", variable: "--font-grotesk", display: "swap", preload: false });
 const dmSans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-dmsans", display: "swap", preload: false });
 const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["500", "600", "700"], style: ["normal", "italic"], variable: "--font-cormorant", display: "swap", preload: false });
 const fredoka = Fredoka({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-fredoka", display: "swap", preload: false });

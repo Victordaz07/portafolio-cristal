@@ -8,14 +8,15 @@ import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, primaryButtonClass, secondaryButtonClass, accentLinkClass } from "@/lib/admin-ui";
 import {
   GOAL_CATEGORIES,
-  GOAL_CATEGORY_LABEL,
   GOAL_SOURCES,
   categoryLabel,
+  goalSourceLabel,
   formatGoalValue,
   goalPercent,
   type GoalCategory,
   type GoalSource,
 } from "@/lib/growth";
+import { useT } from "@/components/admin/AdminLang";
 
 export interface GoalView {
   id: string;
@@ -104,6 +105,7 @@ export default function GoalsManager({
   initialGoals: GoalView[];
   initialActions: ActionView[];
 }) {
+  const { t, lang } = useT();
   const router = useRouter();
   const { showToast } = useToast();
   const [goals, setGoals] = useState(initialGoals);
@@ -145,10 +147,10 @@ export default function GoalsManager({
         : await send(`/api/admin/goals/${formFor}`, "PATCH", payload);
     setSaving(false);
     if (!ok) {
-      showToast("error", data.error ?? "No se pudo guardar la meta");
+      showToast("error", data.error ?? t("No se pudo guardar la meta", "Couldn't save the goal"));
       return;
     }
-    showToast("success", formFor === "new" ? "Meta creada" : "Meta actualizada");
+    showToast("success", formFor === "new" ? t("Meta creada", "Goal created") : t("Meta actualizada", "Goal updated"));
     setFormFor(null);
     router.refresh();
   }
@@ -156,16 +158,16 @@ export default function GoalsManager({
   async function updateCurrent(goal: GoalView, value: number) {
     setGoals((current) => current.map((g) => (g.id === goal.id ? { ...g, current: value } : g)));
     const { ok } = await send(`/api/admin/goals/${goal.id}`, "PATCH", { current: value });
-    if (!ok) showToast("error", "No se pudo actualizar el progreso");
+    if (!ok) showToast("error", t("No se pudo actualizar el progreso", "Couldn't update progress"));
     router.refresh();
   }
 
   async function deleteGoal(goal: GoalView) {
     setDeleting(null);
     const { ok } = await send(`/api/admin/goals/${goal.id}`, "DELETE");
-    if (!ok) return showToast("error", "No se pudo borrar la meta");
+    if (!ok) return showToast("error", t("No se pudo borrar la meta", "Couldn't delete the goal"));
     setGoals((current) => current.filter((g) => g.id !== goal.id));
-    showToast("success", "Meta borrada");
+    showToast("success", t("Meta borrada", "Goal deleted"));
     router.refresh();
   }
 
@@ -173,7 +175,7 @@ export default function GoalsManager({
     setActions((current) => current.map((a) => (a.id === action.id ? { ...a, done: !a.done } : a)));
     const { ok } = await send(`/api/admin/actions/${action.id}`, "PATCH", { done: !action.done });
     if (!ok) {
-      showToast("error", "No se pudo guardar");
+      showToast("error", t("No se pudo guardar", "Couldn't save"));
       setActions((current) => current.map((a) => (a.id === action.id ? { ...a, done: action.done } : a)));
     }
   }
@@ -182,21 +184,27 @@ export default function GoalsManager({
     event.preventDefault();
     if (!newAction.trim()) return;
     const { ok, data } = await send("/api/admin/actions", "POST", { label: newAction, category: newActionCategory });
-    if (!ok) return showToast("error", data.error ?? "No se pudo agregar");
+    if (!ok) return showToast("error", data.error ?? t("No se pudo agregar", "Couldn't add"));
     setActions((current) => [...current, data as ActionView]);
     setNewAction("");
   }
 
   async function deleteAction(action: ActionView) {
     const { ok } = await send(`/api/admin/actions/${action.id}`, "DELETE");
-    if (!ok) return showToast("error", "No se pudo borrar");
+    if (!ok) return showToast("error", t("No se pudo borrar", "Couldn't delete"));
     setActions((current) => current.filter((a) => a.id !== action.id));
   }
 
   async function carryOver() {
     const { ok, data } = await send("/api/admin/actions/carry-over", "POST");
-    if (!ok) return showToast("error", "No se pudieron traer las tareas");
-    showToast("success", `${data.moved} ${data.moved === 1 ? "tarea traída" : "tareas traídas"} a esta semana`);
+    if (!ok) return showToast("error", t("No se pudieron traer las tareas", "Couldn't bring the tasks over"));
+    showToast(
+      "success",
+      t(
+        `${data.moved} ${data.moved === 1 ? "tarea traída" : "tareas traídas"} a esta semana`,
+        `${data.moved} ${data.moved === 1 ? "task" : "tasks"} moved to this week`
+      )
+    );
     router.refresh();
   }
 
@@ -208,45 +216,45 @@ export default function GoalsManager({
     <div className="flex flex-col gap-sp-5">
       <div className="flex flex-wrap items-center justify-between gap-sp-5 rounded-[20px] bg-ink p-sp-5 text-cream sm:p-7">
         <div>
-          <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.1em] text-lime">Tu próximo nivel</p>
+          <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.1em] text-lime">{t("Tu próximo nivel", "Your next level")}</p>
           <p className="max-w-[520px] font-fraunces text-[26px] font-medium italic leading-snug sm:text-[32px]">{phrase}</p>
         </div>
         <div className="shrink-0 text-center">
           <p className="font-fraunces text-[40px] font-semibold text-lime">{overallNow}%</p>
           <p className="mt-sp-1 text-[11px] text-cream/65">
-            {goals.length ? "promedio de tus metas activas" : "crea tu primera meta"}
+            {goals.length ? t("promedio de tus metas activas", "average of your active goals") : t("crea tu primera meta", "create your first goal")}
           </p>
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-sp-3">
-        <p className={eyebrowClass}>Tus metas</p>
+        <p className={eyebrowClass}>{t("Tus metas", "Your goals")}</p>
         <button
           type="button"
           onClick={() => openForm()}
           className="rounded-full bg-coral px-sp-5 py-2.5 text-sm font-bold text-white transition hover:bg-moss"
         >
-          + Nueva meta
+          {t("+ Nueva meta", "+ New goal")}
         </button>
       </div>
 
       {formFor && (
         <Card>
-          <p className={`${eyebrowClass} mb-sp-4`}>{formFor === "new" ? "Nueva meta" : "Editar meta"}</p>
+          <p className={`${eyebrowClass} mb-sp-4`}>{formFor === "new" ? t("Nueva meta", "New goal") : t("Editar meta", "Edit goal")}</p>
           <form onSubmit={saveGoal} className="flex flex-col gap-sp-4">
             <div className="grid gap-sp-4 sm:grid-cols-2">
               <label className="flex flex-col gap-sp-1 sm:col-span-2">
-                <span className="text-sm font-medium text-ink">Meta</span>
+                <span className="text-sm font-medium text-ink">{t("Meta", "Goal")}</span>
                 <input
                   required
                   value={form.title}
                   onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
                   className={inputClass}
-                  placeholder="Ej: Llegar a 50K seguidores en Instagram"
+                  placeholder={t("Ej: Llegar a 50K seguidores en Instagram", "E.g.: Reach 50K followers on Instagram")}
                 />
               </label>
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">Tipo</span>
+                <span className="text-sm font-medium text-ink">{t("Tipo", "Type")}</span>
                 <select
                   value={form.category}
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as GoalCategory }))}
@@ -254,13 +262,13 @@ export default function GoalsManager({
                 >
                   {GOAL_CATEGORIES.map((c) => (
                     <option key={c} value={c}>
-                      {GOAL_CATEGORY_LABEL[c]}
+                      {categoryLabel(c, lang)}
                     </option>
                   ))}
                 </select>
               </label>
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">¿Cómo se mide?</span>
+                <span className="text-sm font-medium text-ink">{t("¿Cómo se mide?", "How is it measured?")}</span>
                 <select
                   value={form.source}
                   onChange={(e) => setForm((f) => ({ ...f, source: e.target.value as GoalSource }))}
@@ -268,18 +276,18 @@ export default function GoalsManager({
                 >
                   {(Object.keys(GOAL_SOURCES) as GoalSource[]).map((s) => (
                     <option key={s} value={s}>
-                      {GOAL_SOURCES[s]}
+                      {goalSourceLabel(s, lang)}
                     </option>
                   ))}
                 </select>
                 {SOURCE_PLATFORM[form.source] && !connectedPlatforms.includes(SOURCE_PLATFORM[form.source]!) && (
                   <span className="text-xs text-coral">
-                    Esa red no está conectada todavía: el valor se actualizará solo cuando la conectes.
+                    {t("Esa red no está conectada todavía: el valor se actualizará solo cuando la conectes.", "That network isn't connected yet: the value will update on its own once you connect it.")}
                   </span>
                 )}
               </label>
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">Valor actual</span>
+                <span className="text-sm font-medium text-ink">{t("Valor actual", "Current value")}</span>
                 <input
                   type="number"
                   min={0}
@@ -289,10 +297,10 @@ export default function GoalsManager({
                   onChange={(e) => setForm((f) => ({ ...f, current: e.target.value }))}
                   className={`${inputClass} disabled:opacity-50`}
                 />
-                {isAuto && <span className="text-xs text-ink/50">Se calcula solo.</span>}
+                {isAuto && <span className="text-xs text-ink/50">{t("Se calcula solo.", "Calculated automatically.")}</span>}
               </label>
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">Objetivo</span>
+                <span className="text-sm font-medium text-ink">{t("Objetivo", "Target")}</span>
                 <input
                   required
                   type="number"
@@ -305,16 +313,16 @@ export default function GoalsManager({
                 />
               </label>
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">Unidad (opcional)</span>
+                <span className="text-sm font-medium text-ink">{t("Unidad (opcional)", "Unit (optional)")}</span>
                 <input
                   value={form.unit}
                   onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
                   className={inputClass}
-                  placeholder="videos, días, reels…"
+                  placeholder={t("videos, días, reels…", "videos, days, reels…")}
                 />
               </label>
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">Fecha límite (opcional)</span>
+                <span className="text-sm font-medium text-ink">{t("Fecha límite (opcional)", "Deadline (optional)")}</span>
                 <input
                   type="date"
                   value={form.dueDate}
@@ -325,10 +333,10 @@ export default function GoalsManager({
             </div>
             <div className="flex gap-sp-3">
               <button type="submit" disabled={saving} className={primaryButtonClass}>
-                {saving ? "Guardando…" : "Guardar meta"}
+                {saving ? t("Guardando…", "Saving…") : t("Guardar meta", "Save goal")}
               </button>
               <button type="button" onClick={() => setFormFor(null)} className={secondaryButtonClass}>
-                Cancelar
+                {t("Cancelar", "Cancel")}
               </button>
             </div>
           </form>
@@ -337,8 +345,10 @@ export default function GoalsManager({
 
       {goals.length === 0 && !formFor ? (
         <Card className="text-sm text-ink/60">
-          Todavía no tienes metas. Crea una: por ejemplo “Publicar 25 piezas este mes” (se cuenta sola con tu Feed) o
-          “Llegar a 50K en Instagram” (se actualiza sola al conectar Instagram).
+          {t(
+            "Todavía no tienes metas. Crea una: por ejemplo “Publicar 25 piezas este mes” (se cuenta sola con tu Feed) o “Llegar a 50K en Instagram” (se actualiza sola al conectar Instagram).",
+            "You don't have goals yet. Create one: for example “Post 25 pieces this month” (counted automatically from your Feed) or “Reach 50K on Instagram” (updates on its own once Instagram is connected)."
+          )}
         </Card>
       ) : (
         <div className="grid gap-sp-4 sm:grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
@@ -350,7 +360,7 @@ export default function GoalsManager({
                 <div className="flex items-start justify-between gap-sp-2">
                   <p className="text-sm font-bold text-ink">{goal.title}</p>
                   <span className="shrink-0 rounded-full bg-lime/30 px-sp-2 py-0.5 font-mono text-[10px] uppercase text-moss">
-                    {categoryLabel(goal.category)}
+                    {categoryLabel(goal.category, lang)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5">
@@ -360,19 +370,24 @@ export default function GoalsManager({
                   <span className="shrink-0 font-mono text-xs font-bold text-coral">{pct}%</span>
                 </div>
                 <p className="text-[11px] text-ink/65">
-                  {formatGoalValue(goal.current, goal.unit)} de {formatGoalValue(goal.target, goal.unit)}
-                  {goal.dueDate && ` · hasta el ${goal.dueDate.slice(8, 10)}/${goal.dueDate.slice(5, 7)}`}
+                  {formatGoalValue(goal.current, goal.unit)} {t("de", "of")} {formatGoalValue(goal.target, goal.unit)}
+                  {goal.dueDate &&
+                    (lang === "en"
+                      ? ` · by ${goal.dueDate.slice(5, 7)}/${goal.dueDate.slice(8, 10)}`
+                      : ` · hasta el ${goal.dueDate.slice(8, 10)}/${goal.dueDate.slice(5, 7)}`)}
                 </p>
                 {auto ? (
                   <p className={`text-[11px] ${goal.autoMissing ? "text-coral" : "text-ink/45"}`}>
-                    {goal.autoMissing ? "Conecta la red en Conectar cuentas para que se actualice sola." : "↻ Se actualiza sola"}
+                    {goal.autoMissing
+                      ? t("Conecta la red en Conectar cuentas para que se actualice sola.", "Connect the network in Connect accounts so it updates on its own.")
+                      : t("↻ Se actualiza sola", "↻ Updates automatically")}
                   </p>
                 ) : (
                   <div className="flex items-center gap-sp-2">
                     <button
                       type="button"
                       onClick={() => updateCurrent(goal, Math.max(0, goal.current - 1))}
-                      aria-label="Restar 1"
+                      aria-label={t("Restar 1", "Subtract 1")}
                       className="h-7 w-7 rounded-full border border-line text-sm text-ink/70 hover:border-coral"
                     >
                       −
@@ -380,24 +395,24 @@ export default function GoalsManager({
                     <button
                       type="button"
                       onClick={() => updateCurrent(goal, goal.current + 1)}
-                      aria-label="Sumar 1"
+                      aria-label={t("Sumar 1", "Add 1")}
                       className="h-7 w-7 rounded-full border border-line text-sm text-ink/70 hover:border-coral"
                     >
                       +
                     </button>
-                    <span className="text-[11px] text-ink/45">Ajusta tu avance</span>
+                    <span className="text-[11px] text-ink/45">{t("Ajusta tu avance", "Adjust your progress")}</span>
                   </div>
                 )}
                 <div className="mt-auto flex gap-sp-3 pt-sp-1">
                   <button type="button" onClick={() => openForm(goal)} className={accentLinkClass}>
-                    Editar
+                    {t("Editar", "Edit")}
                   </button>
                   <button
                     type="button"
                     onClick={() => setDeleting(goal)}
                     className="text-sm font-medium text-ink/45 hover:text-ink"
                   >
-                    Borrar
+                    {t("Borrar", "Delete")}
                   </button>
                 </div>
               </Card>
@@ -408,25 +423,28 @@ export default function GoalsManager({
 
       <Card>
         <div className="mb-sp-3 flex flex-wrap items-baseline justify-between gap-sp-2">
-          <p className={eyebrowClass}>Plan de acción esta semana</p>
+          <p className={eyebrowClass}>{t("Plan de acción esta semana", "This week's action plan")}</p>
           <p className="text-xs text-ink/55">
-            {weekLabel} · {doneCount} de {actions.length} listas
+            {weekLabel} · {t(`${doneCount} de ${actions.length} listas`, `${doneCount} of ${actions.length} done`)}
           </p>
         </div>
 
         {pendingOld > 0 && (
           <div className="mb-sp-3 flex flex-wrap items-center justify-between gap-sp-2 rounded-[12px] bg-lime/25 px-sp-3 py-sp-2 text-[13px] text-ink">
             <span>
-              Te {pendingOld === 1 ? "quedó 1 tarea pendiente" : `quedaron ${pendingOld} tareas pendientes`} de semanas anteriores.
+              {t(
+                `Te ${pendingOld === 1 ? "quedó 1 tarea pendiente" : `quedaron ${pendingOld} tareas pendientes`} de semanas anteriores.`,
+                `You have ${pendingOld === 1 ? "1 pending task" : `${pendingOld} pending tasks`} from previous weeks.`
+              )}
             </span>
             <button type="button" onClick={carryOver} className="font-semibold text-coral hover:underline">
-              Traer a esta semana
+              {t("Traer a esta semana", "Bring to this week")}
             </button>
           </div>
         )}
 
         {actions.length === 0 ? (
-          <p className="text-sm text-ink/60">Agrega 3 o 4 acciones concretas para esta semana.</p>
+          <p className="text-sm text-ink/60">{t("Agrega 3 o 4 acciones concretas para esta semana.", "Add 3 or 4 concrete actions for this week.")}</p>
         ) : (
           <ul className="flex flex-col gap-2.5">
             {actions.map((action) => (
@@ -449,11 +467,11 @@ export default function GoalsManager({
                 >
                   {action.label}
                 </button>
-                <span className="shrink-0 font-mono text-[10px] text-ink/55">{categoryLabel(action.category)}</span>
+                <span className="shrink-0 font-mono text-[10px] text-ink/55">{categoryLabel(action.category, lang)}</span>
                 <button
                   type="button"
                   onClick={() => deleteAction(action)}
-                  aria-label={`Borrar ${action.label}`}
+                  aria-label={t(`Borrar ${action.label}`, `Delete ${action.label}`)}
                   className="shrink-0 text-xs text-ink/30 hover:text-coral sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   ✕
@@ -468,31 +486,31 @@ export default function GoalsManager({
             value={newAction}
             onChange={(e) => setNewAction(e.target.value)}
             className={`${inputClass} flex-1`}
-            placeholder="Ej: Grabar 3 reels en batch"
-            aria-label="Nueva tarea"
+            placeholder={t("Ej: Grabar 3 reels en batch", "E.g.: Batch-record 3 reels")}
+            aria-label={t("Nueva tarea", "New task")}
           />
           <select
             value={newActionCategory}
             onChange={(e) => setNewActionCategory(e.target.value as GoalCategory)}
             className={`${inputClass} sm:w-40`}
-            aria-label="Tipo de tarea"
+            aria-label={t("Tipo de tarea", "Task type")}
           >
             {GOAL_CATEGORIES.map((c) => (
               <option key={c} value={c}>
-                {GOAL_CATEGORY_LABEL[c]}
+                {categoryLabel(c, lang)}
               </option>
             ))}
           </select>
           <button type="submit" disabled={!newAction.trim()} className={secondaryButtonClass}>
-            Agregar
+            {t("Agregar", "Add")}
           </button>
         </form>
       </Card>
 
       {deleting && (
         <ConfirmDialog
-          title="Borrar meta"
-          description={`¿Seguro que quieres borrar "${deleting.title}"?`}
+          title={t("Borrar meta", "Delete goal")}
+          description={t(`¿Seguro que quieres borrar "${deleting.title}"?`, `Are you sure you want to delete "${deleting.title}"?`)}
           onConfirm={() => deleteGoal(deleting)}
           onCancel={() => setDeleting(null)}
         />

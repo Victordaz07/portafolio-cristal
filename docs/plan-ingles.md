@@ -52,7 +52,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/cuenta/page.tsx`
 - [x] `app/admin/(dashboard)/dominio/DomainManager.tsx`
 - [x] `app/admin/(dashboard)/dominio/page.tsx`
-- [ ] `app/admin/(dashboard)/enlaces/LinkEditor.tsx`
+- [x] `app/admin/(dashboard)/enlaces/LinkEditor.tsx`
 - [x] `app/admin/(dashboard)/enlaces/page.tsx`
 - [x] `app/admin/(dashboard)/equipo/datos/DataRequestRow.tsx`
 - [x] `app/admin/(dashboard)/equipo/datos/page.tsx`
@@ -73,7 +73,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/hero/page.tsx`
 - [x] `app/admin/(dashboard)/ideas/page.tsx`
 - [x] `app/admin/(dashboard)/layout.tsx`
-- [ ] `app/admin/(dashboard)/lista-de-espera/WaitlistTable.tsx`
+- [x] `app/admin/(dashboard)/lista-de-espera/WaitlistTable.tsx`
 - [x] `app/admin/(dashboard)/lista-de-espera/page.tsx`
 - [x] `app/admin/(dashboard)/marcas/BrandForm.tsx`
 - [x] `app/admin/(dashboard)/marcas/BrandsManager.tsx`
@@ -82,25 +82,25 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/media-kit/page.tsx`
 - [x] `app/admin/(dashboard)/mensajes/MessagesManager.tsx`
 - [x] `app/admin/(dashboard)/mensajes/page.tsx`
-- [ ] `app/admin/(dashboard)/metas/GoalsManager.tsx`
+- [x] `app/admin/(dashboard)/metas/GoalsManager.tsx`
 - [x] `app/admin/(dashboard)/metas/page.tsx`
 - [x] `app/admin/(dashboard)/page.tsx`
 - [x] `app/admin/(dashboard)/paquetes/PackagesManager.tsx`
 - [x] `app/admin/(dashboard)/paquetes/page.tsx`
 - [x] `app/admin/(dashboard)/plan/PayForm.tsx`
 - [x] `app/admin/(dashboard)/plan/page.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/AccountsTable.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/DepartmentsSection.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/IntelligenceSection.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/LeaderboardTable.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/PendingPayments.tsx`
+- [x] `app/admin/(dashboard)/plataforma/AccountsTable.tsx`
+- [x] `app/admin/(dashboard)/plataforma/DepartmentsSection.tsx`
+- [x] `app/admin/(dashboard)/plataforma/IntelligenceSection.tsx`
+- [x] `app/admin/(dashboard)/plataforma/LeaderboardTable.tsx`
+- [x] `app/admin/(dashboard)/plataforma/PendingPayments.tsx`
 - [x] `app/admin/(dashboard)/plataforma/RefreshInsightsButton.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/[id]/AccountActions.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/[id]/BillingCard.tsx`
+- [x] `app/admin/(dashboard)/plataforma/[id]/AccountActions.tsx`
+- [x] `app/admin/(dashboard)/plataforma/[id]/BillingCard.tsx`
 - [x] `app/admin/(dashboard)/plataforma/[id]/OwnerEmailForm.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/[id]/page.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/charts.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/page.tsx`
+- [x] `app/admin/(dashboard)/plataforma/[id]/page.tsx`
+- [x] `app/admin/(dashboard)/plataforma/charts.tsx`
+- [x] `app/admin/(dashboard)/plataforma/page.tsx`
 - [x] `app/admin/(dashboard)/reportes/ReportActions.tsx`
 - [x] `app/admin/(dashboard)/reportes/mensual/PrintButton.tsx`
 - [x] `app/admin/(dashboard)/reportes/mensual/page.tsx`

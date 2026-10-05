@@ -33,7 +33,7 @@ import {
   type StyleId,
 } from "@/lib/design";
 import { pickLabel } from "@/lib/admin-lang";
-import { LOCALE_COOKIE } from "@/lib/i18n";
+import { usePreviewLocale } from "@/components/admin/usePreviewLocale";
 import { useT } from "@/components/admin/AdminLang";
 
 interface Profile {
@@ -500,16 +500,8 @@ function move<T>(list: T[], index: number, delta: number) {
 
 /** El sitio real en un iframe, con el diseño sin guardar (?disenio=…), escalado para que quepa. */
 function Preview({ path, design, device }: { path: string; design: Design; device: "desktop" | "mobile" }) {
-  const { t: tr, lang } = useT();
-  // Con el panel en inglés, la vista previa del sitio también empieza en inglés (si no se eligió otro idioma).
-  const [langReady, setLangReady] = useState(false);
-  useEffect(() => {
-    const cookies = document.cookie.split("; ");
-    if (lang === "en" && !cookies.some((c) => c.startsWith(`${LOCALE_COOKIE}=`))) {
-      document.cookie = `${LOCALE_COOKIE}=en; path=/; max-age=31536000`;
-    }
-    setLangReady(true);
-  }, [lang]);
+  const { t: tr } = useT();
+  const langReady = usePreviewLocale();
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(600);
   const encoded = useMemo(() => encodePreview(design), [design]);

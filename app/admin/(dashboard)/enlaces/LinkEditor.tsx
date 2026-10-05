@@ -10,6 +10,8 @@ import { LINK_IMAGE_ASPECT_OPTIONS } from "@/lib/image-crop";
 import { useToast } from "@/components/admin/ToastContext";
 import { POPULAR_MIN_CLICKS } from "@/lib/bio-links";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
+import { useT } from "@/components/admin/AdminLang";
+import { usePreviewLocale } from "@/components/admin/usePreviewLocale";
 
 // Editor visual del link en bio: a la izquierda los bloques en el orden en que se ven, a la derecha la página real.
 // Tocar algo en la vista previa abre su edición aquí; cada cambio se guarda solo y la vista previa se actualiza.
@@ -34,6 +36,10 @@ type Status = "idle" | "saving" | "saved" | "error";
 type Drag = { type: "link"; id: string } | { type: "group"; id: string } | null;
 
 const eyebrow = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
+const AUTO_INFO_EN: Record<string, { name: string; info: string }> = {
+  brandkit: { name: "Work with me", info: "Automatic: media kit, contact form, WhatsApp and email (taken from Contact & footer)." },
+  recent: { name: "Recent content", info: "Automatic: your 4 featured or most recent Feed posts." },
+};
 const AUTO_INFO: Record<string, { name: string; info: string }> = {
   brandkit: { name: "Trabaja conmigo", info: "Automático: media kit, formulario de contacto, WhatsApp y correo (salen de Contacto y pie)." },
   recent: { name: "Contenido reciente", info: "Automático: tus 4 publicaciones destacadas o más recientes del Feed." },
@@ -53,6 +59,8 @@ export default function LinkEditor({
   heroPhoto: string | null;
 }) {
   const { showToast } = useToast();
+  const { t, lang } = useT();
+  const previewReady = usePreviewLocale();
   const [groups, setGroups] = useState(initialGroups);
   const [page, setPage] = useState(initialPage);
   const [open, setOpen] = useState<string | null>(null); // "header" | "hero" | "group:id" | "link:id" | "new:groupId"
@@ -81,14 +89,14 @@ export default function LinkEditor({
       const data = await response?.json().catch(() => ({}));
       if (!response?.ok) {
         setStatus("error");
-        showToast("error", data?.error ?? "No se pudo guardar");
+        showToast("error", data?.error ?? t("No se pudo guardar", "Couldn't save"));
         return null;
       }
       setStatus("saved");
       refreshPreview();
       return data;
     },
-    [refreshPreview, showToast]
+    [refreshPreview, showToast, t]
   );
 
   // ─── Vista previa ↔ editor ───
@@ -169,8 +177,11 @@ export default function LinkEditor({
   }
   function deleteGroup(group: Group) {
     setConfirm({
-      title: "Eliminar grupo",
-      description: `¿Eliminar "${group.title}"${group.links.length ? ` y sus ${group.links.length} enlaces` : ""}?`,
+      title: t("Eliminar grupo", "Delete group"),
+      description: t(
+        `¿Eliminar "${group.title}"${group.links.length ? ` y sus ${group.links.length} enlaces` : ""}?`,
+        `Delete "${group.title}"${group.links.length ? ` and its ${group.links.length} links` : ""}?`
+      ),
       run: async () => {
         if (await api("DELETE", `/api/admin/links/groups/${group.id}`)) setGroups((gs) => gs.filter((g) => g.id !== group.id));
       },
@@ -184,8 +195,11 @@ export default function LinkEditor({
   }
   function deleteLink(link: BioLink) {
     setConfirm({
-      title: "Eliminar enlace",
-      description: `¿Eliminar "${link.title}"? Si solo quieres quitarlo un tiempo, usa el ojo para ocultarlo.`,
+      title: t("Eliminar enlace", "Delete link"),
+      description: t(
+        `¿Eliminar "${link.title}"? Si solo quieres quitarlo un tiempo, usa el ojo para ocultarlo.`,
+        `Delete "${link.title}"? If you only want to remove it for a while, use the eye to hide it.`
+      ),
       run: async () => {
         if (await api("DELETE", `/api/admin/links/${link.id}`)) setGroups((gs) => gs.map((g) => ({ ...g, links: g.links.filter((l) => l.id !== link.id) })));
       },
@@ -218,10 +232,13 @@ export default function LinkEditor({
       <div className="flex min-w-0 flex-col gap-sp-3">
         <Card className="flex flex-wrap items-center gap-sp-3">
           <div className="min-w-0 flex-1">
-            <p className={eyebrow}>Tu link en bio</p>
+            <p className={eyebrow}>{t("Tu link en bio", "Your link in bio")}</p>
             <p className="mt-1 truncate font-mono text-sm text-ink">{pageUrl.replace(/^https?:\/\//, "")}</p>
             <p className="mt-1 text-xs text-ink/55">
-              {totalClicks} {totalClicks === 1 ? "clic" : "clics"} en tus enlaces{top ? ` · el más visitado: "${top.title}"` : ""}
+              {t(
+                `${totalClicks} ${totalClicks === 1 ? "clic" : "clics"} en tus enlaces${top ? ` · el más visitado: "${top.title}"` : ""}`,
+                `${totalClicks} ${totalClicks === 1 ? "click" : "clicks"} on your links${top ? ` · most visited: "${top.title}"` : ""}`
+              )}
             </p>
           </div>
           <SaveStatus status={status} />
@@ -229,21 +246,23 @@ export default function LinkEditor({
             type="button"
             onClick={async () => {
               await navigator.clipboard.writeText(pageUrl).catch(() => null);
-              showToast("success", "Enlace copiado: pégalo en tu bio");
+              showToast("success", t("Enlace copiado: pégalo en tu bio", "Link copied: paste it in your bio"));
             }}
             className={primaryButtonClass}
           >
-            Copiar enlace
+            {t("Copiar enlace", "Copy link")}
           </button>
           <a href={pageUrl} target="_blank" rel="noreferrer" className={secondaryButtonClass}>
-            Abrir ↗
+            {t("Abrir ↗", "Open ↗")}
           </a>
         </Card>
         <p className="px-sp-1 text-xs text-ink/55">
-          Toca cualquier parte de la vista previa para editarla. Arrastra (⋮⋮) o usa las flechas para cambiar el orden; el ojo oculta sin borrar. Colores,
-          tipografía y fondo:{" "}
+          {t(
+            "Toca cualquier parte de la vista previa para editarla. Arrastra (⋮⋮) o usa las flechas para cambiar el orden; el ojo oculta sin borrar. Colores, tipografía y fondo:",
+            "Tap any part of the preview to edit it. Drag (⋮⋮) or use the arrows to reorder; the eye hides without deleting. Colors, typography and background:"
+          )}{" "}
           <a href="/admin/apariencia" className="font-semibold text-coral hover:underline">
-            Estudio de diseño
+            {t("Estudio de diseño", "Design studio")}
           </a>
           .
         </p>
@@ -251,14 +270,17 @@ export default function LinkEditor({
         {/* Encabezado (siempre arriba) */}
         <Block
           id="header"
-          title="Encabezado"
-          subtitle={`Foto, nombre, frase${page.linksShowCopy ? ", copiar enlace" : ""}${page.linksShowSocials ? ", redes" : ""}`}
+          title={t("Encabezado", "Header")}
+          subtitle={t(
+            `Foto, nombre, frase${page.linksShowCopy ? ", copiar enlace" : ""}${page.linksShowSocials ? ", redes" : ""}`,
+            `Photo, name, tagline${page.linksShowCopy ? ", copy link" : ""}${page.linksShowSocials ? ", socials" : ""}`
+          )}
           open={open === "header"}
           onToggle={() => toggle("header")}
           fixed
         >
           <BilingualTextField
-            label="Frase bajo tu nombre"
+            label={t("Frase bajo tu nombre", "Tagline under your name")}
             es={page.linksTagline}
             en={page.linksTaglineEn}
             onEsChange={(v) => setPage((p) => ({ ...p, linksTagline: v }))}
@@ -266,20 +288,20 @@ export default function LinkEditor({
           />
           <div className="flex flex-wrap items-center gap-sp-3">
             <button type="button" onClick={() => savePage({ linksTagline: page.linksTagline, linksTaglineEn: page.linksTaglineEn })} className={secondaryButtonClass}>
-              Guardar frase
+              {t("Guardar frase", "Save tagline")}
             </button>
-            <span className="text-xs text-ink/50">Vacía: &quot;Mis favoritos y más ✨&quot;.</span>
+            <span className="text-xs text-ink/50">{t("Vacía: “Mis favoritos y más ✨”.", "Empty: “My favorites and more ✨”.")}</span>
           </div>
-          <Switch label='Botón "Copiar mi enlace"' checked={page.linksShowCopy} onChange={(v) => savePage({ linksShowCopy: v })} />
-          <Switch label="Íconos de tus redes" checked={page.linksShowSocials} onChange={(v) => savePage({ linksShowSocials: v })} />
+          <Switch label={t("Botón “Copiar mi enlace”", "“Copy my link” button")} checked={page.linksShowCopy} onChange={(v) => savePage({ linksShowCopy: v })} />
+          <Switch label={t("Íconos de tus redes", "Social media icons")} checked={page.linksShowSocials} onChange={(v) => savePage({ linksShowSocials: v })} />
           <p className="text-xs text-ink/55">
-            La foto y el nombre se cambian en{" "}
+            {t("La foto y el nombre se cambian en", "Change the photo and name in")}{" "}
             <a href="/admin/apariencia" className="font-semibold text-coral hover:underline">
-              Estudio de diseño
+              {t("Estudio de diseño", "Design studio")}
             </a>
-            ; tus redes y correo, en{" "}
+            {t("; tus redes y correo, en", "; your socials and email in")}{" "}
             <a href="/admin/contacto" className="font-semibold text-coral hover:underline">
-              Contacto y pie
+              {t("Contacto y pie", "Contact & footer")}
             </a>
             .
           </p>
@@ -288,8 +310,8 @@ export default function LinkEditor({
         {/* Tarjeta principal */}
         <Block
           id="hero"
-          title="Tarjeta principal"
-          subtitle={page.linksHeroTitle || "Mi portafolio completo"}
+          title={t("Tarjeta principal", "Main card")}
+          subtitle={(lang === "en" && page.linksHeroTitleEn) || page.linksHeroTitle || t("Mi portafolio completo", "My full portfolio")}
           open={open === "hero"}
           onToggle={() => toggle("hero")}
           hidden={!page.linksHeroShow}
@@ -298,14 +320,14 @@ export default function LinkEditor({
         >
           <div className="grid gap-sp-4 sm:grid-cols-2">
             <BilingualTextField
-              label="Etiqueta pequeña"
+              label={t("Etiqueta pequeña", "Small label")}
               es={page.linksHeroEyebrow}
               en={page.linksHeroEyebrowEn}
               onEsChange={(v) => setPage((p) => ({ ...p, linksHeroEyebrow: v }))}
               onEnChange={(v) => setPage((p) => ({ ...p, linksHeroEyebrowEn: v }))}
             />
             <BilingualTextField
-              label="Título"
+              label={t("Título", "Title")}
               es={page.linksHeroTitle}
               en={page.linksHeroTitleEn}
               onEsChange={(v) => setPage((p) => ({ ...p, linksHeroTitle: v }))}
@@ -314,7 +336,7 @@ export default function LinkEditor({
           </div>
           <div className="grid gap-sp-4 sm:grid-cols-[180px_1fr]">
             <ImageUploadField
-              label="Imagen de fondo"
+              label={t("Imagen de fondo", "Background image")}
               value={page.linksHeroImage}
               onChange={(url) => savePage({ linksHeroImage: url })}
               aspect={5 / 2}
@@ -322,16 +344,19 @@ export default function LinkEditor({
             />
             <div className="flex flex-col gap-sp-2">
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">Lleva a</span>
+                <span className="text-sm font-medium text-ink">{t("Lleva a", "Links to")}</span>
                 <input
                   value={page.linksHeroUrl}
                   onChange={(e) => setPage((p) => ({ ...p, linksHeroUrl: e.target.value }))}
                   className={inputClass}
-                  placeholder="Vacío: tu portafolio"
+                  placeholder={t("Vacío: tu portafolio", "Empty: your portfolio")}
                 />
               </label>
               <p className="text-xs text-ink/50">
-                Sin imagen se usa {heroPhoto ? "tu foto de portada" : "el color de tu sitio"}. Vacío: &quot;PORTAFOLIO · Mi portafolio completo&quot;.
+                {t(
+                  `Sin imagen se usa ${heroPhoto ? "tu foto de portada" : "el color de tu sitio"}. Vacío: “PORTAFOLIO · Mi portafolio completo”.`,
+                  `With no image, ${heroPhoto ? "your cover photo" : "your site color"} is used. Empty: “PORTFOLIO · My full portfolio”.`
+                )}
               </p>
             </div>
           </div>
@@ -348,21 +373,29 @@ export default function LinkEditor({
             }
             className={`${primaryButtonClass} self-start`}
           >
-            Guardar tarjeta
+            {t("Guardar tarjeta", "Save card")}
           </button>
         </Block>
 
         {/* Bloques que se ordenan */}
         {groups.map((group, gi) => {
-          const auto = AUTO_INFO[group.kind];
+          const auto = (lang === "en" ? AUTO_INFO_EN : AUTO_INFO)[group.kind];
+          const groupTitle = (lang === "en" && group.titleEn) || group.title;
           const target = `group:${group.id}`;
           const isOpen = open === target || open === `new:${group.id}` || group.links.some((l) => open === `link:${l.id}`);
           return (
             <Block
               key={group.id}
               id={target}
-              title={auto ? group.title || auto.name : group.title || "Sin título"}
-              subtitle={auto ? "Automático" : `${group.links.length} ${group.links.length === 1 ? "enlace" : "enlaces"}`}
+              title={auto ? groupTitle || auto.name : groupTitle || t("Sin título", "Untitled")}
+              subtitle={
+                auto
+                  ? t("Automático", "Automatic")
+                  : t(
+                      `${group.links.length} ${group.links.length === 1 ? "enlace" : "enlaces"}`,
+                      `${group.links.length} ${group.links.length === 1 ? "link" : "links"}`
+                    )
+              }
               open={isOpen}
               onToggle={() => toggle(target)}
               hidden={group.hidden}
@@ -401,7 +434,7 @@ export default function LinkEditor({
                               setDrag({ type: "link", id: link.id });
                             }}
                             onDragEnd={() => setDrag(null)}
-                            title="Arrastra para mover"
+                            title={t("Arrastra para mover", "Drag to move")}
                             className="cursor-grab select-none px-1 text-ink/35 active:cursor-grabbing"
                           >
                             ⋮⋮
@@ -418,22 +451,23 @@ export default function LinkEditor({
                             className="min-w-0 flex-1 text-left"
                           >
                             <span className="block truncate text-sm font-semibold text-ink">
-                              {link.title}
-                              {link.hidden && <span className="ml-sp-2 text-[10px] font-normal uppercase text-ink/45">oculto</span>}
+                              {(lang === "en" && link.titleEn) || link.title}
+                              {link.hidden && <span className="ml-sp-2 text-[10px] font-normal uppercase text-ink/45">{t("oculto", "hidden")}</span>}
                             </span>
                             <span className="block truncate text-xs text-ink/50">
-                              {link.wide ? "Fila" : "Tarjeta"} · {link.clicks} {link.clicks === 1 ? "clic" : "clics"}
-                              {link.badge ? ` · ${link.badge}` : link.id === top?.id ? " · Más clics" : ""}
+                              {link.wide ? t("Fila", "Row") : t("Tarjeta", "Card")} · {link.clicks}{" "}
+                              {link.clicks === 1 ? t("clic", "click") : t("clics", "clicks")}
+                              {link.badge ? ` · ${link.badge}` : link.id === top?.id ? ` · ${t("Más clics", "Most clicks")}` : ""}
                               {link.pill ? ` · ${link.pill}` : ""}
                             </span>
                           </button>
-                          <IconButton label={link.hidden ? "Mostrar" : "Ocultar"} onClick={() => patchLink(link, { hidden: !link.hidden })}>
+                          <IconButton label={link.hidden ? t("Mostrar", "Show") : t("Ocultar", "Hide")} onClick={() => patchLink(link, { hidden: !link.hidden })}>
                             {link.hidden ? "◌" : "◉"}
                           </IconButton>
-                          <IconButton label="Subir" disabled={li === 0} onClick={() => stepLink(group, li, -1)}>
+                          <IconButton label={t("Subir", "Move up")} disabled={li === 0} onClick={() => stepLink(group, li, -1)}>
                             ▲
                           </IconButton>
-                          <IconButton label="Bajar" disabled={li === group.links.length - 1} onClick={() => stepLink(group, li, 1)}>
+                          <IconButton label={t("Bajar", "Move down")} disabled={li === group.links.length - 1} onClick={() => stepLink(group, li, 1)}>
                             ▼
                           </IconButton>
                         </div>
@@ -448,7 +482,7 @@ export default function LinkEditor({
                                 <div className="flex flex-wrap items-center gap-sp-3">
                                   {customGroups.length > 1 && (
                                     <label className="flex items-center gap-sp-2 text-xs text-ink/70">
-                                      Mover a
+                                      {t("Mover a", "Move to")}
                                       <select
                                         value={group.id}
                                         onChange={(e) => moveLink(link.id, e.target.value)}
@@ -463,7 +497,7 @@ export default function LinkEditor({
                                     </label>
                                   )}
                                   <button type="button" onClick={() => deleteLink(link)} className="text-xs font-semibold text-red-600 hover:underline">
-                                    Eliminar enlace
+                                    {t("Eliminar enlace", "Delete link")}
                                   </button>
                                 </div>
                               }
@@ -480,10 +514,10 @@ export default function LinkEditor({
                   ) : (
                     <div className="flex flex-wrap items-center justify-between gap-sp-2">
                       <button type="button" onClick={() => setOpen(`new:${group.id}`)} className={secondaryButtonClass}>
-                        + Agregar enlace
+                        {t("+ Agregar enlace", "+ Add link")}
                       </button>
                       <button type="button" onClick={() => deleteGroup(group)} className="text-xs font-semibold text-red-600 hover:underline">
-                        Eliminar grupo
+                        {t("Eliminar grupo", "Delete group")}
                       </button>
                     </div>
                   )}
@@ -498,12 +532,12 @@ export default function LinkEditor({
             value={newGroup}
             onChange={(e) => setNewGroup(e.target.value)}
             maxLength={40}
-            placeholder='Nuevo grupo: "Colabora conmigo", "Mis favoritos"…'
-            aria-label="Nombre del nuevo grupo"
+            placeholder={t("Nuevo grupo: “Colabora conmigo”, “Mis favoritos”…", "New group: “Work with me”, “My favorites”…")}
+            aria-label={t("Nombre del nuevo grupo", "New group name")}
             className={`${inputClass} min-w-[200px] flex-1`}
           />
           <button type="submit" disabled={!newGroup.trim()} className={primaryButtonClass}>
-            + Nuevo grupo
+            {t("+ Nuevo grupo", "+ New group")}
           </button>
         </form>
       </div>
@@ -511,13 +545,13 @@ export default function LinkEditor({
       <div className="xl:sticky xl:top-sp-4">
         <Card className="flex flex-col items-center gap-sp-3">
           <div className="flex w-full items-center justify-between">
-            <p className={eyebrow}>Vista previa · toca para editar</p>
+            <p className={eyebrow}>{t("Vista previa · toca para editar", "Preview · tap to edit")}</p>
             <button type="button" onClick={() => setFrameKey((k) => k + 1)} className="text-xs font-semibold text-ink/55 hover:text-ink">
               ↻
             </button>
           </div>
           <div className="h-[720px] w-[360px] max-w-full overflow-hidden rounded-[36px] border-[6px] border-ink bg-white">
-            <iframe ref={frame} key={frameKey} title="Vista previa del link en bio" src={`${previewPath}?editor=1`} className="h-full w-full border-0" />
+            <iframe ref={frame} key={frameKey} title={t("Vista previa del link en bio", "Link in bio preview")} src={previewReady ? `${previewPath}?editor=1` : undefined} className="h-full w-full border-0" />
           </div>
         </Card>
       </div>
@@ -538,8 +572,9 @@ export default function LinkEditor({
 }
 
 function SaveStatus({ status }: { status: Status }) {
+  const { t } = useT();
   if (status === "idle") return null;
-  const text = { saving: "Guardando…", saved: "Guardado ✓", error: "No se guardó" }[status];
+  const text = { saving: t("Guardando…", "Saving…"), saved: t("Guardado ✓", "Saved ✓"), error: t("No se guardó", "Not saved") }[status];
   return (
     <span role="status" className={`text-xs font-semibold ${status === "error" ? "text-red-600" : status === "saved" ? "text-moss" : "text-ink/50"}`}>
       {text}
@@ -615,6 +650,7 @@ function Block({
   children: React.ReactNode;
 }) {
   const [over, setOver] = useState(false);
+  const { t } = useT();
   return (
     <section
       id={`edit-${id}`}
@@ -634,14 +670,14 @@ function Block({
     >
       <div className="flex items-center gap-sp-2 p-sp-3">
         {fixed ? (
-          <span title="Siempre arriba" className="px-1 text-xs text-ink/30">
+          <span title={t("Siempre arriba", "Always on top")} className="px-1 text-xs text-ink/30">
             📌
           </span>
         ) : (
           <span
             draggable={draggable}
             onDragStart={onDragStart}
-            title="Arrastra para mover el bloque"
+            title={t("Arrastra para mover el bloque", "Drag to move the block")}
             className="cursor-grab select-none px-1 text-ink/35 active:cursor-grabbing"
           >
             ⋮⋮
@@ -649,24 +685,24 @@ function Block({
         )}
         <button type="button" onClick={onToggle} aria-expanded={open} className="min-w-0 flex-1 text-left">
           <span className={`block truncate font-semibold ${hidden ? "text-ink/40 line-through" : "text-ink"}`}>{title}</span>
-          <span className="block truncate text-xs text-ink/50">{hidden ? "Oculto en tu página" : subtitle}</span>
+          <span className="block truncate text-xs text-ink/50">{hidden ? t("Oculto en tu página", "Hidden on your page") : subtitle}</span>
         </button>
         {onHide && (
-          <IconButton label={hidden ? "Mostrar" : "Ocultar"} onClick={onHide}>
+          <IconButton label={hidden ? t("Mostrar", "Show") : t("Ocultar", "Hide")} onClick={onHide}>
             {hidden ? "◌" : "◉"}
           </IconButton>
         )}
         {!fixed && (
           <>
-            <IconButton label="Subir bloque" disabled={!onUp} onClick={() => onUp?.()}>
+            <IconButton label={t("Subir bloque", "Move block up")} disabled={!onUp} onClick={() => onUp?.()}>
               ▲
             </IconButton>
-            <IconButton label="Bajar bloque" disabled={!onDown} onClick={() => onDown?.()}>
+            <IconButton label={t("Bajar bloque", "Move block down")} disabled={!onDown} onClick={() => onDown?.()}>
               ▼
             </IconButton>
           </>
         )}
-        <IconButton label={open ? "Cerrar" : "Editar"} onClick={onToggle}>
+        <IconButton label={open ? t("Cerrar", "Close") : t("Editar", "Edit")} onClick={onToggle}>
           {open ? "−" : "✎"}
         </IconButton>
       </div>
@@ -676,6 +712,7 @@ function Block({
 }
 
 function GroupTitleEditor({ group, placeholder, onSave }: { group: Group; placeholder?: string; onSave: (data: { title: string; titleEn: string }) => void }) {
+  const { t } = useT();
   const [title, setTitle] = useState(group.title);
   const [titleEn, setTitleEn] = useState(group.titleEn ?? "");
   const dirty = title !== group.title || titleEn !== (group.titleEn ?? "");
@@ -683,16 +720,16 @@ function GroupTitleEditor({ group, placeholder, onSave }: { group: Group; placeh
   return (
     <div className="flex flex-wrap items-end gap-sp-3">
       <label className="flex min-w-[160px] flex-1 flex-col gap-sp-1">
-        <span className="text-xs font-medium text-ink/70">Título del grupo</span>
+        <span className="text-xs font-medium text-ink/70">{t("Título del grupo", "Group title")}</span>
         <input value={title} maxLength={40} placeholder={placeholder} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
       </label>
       <label className="flex min-w-[160px] flex-1 flex-col gap-sp-1">
-        <span className="text-xs font-medium text-ink/70">En inglés</span>
+        <span className="text-xs font-medium text-ink/70">{t("En inglés", "In English")}</span>
         <input value={titleEn} maxLength={40} onChange={(e) => setTitleEn(e.target.value)} className={inputClass} />
       </label>
       {canSave && (
         <button type="button" onClick={() => onSave({ title: title.trim(), titleEn: titleEn.trim() })} className={secondaryButtonClass}>
-          Guardar título
+          {t("Guardar título", "Save title")}
         </button>
       )}
     </div>
@@ -716,6 +753,7 @@ function LinkForm({
   extra?: React.ReactNode;
 }) {
   const { showToast } = useToast();
+  const { t } = useT();
   const [form, setForm] = useState(
     link
       ? {
@@ -745,56 +783,58 @@ function LinkForm({
     });
     const data = await response.json().catch(() => ({}));
     setSaving(false);
-    if (!response.ok) return showToast("error", data.error ?? "No se pudo guardar el enlace");
-    showToast("success", link ? "Enlace actualizado" : "Enlace agregado");
+    if (!response.ok) return showToast("error", data.error ?? t("No se pudo guardar el enlace", "Couldn't save the link"));
+    showToast("success", link ? t("Enlace actualizado", "Link updated") : t("Enlace agregado", "Link added"));
     onSaved(data);
   }
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-sp-4">
-      <BilingualTextField label="Título" es={form.title} en={form.titleEn} onEsChange={(v) => set("title", v)} onEnChange={(v) => set("titleEn", v)} required />
+      <BilingualTextField label={t("Título", "Title")} es={form.title} en={form.titleEn} onEsChange={(v) => set("title", v)} onEnChange={(v) => set("titleEn", v)} required />
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Enlace</span>
+        <span className="text-sm font-medium text-ink">{t("Enlace", "Link")}</span>
         <input required type="url" value={form.url} onChange={(e) => set("url", e.target.value)} className={inputClass} placeholder="https://" />
       </label>
-      <p className="-mt-sp-3 text-xs text-ink/50">PayPal, tiendas, redes y correo llevan su ícono solo si no subes imagen.</p>
+      <p className="-mt-sp-3 text-xs text-ink/50">{t("PayPal, tiendas, redes y correo llevan su ícono solo si no subes imagen.", "PayPal, stores, socials and email get their own icon automatically if you don't upload an image.")}</p>
       <div className="grid gap-sp-4 sm:grid-cols-[170px_1fr]">
         <ImageUploadField
-          label="Imagen o logo"
+          label={t("Imagen o logo", "Image or logo")}
           value={form.imageUrl}
           onChange={(url) => set("imageUrl", url)}
           aspect={form.wide ? [...LINK_IMAGE_ASPECT_OPTIONS].reverse() : LINK_IMAGE_ASPECT_OPTIONS}
           recommendedSize={form.wide ? "1200 × 400 px" : "600 × 600 px"}
         />
         <fieldset className="flex flex-col gap-sp-2">
-          <legend className="text-sm font-medium text-ink">Cómo se ve</legend>
+          <legend className="text-sm font-medium text-ink">{t("Cómo se ve", "How it looks")}</legend>
           <label className="flex items-center gap-sp-2 text-sm text-ink/80">
-            <input type="radio" checked={form.wide} onChange={() => set("wide", true)} /> Fila a todo el ancho
+            <input type="radio" checked={form.wide} onChange={() => set("wide", true)} /> {t("Fila a todo el ancho", "Full-width row")}
           </label>
           <label className="flex items-center gap-sp-2 text-sm text-ink/80">
-            <input type="radio" checked={!form.wide} onChange={() => set("wide", false)} /> Tarjeta (dos por fila)
+            <input type="radio" checked={!form.wide} onChange={() => set("wide", false)} /> {t("Tarjeta (dos por fila)", "Card (two per row)")}
           </label>
           <label className="mt-sp-2 flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Descuento o etiqueta corta</span>
-            <input value={form.pill} maxLength={14} onChange={(e) => set("pill", e.target.value)} className={inputClass} placeholder="15% OFF, Nuevo…" />
+            <span className="text-sm font-medium text-ink">{t("Descuento o etiqueta corta", "Discount or short tag")}</span>
+            <input value={form.pill} maxLength={14} onChange={(e) => set("pill", e.target.value)} className={inputClass} placeholder={t("15% OFF, Nuevo…", "15% OFF, New…")} />
           </label>
         </fieldset>
       </div>
       <div className="grid gap-sp-4 sm:grid-cols-2">
-        <BilingualTextField label="Palabra de acción (tarjeta)" es={form.kicker} en={form.kickerEn} onEsChange={(v) => set("kicker", v)} onEnChange={(v) => set("kickerEn", v)} />
-        <BilingualTextField label="Etiqueta destacada" es={form.badge} en={form.badgeEn} onEsChange={(v) => set("badge", v)} onEnChange={(v) => set("badgeEn", v)} />
+        <BilingualTextField label={t("Palabra de acción (tarjeta)", "Action word (card)")} es={form.kicker} en={form.kickerEn} onEsChange={(v) => set("kicker", v)} onEnChange={(v) => set("kickerEn", v)} />
+        <BilingualTextField label={t("Etiqueta destacada", "Highlight tag")} es={form.badge} en={form.badgeEn} onEsChange={(v) => set("badge", v)} onEnChange={(v) => set("badgeEn", v)} />
       </div>
       <p className="-mt-sp-2 text-xs text-ink/50">
-        Acción: &quot;Comprar&quot;, &quot;Únete&quot;. Destacada (en tu color): &quot;Abierto ahora&quot;. Si no pones una, el enlace más visitado lleva
-        &quot;Más clics&quot; solo.
+        {t(
+          "Acción: “Comprar”, “Únete”. Destacada (en tu color): “Abierto ahora”. Si no pones una, el enlace más visitado lleva “Más clics” solo.",
+          "Action: “Shop”, “Join”. Highlight (in your color): “Open now”. If you don't set one, your most visited link gets “Most clicks” automatically."
+        )}
       </p>
       {extra}
       <div className="flex gap-sp-3">
         <button type="submit" disabled={saving} className={primaryButtonClass}>
-          {saving ? "Guardando…" : link ? "Guardar cambios" : "+ Agregar enlace"}
+          {saving ? t("Guardando…", "Saving…") : link ? t("Guardar cambios", "Save changes") : t("+ Agregar enlace", "+ Add link")}
         </button>
         <button type="button" onClick={onCancel} className={secondaryButtonClass}>
-          {link ? "Cerrar" : "Cancelar"}
+          {link ? t("Cerrar", "Close") : t("Cancelar", "Cancel")}
         </button>
       </div>
     </form>

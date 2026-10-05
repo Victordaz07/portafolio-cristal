@@ -172,6 +172,10 @@ export async function diagnoseInstagramComments(mediaLimit = 8) {
       const nested = await safe<{ comments?: GraphList<{ id: string; username?: string }> }>(
         `${GRAPH}/${m.id}?${new URLSearchParams({ fields: "comments_count,comments.limit(25){id,username}", access_token: auth.token })}`
       );
+      // Prueba del campo `from` (id y usuario del autor): a veces Meta lo entrega aunque oculte `username`.
+      const withFrom = await safe<GraphList<{ id: string; from?: { id?: string; username?: string } }>>(
+        `${GRAPH}/${m.id}/comments?${new URLSearchParams({ fields: "id,from", limit: "25", access_token: auth.token })}`
+      );
       return {
         permalink: m.permalink ?? null,
         timestamp: m.timestamp ?? null,
@@ -180,6 +184,9 @@ export async function diagnoseInstagramComments(mediaLimit = 8) {
         nested: nested.ok
           ? { returned: nested.data.comments?.data?.length ?? 0, usernames: (nested.data.comments?.data ?? []).map((c) => c.username ?? "(sin usuario)") }
           : { error: nested.error },
+        from: withFrom.ok
+          ? (withFrom.data.data ?? []).map((c) => (c.from ? `${c.from.username ?? "(sin usuario)"}#${c.from.id ? "id" : "sin-id"}` : "(sin from)"))
+          : { error: withFrom.error },
       };
     })
   );

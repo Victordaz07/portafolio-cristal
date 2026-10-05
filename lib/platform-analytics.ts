@@ -15,7 +15,7 @@ export const MIN_VIEWS = 100;
 export function nicheOf(label: string | null | undefined) {
   const text = (label || "").trim().toLowerCase();
   const found = NICHES.find((n) => n.id !== "otro" && (n.label.toLowerCase() === text || n.labelEn.toLowerCase() === text || text.includes(n.label.toLowerCase())));
-  return found ? { id: found.id, label: found.label } : { id: "otro", label: "Otros / varios" };
+  return found ? { id: found.id, label: found.label, labelEn: found.labelEn } : { id: "otro", label: "Otros / varios", labelEn: "Other / mixed" };
 }
 
 export function median(values: number[]) {

@@ -42,14 +42,14 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/calendario/page.tsx`
 - [x] `app/admin/(dashboard)/conectar/ConnectManager.tsx`
 - [x] `app/admin/(dashboard)/conectar/page.tsx`
-- [ ] `app/admin/(dashboard)/contacto/SettingsForm.tsx`
+- [x] `app/admin/(dashboard)/contacto/SettingsForm.tsx`
 - [x] `app/admin/(dashboard)/contacto/page.tsx`
 - [ ] `app/admin/(dashboard)/crear/Composer.tsx`
 - [x] `app/admin/(dashboard)/crear/page.tsx`
-- [ ] `app/admin/(dashboard)/cuenta/AccountForm.tsx`
+- [x] `app/admin/(dashboard)/cuenta/AccountForm.tsx`
 - [x] `app/admin/(dashboard)/cuenta/CreatorKindPicker.tsx`
 - [x] `app/admin/(dashboard)/cuenta/DataRequestForm.tsx`
-- [ ] `app/admin/(dashboard)/cuenta/page.tsx`
+- [x] `app/admin/(dashboard)/cuenta/page.tsx`
 - [ ] `app/admin/(dashboard)/dominio/DomainManager.tsx`
 - [x] `app/admin/(dashboard)/dominio/page.tsx`
 - [ ] `app/admin/(dashboard)/enlaces/LinkEditor.tsx`
@@ -115,7 +115,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/soporte/page.tsx`
 - [x] `app/admin/(dashboard)/testimonios/TestimonialsManager.tsx`
 - [x] `app/admin/(dashboard)/testimonios/page.tsx`
-- [ ] `app/admin/(dashboard)/vista-publica/PublicPreview.tsx`
+- [x] `app/admin/(dashboard)/vista-publica/PublicPreview.tsx`
 - [x] `app/admin/(dashboard)/vista-publica/page.tsx`
 - [x] `components/admin/AdminLang.tsx`
 - [x] `components/admin/AdminShell.tsx`
@@ -125,12 +125,12 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `components/admin/ConfirmDialog.tsx`
 - [x] `components/admin/EmailVerifyNotice.tsx`
 - [x] `components/admin/EmbedUrlInput.tsx`
-- [ ] `components/admin/HeroPreview.tsx`
+- [x] `components/admin/HeroPreview.tsx`
 - [x] `components/admin/IdeaForm.tsx`
 - [x] `components/admin/ImageCropModal.tsx`
 - [x] `components/admin/ImageUploadField.tsx`
 - [x] `components/admin/ImpersonationBanner.tsx`
-- [ ] `components/admin/InsightsCard.tsx`
+- [x] `components/admin/InsightsCard.tsx`
 - [x] `components/admin/LangSwitch.tsx`
 - [x] `components/admin/MediaUploadField.tsx`
 - [x] `components/admin/PageHeader.tsx`

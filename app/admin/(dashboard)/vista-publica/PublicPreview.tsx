@@ -2,29 +2,38 @@
 
 import { useEffect, useState } from "react";
 import { LOCALE_COOKIE } from "@/lib/i18n";
+import { useT } from "@/components/admin/AdminLang";
 
 const DEVICES = [
-  { id: "desktop", label: "Escritorio", width: "100%" },
-  { id: "mobile", label: "Celular", width: "390px" },
+  { id: "desktop", label: "Escritorio", labelEn: "Desktop", width: "100%" },
+  { id: "mobile", label: "Celular", labelEn: "Mobile", width: "390px" },
 ] as const;
 
 /** El sitio público dentro del panel, tal cual lo ve un visitante. */
 export default function PublicPreview({ src }: { src: string }) {
+  const { t, lang: panelLang } = useT();
   const [device, setDevice] = useState<(typeof DEVICES)[number]["id"]>("desktop");
   const [lang, setLang] = useState<"es" | "en">("es");
   const [reloadKey, setReloadKey] = useState(0);
   const width = DEVICES.find((d) => d.id === device)!.width;
 
   useEffect(() => {
-    if (document.cookie.split("; ").includes(`${LOCALE_COOKIE}=en`)) setLang("en");
-  }, []);
+    const cookies = document.cookie.split("; ");
+    if (cookies.includes(`${LOCALE_COOKIE}=en`)) setLang("en");
+    else if (panelLang === "en" && !cookies.some((c) => c.startsWith(`${LOCALE_COOKIE}=`))) {
+      // Con el panel en inglés, la vista previa del sitio también empieza en inglés.
+      document.cookie = `${LOCALE_COOKIE}=en; path=/; max-age=31536000`;
+      setLang("en");
+      setReloadKey((k) => k + 1);
+    }
+  }, [panelLang]);
 
   return (
     <div className="flex flex-col gap-sp-4">
       <div className="flex flex-wrap items-center justify-between gap-sp-3 rounded-[16px] bg-ink px-sp-4 py-3.5 text-cream">
-        <p className="text-xs">Así es exactamente como lo ve un visitante de tu portafolio público.</p>
+        <p className="text-xs">{t("Así es exactamente como lo ve un visitante de tu portafolio público.", "This is exactly how a visitor sees your public portfolio.")}</p>
         <a href="/" target="_blank" rel="noreferrer" className="text-xs font-semibold text-lime hover:underline">
-          Abrir sitio en vivo ↗
+          {t("Abrir sitio en vivo ↗", "Open live site ↗")}
         </a>
       </div>
 
@@ -38,7 +47,7 @@ export default function PublicPreview({ src }: { src: string }) {
               device === d.id ? "bg-ink text-cream" : "border border-line bg-white text-ink/70 hover:border-coral"
             }`}
           >
-            {d.label}
+            {panelLang === "en" ? d.labelEn : d.label}
           </button>
         ))}
         <span className="mx-sp-2 h-4 w-px bg-line" />
@@ -72,7 +81,7 @@ export default function PublicPreview({ src }: { src: string }) {
         <iframe
           key={reloadKey}
           src={src}
-          title="Vista pública del portafolio"
+          title={t("Vista pública del portafolio", "Public portfolio view")}
           style={{ width }}
           className="h-[78vh] max-w-full rounded-[12px] border border-line bg-white shadow-sm transition-all"
         />

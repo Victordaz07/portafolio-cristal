@@ -68,6 +68,19 @@ export async function followerGrowth(months = 6, endMonth?: string) {
 // ─── Mejor momento para publicar ───
 
 export const HEATMAP_DAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+export const HEATMAP_DAYS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+/** Palabras de los reportes y de la inteligencia (días, franjas, formatos) en inglés. */
+const REPORT_WORDS_EN: Record<string, string> = {
+  Lun: "Mon", Mar: "Tue", Mié: "Wed", Jue: "Thu", Vie: "Fri", Sáb: "Sat", Dom: "Sun",
+  Mañana: "Morning", Mediodía: "Midday", Tarde: "Afternoon", Noche: "Night",
+  Foto: "Photo", Video: "Video", "Con marca": "With a brand", Orgánico: "Organic",
+  "Corto (<80)": "Short (<80)", "Medio (80–200)": "Medium (80–200)", "Largo (200+)": "Long (200+)",
+};
+
+export function reportWord(lang: "es" | "en", word: string) {
+  return lang === "en" ? REPORT_WORDS_EN[word] ?? word : word;
+}
 export const HEATMAP_SLOTS = [
   { label: "Mañana", hint: "6–12 h", from: 6, to: 12 },
   { label: "Mediodía", hint: "12–16 h", from: 12, to: 16 },

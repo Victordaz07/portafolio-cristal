@@ -31,8 +31,8 @@ export default async function TeamIdeasPage({ searchParams }: { searchParams: Pr
   return (
     <div className="flex flex-col gap-sp-5">
       <PageHeader
-        eyebrow="Equipo Foliocrew"
-        title="Mejora continua"
+        eyebrow="Departamentos Foliocrew"
+        title="💡 Centro de sugerencias"
         description="Sugerencias de las cuentas e ideas del equipo. Al pasar una sugerencia a «Planeada» o «¡Ya está!», le avisamos a la cuenta por correo."
       />
       <div className="flex flex-wrap gap-sp-2">

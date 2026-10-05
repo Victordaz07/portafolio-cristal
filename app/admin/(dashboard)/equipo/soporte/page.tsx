@@ -38,7 +38,7 @@ export default async function TeamSupportPage({ searchParams }: { searchParams: 
 
   return (
     <div className="flex flex-col gap-sp-5">
-      <PageHeader eyebrow="Equipo Foliocrew" title="Centro de soporte" description="Atiende primero los más antiguos. Las respuestas le llegan a la cuenta por correo y en su panel." />
+      <PageHeader eyebrow="Departamentos Foliocrew" title="🎧 Centro de ayuda" description="Atiende primero los más antiguos. Las respuestas le llegan a la cuenta por correo y en su panel." />
       <div className="flex flex-wrap gap-sp-2">
         {FILTERS.map((x) => (
           <Link

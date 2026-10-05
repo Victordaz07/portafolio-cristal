@@ -18,7 +18,7 @@ const schema = z.object({
 /** Actualizar una idea: estado, respuesta para la cuenta o nota interna. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await requireRole("growth");
-  if (!user) return NextResponse.json({ error: "Solo Mejora continua" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: "Solo el equipo del Centro de sugerencias" }, { status: 403 });
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
@@ -58,7 +58,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await requireRole("growth");
-  if (!user) return NextResponse.json({ error: "Solo Mejora continua" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: "Solo el equipo del Centro de sugerencias" }, { status: 403 });
   const { id } = await params;
   const deleted = await prismaRoot.idea.delete({ where: { id } }).catch(() => null);
   if (!deleted) return NextResponse.json({ error: "No encontré esa idea" }, { status: 404 });

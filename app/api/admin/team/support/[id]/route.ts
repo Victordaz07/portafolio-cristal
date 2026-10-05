@@ -15,7 +15,7 @@ const replySchema = z.object({
 /** El equipo responde un ticket o agrega una nota interna. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await requireRole("support");
-  if (!user) return NextResponse.json({ error: "Solo Soporte" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: "Solo el equipo del Centro de ayuda" }, { status: 403 });
   const { id } = await params;
   const ticket = await prismaRoot.supportTicket.findUnique({ where: { id } });
   if (!ticket) return NextResponse.json({ error: "No encontré ese ticket" }, { status: 404 });
@@ -48,7 +48,7 @@ const patchSchema = z.object({
 /** Cambiar estado o asignación de un ticket. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await requireRole("support");
-  if (!user) return NextResponse.json({ error: "Solo Soporte" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: "Solo el equipo del Centro de ayuda" }, { status: 403 });
   const { id } = await params;
   const parsed = patchSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });

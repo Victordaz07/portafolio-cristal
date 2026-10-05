@@ -15,7 +15,7 @@ const schema = z.object({
 /** Idea interna del equipo (no viene de una cuenta). */
 export async function POST(request: Request) {
   const user = await requireRole("growth");
-  if (!user) return NextResponse.json({ error: "Solo Mejora continua" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: "Solo el equipo del Centro de sugerencias" }, { status: 403 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Escribe la idea en una frase" }, { status: 400 });
   const idea = await prismaRoot.idea.create({

@@ -3,17 +3,17 @@
 export const TEAM_ROLES = [
   {
     id: "support",
-    label: "Soporte",
+    label: "Centro de ayuda",
     hint: "Atiende los tickets de las cuentas y puede entrar a una cuenta para ayudar (con motivo, queda registrado).",
   },
   {
     id: "growth",
-    label: "Mejora continua",
+    label: "Centro de sugerencias",
     hint: "Gestiona las sugerencias de las cuentas y las ideas del equipo.",
   },
   {
     id: "data",
-    label: "Datos y recuperación",
+    label: "Recuperación de datos",
     hint: "Exporta datos de una cuenta y atiende pedidos de copia, recuperación o borrado.",
   },
 ] as const;

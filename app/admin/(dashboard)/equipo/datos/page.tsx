@@ -45,8 +45,8 @@ export default async function TeamDataPage({ searchParams }: { searchParams: Pro
   return (
     <div className="flex flex-col gap-sp-5">
       <PageHeader
-        eyebrow="Equipo Foliocrew"
-        title="🛟 Datos y recuperación"
+        eyebrow="Departamentos Foliocrew"
+        title="🛟 Recuperación de datos"
         description="Pedidos de las cuentas (copia, recuperar, borrar) y copias de los datos de una cuenta. Todo lo que hagas aquí queda registrado."
       />
 

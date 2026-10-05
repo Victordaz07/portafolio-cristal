@@ -18,7 +18,7 @@ const schema = z.object({
 /** El equipo de Datos resuelve (o rechaza) un pedido y se le avisa a la cuenta. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await requireRole("data");
-  if (!user) return NextResponse.json({ error: "Solo Datos y recuperación" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: "Solo el equipo de Recuperación de datos" }, { status: 403 });
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });

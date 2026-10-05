@@ -6,7 +6,7 @@ import { getT } from "@/lib/admin-lang-server";
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const parsed = brandFieldsSchema.safeParse(body);
@@ -22,7 +22,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: t("Marca no encontrada", "Brand not found") }, { status: 404 });
   }
 
-  const notes = autoEventNotes(before, parsed.data);
+  const notes = autoEventNotes(before, parsed.data, lang);
   const brand = await prisma.brand.update({
     where: { id },
     data: {

@@ -13,7 +13,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   const body = await request.json().catch(() => null);
   const parsed = brandCreateSchema.safeParse(body);
   if (!parsed.success) {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   const maxOrder = await prisma.brand.aggregate({ _max: { order: true } });
   // El orden de una marca nueva siempre va al final del carrusel.
   const input = { ...parsed.data, order: undefined };
-  const notes = autoEventNotes({ dealStatus: null, paymentStatus: null }, input);
+  const notes = autoEventNotes({ dealStatus: null, paymentStatus: null }, input, lang);
   const brand = await prisma.brand.create({
     data: {
       ...(toBrandData(input) as { name: string }),

@@ -50,7 +50,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/cuenta/CreatorKindPicker.tsx`
 - [x] `app/admin/(dashboard)/cuenta/DataRequestForm.tsx`
 - [x] `app/admin/(dashboard)/cuenta/page.tsx`
-- [ ] `app/admin/(dashboard)/dominio/DomainManager.tsx`
+- [x] `app/admin/(dashboard)/dominio/DomainManager.tsx`
 - [x] `app/admin/(dashboard)/dominio/page.tsx`
 - [ ] `app/admin/(dashboard)/enlaces/LinkEditor.tsx`
 - [x] `app/admin/(dashboard)/enlaces/page.tsx`
@@ -75,8 +75,8 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/layout.tsx`
 - [ ] `app/admin/(dashboard)/lista-de-espera/WaitlistTable.tsx`
 - [x] `app/admin/(dashboard)/lista-de-espera/page.tsx`
-- [ ] `app/admin/(dashboard)/marcas/BrandForm.tsx`
-- [ ] `app/admin/(dashboard)/marcas/BrandsManager.tsx`
+- [x] `app/admin/(dashboard)/marcas/BrandForm.tsx`
+- [x] `app/admin/(dashboard)/marcas/BrandsManager.tsx`
 - [x] `app/admin/(dashboard)/marcas/page.tsx`
 - [x] `app/admin/(dashboard)/media-kit/StatsManager.tsx`
 - [x] `app/admin/(dashboard)/media-kit/page.tsx`
@@ -101,10 +101,10 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [ ] `app/admin/(dashboard)/plataforma/[id]/page.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/charts.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/page.tsx`
-- [ ] `app/admin/(dashboard)/reportes/ReportActions.tsx`
+- [x] `app/admin/(dashboard)/reportes/ReportActions.tsx`
 - [x] `app/admin/(dashboard)/reportes/mensual/PrintButton.tsx`
-- [ ] `app/admin/(dashboard)/reportes/mensual/page.tsx`
-- [ ] `app/admin/(dashboard)/reportes/page.tsx`
+- [x] `app/admin/(dashboard)/reportes/mensual/page.tsx`
+- [x] `app/admin/(dashboard)/reportes/page.tsx`
 - [x] `app/admin/(dashboard)/resenas/ReviewsManager.tsx`
 - [x] `app/admin/(dashboard)/resenas/page.tsx`
 - [x] `app/admin/(dashboard)/servicios/ServicesManager.tsx`

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma } from "@/lib/prisma";
 import {
   deleteInstagramComment,
   hideInstagramComment,
@@ -26,6 +27,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   try {
     if (parsed.data.action === "reply") {
       const reply = await replyToInstagramComment(id, parsed.data.message);
+      // Se guarda para reconocerla como propia: Meta no dice quién escribió cada respuesta.
+      await prisma.inboxReply.create({ data: { id: reply.id, platform: "instagram", commentId: id } }).catch(() => null);
       return NextResponse.json({ ok: true, replyId: reply.id });
     }
     await hideInstagramComment(id, parsed.data.hide);

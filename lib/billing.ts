@@ -57,6 +57,17 @@ export const BILLING_LABEL: Record<BillingState, string> = {
   none: "Sin plan",
 };
 
+export const BILLING_LABEL_EN: Record<BillingState, string> = {
+  comp: "Complimentary",
+  active: "Paid",
+  trial: "Free trial",
+  expired: "Expired",
+  none: "No plan",
+};
+
+/** Estado del plan en el idioma del panel. */
+export const billingLabel = (state: BillingState, lang: "es" | "en" = "es") => (lang === "en" ? BILLING_LABEL_EN : BILLING_LABEL)[state];
+
 /** Estado del plan hoy y hasta cuándo dura. */
 export function billingState(c: BillingFields, now = new Date()) {
   if (c.comp) return { state: "comp" as BillingState, until: null, daysLeft: null };

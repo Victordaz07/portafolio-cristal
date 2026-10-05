@@ -32,61 +32,61 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 
 ### Pantallas y componentes del panel
 - [ ] `app/admin/(dashboard)/apariencia/DesignStudio.tsx`
-- [ ] `app/admin/(dashboard)/apariencia/page.tsx`
+- [x] `app/admin/(dashboard)/apariencia/page.tsx`
 - [ ] `app/admin/(dashboard)/ayuda/page.tsx`
 - [ ] `app/admin/(dashboard)/bienvenida/Wizard.tsx`
 - [ ] `app/admin/(dashboard)/bienvenida/page.tsx`
 - [ ] `app/admin/(dashboard)/bitacora/LogManager.tsx`
-- [ ] `app/admin/(dashboard)/bitacora/page.tsx`
+- [x] `app/admin/(dashboard)/bitacora/page.tsx`
 - [ ] `app/admin/(dashboard)/calendario/CalendarView.tsx`
-- [ ] `app/admin/(dashboard)/calendario/page.tsx`
+- [x] `app/admin/(dashboard)/calendario/page.tsx`
 - [x] `app/admin/(dashboard)/conectar/ConnectManager.tsx`
 - [x] `app/admin/(dashboard)/conectar/page.tsx`
 - [ ] `app/admin/(dashboard)/contacto/SettingsForm.tsx`
-- [ ] `app/admin/(dashboard)/contacto/page.tsx`
+- [x] `app/admin/(dashboard)/contacto/page.tsx`
 - [ ] `app/admin/(dashboard)/crear/Composer.tsx`
-- [ ] `app/admin/(dashboard)/crear/page.tsx`
+- [x] `app/admin/(dashboard)/crear/page.tsx`
 - [ ] `app/admin/(dashboard)/cuenta/AccountForm.tsx`
-- [ ] `app/admin/(dashboard)/cuenta/CreatorKindPicker.tsx`
-- [ ] `app/admin/(dashboard)/cuenta/DataRequestForm.tsx`
+- [x] `app/admin/(dashboard)/cuenta/CreatorKindPicker.tsx`
+- [x] `app/admin/(dashboard)/cuenta/DataRequestForm.tsx`
 - [ ] `app/admin/(dashboard)/cuenta/page.tsx`
 - [ ] `app/admin/(dashboard)/dominio/DomainManager.tsx`
-- [ ] `app/admin/(dashboard)/dominio/page.tsx`
+- [x] `app/admin/(dashboard)/dominio/page.tsx`
 - [ ] `app/admin/(dashboard)/enlaces/LinkEditor.tsx`
-- [ ] `app/admin/(dashboard)/enlaces/page.tsx`
+- [x] `app/admin/(dashboard)/enlaces/page.tsx`
 - [ ] `app/admin/(dashboard)/equipo/datos/DataRequestRow.tsx`
 - [ ] `app/admin/(dashboard)/equipo/datos/page.tsx`
 - [ ] `app/admin/(dashboard)/equipo/ideas/IdeaRow.tsx`
 - [ ] `app/admin/(dashboard)/equipo/ideas/page.tsx`
 - [ ] `app/admin/(dashboard)/equipo/page.tsx`
 - [ ] `app/admin/(dashboard)/equipo/personas/TeamMembersManager.tsx`
-- [ ] `app/admin/(dashboard)/equipo/personas/page.tsx`
-- [ ] `app/admin/(dashboard)/equipo/soporte/[id]/TeamTicketControls.tsx`
-- [ ] `app/admin/(dashboard)/equipo/soporte/[id]/page.tsx`
-- [ ] `app/admin/(dashboard)/equipo/soporte/page.tsx`
+- [x] `app/admin/(dashboard)/equipo/personas/page.tsx`
+- [x] `app/admin/(dashboard)/equipo/soporte/[id]/TeamTicketControls.tsx`
+- [x] `app/admin/(dashboard)/equipo/soporte/[id]/page.tsx`
+- [x] `app/admin/(dashboard)/equipo/soporte/page.tsx`
 - [ ] `app/admin/(dashboard)/faq/FaqManager.tsx`
-- [ ] `app/admin/(dashboard)/faq/page.tsx`
+- [x] `app/admin/(dashboard)/faq/page.tsx`
 - [x] `app/admin/(dashboard)/feed/ContentCardForm.tsx`
 - [x] `app/admin/(dashboard)/feed/FeedManager.tsx`
 - [x] `app/admin/(dashboard)/feed/page.tsx`
 - [ ] `app/admin/(dashboard)/hero/HeroForm.tsx`
-- [ ] `app/admin/(dashboard)/hero/page.tsx`
+- [x] `app/admin/(dashboard)/hero/page.tsx`
 - [ ] `app/admin/(dashboard)/ideas/page.tsx`
 - [x] `app/admin/(dashboard)/layout.tsx`
 - [ ] `app/admin/(dashboard)/lista-de-espera/WaitlistTable.tsx`
-- [ ] `app/admin/(dashboard)/lista-de-espera/page.tsx`
+- [x] `app/admin/(dashboard)/lista-de-espera/page.tsx`
 - [ ] `app/admin/(dashboard)/marcas/BrandForm.tsx`
 - [ ] `app/admin/(dashboard)/marcas/BrandsManager.tsx`
-- [ ] `app/admin/(dashboard)/marcas/page.tsx`
+- [x] `app/admin/(dashboard)/marcas/page.tsx`
 - [ ] `app/admin/(dashboard)/media-kit/StatsManager.tsx`
-- [ ] `app/admin/(dashboard)/media-kit/page.tsx`
+- [x] `app/admin/(dashboard)/media-kit/page.tsx`
 - [x] `app/admin/(dashboard)/mensajes/MessagesManager.tsx`
 - [x] `app/admin/(dashboard)/mensajes/page.tsx`
 - [ ] `app/admin/(dashboard)/metas/GoalsManager.tsx`
-- [ ] `app/admin/(dashboard)/metas/page.tsx`
+- [x] `app/admin/(dashboard)/metas/page.tsx`
 - [x] `app/admin/(dashboard)/page.tsx`
 - [ ] `app/admin/(dashboard)/paquetes/PackagesManager.tsx`
-- [ ] `app/admin/(dashboard)/paquetes/page.tsx`
+- [x] `app/admin/(dashboard)/paquetes/page.tsx`
 - [ ] `app/admin/(dashboard)/plan/PayForm.tsx`
 - [ ] `app/admin/(dashboard)/plan/page.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/AccountsTable.tsx`
@@ -94,29 +94,29 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [ ] `app/admin/(dashboard)/plataforma/IntelligenceSection.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/LeaderboardTable.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/PendingPayments.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/RefreshInsightsButton.tsx`
+- [x] `app/admin/(dashboard)/plataforma/RefreshInsightsButton.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/[id]/AccountActions.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/[id]/BillingCard.tsx`
-- [ ] `app/admin/(dashboard)/plataforma/[id]/OwnerEmailForm.tsx`
+- [x] `app/admin/(dashboard)/plataforma/[id]/OwnerEmailForm.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/[id]/page.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/charts.tsx`
 - [ ] `app/admin/(dashboard)/plataforma/page.tsx`
 - [ ] `app/admin/(dashboard)/reportes/ReportActions.tsx`
-- [ ] `app/admin/(dashboard)/reportes/mensual/PrintButton.tsx`
+- [x] `app/admin/(dashboard)/reportes/mensual/PrintButton.tsx`
 - [ ] `app/admin/(dashboard)/reportes/mensual/page.tsx`
 - [ ] `app/admin/(dashboard)/reportes/page.tsx`
 - [ ] `app/admin/(dashboard)/resenas/ReviewsManager.tsx`
-- [ ] `app/admin/(dashboard)/resenas/page.tsx`
+- [x] `app/admin/(dashboard)/resenas/page.tsx`
 - [ ] `app/admin/(dashboard)/servicios/ServicesManager.tsx`
-- [ ] `app/admin/(dashboard)/servicios/page.tsx`
-- [ ] `app/admin/(dashboard)/soporte/NewTicketForm.tsx`
-- [ ] `app/admin/(dashboard)/soporte/[id]/CustomerTicketActions.tsx`
-- [ ] `app/admin/(dashboard)/soporte/[id]/page.tsx`
-- [ ] `app/admin/(dashboard)/soporte/page.tsx`
+- [x] `app/admin/(dashboard)/servicios/page.tsx`
+- [x] `app/admin/(dashboard)/soporte/NewTicketForm.tsx`
+- [x] `app/admin/(dashboard)/soporte/[id]/CustomerTicketActions.tsx`
+- [x] `app/admin/(dashboard)/soporte/[id]/page.tsx`
+- [x] `app/admin/(dashboard)/soporte/page.tsx`
 - [ ] `app/admin/(dashboard)/testimonios/TestimonialsManager.tsx`
-- [ ] `app/admin/(dashboard)/testimonios/page.tsx`
+- [x] `app/admin/(dashboard)/testimonios/page.tsx`
 - [ ] `app/admin/(dashboard)/vista-publica/PublicPreview.tsx`
-- [ ] `app/admin/(dashboard)/vista-publica/page.tsx`
+- [x] `app/admin/(dashboard)/vista-publica/page.tsx`
 - [x] `components/admin/AdminLang.tsx`
 - [x] `components/admin/AdminShell.tsx`
 - [x] `components/admin/Badge.tsx`
@@ -126,7 +126,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `components/admin/EmailVerifyNotice.tsx`
 - [x] `components/admin/EmbedUrlInput.tsx`
 - [ ] `components/admin/HeroPreview.tsx`
-- [ ] `components/admin/IdeaForm.tsx`
+- [x] `components/admin/IdeaForm.tsx`
 - [x] `components/admin/ImageCropModal.tsx`
 - [x] `components/admin/ImageUploadField.tsx`
 - [x] `components/admin/ImpersonationBanner.tsx`
@@ -136,7 +136,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `components/admin/PageHeader.tsx`
 - [x] `components/admin/ReorderButtons.tsx`
 - [x] `components/admin/SetupChecklist.tsx`
-- [ ] `components/admin/ShareInsightsButton.tsx`
+- [x] `components/admin/ShareInsightsButton.tsx`
 - [x] `components/admin/ToastContext.tsx`
-- [ ] `components/admin/support/ReplyBox.tsx`
-- [ ] `components/admin/support/SupportThread.tsx`
+- [x] `components/admin/support/ReplyBox.tsx`
+- [x] `components/admin/support/SupportThread.tsx`

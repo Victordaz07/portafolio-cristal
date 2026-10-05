@@ -4,10 +4,12 @@ import PageHeader from "@/components/admin/PageHeader";
 import { adminEmails } from "@/lib/platform-admin";
 import { requireOwner } from "@/lib/team";
 import TeamMembersManager from "./TeamMembersManager";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function TeamMembersPage() {
+  const { t } = await getT();
   const owner = await requireOwner();
   if (!owner) notFound();
   const members = await prismaRoot.teamMember.findMany({ orderBy: { createdAt: "asc" } });
@@ -21,9 +23,9 @@ export default async function TeamMembersPage() {
   return (
     <div className="flex flex-col gap-sp-5">
       <PageHeader
-        eyebrow="Equipo Foliocrew"
-        title="Personas del equipo"
-        description="Cada persona entra con su propia cuenta de Foliocrew (el mismo correo). Los roles deciden qué centros ve. Todo queda registrado."
+        eyebrow={t("Equipo Foliocrew", "Foliocrew team")}
+        title={t("Personas del equipo", "Team members")}
+        description={t("Cada persona entra con su propia cuenta de Foliocrew (el mismo correo). Los roles deciden qué centros ve. Todo queda registrado.", "Each person signs in with their own Foliocrew account (same email). Roles decide which centers they see. Everything is logged.")}
       />
       <TeamMembersManager
         owners={adminEmails().map((email) => ({ email, account: accountFor(email)?.creator?.name ?? null }))}

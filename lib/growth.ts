@@ -1,3 +1,4 @@
+import type { AdminLang } from "./admin-lang";
 // Utilidades de Crecimiento (metas, plan semanal y bitácora). Sin dependencias de servidor:
 // se usan también en componentes de cliente.
 
@@ -87,15 +88,18 @@ export function weekStartOf(key: string) {
 }
 
 const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /** "2026-09-28" → "28 sep 2026" */
-export function formatDateKey(key: string, withYear = true) {
+export function formatDateKey(key: string, withYear = true, lang: AdminLang = "es") {
   const [y, m, d] = key.split("-").map(Number);
+  if (lang === "en") return withYear ? `${MONTHS_EN[m - 1]} ${d}, ${y}` : `${MONTHS_EN[m - 1]} ${d}`;
   return withYear ? `${d} ${MONTHS[m - 1]} ${y}` : `${d} ${MONTHS[m - 1]}`;
 }
 
 /** "Semana del 28 sep al 4 oct" */
-export function weekLabel(weekStart: string) {
+export function weekLabel(weekStart: string, lang: AdminLang = "es") {
+  if (lang === "en") return `Week of ${formatDateKey(weekStart, false, "en")} – ${formatDateKey(addDays(weekStart, 6), false, "en")}`;
   return `Semana del ${formatDateKey(weekStart, false)} al ${formatDateKey(addDays(weekStart, 6), false)}`;
 }
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
-import { DATA_REQUEST_STATUS, dataRequestKindLabel } from "@/lib/data-export";
+import { DATA_REQUEST_STATUS, dataRequestKindLabel } from "@/lib/data-requests";
 
 type Request = {
   id: string;

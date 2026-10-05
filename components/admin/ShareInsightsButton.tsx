@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useT } from "@/components/admin/AdminLang";
 
 /** Sumarse o salir de la inteligencia de Foliocrew (resultados anónimos a cambio de comparativas del nicho). */
 export default function ShareInsightsButton({ share, label, variant = "primary" }: { share: boolean; label: string; variant?: "primary" | "ghost" }) {
+  const { t } = useT();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -20,7 +22,7 @@ export default function ShareInsightsButton({ share, label, variant = "primary" 
     setBusy(false);
     if (!res?.ok) {
       const data = await res?.json().catch(() => null);
-      setError(data?.error || "No se pudo guardar. Intenta de nuevo.");
+      setError(data?.error || t("No se pudo guardar. Intenta de nuevo.", "Couldn't save. Try again."));
       return;
     }
     router.refresh();
@@ -38,7 +40,7 @@ export default function ShareInsightsButton({ share, label, variant = "primary" 
             : "rounded-full border border-line bg-white px-sp-4 py-2 text-sm font-semibold text-ink/70 transition hover:border-coral hover:text-ink disabled:opacity-60"
         }
       >
-        {busy ? "Guardando…" : label}
+        {busy ? t("Guardando…", "Saving…") : label}
       </button>
       {error && (
         <span role="alert" className="text-xs text-red-700">

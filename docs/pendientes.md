@@ -3,14 +3,16 @@
 Lo que el código ya no puede resolver solo: cuentas, llaves y revisiones de terceros.
 Regla de siempre: **nunca pegues llaves ni secretos en el chat ni en capturas**; cópialos directo de una pestaña a otra.
 
-## 1. Base de datos para los previews (importante)
-Hoy los previews de Vercel (cada PR) **no migran** para no tocar producción (`scripts/migrate.mjs`).
-Para que cada preview tenga su propia base:
-1. En Neon: crea una rama `preview` a partir de `main` (no borres ni reinicies `main`).
-2. En Vercel → Settings → Environment Variables, **solo en el entorno Preview**:
-   - `DATABASE_URL` y `DIRECT_URL` → los de la rama `preview` de Neon.
-   - `DB_ENV` = `preview`.
-3. En **Production** puedes agregar `DB_ENV` = `production` (opcional, es un seguro extra).
+## 1. Base de datos para los previews (pospuesto, no urgente)
+Revisado el 5 de octubre: la integración nativa de Neon en Vercel (recurso `neon-chestnut-lens`) inyecta sus variables
+en Production **y** Preview, y no crea ramas por preview. El código solo lee `DATABASE_URL` y `DIRECT_URL`.
+
+Hoy los previews usan la base de producción, pero **nunca migran** (`scripts/migrate.mjs` lo impide sin `DB_ENV=preview`).
+Es suficiente mientras solo tú abras los previews. Cuando entre más gente al equipo:
+1. En Neon (Open in Neon Console): crea la rama `preview` a partir de `main`. No toques `main`.
+2. En Vercel → Storage → `neon-chestnut-lens` → Settings → Allowed Environments: deja **solo Production**.
+3. En Vercel → Environment Variables, **solo Preview**: `DATABASE_URL` (pooled de la rama preview),
+   `DIRECT_URL` (directa de la rama preview) y `DB_ENV` = `preview`. Quita Preview del `DIRECT_URL` actual.
 
 ## 2. Meta / Instagram
 1. En developers.facebook.com → tu app → Roles de la app → Evaluadores de Instagram: agrega **beyareaplus** y **alfonsorb07**.

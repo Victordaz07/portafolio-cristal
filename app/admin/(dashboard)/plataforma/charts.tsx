@@ -13,6 +13,7 @@ const TABS = [
   { id: "nichos", label: "Nichos" },
   { id: "inteligencia", label: "Inteligencia" },
   { id: "cuentas", label: "Cuentas" },
+  { id: "departamentos", label: "Departamentos" },
 ];
 
 export function PlatformTabs({ active }: { active: string }) {

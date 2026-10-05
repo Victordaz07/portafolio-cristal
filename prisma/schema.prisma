@@ -57,6 +57,9 @@ model Creator {
   siteSettings      SiteSettings?
   socialAccounts    SocialAccount[]
   inboxReplies      InboxReply[]
+  supportTickets    SupportTicket[]
+  ideas             Idea[]
+  dataRequests      DataRequest[]
   goals             Goal[]
   actionItems       ActionItem[]
   logEntries        LogEntry[]
@@ -638,5 +641,101 @@ model BioLinkGroup {
   links     BioLink[]
   createdAt DateTime  @default(now())
 
+  @@index([creatorId])
+}
+
+// ─── Equipo de Foliocrew: soporte, mejora continua y datos ───
+
+/// Personas del equipo (además de PLATFORM_ADMIN_EMAILS, que son Dueño). Entran con su propia cuenta de Foliocrew.
+model TeamMember {
+  id        String   @id @default(cuid())
+  /// Correo de su cuenta de Foliocrew (en minúsculas)
+  email     String   @unique
+  name      String?
+  /// "support" | "growth" | "data" (lib/team.ts)
+  roles     String[] @default([])
+  active    Boolean  @default(true)
+  addedBy   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Ticket del centro de soporte: lo abre una cuenta, lo atiende el equipo.
+model SupportTicket {
+  id               String           @id @default(cuid())
+  number           Int              @unique @default(autoincrement())
+  creatorId        String           @default("") // lo llena lib/prisma.ts
+  creator          Creator          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  authorEmail      String
+  authorName       String?
+  subject          String
+  category         String           @default("otro") // lib/support.ts → CATEGORIES
+  status           String           @default("open") // "open" | "waiting" | "closed"
+  /// Correo de quien del equipo lo atiende
+  assignedTo       String?
+  /// La última respuesta del equipo todavía no la vio la cuenta
+  unreadByCustomer Boolean          @default(false)
+  lastActivityAt   DateTime         @default(now())
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  messages         SupportMessage[]
+
+  @@index([status, lastActivityAt])
+  @@index([creatorId])
+}
+
+model SupportMessage {
+  id          String        @id @default(cuid())
+  ticketId    String
+  ticket      SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  fromTeam    Boolean       @default(false)
+  /// Nota interna del equipo: la cuenta no la ve
+  internal    Boolean       @default(false)
+  authorEmail String
+  authorName  String?
+  body        String
+  createdAt   DateTime      @default(now())
+
+  @@index([ticketId, createdAt])
+}
+
+/// Centro de mejora continua: sugerencias de las cuentas e ideas internas del equipo.
+model Idea {
+  id           String   @id @default(cuid())
+  /// Cuenta que la sugirió; null = idea interna del equipo
+  creatorId    String?
+  creator      Creator? @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+  authorEmail  String
+  authorName   String?
+  title        String
+  description  String   @default("")
+  category     String   @default("otro") // lib/ideas.ts → CATEGORIES
+  status       String   @default("new") // "new" | "review" | "planned" | "done" | "declined"
+  /// Respuesta del equipo que ve quien la sugirió
+  teamReply    String?
+  /// Nota interna del equipo
+  internalNote String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status, updatedAt])
+  @@index([creatorId])
+}
+
+/// Centro de datos: pedidos de copia, recuperación o borrado de datos de una cuenta.
+model DataRequest {
+  id          String    @id @default(cuid())
+  creatorId   String    @default("") // lo llena lib/prisma.ts
+  creator     Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  kind        String // "export" | "recover" | "delete"
+  detail      String    @default("")
+  status      String    @default("open") // "open" | "done" | "rejected"
+  requestedBy String
+  handledBy   String?
+  resolution  String?
+  createdAt   DateTime  @default(now())
+  resolvedAt  DateTime?
+
+  @@index([status, createdAt])
   @@index([creatorId])
 }

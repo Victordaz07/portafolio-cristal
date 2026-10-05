@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-/** Franja fija mientras quien administra Foliocrew está "entrando como" otra cuenta. */
+/** Franja fija mientras alguien del equipo de Foliocrew está "entrando como" otra cuenta. */
 export default function ImpersonationBanner({ creatorName }: { creatorName: string }) {
   const router = useRouter();
   const [leaving, setLeaving] = useState(false);
@@ -11,11 +11,12 @@ export default function ImpersonationBanner({ creatorName }: { creatorName: stri
   async function leave() {
     setLeaving(true);
     const response = await fetch("/api/admin/platform/impersonate", { method: "DELETE" });
+    const body = (await response.json().catch(() => ({}))) as { back?: string };
     if (!response.ok) {
       setLeaving(false);
       return;
     }
-    router.push("/admin/plataforma");
+    router.push(body.back ?? "/admin/plataforma");
     router.refresh();
   }
 

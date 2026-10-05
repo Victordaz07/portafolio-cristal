@@ -10,6 +10,13 @@ import { creatorKind } from "@/lib/creator-kind";
 import { emailConfigured } from "@/lib/email";
 import { isPlatformAdminEmail } from "@/lib/platform-admin";
 import ShareInsightsButton from "@/components/admin/ShareInsightsButton";
+import DataRequestForm from "./DataRequestForm";
+import { DATA_REQUEST_STATUS, dataRequestKindLabel } from "@/lib/data-export";
+
+const fmtDate = (d: Date) => d.toLocaleString("es", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+
+/** "Motivo: Ticket #3: …" → "Ticket #3: …" (el registro guarda el motivo de cada acceso). */
+const accessReason = (detail: string | null) => (detail?.startsWith("Motivo: ") ? detail.slice(8) : "Ayuda de soporte");
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ correo?: string }> }) {
   const { correo } = await searchParams;
@@ -21,6 +28,16 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       ])
     : [null, null];
   const siteUrl = (await sessionCreatorSite())?.url ?? "";
+  const [dataRequests, teamAccess] = session
+    ? await Promise.all([
+        prisma.dataRequest.findMany({ orderBy: { createdAt: "desc" }, take: 10 }),
+        prismaRoot.platformAction.findMany({
+          where: { creatorId: session.creatorId, action: { in: ["impersonate", "data-export"] } },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        }),
+      ])
+    : [[], []];
 
   return (
     <div className="flex flex-col gap-sp-5">
@@ -86,6 +103,53 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
             <ShareInsightsButton share label="Sumarme" />
           )}
         </div>
+      </Card>
+      <Card>
+        <div id="datos" className="scroll-mt-sp-6" />
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Tus datos</p>
+        {session?.actorId ? (
+          <p className="text-sm text-ink/70">Mientras el equipo ayuda en esta cuenta, la descarga y los pedidos de datos no están disponibles.</p>
+        ) : (
+          <DataRequestForm />
+        )}
+        {dataRequests.length > 0 && (
+          <ul className="mt-sp-4 flex flex-col gap-sp-2 border-t border-line pt-sp-4 text-sm">
+            {dataRequests.map((r) => {
+              const status = DATA_REQUEST_STATUS[r.status] ?? DATA_REQUEST_STATUS.open;
+              return (
+                <li key={r.id} className="flex flex-col gap-sp-1">
+                  <div className="flex flex-wrap items-center gap-sp-2">
+                    <span className="font-semibold text-ink">{dataRequestKindLabel(r.kind)}</span>
+                    <span className={`rounded-full px-[8px] py-px font-mono text-[10px] uppercase ${status.tone}`}>{status.label}</span>
+                    <span className="font-mono text-xs text-ink/50">{fmtDate(r.createdAt)}</span>
+                  </div>
+                  {r.resolution && <p className="text-ink/70">💬 {r.resolution}</p>}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Card>
+      <Card>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Accesos del equipo de Foliocrew</p>
+        <p className="text-sm text-ink/70">
+          Cada vez que alguien del equipo entra a tu cuenta para ayudarte (o saca una copia de tus datos) queda anotado aquí, con el motivo.
+        </p>
+        {teamAccess.length === 0 ? (
+          <p className="mt-sp-2 text-sm text-ink/60">Nadie del equipo ha entrado a tu cuenta.</p>
+        ) : (
+          <ul className="mt-sp-3 flex flex-col gap-sp-2 text-sm">
+            {teamAccess.map((a) => (
+              <li key={a.id} className="flex flex-wrap gap-x-sp-2 border-t border-line pt-sp-2 first:border-0 first:pt-0">
+                <span className="font-mono text-xs text-ink/50">{fmtDate(a.createdAt)}</span>
+                <span className="font-semibold text-ink">{a.actorEmail}</span>
+                <span className="text-ink/70">
+                  {a.action === "data-export" ? "Sacó una copia de tus datos" : `Entró a tu cuenta · ${accessReason(a.detail)}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
       <AccountForm
         initialName={user?.name ?? creator?.name ?? ""}

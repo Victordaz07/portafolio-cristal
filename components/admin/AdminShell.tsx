@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { MenuIcon, CloseIcon, LogoutIcon } from "@/components/icons";
 
-type NavItem = { href: string; label: string; badgeKey?: "unread" };
+type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets"; exact?: boolean };
 type NavGroup = { id: string; title: string; items: NavItem[] };
 
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
@@ -69,26 +69,51 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Ayuda",
     items: [
       { href: "/admin/ayuda", label: "Manual de uso" },
+      { href: "/admin/soporte", label: "Soporte", badgeKey: "support" },
+      { href: "/admin/ideas", label: "Ideas y sugerencias" },
       { href: "/admin/plan", label: "Mi plan" },
       { href: "/admin/cuenta", label: "Mi cuenta" },
     ],
   },
 ];
 
-// Solo para quien administra la plataforma.
-const PLATFORM_GROUP: NavGroup = {
-  id: "foliocrew",
-  title: "Foliocrew",
-  items: [
-    { href: "/admin/plataforma", label: "Centro de mando" },
-    { href: "/admin/lista-de-espera", label: "Lista de espera" },
-  ],
-};
+/** Departamentos del equipo: cada uno aparece según los roles de la persona. */
+function departmentItems(team: { owner: boolean; roles: string[] } | null): NavItem[] {
+  if (!team) return [];
+  const has = (role: string) => team.owner || team.roles.includes(role);
+  const items: NavItem[] = [];
+  if (has("support")) items.push({ href: "/admin/equipo/soporte", label: "Centro de ayuda", badgeKey: "tickets" });
+  if (has("growth")) items.push({ href: "/admin/equipo/ideas", label: "Centro de sugerencias" });
+  if (has("data")) items.push({ href: "/admin/equipo/datos", label: "Recuperación de datos" });
+  if (team.owner) items.push({ href: "/admin/equipo/personas", label: "Personas del equipo" });
+  return items;
+}
+
+/**
+ * Grupo "Foliocrew". El Dueño ve el Centro de mando con todos los departamentos debajo;
+ * las demás personas del equipo ven solo el centro del equipo y sus departamentos.
+ */
+function foliocrewGroup(platformAdmin: boolean, team: { owner: boolean; roles: string[] } | null): NavGroup | null {
+  const departments = departmentItems(team);
+  if (platformAdmin) {
+    return {
+      id: "foliocrew",
+      title: "Foliocrew",
+      items: [
+        { href: "/admin/plataforma", label: "Centro de mando" },
+        ...departments,
+        { href: "/admin/lista-de-espera", label: "Lista de espera" },
+      ],
+    };
+  }
+  if (!departments.length) return null;
+  return { id: "equipo", title: "Equipo Foliocrew", items: [{ href: "/admin/equipo", label: "Centro del equipo", exact: true }, ...departments] };
+}
 
 const OPEN_GROUPS_KEY = "admin-nav-open-groups";
 
-function isActive(pathname: string, href: string) {
-  return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+function isActive(pathname: string, href: string, exact = false) {
+  return href === "/admin" || exact ? pathname === href : pathname.startsWith(href);
 }
 
 export default function AdminShell({
@@ -97,6 +122,9 @@ export default function AdminShell({
   creatorName = "",
   siteUrl = "/",
   platformAdmin = false,
+  team = null,
+  supportUnread = 0,
+  openTickets = 0,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -104,6 +132,12 @@ export default function AdminShell({
   siteUrl?: string;
   /** Quien administra Foliocrew: ve el grupo "Foliocrew" (cuentas y lista de espera). */
   platformAdmin?: boolean;
+  /** Persona del equipo de Foliocrew: ve el grupo "Equipo Foliocrew" según sus roles. */
+  team?: { owner: boolean; roles: string[] } | null;
+  /** Respuestas de soporte que la cuenta todavía no vio. */
+  supportUnread?: number;
+  /** Tickets abiertos (para Soporte). */
+  openTickets?: number;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -139,7 +173,7 @@ export default function AdminShell({
     router.refresh();
   }
 
-  const badges = { unread: unreadMessages };
+  const badges = { unread: unreadMessages, support: supportUnread, tickets: openTickets };
   const homeActive = isActive(pathname, "/admin");
 
   return (
@@ -189,8 +223,8 @@ export default function AdminShell({
         </Link>
 
         <nav className="-mx-1 mt-sp-1 flex flex-1 flex-col gap-sp-1 overflow-y-auto px-1">
-          {(platformAdmin ? [...NAV_GROUPS, PLATFORM_GROUP] : NAV_GROUPS).map((group) => {
-            const groupActive = group.items.some((item) => isActive(pathname, item.href));
+          {[...NAV_GROUPS, ...[foliocrewGroup(platformAdmin, team)].filter((g): g is NavGroup => Boolean(g))].map((group) => {
+            const groupActive = group.items.some((item) => isActive(pathname, item.href, item.exact));
             const open = openGroups[group.id] !== false;
             return (
               <div key={group.id}>
@@ -219,7 +253,7 @@ export default function AdminShell({
                 {open && (
                   <div className="flex flex-col gap-0.5 pb-1.5">
                     {group.items.map((item) => {
-                      const active = isActive(pathname, item.href);
+                      const active = isActive(pathname, item.href, item.exact);
                       const badge = item.badgeKey ? badges[item.badgeKey] : 0;
                       return (
                         <Link

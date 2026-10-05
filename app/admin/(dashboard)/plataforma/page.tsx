@@ -13,13 +13,14 @@ import AccountsTable from "./AccountsTable";
 import PendingPayments from "./PendingPayments";
 import LeaderboardTable from "./LeaderboardTable";
 import IntelligenceSection from "./IntelligenceSection";
+import DepartmentsSection from "./DepartmentsSection";
 import { BarList, EngagementHeatmap, PlatformTabs, Stat, WeeklyBars, compact, eyebrowClass } from "./charts";
 import { BILLING_LABEL, PAYMENT_METHODS, billingState, formatMoney, getPlan, type PaymentMethod } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
 
 const DAY = 86_400_000;
-const VIEWS = ["resumen", "creadores", "contenido", "nichos", "inteligencia", "cuentas"];
+const VIEWS = ["resumen", "creadores", "contenido", "nichos", "inteligencia", "cuentas", "departamentos"];
 const networkLabel = (key: string) => (key in NETWORK_META ? NETWORK_META[key as keyof typeof NETWORK_META].label : key);
 
 export default async function PlatformPage({ searchParams }: { searchParams: Promise<{ vista?: string; nicho?: string }> }) {
@@ -33,7 +34,7 @@ export default async function PlatformPage({ searchParams }: { searchParams: Pro
       <PageHeader
         eyebrow="Foliocrew"
         title="Centro de mando"
-        description="Cómo va Foliocrew y qué está funcionando: cuentas, creadores, contenido, horarios y nichos. Solo quien administra la plataforma ve esta sección."
+        description="Cómo va Foliocrew y qué está funcionando: cuentas, creadores, contenido, horarios, nichos y los departamentos del equipo. Solo quien administra la plataforma ve esta sección."
       />
       <PlatformTabs active={vista} />
       {vista === "resumen" && <ResumenView />}
@@ -42,6 +43,7 @@ export default async function PlatformPage({ searchParams }: { searchParams: Pro
       {vista === "nichos" && <NichosView />}
       {vista === "inteligencia" && <IntelligenceSection />}
       {vista === "cuentas" && <CuentasView adminCreatorId={admin.creatorId} />}
+      {vista === "departamentos" && <DepartmentsSection />}
     </div>
   );
 }

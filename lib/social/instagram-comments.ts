@@ -82,6 +82,9 @@ export async function fetchInstagramComments(mediaLimit = 8, stats?: CommentStat
     })}`
   );
   const withComments = (media.data ?? []).filter((m) => (m.comments_count ?? 0) > 0);
+  const ownReplyIds = new Set(
+    (await prisma.inboxReply.findMany({ where: { platform: "instagram" }, select: { id: true } }).catch(() => [])).map((r) => r.id)
+  );
   if (stats) stats.reported = withComments.reduce((sum, m) => sum + (m.comments_count ?? 0), 0);
 
   const perMedia = await Promise.all(
@@ -99,18 +102,13 @@ export async function fetchInstagramComments(mediaLimit = 8, stats?: CommentStat
         // Sus propios comentarios no son mensajes por responder.
         .filter((c) => author(c).toLowerCase() !== auth.username);
       if (stats) stats.own += all.length - others.length;
-      const isOwn = (r: { username?: string; from?: GraphAuthor }) =>
-        author(r).toLowerCase() === auth.username || (!!r.from?.id && auth.ids.includes(r.from.id));
+      // Meta no dice quién escribió una respuesta: las propias se reconocen por los ids que guarda la
+      // Bandeja al responder (InboxReply), o por el usuario/id cuando sí viene.
+      const isOwn = (r: GraphReply) =>
+        ownReplyIds.has(r.id) || author(r).toLowerCase() === auth.username || (!!r.from?.id && auth.ids.includes(r.from.id));
       return Promise.all(
         others.map<Promise<InboxComment>>(async (c) => {
-          let rawReplies = c.replies?.data ?? [];
-          if (rawReplies.some((r) => !author(r))) {
-            // En las respuestas anidadas Meta puede omitir el autor: el edge /replies lo trae completo.
-            const full = await fetchJson<GraphList<GraphReply>>(
-              `${GRAPH}/${c.id}/replies?${new URLSearchParams({ fields: "id,text,username,from,timestamp", access_token: auth.token })}`
-            ).catch(() => null);
-            if (full?.data?.length) rawReplies = full.data;
-          }
+          const rawReplies = c.replies?.data ?? [];
           const replies = rawReplies.map((r) => ({
             id: r.id,
             text: r.text ?? "",

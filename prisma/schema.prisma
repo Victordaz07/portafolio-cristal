@@ -56,6 +56,7 @@ model Creator {
   users             AdminUser[]
   siteSettings      SiteSettings?
   socialAccounts    SocialAccount[]
+  inboxReplies      InboxReply[]
   goals             Goal[]
   actionItems       ActionItem[]
   logEntries        LogEntry[]
@@ -324,33 +325,33 @@ model AuthToken {
 }
 
 model SiteSettings {
-  id               String   @id @default(cuid())
-  creatorId        String   @unique @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
-  creator          Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  whyMeText        String
-  whyMeTextEn      String?
-  contactEmail     String
-  instagramHandle  String
-  tiktokHandle     String
-  facebookHandle   String?
-  whatsapp         String?
-  collabsEmail     String?
-  websiteUrl       String?
-  youtubeHandle    String?
-  pinterestHandle  String?
-  footerIntro      String?
-  footerIntroEn    String?
-  supportMessage   String?
-  supportMessageEn String?
-  accentColor      String   @default("lila") // paleta de acento (lib/theme.ts) o "custom"
+  id                 String   @id @default(cuid())
+  creatorId          String   @unique @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator            Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  whyMeText          String
+  whyMeTextEn        String?
+  contactEmail       String
+  instagramHandle    String
+  tiktokHandle       String
+  facebookHandle     String?
+  whatsapp           String?
+  collabsEmail       String?
+  websiteUrl         String?
+  youtubeHandle      String?
+  pinterestHandle    String?
+  footerIntro        String?
+  footerIntroEn      String?
+  supportMessage     String?
+  supportMessageEn   String?
+  accentColor        String   @default("lila") // paleta de acento (lib/theme.ts) o "custom"
   // Estudio de diseño (lib/design.ts): solo opciones cerradas, validadas al leer.
-  customAccent     String? // color propio "#RRGGBB" cuando accentColor = "custom"
-  themeStyle       String   @default("editorial")
-  fontPair         String   @default("editorial")
-  heroLayout       String   @default("split")
-  corners          String   @default("suave")
-  background       String   @default("textura")
-  sectionLayout    Json? // [{ id, hidden }] en el orden en que se muestran
+  customAccent       String? // color propio "#RRGGBB" cuando accentColor = "custom"
+  themeStyle         String   @default("editorial")
+  fontPair           String   @default("editorial")
+  heroLayout         String   @default("split")
+  corners            String   @default("suave")
+  background         String   @default("textura")
+  sectionLayout      Json? // [{ id, hidden }] en el orden en que se muestran
   secondaryColor     String   @default("acento") // bloques y botones oscuros: acento, oliva, tinta o estilo
   contactPhotoUrl    String? // foto de la sección de contacto (vacía: sin foto)
   brandsBannerUrl    String? // imagen sobre la cinta de marcas (vacía: sin imagen)
@@ -369,7 +370,7 @@ model SiteSettings {
   linksHeroTitleEn   String?
   linksHeroImage     String? // vacía: la foto de la portada
   linksHeroUrl       String? // vacía: el portafolio
-  updatedAt        DateTime @updatedAt
+  updatedAt          DateTime @updatedAt
 }
 
 // Cuentas de redes conectadas por OAuth (panel v2 → Conectar cuentas).
@@ -396,6 +397,19 @@ model SocialAccount {
   updatedAt    DateTime  @updatedAt
 
   @@unique([creatorId, platform])
+}
+
+/// Respuestas enviadas desde la Bandeja. Meta no dice quién escribió una respuesta, así que se
+/// guardan sus ids para reconocer las propias (y marcar el comentario como respondido).
+model InboxReply {
+  id        String   @id // id de la respuesta en la red
+  creatorId String   @default("")
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  platform  String // "instagram"
+  commentId String
+  createdAt DateTime @default(now())
+
+  @@index([creatorId, platform])
 }
 
 // ─── Crecimiento (panel v2): metas, plan semanal y bitácora ───
@@ -585,27 +599,27 @@ model NicheInsight {
 
 // Enlaces propios de la página "link en bio" (/enlaces): tienda, cupones, videos, lo que quiera.
 model BioLink {
-  id        String   @id @default(cuid())
-  creatorId String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
-  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  id        String        @id @default(cuid())
+  creatorId String        @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   title     String
   titleEn   String?
   url       String
   imageUrl  String?
   pill      String? // etiqueta corta arriba a la derecha: "15% OFF", "Nuevo"…
-  wide      Boolean  @default(true) // fila a todo el ancho (true) o tarjeta con imagen (false)
-  section   String   @default("") // grupo donde aparece ("Colabora conmigo", "Mis favoritos"…)
+  wide      Boolean       @default(true) // fila a todo el ancho (true) o tarjeta con imagen (false)
+  section   String        @default("") // grupo donde aparece ("Colabora conmigo", "Mis favoritos"…)
   sectionEn String?
   kicker    String? // palabra de acción sobre el título de la tarjeta: "Comprar", "Únete"
   kickerEn  String?
   badge     String? // etiqueta destacada en el acento: "Abierto ahora"
   badgeEn   String?
-  clicks    Int      @default(0) // clics en la página pública (el más visitado lleva "Más clics")
-  hidden    Boolean  @default(false) // pausado: no se muestra pero no se borra
+  clicks    Int           @default(0) // clics en la página pública (el más visitado lleva "Más clics")
+  hidden    Boolean       @default(false) // pausado: no se muestra pero no se borra
   groupId   String?
   group     BioLinkGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
+  order     Int           @default(0)
+  createdAt DateTime      @default(now())
 
   @@index([creatorId])
 }

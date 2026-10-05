@@ -1,11 +1,13 @@
 "use client";
 
+import { useT } from "@/components/admin/AdminLang";
+
 export default function ConfirmDialog({
   title,
   description,
   onConfirm,
   onCancel,
-  confirmLabel = "Eliminar",
+  confirmLabel,
 }: {
   title: string;
   description: string;
@@ -13,6 +15,7 @@ export default function ConfirmDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  const { t } = useT();
   return (
     <div
       role="dialog"
@@ -32,14 +35,14 @@ export default function ConfirmDialog({
             onClick={onCancel}
             className="rounded-sm border border-line px-sp-4 py-sp-2 text-sm font-medium text-ink hover:bg-cream"
           >
-            Cancelar
+            {t("Cancelar", "Cancel")}
           </button>
           <button
             type="button"
             onClick={onConfirm}
             className="rounded-sm bg-red-600 px-sp-4 py-sp-2 text-sm font-medium text-white hover:opacity-90"
           >
-            {confirmLabel}
+            {confirmLabel ?? t("Eliminar", "Delete")}
           </button>
         </div>
       </div>

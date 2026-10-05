@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getT } from "@/lib/admin-lang-server";
 import { diagnoseInstagramComments, fetchInstagramComments, isInstagramConnected, type CommentStats } from "@/lib/social/instagram-comments";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,8 @@ export async function GET(request: Request) {
     const comments = await fetchInstagramComments(8, stats);
     return NextResponse.json({ connected: true, comments, stats });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "No se pudieron cargar los comentarios";
+    const { t } = await getT();
+    const message = error instanceof Error ? error.message : t("No se pudieron cargar los comentarios", "Couldn't load the comments");
     return NextResponse.json({ connected: true, comments: [], error: message }, { status: 502 });
   }
 }

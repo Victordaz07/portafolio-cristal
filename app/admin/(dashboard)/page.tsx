@@ -17,6 +17,8 @@ import {
 import { weekStartOf } from "@/lib/growth";
 import { appTimeZone, getActivityStreak, todayKey } from "@/lib/growth-server";
 import { NETWORK_META, formatTime, isPlanNetwork, utcToZoned } from "@/lib/content-plan";
+import { pickLabel, type T } from "@/lib/admin-lang";
+import { getT } from "@/lib/admin-lang-server";
 
 // Iniciales y color por red, igual que en el diseño del panel v2.
 const PLATFORM_META: Record<string, { initials: string; className: string }> = {
@@ -26,11 +28,11 @@ const PLATFORM_META: Record<string, { initials: string; className: string }> = {
   ugc: { initials: "📷", className: "bg-lime text-ink" },
 };
 
-function timeAgo(date: Date) {
+function timeAgo(date: Date, t: T) {
   const hours = Math.floor((Date.now() - date.getTime()) / 3_600_000);
-  if (hours < 1) return "hace un momento";
-  if (hours < 24) return `hace ${hours}h`;
-  return `hace ${Math.floor(hours / 24)}d`;
+  if (hours < 1) return t("hace un momento", "just now");
+  if (hours < 24) return t(`hace ${hours}h`, `${hours}h ago`);
+  return t(`hace ${Math.floor(hours / 24)}d`, `${Math.floor(hours / 24)}d ago`);
 }
 
 function SectionTitle({ children, aside }: { children: ReactNode; aside?: ReactNode }) {
@@ -43,6 +45,7 @@ function SectionTitle({ children, aside }: { children: ReactNode; aside?: ReactN
 }
 
 export default async function AdminHomePage() {
+  const { t, lang } = await getT();
   // Las creadoras nuevas empiezan por el asistente de bienvenida.
   const session = await getSession();
   const creator = session
@@ -112,31 +115,31 @@ export default async function AdminHomePage() {
   const payments = deals.filter((d) => isPaymentStatus(d.paymentStatus));
 
   const kpis = [
-    { label: "Publicaciones programadas", value: scheduledCount, href: "/admin/calendario" },
+    { label: t("Publicaciones programadas", "Scheduled posts"), value: scheduledCount, href: "/admin/calendario" },
     {
-      label: "Tratos activos",
+      label: t("Tratos activos", "Active deals"),
       value: deals.filter((d) => d.dealStatus === "active").length,
       href: "/admin/marcas",
     },
-    { label: "Mensajes sin leer", value: unreadMessages, href: "/admin/mensajes" },
-    { label: "Seguimientos pendientes", value: followUps.length, href: "/admin/marcas" },
+    { label: t("Mensajes sin leer", "Unread messages"), value: unreadMessages, href: "/admin/mensajes" },
+    { label: t("Seguimientos pendientes", "Pending follow-ups"), value: followUps.length, href: "/admin/marcas" },
     {
-      label: "Valor en tratos abiertos",
+      label: t("Valor en tratos abiertos", "Value in open deals"),
       value: formatMoney(openDeals.reduce((sum, d) => sum + (d.dealValue ?? 0), 0)),
       href: "/admin/marcas",
     },
   ];
 
   const quickActions = [
-    { label: "+ Nueva publicación", href: "/admin/crear" },
-    { label: "+ Tarjeta en el Feed", href: "/admin/feed" },
-    { label: "+ Agregar marca", href: "/admin/marcas" },
-    { label: "Editar portada", href: "/admin/hero" },
+    { label: t("+ Nueva publicación", "+ New post"), href: "/admin/crear" },
+    { label: t("+ Tarjeta en el Feed", "+ Feed card"), href: "/admin/feed" },
+    { label: t("+ Agregar marca", "+ Add brand"), href: "/admin/marcas" },
+    { label: t("Editar portada", "Edit cover"), href: "/admin/hero" },
   ];
 
   return (
     <div>
-      <PageHeader eyebrow="Resumen" title="Tu panorama general" />
+      <PageHeader eyebrow={t("Resumen", "Overview")} title={t("Tu panorama general", "Your big picture")} />
 
       <SetupChecklist />
 
@@ -158,16 +161,16 @@ export default async function AdminHomePage() {
               aside={
                 overdueCount > 0 && (
                   <span className="rounded-full bg-coral px-sp-2 py-0.5 font-mono text-[10px] font-bold text-white">
-                    {overdueCount} {overdueCount === 1 ? "atrasado" : "atrasados"}
+                    {overdueCount} {overdueCount === 1 ? t("atrasado", "overdue") : t("atrasados", "overdue")}
                   </span>
                 )
               }
             >
-              Seguimientos pendientes
+              {t("Seguimientos pendientes", "Pending follow-ups")}
             </SectionTitle>
             {followUps.length === 0 ? (
               <p className="text-sm text-ink/60">
-                Sin pendientes. Agrega un “próximo paso” a tus tratos en Marcas para verlos aquí.
+                {t("Sin pendientes. Agrega un “próximo paso” a tus tratos en Marcas para verlos aquí.", "Nothing pending. Add a “next step” to your deals in Brands to see them here.")}
               </p>
             ) : (
               <ul className="divide-y divide-line">
@@ -189,7 +192,7 @@ export default async function AdminHomePage() {
                               overdue ? "bg-coral/15 text-coral" : "bg-lime/30 text-ink"
                             }`}
                           >
-                            {dueLabel(deal.nextActionDue)}
+                            {dueLabel(deal.nextActionDue, lang)}
                           </span>
                         )}
                       </Link>
@@ -204,17 +207,17 @@ export default async function AdminHomePage() {
             <SectionTitle
               aside={
                 <Link href="/admin/calendario" className="text-xs font-semibold text-coral hover:underline">
-                  Ver calendario
+                  {t("Ver calendario", "View calendar")}
                 </Link>
               }
             >
-              Próximas publicaciones
+              {t("Próximas publicaciones", "Upcoming posts")}
             </SectionTitle>
             {upcomingPosts.length === 0 ? (
               <p className="text-sm text-ink/60">
-                Nada programado.{" "}
+                {t("Nada programado.", "Nothing scheduled.")}{" "}
                 <Link href="/admin/crear" className="font-medium text-coral hover:underline">
-                  Crea tu próxima publicación
+                  {t("Crea tu próxima publicación", "Create your next post")}
                 </Link>
               </p>
             ) : (
@@ -234,7 +237,7 @@ export default async function AdminHomePage() {
                         </span>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-semibold text-ink">
-                            {post.caption.split("\n")[0] || "(sin texto)"}
+                            {post.caption.split("\n")[0] || t("(sin texto)", "(no text)")}
                           </p>
                           {post.brand && <p className="truncate text-xs text-ink/60">{post.brand.name}</p>}
                         </div>
@@ -254,15 +257,15 @@ export default async function AdminHomePage() {
               aside={
                 unreadMessages > 0 && (
                   <span className="rounded-full bg-coral px-sp-2 py-0.5 font-mono text-[10px] font-bold text-white">
-                    {unreadMessages} sin leer
+                    {unreadMessages} {t("sin leer", "unread")}
                   </span>
                 )
               }
             >
-              Mensajes por atender
+              {t("Mensajes por atender", "Messages to answer")}
             </SectionTitle>
             {pendingMessages.length === 0 ? (
-              <p className="text-sm text-ink/60">Estás al día: no hay mensajes sin leer.</p>
+              <p className="text-sm text-ink/60">{t("Estás al día: no hay mensajes sin leer.", "You're all caught up: no unread messages.")}</p>
             ) : (
               <ul className="divide-y divide-line">
                 {pendingMessages.map((message) => (
@@ -278,7 +281,7 @@ export default async function AdminHomePage() {
                         </p>
                       </div>
                       <span className="shrink-0 rounded-full bg-coral/10 px-sp-2 py-0.5 text-[11px] font-semibold text-moss">
-                        {timeAgo(message.createdAt)}
+                        {timeAgo(message.createdAt, t)}
                       </span>
                     </Link>
                   </li>
@@ -288,9 +291,9 @@ export default async function AdminHomePage() {
           </Card>
 
           <Card>
-            <SectionTitle>Últimas publicaciones</SectionTitle>
+            <SectionTitle>{t("Últimas publicaciones", "Latest posts")}</SectionTitle>
             {latestCards.length === 0 ? (
-              <p className="text-sm text-ink/60">Todavía no hay publicaciones en el feed.</p>
+              <p className="text-sm text-ink/60">{t("Todavía no hay publicaciones en el feed.", "There are no posts in the feed yet.")}</p>
             ) : (
               <ul className="flex flex-col gap-sp-3">
                 {latestCards.map((card) => {
@@ -304,12 +307,12 @@ export default async function AdminHomePage() {
                           {meta.initials}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-ink">{card.caption}</p>
+                          <p className="truncate text-sm font-semibold text-ink">{(lang === "en" && card.captionEn) || card.caption}</p>
                           {card.brand && (
                             <p className="truncate text-xs text-ink/60">{card.brand.name}</p>
                           )}
                         </div>
-                        <span className="shrink-0 text-xs text-ink/50">{card.category}</span>
+                        <span className="shrink-0 text-xs text-ink/50">{(lang === "en" && card.categoryEn) || card.category}</span>
                       </Link>
                     </li>
                   );
@@ -321,13 +324,13 @@ export default async function AdminHomePage() {
 
         <div className="flex flex-col gap-sp-4">
           <Link href="/admin/metas" className="rounded-[18px] bg-ink p-sp-5 text-cream transition hover:opacity-95">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-lime">Racha y plan de la semana</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-lime">{t("Racha y plan de la semana", "Streak & weekly plan")}</p>
             {weekActions.length === 0 ? (
-              <p className="mt-sp-3 font-fraunces text-xl font-semibold">Arma tu plan de esta semana →</p>
+              <p className="mt-sp-3 font-fraunces text-xl font-semibold">{t("Arma tu plan de esta semana →", "Build this week's plan →")}</p>
             ) : (
               <>
                 <p className="mt-sp-3 font-fraunces text-2xl font-semibold">
-                  {weekDone} / {weekActions.length} tareas del plan listas
+                  {weekDone} / {weekActions.length} {t("tareas del plan listas", "plan tasks done")}
                 </p>
                 <div className="mt-sp-3 h-1.5 overflow-hidden rounded-full bg-cream/15">
                   <div className="h-full rounded-full bg-lime" style={{ width: `${weekPct}%` }} />
@@ -335,7 +338,7 @@ export default async function AdminHomePage() {
               </>
             )}
             <p className="mt-sp-3 text-xs text-cream/70">
-              {streak > 0 ? `${streak} ${streak === 1 ? "día" : "días"} seguidos activa` : "Empieza tu racha hoy"}
+              {streak > 0 ? t(`${streak} ${streak === 1 ? "día" : "días"} seguidos activa`, `${streak}-day active streak`) : t("Empieza tu racha hoy", "Start your streak today")}
             </p>
           </Link>
 
@@ -344,10 +347,10 @@ export default async function AdminHomePage() {
             className="rounded-[18px] bg-ink p-sp-5 text-cream transition hover:opacity-95"
           >
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-lime">
-              Tu media kit
+              {t("Tu media kit", "Your media kit")}
             </p>
             {stats.length === 0 ? (
-              <p className="mt-sp-3 text-sm text-cream/70">Agrega tus cifras en Media kit.</p>
+              <p className="mt-sp-3 text-sm text-cream/70">{t("Agrega tus cifras en Media kit.", "Add your numbers in Media kit.")}</p>
             ) : (
               <div className="mt-sp-3 grid grid-cols-3 gap-sp-3">
                 {stats.map((stat) => (
@@ -361,10 +364,10 @@ export default async function AdminHomePage() {
           </Link>
 
           <Card>
-            <SectionTitle>Pagos de marcas</SectionTitle>
+            <SectionTitle>{t("Pagos de marcas", "Brand payments")}</SectionTitle>
             {payments.length === 0 ? (
               <p className="text-sm text-ink/60">
-                Marca un trato como “Pendiente” o “Pagado” en Marcas para seguir tus cobros.
+                {t("Marca un trato como “Pendiente” o “Pagado” en Marcas para seguir tus cobros.", "Mark a deal as “Pending” or “Paid” in Brands to track your payments.")}
               </p>
             ) : (
               <ul className="flex flex-col gap-2.5">
@@ -385,7 +388,7 @@ export default async function AdminHomePage() {
                           )}
                           {meta && (
                             <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${meta.className}`}>
-                              {meta.label}
+                              {pickLabel(lang, meta)}
                             </span>
                           )}
                         </span>
@@ -398,7 +401,7 @@ export default async function AdminHomePage() {
           </Card>
 
           <Card>
-            <SectionTitle>Acciones rápidas</SectionTitle>
+            <SectionTitle>{t("Acciones rápidas", "Quick actions")}</SectionTitle>
             <div className="flex flex-col gap-2.5">
               {quickActions.map((action) => (
                 <Link

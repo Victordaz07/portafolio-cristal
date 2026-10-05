@@ -40,8 +40,8 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [ ] `app/admin/(dashboard)/bitacora/page.tsx`
 - [ ] `app/admin/(dashboard)/calendario/CalendarView.tsx`
 - [ ] `app/admin/(dashboard)/calendario/page.tsx`
-- [ ] `app/admin/(dashboard)/conectar/ConnectManager.tsx`
-- [ ] `app/admin/(dashboard)/conectar/page.tsx`
+- [x] `app/admin/(dashboard)/conectar/ConnectManager.tsx`
+- [x] `app/admin/(dashboard)/conectar/page.tsx`
 - [ ] `app/admin/(dashboard)/contacto/SettingsForm.tsx`
 - [ ] `app/admin/(dashboard)/contacto/page.tsx`
 - [ ] `app/admin/(dashboard)/crear/Composer.tsx`
@@ -66,9 +66,9 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [ ] `app/admin/(dashboard)/equipo/soporte/page.tsx`
 - [ ] `app/admin/(dashboard)/faq/FaqManager.tsx`
 - [ ] `app/admin/(dashboard)/faq/page.tsx`
-- [ ] `app/admin/(dashboard)/feed/ContentCardForm.tsx`
-- [ ] `app/admin/(dashboard)/feed/FeedManager.tsx`
-- [ ] `app/admin/(dashboard)/feed/page.tsx`
+- [x] `app/admin/(dashboard)/feed/ContentCardForm.tsx`
+- [x] `app/admin/(dashboard)/feed/FeedManager.tsx`
+- [x] `app/admin/(dashboard)/feed/page.tsx`
 - [ ] `app/admin/(dashboard)/hero/HeroForm.tsx`
 - [ ] `app/admin/(dashboard)/hero/page.tsx`
 - [ ] `app/admin/(dashboard)/ideas/page.tsx`
@@ -80,11 +80,11 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [ ] `app/admin/(dashboard)/marcas/page.tsx`
 - [ ] `app/admin/(dashboard)/media-kit/StatsManager.tsx`
 - [ ] `app/admin/(dashboard)/media-kit/page.tsx`
-- [ ] `app/admin/(dashboard)/mensajes/MessagesManager.tsx`
-- [ ] `app/admin/(dashboard)/mensajes/page.tsx`
+- [x] `app/admin/(dashboard)/mensajes/MessagesManager.tsx`
+- [x] `app/admin/(dashboard)/mensajes/page.tsx`
 - [ ] `app/admin/(dashboard)/metas/GoalsManager.tsx`
 - [ ] `app/admin/(dashboard)/metas/page.tsx`
-- [ ] `app/admin/(dashboard)/page.tsx`
+- [x] `app/admin/(dashboard)/page.tsx`
 - [ ] `app/admin/(dashboard)/paquetes/PackagesManager.tsx`
 - [ ] `app/admin/(dashboard)/paquetes/page.tsx`
 - [ ] `app/admin/(dashboard)/plan/PayForm.tsx`
@@ -119,24 +119,24 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [ ] `app/admin/(dashboard)/vista-publica/page.tsx`
 - [x] `components/admin/AdminLang.tsx`
 - [x] `components/admin/AdminShell.tsx`
-- [ ] `components/admin/Badge.tsx`
-- [ ] `components/admin/BilingualTextField.tsx`
-- [ ] `components/admin/Card.tsx`
-- [ ] `components/admin/ConfirmDialog.tsx`
-- [ ] `components/admin/EmailVerifyNotice.tsx`
-- [ ] `components/admin/EmbedUrlInput.tsx`
+- [x] `components/admin/Badge.tsx`
+- [x] `components/admin/BilingualTextField.tsx`
+- [x] `components/admin/Card.tsx`
+- [x] `components/admin/ConfirmDialog.tsx`
+- [x] `components/admin/EmailVerifyNotice.tsx`
+- [x] `components/admin/EmbedUrlInput.tsx`
 - [ ] `components/admin/HeroPreview.tsx`
 - [ ] `components/admin/IdeaForm.tsx`
-- [ ] `components/admin/ImageCropModal.tsx`
-- [ ] `components/admin/ImageUploadField.tsx`
-- [ ] `components/admin/ImpersonationBanner.tsx`
+- [x] `components/admin/ImageCropModal.tsx`
+- [x] `components/admin/ImageUploadField.tsx`
+- [x] `components/admin/ImpersonationBanner.tsx`
 - [ ] `components/admin/InsightsCard.tsx`
 - [x] `components/admin/LangSwitch.tsx`
-- [ ] `components/admin/MediaUploadField.tsx`
-- [ ] `components/admin/PageHeader.tsx`
-- [ ] `components/admin/ReorderButtons.tsx`
-- [ ] `components/admin/SetupChecklist.tsx`
+- [x] `components/admin/MediaUploadField.tsx`
+- [x] `components/admin/PageHeader.tsx`
+- [x] `components/admin/ReorderButtons.tsx`
+- [x] `components/admin/SetupChecklist.tsx`
 - [ ] `components/admin/ShareInsightsButton.tsx`
-- [ ] `components/admin/ToastContext.tsx`
+- [x] `components/admin/ToastContext.tsx`
 - [ ] `components/admin/support/ReplyBox.tsx`
 - [ ] `components/admin/support/SupportThread.tsx`

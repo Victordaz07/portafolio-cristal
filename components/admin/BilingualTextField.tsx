@@ -1,6 +1,7 @@
 "use client";
 
 import { inputClass } from "@/lib/admin-ui";
+import { useT } from "@/components/admin/AdminLang";
 
 export default function BilingualTextField({
   label,
@@ -22,12 +23,13 @@ export default function BilingualTextField({
   required?: boolean;
 }) {
   const Field = multiline ? "textarea" : "input";
+  const { t } = useT();
 
   return (
     <div className="flex flex-col gap-sp-2">
       <span className="text-sm font-medium text-ink">{label}</span>
       <label className="flex flex-col gap-sp-1">
-        <span className="text-xs uppercase tracking-wide text-moss">Español</span>
+        <span className="text-xs uppercase tracking-wide text-moss">{t("Español", "Spanish")}</span>
         <Field
           required={required}
           rows={multiline ? rows : undefined}

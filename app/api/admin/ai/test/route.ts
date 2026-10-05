@@ -24,8 +24,10 @@ export async function POST() {
       messages: [
         {
           role: "user",
-          content:
+          content: t(
             "Escribe un caption de una sola línea, en español y con tono cercano, para un reel de rutina de skincare de una persona creadora de contenido UGC. Responde solo con el caption.",
+            "Write a one-line caption, in English with a friendly tone, for a skincare routine reel by a content creator. Reply with the caption only."
+          ),
         },
       ],
     });

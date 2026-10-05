@@ -2,8 +2,10 @@ import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/admin/PageHeader";
 import { sessionCreatorSite } from "@/lib/site-url";
 import InboxManager from "./MessagesManager";
+import { getT } from "@/lib/admin-lang-server";
 
 export default async function AdminMensajesPage() {
+  const { t } = await getT();
   const [messages, brands, instagram, hero] = await Promise.all([
     prisma.contactMessage.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.brand.findMany({ select: { name: true } }),
@@ -14,9 +16,13 @@ export default async function AdminMensajesPage() {
   return (
     <div>
       <PageHeader
-        eyebrow="Negocio"
-        title="Bandeja"
-        description={`Mensajes del formulario${instagram ? " y comentarios de Instagram" : ""} en un solo lugar.`}
+        eyebrow={t("Negocio", "Business")}
+        title={t("Bandeja", "Inbox")}
+        description={
+          instagram
+            ? t("Mensajes del formulario y comentarios de Instagram en un solo lugar.", "Contact form messages and Instagram comments in one place.")
+            : t("Mensajes del formulario en un solo lugar.", "Contact form messages in one place.")
+        }
       />
       <InboxManager
         initialMessages={messages.map((m) => ({ ...m, createdAt: m.createdAt.toISOString(), repliedAt: m.repliedAt?.toISOString() ?? null }))}

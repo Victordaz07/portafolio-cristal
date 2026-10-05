@@ -6,6 +6,7 @@ import { useToast } from "./ToastContext";
 import ImageCropModal, { type AspectOption } from "./ImageCropModal";
 import { cropMimeFor, extensionFor } from "@/lib/image-crop";
 import { MAX_PHOTO_BYTES, formatMb } from "@/lib/upload-limits";
+import { useT } from "@/components/admin/AdminLang";
 
 const DIACRITICS_PATTERN = new RegExp("[\\u0300-\\u036f]", "g");
 
@@ -40,6 +41,7 @@ export default function ImageUploadField({
   /** "png" conserva transparencia (logos); "jpeg" (por defecto) pesa menos para fotos. */
   outputFormat?: "jpeg" | "png";
 }) {
+  const { t } = useT();
   const { showToast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -53,7 +55,10 @@ export default function ImageUploadField({
     if (file.size > MAX_PHOTO_BYTES) {
       showToast(
         "error",
-        `La imagen pesa demasiado (máximo ${formatMb(MAX_PHOTO_BYTES)}). Comprímela o achícala e inténtalo de nuevo.`
+        t(
+          `La imagen pesa demasiado (máximo ${formatMb(MAX_PHOTO_BYTES)}). Comprímela o achícala e inténtalo de nuevo.`,
+          `The image is too large (max ${formatMb(MAX_PHOTO_BYTES)}). Compress or shrink it and try again.`
+        )
       );
       return;
     }
@@ -67,7 +72,7 @@ export default function ImageUploadField({
       });
       onChange(blob.url);
     } catch (error) {
-      showToast("error", error instanceof Error ? error.message : "No se pudo subir la imagen");
+      showToast("error", error instanceof Error ? error.message : t("No se pudo subir la imagen", "Couldn't upload the image"));
     } finally {
       setUploading(false);
     }
@@ -77,7 +82,10 @@ export default function ImageUploadField({
     if (file.size > MAX_PHOTO_BYTES) {
       showToast(
         "error",
-        `La imagen pesa demasiado (máximo ${formatMb(MAX_PHOTO_BYTES)}). Comprímela o achícala e inténtalo de nuevo.`
+        t(
+          `La imagen pesa demasiado (máximo ${formatMb(MAX_PHOTO_BYTES)}). Comprímela o achícala e inténtalo de nuevo.`,
+          `The image is too large (max ${formatMb(MAX_PHOTO_BYTES)}). Compress or shrink it and try again.`
+        )
       );
       return;
     }
@@ -127,7 +135,7 @@ export default function ImageUploadField({
           setDragging(false);
           const file = event.dataTransfer.files?.[0];
           if (file && file.type.startsWith("image/")) handleFile(file);
-          else if (file) showToast("error", "Ese archivo no es una imagen");
+          else if (file) showToast("error", t("Ese archivo no es una imagen", "That file isn't an image"));
         }}
         className={`group flex cursor-pointer flex-wrap items-center gap-sp-3 rounded-[14px] border border-dashed p-sp-3 transition ${
           dragging ? "border-coral bg-coral/5" : "border-line bg-white hover:border-coral"
@@ -148,10 +156,10 @@ export default function ImageUploadField({
         {/* Si no cabe al lado de la foto (columnas angostas), el texto baja debajo en vez de apretarse. */}
         <span className="flex min-w-[150px] flex-1 flex-col gap-1">
           <span className="inline-flex w-fit items-center whitespace-nowrap rounded-full bg-ink px-sp-4 py-1.5 text-xs font-semibold text-cream group-hover:bg-coral">
-            {uploading ? "Subiendo…" : value ? "Cambiar foto" : "Elegir foto"}
+            {uploading ? t("Subiendo…", "Uploading…") : value ? t("Cambiar foto", "Change photo") : t("Elegir foto", "Choose photo")}
           </span>
           <span className="text-xs text-ink/55">
-            o arrástrala aquí · {recommendedSize ? `ideal ${recommendedSize} · ` : ""}JPG, PNG o WebP · máx. {formatMb(MAX_PHOTO_BYTES)}
+            {t("o arrástrala aquí", "or drag it here")} · {recommendedSize ? `${t("ideal", "ideal")} ${recommendedSize} · ` : ""}{t("JPG, PNG o WebP", "JPG, PNG or WebP")} · {t("máx.", "max")} {formatMb(MAX_PHOTO_BYTES)}
           </span>
         </span>
         <input
@@ -170,11 +178,11 @@ export default function ImageUploadField({
         <div className="flex gap-sp-4">
           {aspectOptions && (
             <button type="button" onClick={openCropForExisting} className="w-fit text-xs text-ink/55 hover:text-coral">
-              Ajustar encuadre
+              {t("Ajustar encuadre", "Adjust framing")}
             </button>
           )}
           <button type="button" onClick={() => onChange("")} className="w-fit text-xs text-ink/50 hover:text-red-600">
-            Quitar foto
+            {t("Quitar foto", "Remove photo")}
           </button>
         </div>
       )}

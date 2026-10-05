@@ -3,12 +3,14 @@ import { cookies } from "next/headers";
 import { PROVIDERS } from "@/lib/social/providers";
 import { isPlatformId } from "@/lib/social/types";
 import { getAppUrl, getRedirectUri, saveConnection } from "@/lib/social/accounts";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
 /** La red redirige aquí tras el login: valida el state, cambia el code por tokens y guarda la cuenta. */
 export async function GET(request: Request, { params }: { params: Promise<{ platform: string }> }) {
   const { platform } = await params;
+  const { t } = await getT();
   const url = new URL(request.url);
   const appUrl = getAppUrl(request.url);
   const done = (query: string) => {
@@ -18,7 +20,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ plat
   };
   const fail = (message: string) => done(`error=${encodeURIComponent(message)}`);
 
-  if (!isPlatformId(platform)) return fail("Red desconocida");
+  if (!isPlatformId(platform)) return fail(t("Red desconocida", "Unknown network"));
 
   // La red puede devolver un error (p. ej. si cancelaste el permiso).
   const providerError = url.searchParams.get("error_description") || url.searchParams.get("error");
@@ -27,11 +29,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ plat
   const expectedState = (await cookies()).get(`oauth_state_${platform}`)?.value;
   const state = url.searchParams.get("state");
   if (!expectedState || !state || state !== expectedState) {
-    return fail("La sesión de conexión expiró o no coincide. Vuelve a intentarlo.");
+    return fail(t("La sesión de conexión expiró o no coincide. Vuelve a intentarlo.", "The connection session expired or doesn't match. Try again."));
   }
 
   const code = url.searchParams.get("code");
-  if (!code) return fail("La red no devolvió un código de autorización");
+  if (!code) return fail(t("La red no devolvió un código de autorización", "The network didn't return an authorization code"));
 
   try {
     const provider = PROVIDERS[platform];
@@ -46,6 +48,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ plat
     await saveConnection(platform, tokens, profile);
     return done(`connected=${platform}`);
   } catch (error) {
-    return fail(`${PROVIDERS[platform].label}: ${error instanceof Error ? error.message : "error desconocido"}`);
+    return fail(`${PROVIDERS[platform].label}: ${error instanceof Error ? error.message : t("error desconocido", "unknown error")}`);
   }
 }

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import { PLANS, showPrices } from "@/lib/plans";
 import WaitlistForm, { type Utm } from "./WaitlistForm";
 import MetaPixel from "./MetaPixel";
 
-const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "600", "700"], variable: "--font-outfit", display: "swap" });
+const outfit = localFont({ src: "../fonts/outfit-normal-300-700.woff2", weight: "300 700", style: "normal", variable: "--font-outfit", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Foliocrew — Tu talento merece su espacio",

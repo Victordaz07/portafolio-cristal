@@ -29,15 +29,23 @@ type GraphMedia = {
   thumbnail_url?: string;
   comments_count?: number;
 };
+type GraphAuthor = { id?: string; username?: string };
 type GraphComment = {
   id: string;
   text?: string;
   username?: string;
+  /** Con acceso estándar Meta deja `username` vacío para quien no tiene rol en la app, pero sí llena `from`. */
+  from?: GraphAuthor;
   timestamp?: string;
   like_count?: number;
   hidden?: boolean;
-  replies?: GraphList<{ id: string; text?: string; username?: string; timestamp?: string }>;
+  replies?: GraphList<{ id: string; text?: string; username?: string; from?: GraphAuthor; timestamp?: string }>;
 };
+
+/** Usuario de quien escribió el comentario: `username` o, si Meta lo oculta, `from.username`. */
+function author(c: { username?: string; from?: GraphAuthor }) {
+  return c.username || c.from?.username || "";
+}
 
 async function instagramToken() {
   const account = await prisma.socialAccount.findFirst({ where: { platform: "instagram" } });
@@ -72,30 +80,31 @@ export async function fetchInstagramComments(mediaLimit = 8, stats?: CommentStat
 
   const perMedia = await Promise.all(
     withComments.map(async (m) => {
+      const commentsUrl = (fields: string) =>
+        `${GRAPH}/${m.id}/comments?${new URLSearchParams({ fields, limit: "25", access_token: auth.token })}`;
+      // Si Meta rechazara `from`, se vuelve a los campos de siempre (sin nombre, pero la Bandeja sigue andando).
       const list = await fetchJson<GraphList<GraphComment>>(
-        `${GRAPH}/${m.id}/comments?${new URLSearchParams({
-          fields: "id,text,username,timestamp,like_count,hidden,replies{id,text,username,timestamp}",
-          limit: "25",
-          access_token: auth.token,
-        })}`
+        commentsUrl("id,text,username,from,timestamp,like_count,hidden,replies{id,text,username,from,timestamp}")
+      ).catch(() =>
+        fetchJson<GraphList<GraphComment>>(commentsUrl("id,text,username,timestamp,like_count,hidden,replies{id,text,username,timestamp}"))
       );
       const all = list.data ?? [];
       const others = all
         // Sus propios comentarios no son mensajes por responder.
-        .filter((c) => (c.username ?? "").toLowerCase() !== auth.username);
+        .filter((c) => author(c).toLowerCase() !== auth.username);
       if (stats) stats.own += all.length - others.length;
       return others
         .map<InboxComment>((c) => {
           const replies = (c.replies?.data ?? []).map((r) => ({
             id: r.id,
             text: r.text ?? "",
-            username: r.username ?? "",
+            username: author(r),
             timestamp: r.timestamp ?? "",
           }));
           return {
             id: c.id,
             text: c.text ?? "",
-            username: c.username ?? "",
+            username: author(c),
             timestamp: c.timestamp ?? "",
             likeCount: c.like_count ?? 0,
             hidden: !!c.hidden,

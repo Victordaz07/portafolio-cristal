@@ -1,13 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { AI_MODEL, aiErrorMessage, getAiClient, isAiConfigured } from "@/lib/ai";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
 /** Prueba mínima de conexión con Claude: pide un caption corto de ejemplo. */
 export async function POST() {
+  const { t } = await getT();
   if (!isAiConfigured()) {
-    return NextResponse.json({ ok: false, error: "Falta ANTHROPIC_API_KEY en las variables de entorno" });
+    return NextResponse.json({ ok: false, error: t("Falta ANTHROPIC_API_KEY en las variables de entorno", "ANTHROPIC_API_KEY is missing from the environment variables") });
   }
 
   const started = Date.now();
@@ -29,7 +31,7 @@ export async function POST() {
     });
 
     if (response.stop_reason === "refusal") {
-      return NextResponse.json({ ok: false, error: "Claude rechazó la petición de prueba" });
+      return NextResponse.json({ ok: false, error: t("Claude rechazó la petición de prueba", "Claude rejected the test request") });
     }
     const text = response.content
       .filter((block): block is Anthropic.Beta.BetaTextBlock => block.type === "text")

@@ -7,6 +7,8 @@ import { withSession } from "@/lib/creators";
 import { forgetSessionVersion } from "@/lib/tenant";
 import { sendPasswordChangedEmail } from "@/lib/account-emails";
 import { clientIp, tooManyAttempts } from "@/lib/rate-limit";
+import { getT } from "@/lib/admin-lang-server";
+import { validationMessage } from "@/lib/admin-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -17,16 +19,17 @@ const schema = z.object({
 
 /** Guarda la contraseña nueva con el enlace del correo, cierra las otras sesiones y entra. */
 export async function POST(request: Request) {
+  const { t } = await getT();
   if (tooManyAttempts(`reset:${clientIp(request)}`, 10)) {
-    return NextResponse.json({ error: "Demasiados intentos; prueba en un minuto" }, { status: 429 });
+    return NextResponse.json({ error: t("Demasiados intentos; prueba en un minuto", "Too many attempts; try again in a minute") }, { status: 429 });
   }
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Revisa los datos" }, { status: 400 });
+    return NextResponse.json({ error: validationMessage(t, parsed.error.issues[0]?.message) }, { status: 400 });
   }
   const userId = await consumeAuthToken(parsed.data.token, "reset");
   if (!userId) {
-    return NextResponse.json({ error: "El enlace venció o ya se usó. Pide uno nuevo." }, { status: 400 });
+    return NextResponse.json({ error: t("El enlace venció o ya se usó. Pide uno nuevo.", "The link expired or was already used. Request a new one.") }, { status: 400 });
   }
   const user = await prismaRoot.adminUser.update({
     where: { id: userId },

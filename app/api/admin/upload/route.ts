@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { MAX_VIDEO_BYTES, MAX_PHOTO_BYTES } from "@/lib/upload-limits";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -16,12 +17,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
+  const { t } = await getT();
   const token = process.env.PUBLIC_BLOB_READ_WRITE_TOKEN?.trim();
 
   if (!token) {
     console.error("PUBLIC_BLOB_READ_WRITE_TOKEN no está disponible en este deployment.");
     return NextResponse.json(
-      { error: "El almacenamiento no está configurado en este deployment." },
+      { error: t("El almacenamiento no está configurado en este deployment.", "Storage isn't configured in this deployment.") },
       { status: 500 }
     );
   }

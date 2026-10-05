@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -23,9 +24,10 @@ const metricsSchema = z.object({
 
 /** Edita a mano las métricas, el comentario destacado y si la pieza va destacada. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   const parsed = metricsSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Revisa los números" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Revisa los números", "Check the numbers") }, { status: 400 });
   const data = { ...parsed.data };
   for (const key of ["topComment", "topCommentEn", "topCommentAuthor"] as const) {
     if (data[key] === "") data[key] = null;

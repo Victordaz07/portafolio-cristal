@@ -13,12 +13,14 @@ import ImpersonationBanner from "@/components/admin/ImpersonationBanner";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { billingState } from "@/lib/billing";
+import { getT } from "@/lib/admin-lang-server";
+import { plural } from "@/lib/admin-lang";
 
 // El panel lee siempre el estado más reciente de la base de datos: nunca debe
 // servirse una versión prerenderizada en build.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Panel — Foliocrew", robots: { index: false } };
+export const metadata: Metadata = { title: "Foliocrew", robots: { index: false } };
 
 export default async function AdminDashboardLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
@@ -37,14 +39,16 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     prisma.supportTicket.count({ where: { unreadByCustomer: true } }).catch(() => 0),
   ]);
   const openTickets = hasRole(team, "support") ? await prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0;
+  const { t, lang } = await getT();
+  const days = (n: number) => plural(lang, n, ["día", "días"], ["day", "days"]);
   const billing = creator ? billingState(creator) : null;
   const billingNotice =
     billing && (billing.state === "expired" || billing.state === "none")
-      ? "Tu plan venció. Renueva para seguir usando Foliocrew sin cortes."
+      ? t("Tu plan venció. Renueva para seguir usando Foliocrew sin cortes.", "Your plan expired. Renew to keep using Foliocrew without interruptions.")
       : billing?.state === "trial" && (billing.daysLeft ?? 99) <= 3
-        ? `Tu prueba gratis termina en ${billing.daysLeft} ${billing.daysLeft === 1 ? "día" : "días"}.`
+        ? t(`Tu prueba gratis termina en ${days(billing.daysLeft ?? 0)}.`, `Your free trial ends in ${days(billing.daysLeft ?? 0)}.`)
         : billing?.state === "active" && (billing.daysLeft ?? 99) <= 5
-          ? `Tu plan vence en ${billing.daysLeft} ${billing.daysLeft === 1 ? "día" : "días"}.`
+          ? t(`Tu plan vence en ${days(billing.daysLeft ?? 0)}.`, `Your plan expires in ${days(billing.daysLeft ?? 0)}.`)
           : null;
   const needsVerification = Boolean(user && !user.emailVerifiedAt && emailConfigured() && !session.actorId);
 
@@ -59,10 +63,10 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         {billingNotice && (
           <div role="status" className="mb-sp-4 flex flex-wrap items-center justify-between gap-sp-3 rounded-[14px] border border-coral/30 bg-coral/5 px-sp-4 py-sp-3 text-sm text-ink">
             <p>
-              <strong>{billingNotice}</strong> Paga por PayPal o transferencia.
+              <strong>{billingNotice}</strong> {t("Paga por PayPal o transferencia.", "Pay by PayPal or bank transfer.")}
             </p>
             <Link href="/admin/plan" className="rounded-full bg-ink px-sp-4 py-1.5 text-xs font-semibold text-cream hover:bg-coral">
-              Ver cómo pagar
+              {t("Ver cómo pagar", "See how to pay")}
             </Link>
           </div>
         )}

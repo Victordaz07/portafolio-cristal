@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isSocialPostUrl, resolvePermanentThumbnail } from "@/lib/social/thumbnail";
 import { resolveThumbnailViaAccount } from "@/lib/social/metrics-sync";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -11,16 +12,17 @@ export const dynamic = "force-dynamic";
  * post (menos confiable: Instagram lo bloquea cada vez más).
  */
 export async function GET(request: Request) {
+  const { t } = await getT();
   const url = new URL(request.url).searchParams.get("url");
   const platform = new URL(request.url).searchParams.get("platform");
   if (!url) {
-    return NextResponse.json({ error: "Falta el parámetro url" }, { status: 400 });
+    return NextResponse.json({ error: t("Falta el parámetro url", "The url parameter is missing") }, { status: 400 });
   }
   if (!isSocialPostUrl(url)) {
-    return NextResponse.json({ error: "Solo se aceptan links de Instagram o Facebook" }, { status: 400 });
+    return NextResponse.json({ error: t("Solo se aceptan links de Instagram o Facebook", "Only Instagram or Facebook links are accepted") }, { status: 400 });
   }
   if (platform !== "instagram" && platform !== "facebook") {
-    return NextResponse.json({ error: "Falta o es inválido el parámetro platform" }, { status: 400 });
+    return NextResponse.json({ error: t("Falta o es inválido el parámetro platform", "The platform parameter is missing or invalid") }, { status: 400 });
   }
 
   const thumbnailUrl = (await resolveThumbnailViaAccount(platform, url)) ?? (await resolvePermanentThumbnail(url, platform));

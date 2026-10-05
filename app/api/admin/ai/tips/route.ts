@@ -3,6 +3,7 @@ import { z } from "zod";
 import { AiQuotaError, aiErrorMessage, isAiConfigured } from "@/lib/ai";
 import { suggestNetworkTips } from "@/lib/ai-content";
 import { CONTENT_TYPES, PLAN_NETWORKS } from "@/lib/content-plan";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,12 @@ const schema = z.object({
 
 /** Consejos de IA para ejecutar la publicación en cada red. */
 export async function POST(request: Request) {
+  const { t } = await getT();
   if (!isAiConfigured()) {
-    return NextResponse.json({ error: "Falta ANTHROPIC_API_KEY (Conectar cuentas → IA)" }, { status: 400 });
+    return NextResponse.json({ error: t("Falta ANTHROPIC_API_KEY (Conectar cuentas → IA)", "ANTHROPIC_API_KEY is missing (Connect accounts → AI)") }, { status: 400 });
   }
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Escribe al menos 6 caracteres y elige una red" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Escribe al menos 6 caracteres y elige una red", "Write at least 6 characters and choose a network") }, { status: 400 });
   try {
     return NextResponse.json({ tips: await suggestNetworkTips(parsed.data) });
   } catch (error) {

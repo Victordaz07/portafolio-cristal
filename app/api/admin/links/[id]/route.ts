@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { OPTIONAL_TEXT, linkSchema } from "@/lib/bio-links";
+import { getT } from "@/lib/admin-lang-server";
+import { validationMessage } from "@/lib/admin-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -9,12 +11,13 @@ export const dynamic = "force-dynamic";
 const updateSchema = linkSchema.partial().extend({ wide: z.boolean().optional(), order: z.number().int().optional() });
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   const parsed = updateSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: validationMessage(t, parsed.error.issues[0]?.message) }, { status: 400 });
   const d = parsed.data;
   if (d.groupId && !(await prisma.bioLinkGroup.findFirst({ where: { id: d.groupId, kind: "custom" }, select: { id: true } }))) {
-    return NextResponse.json({ error: "Ese grupo no existe" }, { status: 400 });
+    return NextResponse.json({ error: t("Ese grupo no existe", "That group doesn't exist") }, { status: 400 });
   }
   const link = await prisma.bioLink.update({
     where: { id },

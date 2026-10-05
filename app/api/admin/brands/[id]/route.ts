@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { brandCrmInclude, brandFieldsSchema, toBrandData, autoEventNotes } from "@/lib/brand-crm";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const parsed = brandFieldsSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+    return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   }
 
   const before = await prisma.brand.findUnique({
@@ -17,7 +19,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     select: { dealStatus: true, paymentStatus: true },
   });
   if (!before) {
-    return NextResponse.json({ error: "Marca no encontrada" }, { status: 404 });
+    return NextResponse.json({ error: t("Marca no encontrada", "Brand not found") }, { status: 404 });
   }
 
   const notes = autoEventNotes(before, parsed.data);

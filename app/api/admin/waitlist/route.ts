@@ -5,6 +5,7 @@ import { isPlatformAdmin } from "@/lib/platform-admin";
 import { emailConfigured, sendEmail } from "@/lib/email";
 import { waitlistInviteEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,8 @@ function csvCell(value: unknown) {
 
 /** Descarga la lista de espera en CSV (para Excel, Google Sheets o tu herramienta de correos). */
 export async function GET() {
-  if (!(await isPlatformAdmin())) return NextResponse.json({ error: "Solo para quien administra Foliocrew" }, { status: 403 });
+  const { t } = await getT();
+  if (!(await isPlatformAdmin())) return NextResponse.json({ error: t("Solo para quien administra Foliocrew", "Foliocrew admins only") }, { status: 403 });
   const entries = await prismaRoot.waitlistEntry.findMany({ orderBy: { createdAt: "asc" } });
   const header = ["posicion", "email", "instagram", "nicho", "seguidores", "utm_source", "utm_medium", "utm_campaign", "estado", "fecha"];
   const rows = entries.map((e, i) =>
@@ -45,9 +47,10 @@ const updateSchema = z.object({
 
 /** Invitar por correo, marcar la invitación como enviada o volver a "en espera". */
 export async function PATCH(request: Request) {
-  if (!(await isPlatformAdmin())) return NextResponse.json({ error: "Solo para quien administra Foliocrew" }, { status: 403 });
+  const { t } = await getT();
+  if (!(await isPlatformAdmin())) return NextResponse.json({ error: t("Solo para quien administra Foliocrew", "Foliocrew admins only") }, { status: 403 });
   const parsed = updateSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const { ids, action } = parsed.data;
   // Quien ya creó su cuenta no vuelve a la lista ni recibe otra invitación.
   const where = { id: { in: ids }, status: { not: "joined" } };
@@ -62,8 +65,8 @@ export async function PATCH(request: Request) {
   }
 
   const inviteCode = process.env.SIGNUP_INVITE_CODE;
-  if (!inviteCode) return NextResponse.json({ error: "Falta SIGNUP_INVITE_CODE en Vercel" }, { status: 400 });
-  if (!emailConfigured()) return NextResponse.json({ error: "Falta RESEND_API_KEY en Vercel" }, { status: 400 });
+  if (!inviteCode) return NextResponse.json({ error: t("Falta SIGNUP_INVITE_CODE en Vercel", "SIGNUP_INVITE_CODE is missing in Vercel") }, { status: 400 });
+  if (!emailConfigured()) return NextResponse.json({ error: t("Falta RESEND_API_KEY en Vercel", "RESEND_API_KEY is missing in Vercel") }, { status: 400 });
   const origin = await platformOrigin();
   const entries = await prismaRoot.waitlistEntry.findMany({ where });
   let sent = 0;

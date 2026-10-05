@@ -6,6 +6,7 @@ import {
   hideInstagramComment,
   replyToInstagramComment,
 } from "@/lib/social/instagram-comments";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -21,9 +22,10 @@ function apiError(error: unknown) {
 
 /** Responder u ocultar/mostrar un comentario. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   const parsed = actionSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   try {
     if (parsed.data.action === "reply") {
       const reply = await replyToInstagramComment(id, parsed.data.message);

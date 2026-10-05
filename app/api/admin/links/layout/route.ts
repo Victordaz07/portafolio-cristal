@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +16,9 @@ const schema = z.object({
  * Solo se aceptan ids de esta cuenta, y los enlaces solo pueden ir en grupos propios.
  */
 export async function PUT(request: Request) {
+  const { t } = await getT();
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const [groups, links] = await Promise.all([
     prisma.bioLinkGroup.findMany({ select: { id: true, kind: true } }),
     prisma.bioLink.findMany({ select: { id: true } }),
@@ -25,10 +27,10 @@ export async function PUT(request: Request) {
   const linkIds = new Set(links.map((l) => l.id));
   const seen = new Set<string>();
   for (const g of parsed.data.groups) {
-    if (!groupKind.has(g.id)) return NextResponse.json({ error: "Hay un bloque que no existe" }, { status: 400 });
-    if (g.links.length && groupKind.get(g.id) !== "custom") return NextResponse.json({ error: "Los enlaces van en tus grupos" }, { status: 400 });
+    if (!groupKind.has(g.id)) return NextResponse.json({ error: t("Hay un bloque que no existe", "One of the blocks doesn't exist") }, { status: 400 });
+    if (g.links.length && groupKind.get(g.id) !== "custom") return NextResponse.json({ error: t("Los enlaces van en tus grupos", "Links go inside your groups") }, { status: 400 });
     for (const id of g.links) {
-      if (!linkIds.has(id) || seen.has(id)) return NextResponse.json({ error: "Hay un enlace que no existe" }, { status: 400 });
+      if (!linkIds.has(id) || seen.has(id)) return NextResponse.json({ error: t("Hay un enlace que no existe", "One of the links doesn't exist") }, { status: 400 });
       seen.add(id);
     }
   }

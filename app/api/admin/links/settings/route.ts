@@ -3,6 +3,8 @@ import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 import { LINK_PATTERNS } from "@/lib/bio-links";
+import { getT } from "@/lib/admin-lang-server";
+import { validationMessage } from "@/lib/admin-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -33,10 +35,11 @@ const schema = z.object({
 
 /** Opciones de la página "link en bio": encabezado, tarjeta principal, fondo. */
 export async function PATCH(request: Request) {
+  const { t } = await getT();
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: validationMessage(t, parsed.error.issues[0]?.message) }, { status: 400 });
   const settings = await prisma.siteSettings.findFirst({ select: { id: true } });
-  if (!settings) return NextResponse.json({ error: "Primero completa Contacto y pie" }, { status: 400 });
+  if (!settings) return NextResponse.json({ error: t("Primero completa Contacto y pie", "First complete Contact & footer") }, { status: 400 });
   const d = parsed.data;
   await prisma.siteSettings.update({
     where: { id: settings.id },

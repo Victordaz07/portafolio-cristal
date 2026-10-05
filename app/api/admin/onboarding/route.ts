@@ -8,6 +8,7 @@ import { ACCENTS } from "@/lib/theme";
 import { getNiche, siteTemplate } from "@/lib/onboarding";
 import { CREATOR_KINDS, type CreatorKind } from "@/lib/creator-kind";
 import { sessionCreatorSite } from "@/lib/site-url";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -34,17 +35,18 @@ const onboardingSchema = z.object({
 
 /** Termina el asistente: arma el sitio con lo que eligió la creadora. */
 export async function POST(request: Request) {
+  const { t } = await getT();
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (!session) return NextResponse.json({ error: t("No autorizado", "Not authorized") }, { status: 401 });
   const parsed = onboardingSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
-    return NextResponse.json({ error: `Revisa ${issue?.path.join(".") || "los datos"}` }, { status: 400 });
+    return NextResponse.json({ error: t(`Revisa ${issue?.path.join(".") || "los datos"}`, `Check ${issue?.path.join(".") || "the details"}`) }, { status: 400 });
   }
   const d = parsed.data;
   for (const piece of d.pieces) {
     if (!parseEmbedUrl(piece.url).platform) {
-      return NextResponse.json({ error: `Ese link no es de Instagram, TikTok ni Facebook: ${piece.url}` }, { status: 400 });
+      return NextResponse.json({ error: t(`Ese link no es de Instagram, TikTok ni Facebook: ${piece.url}`, `That link isn't from Instagram, TikTok or Facebook: ${piece.url}`) }, { status: 400 });
     }
   }
   const niche = getNiche(d.niche);
@@ -58,7 +60,7 @@ export async function POST(request: Request) {
     prisma.faqItem.count(),
     prisma.contentCard.count(),
   ]);
-  if (!hero || !settings) return NextResponse.json({ error: "Tu cuenta no tiene sitio inicial" }, { status: 400 });
+  if (!hero || !settings) return NextResponse.json({ error: t("Tu cuenta no tiene sitio inicial", "Your account has no starter site") }, { status: 400 });
 
   await prisma.$transaction([
     prisma.hero.update({
@@ -116,8 +118,9 @@ export async function POST(request: Request) {
 
 /** "Saltar por ahora": no vuelve a mostrar el asistente. */
 export async function PATCH() {
+  const { t } = await getT();
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (!session) return NextResponse.json({ error: t("No autorizado", "Not authorized") }, { status: 401 });
   await prismaRoot.creator.update({ where: { id: session.creatorId }, data: { onboardedAt: new Date() } });
   return NextResponse.json({ ok: true });
 }

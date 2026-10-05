@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { goalSchema } from "@/lib/growth-schemas";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   const parsed = goalSchema.partial().safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Revisa los datos de la meta" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Revisa los datos de la meta", "Check the goal details") }, { status: 400 });
   const { dueDate, unit, ...data } = parsed.data;
   const goal = await prisma.goal.update({
     where: { id },

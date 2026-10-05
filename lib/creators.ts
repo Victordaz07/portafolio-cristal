@@ -1,3 +1,4 @@
+import { makeT, type T } from "./admin-lang";
 import bcrypt from "bcryptjs";
 import { trialDays } from "./billing";
 import { NextResponse } from "next/server";
@@ -26,10 +27,12 @@ export function slugify(text: string) {
 }
 
 /** Mensaje de error si el nombre del sitio no sirve, o null si está bien. */
-export async function slugProblem(slug: string) {
-  if (!SLUG_PATTERN.test(slug)) return "Usa de 3 a 30 letras minúsculas, números o guiones (sin espacios ni tildes)";
-  if (RESERVED_SLUGS.has(slug)) return "Ese nombre está reservado; prueba con otro";
-  if (await prismaRoot.creator.findUnique({ where: { slug }, select: { id: true } })) return "Ese nombre ya está en uso";
+export async function slugProblem(slug: string, t: T = makeT("es")) {
+  if (!SLUG_PATTERN.test(slug)) {
+    return t("Usa de 3 a 30 letras minúsculas, números o guiones (sin espacios ni tildes)", "Use 3 to 30 lowercase letters, numbers or hyphens (no spaces or accents)");
+  }
+  if (RESERVED_SLUGS.has(slug)) return t("Ese nombre está reservado; prueba con otro", "That name is reserved; try another one");
+  if (await prismaRoot.creator.findUnique({ where: { slug }, select: { id: true } })) return t("Ese nombre ya está en uso", "That name is already taken");
   return null;
 }
 

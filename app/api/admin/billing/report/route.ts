@@ -5,6 +5,7 @@ import { getSession } from "@/lib/tenant";
 import { PAYABLE_PLANS, PERIODS, priceCents } from "@/lib/billing";
 import { notifyPaymentReported } from "@/lib/billing-server";
 import { tooManyAttempts } from "@/lib/rate-limit";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -18,13 +19,14 @@ const schema = z.object({
 
 /** "Ya pagué": la persona avisa que pagó por PayPal o transferencia; queda pendiente de confirmar. */
 export async function POST(request: Request) {
+  const { t } = await getT();
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (!session) return NextResponse.json({ error: t("No autorizado", "Not authorized") }, { status: 401 });
   if (tooManyAttempts(`billing-report:${session.creatorId}`, 5, 60 * 60 * 1000)) {
-    return NextResponse.json({ error: "Ya enviaste varios avisos; te escribimos pronto" }, { status: 429 });
+    return NextResponse.json({ error: t("Ya enviaste varios avisos; te escribimos pronto", "You already sent several notices; we'll write to you soon") }, { status: 429 });
   }
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Revisa los datos del pago" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Revisa los datos del pago", "Check the payment details") }, { status: 400 });
   const { plan, months, method, reference, note } = parsed.data;
   const payment = await prisma.payment.create({
     data: { plan, months, method, amountCents: priceCents(plan, months), reference: reference || null, note: note || null },

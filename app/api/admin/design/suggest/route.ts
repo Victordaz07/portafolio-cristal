@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { aiErrorMessage, isAiConfigured } from "@/lib/ai";
 import { fallbackDesign, suggestDesign } from "@/lib/design-ai";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,8 +15,9 @@ const schema = z.object({
 
 /** "Diséñalo por mí": propuesta de estilo, tipografía, color y portada según el nicho y la bio. */
 export async function POST(request: Request) {
+  const { t } = await getT();
   const parsed = schema.safeParse(await request.json().catch(() => ({})));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const hero = await prisma.hero.findFirst({ select: { name: true, niche: true, description: true } });
   const niche = hero?.niche ?? "";
   if (!isAiConfigured()) {

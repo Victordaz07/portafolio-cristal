@@ -4,6 +4,7 @@ import { prismaRoot } from "@/lib/prisma-root";
 import { forgetHost, getSession } from "@/lib/tenant";
 import { dnsPointsToVercel, dnsRecordsFor, domainProblem, normalizeDomain, type DomainState } from "@/lib/domains";
 import { addProjectDomain, projectDomainStatus, removeProjectDomain, vercelDomainsEnabled } from "@/lib/vercel-domains";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -53,8 +54,9 @@ async function checkDomain(creatorId: string, domain: string): Promise<DomainSta
 }
 
 export async function GET() {
+  const { t } = await getT();
   const creator = await requireCreator();
-  if (!creator) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (!creator) return NextResponse.json({ error: t("No autorizado", "Not authorized") }, { status: 401 });
   if (!creator.customDomain) {
     return NextResponse.json({ domain: null, status: "none", records: [], automatic: vercelDomainsEnabled(), message: null } satisfies DomainState);
   }
@@ -64,10 +66,11 @@ export async function GET() {
 const domainSchema = z.object({ domain: z.string().min(1).max(253) });
 
 export async function PUT(request: Request) {
+  const { t } = await getT();
   const creator = await requireCreator();
-  if (!creator) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (!creator) return NextResponse.json({ error: t("No autorizado", "Not authorized") }, { status: 401 });
   const parsed = domainSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Escribe tu dominio" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Escribe tu dominio", "Enter your domain") }, { status: 400 });
   const domain = normalizeDomain(parsed.data.domain);
   const problem = await domainProblem(domain, creator.id);
   if (problem) return NextResponse.json({ error: problem }, { status: 400 });
@@ -86,8 +89,9 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE() {
+  const { t } = await getT();
   const creator = await requireCreator();
-  if (!creator) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  if (!creator) return NextResponse.json({ error: t("No autorizado", "Not authorized") }, { status: 401 });
   if (creator.customDomain) {
     if (vercelDomainsEnabled()) {
       try {

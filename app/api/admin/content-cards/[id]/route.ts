@@ -3,6 +3,7 @@ import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "@/lib/social/thumbnail";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -40,11 +41,12 @@ const contentCardUpdateSchema = z
   );
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const parsed = contentCardUpdateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+    return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   }
 
   const data = { ...parsed.data };

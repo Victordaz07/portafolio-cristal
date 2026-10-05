@@ -306,6 +306,8 @@ model AdminUser {
   sessionVersion  Int         @default(0)
   /// Último inicio de sesión (panel de dueño)
   lastLoginAt     DateTime?
+  /// Idioma del panel y de los correos: "es" | "en"
+  language        String      @default("es")
   createdAt       DateTime    @default(now())
   tokens          AuthToken[]
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { refreshInsights } from "@/lib/insights";
 import { syncFeedThumbnailsForAllCreators } from "@/lib/social/metrics-sync";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -11,9 +12,10 @@ export const maxDuration = 300;
  * Va en la misma tarea para no sumar otro cron.
  */
 export async function GET(request: Request) {
+  const { t } = await getT();
   const secret = process.env.CRON_SECRET;
   if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    return NextResponse.json({ error: t("No autorizado", "Not authorized") }, { status: 401 });
   }
   const insights = await refreshInsights();
   const thumbnails = await syncFeedThumbnailsForAllCreators().catch((error: unknown) => ({

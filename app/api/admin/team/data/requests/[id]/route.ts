@@ -7,6 +7,7 @@ import { dataRequestKindLabel } from "@/lib/data-export";
 import { sendEmail } from "@/lib/email";
 import { noticeEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,17 +18,18 @@ const schema = z.object({
 
 /** El equipo de Datos resuelve (o rechaza) un pedido y se le avisa a la cuenta. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const user = await requireRole("data");
-  if (!user) return NextResponse.json({ error: "Solo el equipo de Recuperación de datos" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: t("Solo el equipo de Recuperación de datos", "Data recovery team only") }, { status: 403 });
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const { status, resolution } = parsed.data;
   if (status !== "open" && resolution.length < 3) {
-    return NextResponse.json({ error: "Escribe qué se hizo, para avisarle a la cuenta" }, { status: 400 });
+    return NextResponse.json({ error: t("Escribe qué se hizo, para avisarle a la cuenta", "Write what was done, so we can let the account know") }, { status: 400 });
   }
   const before = await prismaRoot.dataRequest.findUnique({ where: { id } });
-  if (!before) return NextResponse.json({ error: "No encontré ese pedido" }, { status: 404 });
+  if (!before) return NextResponse.json({ error: t("No encontré ese pedido", "Couldn't find that request") }, { status: 404 });
   const updated = await prismaRoot.dataRequest.update({
     where: { id },
     data:

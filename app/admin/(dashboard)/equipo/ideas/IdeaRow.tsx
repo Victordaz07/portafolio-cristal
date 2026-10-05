@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, secondaryButtonClass, dangerLinkClass } from "@/lib/admin-ui";
 import { IDEA_STATUS, ideaCategoryLabel } from "@/lib/ideas";
+import { pickLabel } from "@/lib/admin-lang";
+import { useT } from "@/components/admin/AdminLang";
 
 export type IdeaView = {
   id: string;
@@ -20,6 +22,7 @@ export type IdeaView = {
 };
 
 export default function IdeaRow({ idea }: { idea: IdeaView }) {
+  const { t, lang } = useT();
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
@@ -35,15 +38,15 @@ export default function IdeaRow({ idea }: { idea: IdeaView }) {
       body: JSON.stringify(body),
     });
     setBusy(false);
-    if (!response.ok) return showToast("error", "No se pudo guardar");
+    if (!response.ok) return showToast("error", t("No se pudo guardar", "Couldn't save"));
     showToast("success", ok);
     router.refresh();
   }
 
   async function remove() {
-    if (!window.confirm("¿Borrar esta idea?")) return;
+    if (!window.confirm(t("¿Borrar esta idea?", "Delete this idea?"))) return;
     const response = await fetch(`/api/admin/team/ideas/${idea.id}`, { method: "DELETE" });
-    if (!response.ok) return showToast("error", "No se pudo borrar");
+    if (!response.ok) return showToast("error", t("No se pudo borrar", "Couldn't delete"));
     router.refresh();
   }
 
@@ -53,19 +56,19 @@ export default function IdeaRow({ idea }: { idea: IdeaView }) {
         <button type="button" onClick={() => setOpen((v) => !v)} className="min-w-0 flex-1 text-left">
           <span className="block font-semibold text-ink hover:text-coral">{idea.title}</span>
           <span className="text-xs text-ink/60">
-            {idea.fromAccount ? `💬 ${idea.source}` : `🧠 Equipo · ${idea.source}`} · {ideaCategoryLabel(idea.category)} · {idea.createdAt}
+            {idea.fromAccount ? `💬 ${idea.source}` : `🧠 ${t("Equipo", "Team")} · ${idea.source}`} · {ideaCategoryLabel(idea.category, lang)} · {idea.createdAt}
           </span>
         </button>
         <select
           className="rounded-full border border-line bg-white px-sp-3 py-1 text-xs font-semibold"
           value={idea.status}
           disabled={busy}
-          onChange={(e) => save({ status: e.target.value }, "Estado actualizado")}
-          aria-label="Estado"
+          onChange={(e) => save({ status: e.target.value }, t("Estado actualizado", "Status updated"))}
+          aria-label={t("Estado", "Status")}
         >
           {IDEA_STATUS.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.label}
+              {pickLabel(lang, s)}
             </option>
           ))}
         </select>
@@ -75,12 +78,12 @@ export default function IdeaRow({ idea }: { idea: IdeaView }) {
           {idea.description && <p className="whitespace-pre-wrap text-sm text-ink">{idea.description}</p>}
           {idea.fromAccount && (
             <label className="flex flex-col gap-sp-1 text-sm">
-              <span className="font-semibold text-ink">Respuesta para la cuenta (la ve en «Ideas y sugerencias»)</span>
+              <span className="font-semibold text-ink">{t("Respuesta para la cuenta (la ve en «Ideas y sugerencias»)", "Reply to the account (they see it in “Ideas & suggestions”)")}</span>
               <textarea className={`${inputClass} min-h-[70px]`} value={reply} maxLength={2000} onChange={(e) => setReply(e.target.value)} />
             </label>
           )}
           <label className="flex flex-col gap-sp-1 text-sm">
-            <span className="font-semibold text-ink">Nota interna del equipo</span>
+            <span className="font-semibold text-ink">{t("Nota interna del equipo", "Internal team note")}</span>
             <textarea className={`${inputClass} min-h-[70px]`} value={note} maxLength={2000} onChange={(e) => setNote(e.target.value)} />
           </label>
           <div className="flex flex-wrap items-center gap-sp-3">
@@ -88,12 +91,12 @@ export default function IdeaRow({ idea }: { idea: IdeaView }) {
               type="button"
               className={secondaryButtonClass}
               disabled={busy}
-              onClick={() => save(idea.fromAccount ? { teamReply: reply, internalNote: note } : { internalNote: note }, "Guardado")}
+              onClick={() => save(idea.fromAccount ? { teamReply: reply, internalNote: note } : { internalNote: note }, t("Guardado", "Saved"))}
             >
-              Guardar
+              {t("Guardar", "Save")}
             </button>
             <button type="button" className={dangerLinkClass} onClick={remove}>
-              Borrar
+              {t("Borrar", "Delete")}
             </button>
           </div>
         </div>

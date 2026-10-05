@@ -15,6 +15,12 @@ export const PAYMENT_METHODS = {
 } as const;
 export type PaymentMethod = keyof typeof PAYMENT_METHODS;
 
+export const PAYMENT_METHODS_EN: Record<PaymentMethod, string> = { paypal: "PayPal", transfer: "Bank transfer", other: "Other" };
+
+/** Nombre del método de pago en el idioma del panel. */
+export const paymentMethodLabel = (method: string, lang: "es" | "en" = "es") =>
+  (lang === "en" ? PAYMENT_METHODS_EN : PAYMENT_METHODS)[method as PaymentMethod] ?? method;
+
 /** Planes que se pueden pagar desde el panel (Crew se arma a la medida). */
 export const PAYABLE_PLANS = PLANS.filter((p) => p.id !== "crew");
 export const PERIODS = [1, 3, 12] as const;

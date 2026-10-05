@@ -6,6 +6,7 @@ import Card from "@/components/admin/Card";
 import Badge from "@/components/admin/Badge";
 import { inputClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { MANUAL, SECTION_OPTIONS, type ManualBlock, type GlossaryTerm } from "./manual-content";
+import { useT } from "@/components/admin/AdminLang";
 
 type Lang = "es" | "en";
 type SectionKey = (typeof SECTION_OPTIONS)[number]["value"];
@@ -63,7 +64,8 @@ function Glossary({ terms }: { terms: GlossaryTerm[] }) {
 }
 
 export default function AdminManualPage() {
-  const [lang, setLang] = useState<Lang>("es");
+  const { lang: panelLang } = useT();
+  const [lang, setLang] = useState<Lang>(panelLang);
   const [section, setSection] = useState<SectionKey>("primera-vez");
   const content = MANUAL[lang];
   const header = HEADER[lang];

@@ -3,26 +3,32 @@ import { getSession } from "@/lib/tenant";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import {
-  BILLING_LABEL,
+  billingLabel,
+  paymentMethodLabel,
   PAYABLE_PLANS,
-  PAYMENT_METHODS,
   billingState,
   formatMoney,
   getPlan,
   paymentInstructions,
   paymentReference,
   priceCents,
-  type PaymentMethod,
 } from "@/lib/billing";
+import { dateLocale, plural, type AdminLang } from "@/lib/admin-lang";
 import PayForm from "./PayForm";
 import { aiQuota } from "@/lib/ai";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
-const fmt = (d: Date) => d.toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-const STATUS: Record<string, string> = { reported: "Por confirmar", confirmed: "Confirmado", rejected: "No encontrado" };
+const fmtDate = (d: Date, lang: AdminLang) => d.toLocaleDateString(dateLocale(lang), { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+const STATUS: Record<string, [string, string]> = {
+  reported: ["Por confirmar", "Awaiting confirmation"],
+  confirmed: ["Confirmado", "Confirmed"],
+  rejected: ["No encontrado", "Not found"],
+};
 
 export default async function PlanPage() {
+  const { t, lang } = await getT();
   const session = await getSession();
   const [creator, payments] = await Promise.all([
     session
@@ -40,21 +46,29 @@ export default async function PlanPage() {
   const instructions = paymentInstructions();
   const reference = paymentReference(creator.slug);
   const pending = payments.find((p) => p.status === "reported");
+  const fmt = (d: Date) => fmtDate(d, lang);
 
   const headline =
     state === "comp"
-      ? "Tu cuenta es de cortesía: no tienes que pagar nada. 💜"
+      ? t("Tu cuenta es de cortesía: no tienes que pagar nada. 💜", "Your account is complimentary: you don't have to pay anything. 💜")
       : state === "active"
-        ? `Tu plan ${plan.name} está pagado hasta el ${fmt(until!)}.`
+        ? t(`Tu plan ${plan.name} está pagado hasta el ${fmt(until!)}.`, `Your ${plan.name} plan is paid until ${fmt(until!)}.`)
         : state === "trial"
-          ? `Estás en tu prueba gratis: te quedan ${daysLeft} ${daysLeft === 1 ? "día" : "días"} (hasta el ${fmt(until!)}).`
+          ? t(
+              `Estás en tu prueba gratis: te quedan ${plural("es", daysLeft ?? 0, ["día", "días"], ["day", "days"])} (hasta el ${fmt(until!)}).`,
+              `You're on your free trial: ${plural("en", daysLeft ?? 0, ["día", "días"], ["day", "days"])} left (until ${fmt(until!)}).`
+            )
           : state === "expired"
-            ? `Tu plan venció el ${fmt(until!)}. Renueva para seguir sin cortes.`
-            : "Todavía no tienes un plan pagado.";
+            ? t(`Tu plan venció el ${fmt(until!)}. Renueva para seguir sin cortes.`, `Your plan expired on ${fmt(until!)}. Renew to keep going without interruptions.`)
+            : t("Todavía no tienes un plan pagado.", "You don't have a paid plan yet.");
 
   return (
     <div className="flex flex-col gap-sp-5">
-      <PageHeader eyebrow="Ayuda" title="Mi plan" description="Tu plan, cómo pagar y tus pagos. Sin renovación automática: te avisamos antes de que venza." />
+      <PageHeader
+        eyebrow={t("Ayuda", "Help")}
+        title={t("Mi plan", "My plan")}
+        description={t("Tu plan, cómo pagar y tus pagos. Sin renovación automática: te avisamos antes de que venza.", "Your plan, how to pay and your payments. No automatic renewal: we'll remind you before it expires.")}
+      />
       <Card>
         <div className="flex flex-wrap items-center gap-sp-3">
           <span
@@ -62,23 +76,30 @@ export default async function PlanPage() {
               state === "expired" ? "bg-red-50 text-red-700" : state === "trial" ? "bg-coral/10 text-coral" : "bg-sage/30 text-cobalt-ink"
             }`}
           >
-            {BILLING_LABEL[state]}
+            {billingLabel(state, lang)}
           </span>
-          <span className="font-semibold text-ink">{state === "comp" ? "Cortesía" : plan.name}</span>
+          <span className="font-semibold text-ink">{state === "comp" ? t("Cortesía", "Complimentary") : plan.name}</span>
         </div>
         <p className="mt-sp-2 text-ink">{headline}</p>
         {pending && (
           <p className="mt-sp-2 text-sm text-ink/70">
-            ⏳ Recibimos tu aviso de pago de {formatMoney(pending.amountCents)} ({PAYMENT_METHODS[pending.method as PaymentMethod] ?? pending.method}). Lo
-            confirmamos en cuanto lo veamos y te llega un correo.
+            ⏳{" "}
+            {t(
+              `Recibimos tu aviso de pago de ${formatMoney(pending.amountCents)} (${paymentMethodLabel(pending.method)}). Lo confirmamos en cuanto lo veamos y te llega un correo.`,
+              `We got your payment notice for ${formatMoney(pending.amountCents)} (${paymentMethodLabel(pending.method, "en")}). We'll confirm it as soon as we see it and you'll get an email.`
+            )}
           </p>
         )}
       </Card>
       {ai && (
         <Card>
-          <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Sugerencias de IA este mes</p>
+          <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Sugerencias de IA este mes", "AI suggestions this month")}</p>
           <p className="text-sm text-ink">
-            <strong>{ai.used}</strong> de {ai.limit} usadas · captions, consejos y “Diséñalo por mí” cuentan 1 cada uno. Se renueva el día 1.
+            <strong>{ai.used}</strong>{" "}
+            {t(
+              `de ${ai.limit} usadas · captions, consejos y “Diséñalo por mí” cuentan 1 cada uno. Se renueva el día 1.`,
+              `of ${ai.limit} used · captions, tips and “Design it for me” count 1 each. It resets on the 1st.`
+            )}
           </p>
           <div className="mt-sp-2 h-2 overflow-hidden rounded-full bg-cream" aria-hidden>
             <div className="h-full rounded-full bg-coral" style={{ width: `${Math.min(100, Math.round((ai.used / ai.limit) * 100))}%` }} />
@@ -92,13 +113,15 @@ export default async function PlanPage() {
             {PAYABLE_PLANS.map((p) => (
               <Card key={p.id}>
                 <p className="font-fraunces text-2xl font-semibold text-ink">{p.name}</p>
-                <p className="text-sm text-ink/60">{p.tagline}</p>
+                <p className="text-sm text-ink/60">{lang === "en" ? p.taglineEn : p.tagline}</p>
                 <p className="mt-sp-3 text-ink">
-                  <strong className="text-2xl">{formatMoney(priceCents(p.id, 1))}</strong> al mes ·{" "}
-                  <span className="text-sm text-ink/70">{formatMoney(priceCents(p.id, 12))} al año (2 meses de regalo)</span>
+                  <strong className="text-2xl">{formatMoney(priceCents(p.id, 1))}</strong> {t("al mes", "per month")} ·{" "}
+                  <span className="text-sm text-ink/70">
+                    {formatMoney(priceCents(p.id, 12))} {t("al año (2 meses de regalo)", "per year (2 months free)")}
+                  </span>
                 </p>
                 <ul className="mt-sp-3 list-disc pl-sp-4 text-sm text-ink/75">
-                  {p.features.map((f) => (
+                  {(lang === "en" ? p.featuresEn : p.features).map((f) => (
                     <li key={f}>{f}</li>
                   ))}
                 </ul>
@@ -107,21 +130,21 @@ export default async function PlanPage() {
           </div>
 
           <Card>
-            <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Cómo pagar</p>
+            <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Cómo pagar", "How to pay")}</p>
             <ol className="list-decimal pl-sp-4 text-sm text-ink">
-              <li>Elige tu plan y por cuánto tiempo (1, 3 o 12 meses).</li>
+              <li>{t("Elige tu plan y por cuánto tiempo (1, 3 o 12 meses).", "Choose your plan and for how long (1, 3 or 12 months).")}</li>
               <li>
-                Paga por PayPal o transferencia y escribe en el concepto tu referencia:{" "}
+                {t("Paga por PayPal o transferencia y escribe en el concepto tu referencia:", "Pay by PayPal or bank transfer and write your reference in the payment note:")}{" "}
                 <span className="rounded bg-cream px-1.5 py-0.5 font-mono font-semibold">{reference}</span>
               </li>
-              <li>Avísanos con el formulario de abajo. Lo confirmamos y te llega un correo.</li>
+              <li>{t("Avísanos con el formulario de abajo. Lo confirmamos y te llega un correo.", "Let us know with the form below. We confirm it and you get an email.")}</li>
             </ol>
             {!instructions.paypal && !instructions.transfer && (
-              <p className="mt-sp-3 text-sm text-ink/70">Escríbenos y te mandamos los datos para pagar.</p>
+              <p className="mt-sp-3 text-sm text-ink/70">{t("Escríbenos y te mandamos los datos para pagar.", "Write to us and we'll send you the payment details.")}</p>
             )}
             {instructions.transfer && (
               <div className="mt-sp-4">
-                <p className="text-sm font-semibold text-ink">Transferencia bancaria</p>
+                <p className="text-sm font-semibold text-ink">{t("Transferencia bancaria", "Bank transfer")}</p>
                 <pre className="mt-sp-1 whitespace-pre-wrap rounded-[12px] bg-cream p-sp-3 font-mono text-sm text-ink">{instructions.transfer}</pre>
               </div>
             )}
@@ -138,15 +161,15 @@ export default async function PlanPage() {
 
       {payments.length > 0 && (
         <Card>
-          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Tus pagos</p>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Tus pagos", "Your payments")}</p>
           <table className="w-full text-sm">
             <thead className="font-mono text-[10px] uppercase text-ink/50">
               <tr>
-                <th className="py-1 text-left">Fecha</th>
-                <th className="py-1 text-left">Plan</th>
-                <th className="py-1 text-left">Monto</th>
-                <th className="py-1 text-left">Método</th>
-                <th className="py-1 text-left">Estado</th>
+                <th className="py-1 text-left">{t("Fecha", "Date")}</th>
+                <th className="py-1 text-left">{t("Plan", "Plan")}</th>
+                <th className="py-1 text-left">{t("Monto", "Amount")}</th>
+                <th className="py-1 text-left">{t("Método", "Method")}</th>
+                <th className="py-1 text-left">{t("Estado", "Status")}</th>
               </tr>
             </thead>
             <tbody>
@@ -154,13 +177,13 @@ export default async function PlanPage() {
                 <tr key={p.id} className="border-t border-line">
                   <td className="py-1.5">{fmt(p.createdAt)}</td>
                   <td className="py-1.5">
-                    {getPlan(p.plan).name} · {p.months} {p.months === 1 ? "mes" : "meses"}
+                    {getPlan(p.plan).name} · {plural(lang, p.months, ["mes", "meses"], ["month", "months"])}
                   </td>
                   <td className="py-1.5 font-mono">{formatMoney(p.amountCents, p.currency)}</td>
-                  <td className="py-1.5">{PAYMENT_METHODS[p.method as PaymentMethod] ?? p.method}</td>
+                  <td className="py-1.5">{paymentMethodLabel(p.method, lang)}</td>
                   <td className="py-1.5">
-                    {STATUS[p.status] ?? p.status}
-                    {p.status === "confirmed" && p.periodEnd ? ` · hasta ${fmt(p.periodEnd)}` : ""}
+                    {STATUS[p.status] ? t(...STATUS[p.status]) : p.status}
+                    {p.status === "confirmed" && p.periodEnd ? ` · ${t("hasta", "until")} ${fmt(p.periodEnd)}` : ""}
                   </td>
                 </tr>
               ))}

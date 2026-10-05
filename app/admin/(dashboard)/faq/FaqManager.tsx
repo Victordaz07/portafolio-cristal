@@ -8,10 +8,12 @@ import ReorderButtons from "@/components/admin/ReorderButtons";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
 import { primaryButtonClass, rowCardStartClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
+import { useT } from "@/components/admin/AdminLang";
 
 const API_BASE = "/api/admin/faq";
 
 export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqItem[] }) {
+  const { t, lang } = useT();
   const { showToast } = useToast();
   const [items, setItems] = useState(initialFaqItems);
   const [question, setQuestion] = useState("");
@@ -33,7 +35,7 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      showToast("error", data.error ?? "No se pudo agregar la pregunta");
+      showToast("error", data.error ?? t("No se pudo agregar la pregunta", "Couldn't add the question"));
       return;
     }
 
@@ -43,18 +45,18 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
     setQuestionEn("");
     setAnswer("");
     setAnswerEn("");
-    showToast("success", "Pregunta agregada");
+    showToast("success", t("Pregunta agregada", "Question added"));
   }
 
   async function handleDelete(item: FaqItem) {
     const response = await fetch(`${API_BASE}/${item.id}`, { method: "DELETE" });
     setPendingDelete(null);
     if (!response.ok) {
-      showToast("error", "No se pudo eliminar");
+      showToast("error", t("No se pudo eliminar", "Couldn't delete"));
       return;
     }
     setItems((current) => current.filter((entry) => entry.id !== item.id));
-    showToast("success", "Pregunta eliminada");
+    showToast("success", t("Pregunta eliminada", "Question deleted"));
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -74,15 +76,15 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
               disableDown={index === items.length - 1}
             />
             <div className="flex-1">
-              <p className="font-medium text-ink">{item.question}</p>
-              <p className="mt-1 text-sm text-ink/60">{item.answer}</p>
+              <p className="font-medium text-ink">{(lang === "en" && item.questionEn) || item.question}</p>
+              <p className="mt-1 text-sm text-ink/60">{(lang === "en" && item.answerEn) || item.answer}</p>
             </div>
             <button
               type="button"
               onClick={() => setPendingDelete(item)}
               className={dangerLinkClass}
             >
-              Eliminar
+              {t("Eliminar", "Delete")}
             </button>
           </li>
         ))}
@@ -90,7 +92,7 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
 
       <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <BilingualTextField
-          label="Pregunta"
+          label={t("Pregunta", "Question")}
           es={question}
           en={questionEn}
           onEsChange={setQuestion}
@@ -98,7 +100,7 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
           required
         />
         <BilingualTextField
-          label="Respuesta"
+          label={t("Respuesta", "Answer")}
           es={answer}
           en={answerEn}
           onEsChange={setAnswer}
@@ -108,14 +110,14 @@ export default function FaqManager({ initialFaqItems }: { initialFaqItems: FaqIt
           required
         />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-          {saving ? "Agregando..." : "+ agregar pregunta"}
+          {saving ? t("Agregando...", "Adding...") : t("+ agregar pregunta", "+ add question")}
         </button>
       </form>
 
       {pendingDelete && (
         <ConfirmDialog
-          title="Eliminar pregunta"
-          description={`¿Eliminar "${pendingDelete.question}"?`}
+          title={t("Eliminar pregunta", "Delete question")}
+          description={t(`¿Eliminar "${pendingDelete.question}"?`, `Delete "${pendingDelete.question}"?`)}
           onConfirm={() => handleDelete(pendingDelete)}
           onCancel={() => setPendingDelete(null)}
         />

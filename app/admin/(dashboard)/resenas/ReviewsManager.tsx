@@ -10,6 +10,7 @@ import BilingualTextField from "@/components/admin/BilingualTextField";
 import Badge from "@/components/admin/Badge";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass, rowCardClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
+import { useT } from "@/components/admin/AdminLang";
 
 const API_BASE = "/api/admin/reviews";
 
@@ -25,6 +26,7 @@ const EMPTY = {
 };
 
 export default function ReviewsManager({ initialReviews }: { initialReviews: Review[] }) {
+  const { t, lang } = useT();
   const { showToast } = useToast();
   const [reviews, setReviews] = useState(initialReviews);
   const [form, setForm] = useState(EMPTY);
@@ -47,25 +49,25 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      showToast("error", data.error ?? "No se pudo agregar la reseña");
+      showToast("error", data.error ?? t("No se pudo agregar la reseña", "Couldn't add the review"));
       return;
     }
 
     const created: Review = await response.json();
     setReviews((current) => [...current, created]);
     setForm(EMPTY);
-    showToast("success", "Reseña agregada");
+    showToast("success", t("Reseña agregada", "Review added"));
   }
 
   async function handleDelete(review: Review) {
     const response = await fetch(`${API_BASE}/${review.id}`, { method: "DELETE" });
     setPendingDelete(null);
     if (!response.ok) {
-      showToast("error", "No se pudo eliminar");
+      showToast("error", t("No se pudo eliminar", "Couldn't delete"));
       return;
     }
     setReviews((current) => current.filter((item) => item.id !== review.id));
-    showToast("success", "Reseña eliminada");
+    showToast("success", t("Reseña eliminada", "Review deleted"));
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -93,9 +95,9 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
               </span>
             )}
             <div className="flex-1">
-              <Badge>{review.category}</Badge>
-              <p className="mt-1 font-medium text-ink">{review.title}</p>
-              <p className="text-sm text-ink/60">{review.description}</p>
+              <Badge>{(lang === "en" && review.categoryEn) || review.category}</Badge>
+              <p className="mt-1 font-medium text-ink">{(lang === "en" && review.titleEn) || review.title}</p>
+              <p className="text-sm text-ink/60">{(lang === "en" && review.descriptionEn) || review.description}</p>
             </div>
             <span className="font-mono text-sm text-moss">{review.rating}★</span>
             <button
@@ -103,7 +105,7 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
               onClick={() => setPendingDelete(review)}
               className={dangerLinkClass}
             >
-              Eliminar
+              {t("Eliminar", "Delete")}
             </button>
           </li>
         ))}
@@ -112,7 +114,7 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
       <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <div className="grid gap-sp-4 sm:grid-cols-2">
           <BilingualTextField
-            label="Categoría"
+            label={t("Categoría", "Category")}
             es={form.category}
             en={form.categoryEn}
             onEsChange={(v) => set("category", v)}
@@ -120,7 +122,7 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
             required
           />
           <label className="flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Calificación</span>
+            <span className="text-sm font-medium text-ink">{t("Calificación", "Rating")}</span>
             <select
               value={form.rating}
               onChange={(e) => set("rating", Number(e.target.value))}
@@ -135,7 +137,7 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
           </label>
         </div>
         <BilingualTextField
-          label="Título (producto – marca)"
+          label={t("Título (producto – marca)", "Title (product – brand)")}
           es={form.title}
           en={form.titleEn}
           onEsChange={(v) => set("title", v)}
@@ -143,7 +145,7 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
           required
         />
         <BilingualTextField
-          label="Descripción"
+          label={t("Descripción", "Description")}
           es={form.description}
           en={form.descriptionEn}
           onEsChange={(v) => set("description", v)}
@@ -153,21 +155,21 @@ export default function ReviewsManager({ initialReviews }: { initialReviews: Rev
           required
         />
         <ImageUploadField
-          label="Foto (opcional)"
+          label={t("Foto (opcional)", "Photo (optional)")}
           value={form.photoUrl}
           onChange={(url) => set("photoUrl", url)}
           aspect={1}
           recommendedSize="400 × 400 px"
         />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-          {saving ? "Agregando..." : "+ agregar reseña"}
+          {saving ? t("Agregando...", "Adding...") : t("+ agregar reseña", "+ add review")}
         </button>
       </form>
 
       {pendingDelete && (
         <ConfirmDialog
-          title="Eliminar reseña"
-          description={`¿Eliminar "${pendingDelete.title}"?`}
+          title={t("Eliminar reseña", "Delete review")}
+          description={t(`¿Eliminar "${pendingDelete.title}"?`, `Delete "${pendingDelete.title}"?`)}
           onConfirm={() => handleDelete(pendingDelete)}
           onCancel={() => setPendingDelete(null)}
         />

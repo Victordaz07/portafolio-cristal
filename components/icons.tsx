@@ -522,11 +522,11 @@ export const SERVICE_ICONS = {
 
 export type ServiceIconKey = keyof typeof SERVICE_ICONS;
 
-export const SERVICE_ICON_OPTIONS: { value: ServiceIconKey; label: string }[] = [
-  { value: "camera", label: "Cámara" },
-  { value: "chat", label: "Chat" },
-  { value: "box", label: "Caja" },
-  { value: "phone", label: "Teléfono" },
+export const SERVICE_ICON_OPTIONS: { value: ServiceIconKey; label: string; labelEn: string }[] = [
+  { value: "camera", label: "Cámara", labelEn: "Camera" },
+  { value: "chat", label: "Chat", labelEn: "Chat" },
+  { value: "box", label: "Caja", labelEn: "Box" },
+  { value: "phone", label: "Teléfono", labelEn: "Phone" },
 ];
 
 export const STAT_ICONS = {
@@ -538,9 +538,9 @@ export const STAT_ICONS = {
 
 export type StatIconKey = keyof typeof STAT_ICONS;
 
-export const STAT_ICON_OPTIONS: { value: StatIconKey; label: string }[] = [
-  { value: "heart", label: "Corazón" },
-  { value: "star", label: "Estrella" },
-  { value: "chat", label: "Chat" },
-  { value: "people", label: "Personas" },
+export const STAT_ICON_OPTIONS: { value: StatIconKey; label: string; labelEn: string }[] = [
+  { value: "heart", label: "Corazón", labelEn: "Heart" },
+  { value: "star", label: "Estrella", labelEn: "Star" },
+  { value: "chat", label: "Chat", labelEn: "Chat" },
+  { value: "people", label: "Personas", labelEn: "People" },
 ];

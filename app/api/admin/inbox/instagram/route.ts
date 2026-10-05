@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
-import { fetchInstagramComments, isInstagramConnected, type CommentStats } from "@/lib/social/instagram-comments";
+import { diagnoseInstagramComments, fetchInstagramComments, isInstagramConnected, type CommentStats } from "@/lib/social/instagram-comments";
 
 export const dynamic = "force-dynamic";
 
 /** Comentarios recientes de Instagram para la Bandeja. */
-export async function GET() {
+export async function GET(request: Request) {
+  // ?diagnostico=1 → qué responde Meta por publicación (sin tokens), para depurar una Bandeja vacía.
+  if (new URL(request.url).searchParams.get("diagnostico") === "1") {
+    return NextResponse.json(await diagnoseInstagramComments());
+  }
   if (!(await isInstagramConnected())) return NextResponse.json({ connected: false, comments: [] });
   try {
     const stats: CommentStats = { reported: 0, own: 0 };

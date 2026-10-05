@@ -142,3 +142,46 @@ export async function deleteInstagramComment(commentId: string) {
     method: "DELETE",
   });
 }
+
+/**
+ * Diagnóstico de la Bandeja (sin tokens ni llaves): qué responde Meta por cada publicación reciente,
+ * tanto por el edge /comments como por el campo anidado `comments`.
+ */
+export async function diagnoseInstagramComments(mediaLimit = 8) {
+  const auth = await instagramToken();
+  if (!auth) return { connected: false };
+  const safe = async <T>(url: string) => {
+    try {
+      return { ok: true as const, data: await fetchJson<T>(url) };
+    } catch (error) {
+      return { ok: false as const, error: error instanceof Error ? error.message : String(error) };
+    }
+  };
+  const me = await safe<{ user_id?: string; username?: string; account_type?: string }>(
+    `${GRAPH}/me?${new URLSearchParams({ fields: "user_id,username,account_type", access_token: auth.token })}`
+  );
+  const media = await safe<GraphList<GraphMedia & { timestamp?: string }>>(
+    `${GRAPH}/me/media?${new URLSearchParams({ fields: "id,permalink,timestamp,comments_count", limit: String(mediaLimit), access_token: auth.token })}`
+  );
+  if (!media.ok) return { connected: true, account: me.ok ? me.data : me.error, mediaError: media.error };
+  const posts = await Promise.all(
+    (media.data.data ?? []).map(async (m) => {
+      const edge = await safe<GraphList<{ id: string; username?: string; timestamp?: string }>>(
+        `${GRAPH}/${m.id}/comments?${new URLSearchParams({ fields: "id,username,timestamp", limit: "25", access_token: auth.token })}`
+      );
+      const nested = await safe<{ comments?: GraphList<{ id: string; username?: string }> }>(
+        `${GRAPH}/${m.id}?${new URLSearchParams({ fields: "comments_count,comments.limit(25){id,username}", access_token: auth.token })}`
+      );
+      return {
+        permalink: m.permalink ?? null,
+        timestamp: m.timestamp ?? null,
+        commentsCount: m.comments_count ?? 0,
+        edge: edge.ok ? { returned: edge.data.data?.length ?? 0, usernames: (edge.data.data ?? []).map((c) => c.username ?? "(sin usuario)") } : { error: edge.error },
+        nested: nested.ok
+          ? { returned: nested.data.comments?.data?.length ?? 0, usernames: (nested.data.comments?.data ?? []).map((c) => c.username ?? "(sin usuario)") }
+          : { error: nested.error },
+      };
+    })
+  );
+  return { connected: true, account: me.ok ? me.data : { error: me.error }, posts };
+}

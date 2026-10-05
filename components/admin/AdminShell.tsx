@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { MenuIcon, CloseIcon, LogoutIcon } from "@/components/icons";
 
-type NavItem = { href: string; label: string; badgeKey?: "unread" };
+type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets"; exact?: boolean };
 type NavGroup = { id: string; title: string; items: NavItem[] };
 
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
@@ -69,6 +69,8 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Ayuda",
     items: [
       { href: "/admin/ayuda", label: "Manual de uso" },
+      { href: "/admin/soporte", label: "Soporte", badgeKey: "support" },
+      { href: "/admin/ideas", label: "Ideas y sugerencias" },
       { href: "/admin/plan", label: "Mi plan" },
       { href: "/admin/cuenta", label: "Mi cuenta" },
     ],
@@ -85,10 +87,21 @@ const PLATFORM_GROUP: NavGroup = {
   ],
 };
 
+/** Grupo del equipo de Foliocrew: cada centro aparece según los roles de la persona. */
+function teamGroup(team: { owner: boolean; roles: string[] }): NavGroup {
+  const has = (role: string) => team.owner || team.roles.includes(role);
+  const items: NavItem[] = [{ href: "/admin/equipo", label: "Centro del equipo", exact: true }];
+  if (has("support")) items.push({ href: "/admin/equipo/soporte", label: "Soporte", badgeKey: "tickets" });
+  if (has("growth")) items.push({ href: "/admin/equipo/ideas", label: "Mejora continua" });
+  if (has("data")) items.push({ href: "/admin/equipo/datos", label: "Datos y recuperación" });
+  if (team.owner) items.push({ href: "/admin/equipo/personas", label: "Personas del equipo" });
+  return { id: "equipo", title: "Equipo Foliocrew", items };
+}
+
 const OPEN_GROUPS_KEY = "admin-nav-open-groups";
 
-function isActive(pathname: string, href: string) {
-  return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+function isActive(pathname: string, href: string, exact = false) {
+  return href === "/admin" || exact ? pathname === href : pathname.startsWith(href);
 }
 
 export default function AdminShell({
@@ -97,6 +110,9 @@ export default function AdminShell({
   creatorName = "",
   siteUrl = "/",
   platformAdmin = false,
+  team = null,
+  supportUnread = 0,
+  openTickets = 0,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -104,6 +120,12 @@ export default function AdminShell({
   siteUrl?: string;
   /** Quien administra Foliocrew: ve el grupo "Foliocrew" (cuentas y lista de espera). */
   platformAdmin?: boolean;
+  /** Persona del equipo de Foliocrew: ve el grupo "Equipo Foliocrew" según sus roles. */
+  team?: { owner: boolean; roles: string[] } | null;
+  /** Respuestas de soporte que la cuenta todavía no vio. */
+  supportUnread?: number;
+  /** Tickets abiertos (para Soporte). */
+  openTickets?: number;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -139,7 +161,7 @@ export default function AdminShell({
     router.refresh();
   }
 
-  const badges = { unread: unreadMessages };
+  const badges = { unread: unreadMessages, support: supportUnread, tickets: openTickets };
   const homeActive = isActive(pathname, "/admin");
 
   return (
@@ -189,8 +211,8 @@ export default function AdminShell({
         </Link>
 
         <nav className="-mx-1 mt-sp-1 flex flex-1 flex-col gap-sp-1 overflow-y-auto px-1">
-          {(platformAdmin ? [...NAV_GROUPS, PLATFORM_GROUP] : NAV_GROUPS).map((group) => {
-            const groupActive = group.items.some((item) => isActive(pathname, item.href));
+          {[...NAV_GROUPS, ...(team ? [teamGroup(team)] : []), ...(platformAdmin ? [PLATFORM_GROUP] : [])].map((group) => {
+            const groupActive = group.items.some((item) => isActive(pathname, item.href, item.exact));
             const open = openGroups[group.id] !== false;
             return (
               <div key={group.id}>
@@ -219,7 +241,7 @@ export default function AdminShell({
                 {open && (
                   <div className="flex flex-col gap-0.5 pb-1.5">
                     {group.items.map((item) => {
-                      const active = isActive(pathname, item.href);
+                      const active = isActive(pathname, item.href, item.exact);
                       const badge = item.badgeKey ? badges[item.badgeKey] : 0;
                       return (
                         <Link

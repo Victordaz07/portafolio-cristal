@@ -6,6 +6,7 @@ import { prisma, prismaRoot } from "@/lib/prisma";
 import { getSession } from "@/lib/tenant";
 import { sessionCreatorSite } from "@/lib/site-url";
 import { isPlatformAdmin } from "@/lib/platform-admin";
+import { hasRole, teamUser } from "@/lib/team";
 import { emailConfigured } from "@/lib/email";
 import EmailVerifyNotice from "@/components/admin/EmailVerifyNotice";
 import ImpersonationBanner from "@/components/admin/ImpersonationBanner";
@@ -23,7 +24,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
   const session = await getSession();
   // Sesión vencida o cerrada desde otro equipo (cambio de contraseña): de vuelta al login.
   if (!session) redirect("/admin/login");
-  const [unreadMessages, creator, site, platformAdmin, user] = await Promise.all([
+  const [unreadMessages, creator, site, platformAdmin, user, team, supportUnread] = await Promise.all([
     prisma.contactMessage.count({ where: { read: false } }),
     prismaRoot.creator.findUnique({
       where: { id: session.creatorId },
@@ -32,7 +33,10 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     sessionCreatorSite(),
     isPlatformAdmin(),
     prismaRoot.adminUser.findUnique({ where: { id: session.userId }, select: { email: true, emailVerifiedAt: true } }),
+    teamUser(),
+    prisma.supportTicket.count({ where: { unreadByCustomer: true } }).catch(() => 0),
   ]);
+  const openTickets = hasRole(team, "support") ? await prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0;
   const billing = creator ? billingState(creator) : null;
   const billingNotice =
     billing && (billing.state === "expired" || billing.state === "none")
@@ -46,7 +50,11 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
 
   return (
     <ToastProvider>
-      <AdminShell unreadMessages={unreadMessages} creatorName={creator?.name ?? ""} siteUrl={site?.url ?? "/"} platformAdmin={platformAdmin}>
+      <AdminShell unreadMessages={unreadMessages} creatorName={creator?.name ?? ""} siteUrl={site?.url ?? "/"} platformAdmin={platformAdmin}
+        team={team ? { owner: team.owner, roles: team.roles } : null}
+        supportUnread={supportUnread}
+        openTickets={openTickets}
+      >
         {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
         {billingNotice && (
           <div role="status" className="mb-sp-4 flex flex-wrap items-center justify-between gap-sp-3 rounded-[14px] border border-coral/30 bg-coral/5 px-sp-4 py-sp-3 text-sm text-ink">

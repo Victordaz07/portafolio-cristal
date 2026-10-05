@@ -369,3 +369,31 @@ export function billingReminderEmail(p: { origin: string; name: string | null; k
     text: text([hello(p.name), copy.line.replace(/<[^>]+>/g, ""), `Cómo pagar: ${p.planUrl}`]),
   };
 }
+
+// ─── Equipo de Foliocrew: soporte, ideas y datos ───
+
+/** Aviso genérico (tickets, pedidos de datos…). `lines` es texto plano: se escapa aquí. */
+export function noticeEmail(p: {
+  origin: string;
+  name?: string | null;
+  subject: string;
+  title: string;
+  lines: string[];
+  /** Texto citado (mensaje del ticket, detalle del pedido). */
+  quote?: string;
+  button: { label: string; url: string };
+  note?: string;
+}) {
+  const body = [
+    ...(p.name !== undefined ? [escapeHtml(hello(p.name))] : []),
+    ...p.lines.map(escapeHtml),
+    ...(p.quote
+      ? [`<span style="display:block;border-left:3px solid ${PLUM};padding:4px 0 4px 14px;color:${INK};">${escapeHtml(p.quote).replace(/\n/g, "<br>")}</span>`]
+      : []),
+  ];
+  return {
+    subject: p.subject,
+    html: layout({ origin: p.origin, preheader: p.lines[0] ?? p.title, title: p.title, body, button: p.button, note: p.note ? escapeHtml(p.note) : undefined }),
+    text: text([p.name !== undefined ? hello(p.name) : undefined, ...p.lines, p.quote, `${p.button.label}: ${p.button.url}`, p.note]),
+  };
+}

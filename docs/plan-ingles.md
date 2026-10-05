@@ -31,20 +31,20 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [ ] Prueba completa en inglés (capturas) y en español (que nada se rompió)
 
 ### Pantallas y componentes del panel
-- [ ] `app/admin/(dashboard)/apariencia/DesignStudio.tsx`
+- [x] `app/admin/(dashboard)/apariencia/DesignStudio.tsx`
 - [x] `app/admin/(dashboard)/apariencia/page.tsx`
 - [x] `app/admin/(dashboard)/ayuda/page.tsx`
-- [ ] `app/admin/(dashboard)/bienvenida/Wizard.tsx`
+- [x] `app/admin/(dashboard)/bienvenida/Wizard.tsx`
 - [ ] `app/admin/(dashboard)/bienvenida/page.tsx`
-- [ ] `app/admin/(dashboard)/bitacora/LogManager.tsx`
+- [x] `app/admin/(dashboard)/bitacora/LogManager.tsx`
 - [x] `app/admin/(dashboard)/bitacora/page.tsx`
-- [ ] `app/admin/(dashboard)/calendario/CalendarView.tsx`
+- [x] `app/admin/(dashboard)/calendario/CalendarView.tsx`
 - [x] `app/admin/(dashboard)/calendario/page.tsx`
 - [x] `app/admin/(dashboard)/conectar/ConnectManager.tsx`
 - [x] `app/admin/(dashboard)/conectar/page.tsx`
 - [x] `app/admin/(dashboard)/contacto/SettingsForm.tsx`
 - [x] `app/admin/(dashboard)/contacto/page.tsx`
-- [ ] `app/admin/(dashboard)/crear/Composer.tsx`
+- [x] `app/admin/(dashboard)/crear/Composer.tsx`
 - [x] `app/admin/(dashboard)/crear/page.tsx`
 - [x] `app/admin/(dashboard)/cuenta/AccountForm.tsx`
 - [x] `app/admin/(dashboard)/cuenta/CreatorKindPicker.tsx`
@@ -69,7 +69,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/feed/ContentCardForm.tsx`
 - [x] `app/admin/(dashboard)/feed/FeedManager.tsx`
 - [x] `app/admin/(dashboard)/feed/page.tsx`
-- [ ] `app/admin/(dashboard)/hero/HeroForm.tsx`
+- [x] `app/admin/(dashboard)/hero/HeroForm.tsx`
 - [x] `app/admin/(dashboard)/hero/page.tsx`
 - [x] `app/admin/(dashboard)/ideas/page.tsx`
 - [x] `app/admin/(dashboard)/layout.tsx`

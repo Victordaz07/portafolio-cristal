@@ -297,3 +297,56 @@ export function designVars(design: Design): Record<string, string> {
 }
 
 export { ACCENTS };
+
+// ─── Textos del Estudio de diseño en inglés (panel en inglés) ───
+export const DESIGN_EN = {
+  styles: {
+    editorial: { label: "Editorial", description: "Cream, elegant serif and fine details (the original)." },
+    minimal: { label: "Minimal", description: "White, airy and modern type." },
+    noche: { label: "Night", description: "Dark and elegant; photos pop." },
+    soft: { label: "Soft", description: "Pastel, rounded and friendly." },
+    bold: { label: "Bold", description: "Strong contrast and big headlines." },
+  } satisfies Record<StyleId, { label: string; description: string }>,
+  fonts: {
+    editorial: { label: "Editorial", hint: "Fraunces + Bodoni" },
+    elegante: { label: "Elegant", hint: "Playfair Display" },
+    moderna: { label: "Modern", hint: "Space Grotesk + DM Sans" },
+    clasica: { label: "Classic", hint: "Cormorant Garamond" },
+    divertida: { label: "Playful", hint: "Fredoka + Nunito" },
+    impacto: { label: "Impact", hint: "Archivo Bold" },
+  } satisfies Record<FontId, { label: string; hint: string }>,
+  corners: { recto: "Sharp", suave: "Soft", redondo: "Round" } satisfies Record<CornerId, string>,
+  backgrounds: {
+    liso: "Plain",
+    textura: "Little stars",
+    degradado: "Gradient",
+    acuarela: "Watercolor",
+    punteado: "Dotted",
+    petalos: "Petals",
+    ramitas: "Twigs",
+    enredadera: "Vines",
+  } satisfies Record<BackgroundId, string>,
+  secondary: {
+    acento: { label: "From accent", hint: "Changes with your color" },
+    oliva: { label: "Olive", hint: "The original green" },
+    tinta: { label: "Ink", hint: "Almost black, elegant" },
+    estilo: { label: "From style", hint: "The one the style brings" },
+  } satisfies Record<SecondaryId, { label: string; hint: string }>,
+  heroes: {
+    split: { label: "Photo on the side", hint: "Text on the left, big photo on the right" },
+    cover: { label: "Background photo", hint: "Your photo fills the whole cover" },
+    centered: { label: "Centered", hint: "Circle photo and everything centered" },
+    magazine: { label: "Magazine", hint: "Your name huge, like a magazine cover" },
+  } satisfies Record<HeroId, { label: string; hint: string }>,
+  sections: {
+    contenido: "Content (Feed)",
+    colaboraciones: "Collaborations",
+    marcas: "Brands",
+    resenas: "Reviews",
+    servicios: "Services",
+    paquetes: "Packages",
+    testimonios: "Testimonials",
+    why: "Why me",
+    faq: "FAQ",
+  } satisfies Record<SectionId, string>,
+};

@@ -15,6 +15,7 @@ import {
   BACKGROUNDS,
   CORNERS,
   DEFAULT_DESIGN,
+  DESIGN_EN,
   FONTS,
   HEROES,
   SECONDARY,
@@ -31,6 +32,9 @@ import {
   type StyleDef,
   type StyleId,
 } from "@/lib/design";
+import { pickLabel } from "@/lib/admin-lang";
+import { LOCALE_COOKIE } from "@/lib/i18n";
+import { useT } from "@/components/admin/AdminLang";
 
 interface Profile {
   name: string;
@@ -40,6 +44,15 @@ interface Profile {
   description: string;
   descriptionEn: string;
 }
+
+const PATTERN_EN: Record<LinkPatternId, string> = {
+  blobs: "None (soft blobs)",
+  acuarela: "Watercolor blobs",
+  punteado: "Dotted",
+  petalos: "Petals",
+  ramitas: "Twigs (sprigs)",
+  enredadera: "Vines",
+};
 
 const eyebrow = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
 const tile = (selected: boolean) =>
@@ -56,6 +69,7 @@ export default function DesignStudio({
   previewPath: string;
   siteUrl: string;
 }) {
+  const { t, lang } = useT();
   const router = useRouter();
   const { showToast } = useToast();
   const [profile, setProfile] = useState(initialProfile);
@@ -89,7 +103,7 @@ export default function DesignStudio({
     }).catch(() => null);
     const data = await response?.json().catch(() => null);
     setSuggesting(false);
-    if (!response?.ok || !data?.suggestion) return showToast("error", data?.error ?? "No se pudo proponer un diseño");
+    if (!response?.ok || !data?.suggestion) return showToast("error", data?.error ?? t("No se pudo proponer un diseño", "Couldn't suggest a design"));
     attempt.current += 1;
     const s = data.suggestion;
     setDesign((d) => ({ ...d, style: s.style, font: s.font, accent: s.accent, customAccent: d.customAccent, hero: s.hero, corners: s.corners, background: s.background }));
@@ -105,12 +119,13 @@ export default function DesignStudio({
     }).catch(() => null);
     const data = await response?.json().catch(() => ({}));
     setSaving(false);
-    if (!response?.ok) return showToast("error", data?.error ?? "No se pudo guardar");
+    if (!response?.ok) return showToast("error", data?.error ?? t("No se pudo guardar", "Couldn't save"));
     setSaved({ profile, design });
-    showToast("success", "Diseño guardado: ya se ve en tu sitio");
+    showToast("success", t("Diseño guardado: ya se ve en tu sitio", "Design saved: it's live on your site"));
     router.refresh(); // el panel también toma el color nuevo
   }
 
+  const sectionName = (id: keyof typeof SECTIONS) => (lang === "en" ? DESIGN_EN.sections[id] : SECTIONS[id]);
   const custom = design.customAccent ? paletteFromHex(design.customAccent) : null;
 
   return (
@@ -119,18 +134,19 @@ export default function DesignStudio({
         <Card className="flex flex-col gap-sp-3">
           <div className="flex flex-wrap items-center justify-between gap-sp-3">
             <div>
-              <p className={eyebrow}>Diséñalo por mí</p>
-              <p className="mt-1 text-sm text-ink/70">Claude propone estilo, tipografía, color y portada según tu nicho y tu bio.</p>
+              <p className={eyebrow}>{t("Diséñalo por mí", "Design it for me")}</p>
+              <p className="mt-1 text-sm text-ink/70">{t("Claude propone estilo, tipografía, color y portada según tu nicho y tu bio.", "Claude suggests style, typography, color and cover based on your niche and bio.")}</p>
             </div>
             <button type="button" onClick={designForMe} disabled={suggesting} className={primaryButtonClass}>
-              {suggesting ? "Pensando…" : suggestion ? "✨ Otra idea" : "✨ Diséñalo por mí"}
+              {suggesting ? t("Pensando…", "Thinking…") : suggestion ? t("✨ Otra idea", "✨ Another idea") : t("✨ Diséñalo por mí", "✨ Design it for me")}
             </button>
           </div>
           {suggestion && (
             <p role="status" className="rounded-[12px] bg-cream p-sp-3 text-sm text-ink/80">
               {suggestion.reason}
               <span className="mt-1 block text-xs text-ink/50">
-                {suggestion.source === "claude" ? "Propuesta de Claude" : "Propuesta sugerida para tu nicho"} · Ya está en la vista previa; guarda si te gusta.
+                {suggestion.source === "claude" ? t("Propuesta de Claude", "Claude's proposal") : t("Propuesta sugerida para tu nicho", "Suggested for your niche")} ·{" "}
+                {t("Ya está en la vista previa; guarda si te gusta.", "It's already in the preview; save if you like it.")}
                 {suggestion.warning ? ` (${suggestion.warning})` : ""}
               </span>
             </p>
@@ -138,8 +154,10 @@ export default function DesignStudio({
         </Card>
 
         <Card>
-          <p className={eyebrow}>Estilo</p>
-          <p className="mt-1 text-xs text-ink/55">Cambia fondo, colores base y el resto de opciones de un clic. Después puedes ajustar cada detalle.</p>
+          <p className={eyebrow}>{t("Estilo", "Style")}</p>
+          <p className="mt-1 text-xs text-ink/55">
+            {t("Cambia fondo, colores base y el resto de opciones de un clic. Después puedes ajustar cada detalle.", "Changes background, base colors and the other options in one click. Then you can tweak every detail.")}
+          </p>
           <div className="mt-sp-3 grid grid-cols-2 gap-sp-3 sm:grid-cols-3 lg:grid-cols-5">
             {(Object.keys(STYLES) as StyleId[]).map((id) => {
               const style: StyleDef = STYLES[id];
@@ -153,8 +171,8 @@ export default function DesignStudio({
                       <span className="h-2.5 w-7 rounded-full" style={{ background: c.inverse }} />
                     </span>
                   </span>
-                  <span className="text-xs font-semibold text-ink">{style.label}</span>
-                  <span className="text-[11px] leading-tight text-ink/55">{style.description}</span>
+                  <span className="text-xs font-semibold text-ink">{lang === "en" ? DESIGN_EN.styles[id].label : style.label}</span>
+                  <span className="text-[11px] leading-tight text-ink/55">{lang === "en" ? DESIGN_EN.styles[id].description : style.description}</span>
                 </button>
               );
             })}
@@ -162,8 +180,8 @@ export default function DesignStudio({
         </Card>
 
         <Card>
-          <p className={eyebrow}>Color de acento</p>
-          <p className="mt-1 text-xs text-ink/55">Botones, enlaces, etiquetas y detalles del sitio y de este panel.</p>
+          <p className={eyebrow}>{t("Color de acento", "Accent color")}</p>
+          <p className="mt-1 text-xs text-ink/55">{t("Botones, enlaces, etiquetas y detalles del sitio y de este panel.", "Buttons, links, tags and details on your site and this dashboard.")}</p>
           <div className="mt-sp-3 grid grid-cols-4 gap-sp-3 sm:grid-cols-7">
             {(Object.keys(ACCENTS) as AccentId[]).map((id) => {
               const palette = ACCENTS[id];
@@ -174,7 +192,7 @@ export default function DesignStudio({
                     <span className="-ml-2 h-6 w-6 rounded-full ring-2 ring-white" style={{ background: palette.dark }} />
                     <span className="-ml-2 h-6 w-6 rounded-full ring-2 ring-white" style={{ background: palette.light }} />
                   </span>
-                  <span className="text-[11px] font-semibold text-ink">{palette.label}</span>
+                  <span className="text-[11px] font-semibold text-ink">{pickLabel(lang, palette)}</span>
                 </button>
               );
             })}
@@ -182,19 +200,19 @@ export default function DesignStudio({
               <span className="relative h-6 w-6 overflow-hidden rounded-full ring-2 ring-white" style={{ background: custom?.accent ?? "conic-gradient(#f43f5e,#f59e0b,#10b981,#3b82f6,#a855f7,#f43f5e)" }}>
                 <input
                   type="color"
-                  aria-label="Color propio"
+                  aria-label={t("Color propio", "Custom color")}
                   value={design.customAccent ?? "#A866BE"}
                   onChange={(e) => setDesign((d) => ({ ...d, accent: "custom", customAccent: e.target.value.toUpperCase() }))}
                   className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                 />
               </span>
-              <span className="text-[11px] font-semibold text-ink">Propio</span>
+              <span className="text-[11px] font-semibold text-ink">{t("Propio", "Custom")}</span>
             </label>
           </div>
           {design.accent === "custom" && custom && (
             <div className="mt-sp-3 flex flex-wrap items-center gap-sp-3 text-xs text-ink/65">
               <input
-                aria-label="Código del color"
+                aria-label={t("Código del color", "Color code")}
                 value={design.customAccent ?? ""}
                 onChange={(e) => {
                   const v = e.target.value.trim();
@@ -208,14 +226,21 @@ export default function DesignStudio({
                   <span key={c} className="-ml-1 h-5 w-5 rounded-full ring-2 ring-white first:ml-0" style={{ background: c }} />
                 ))}
               </span>
-              {custom.adjusted && <span>Lo oscurecimos un poco ({custom.accent}) para que el texto blanco de los botones se lea.</span>}
+              {custom.adjusted && <span>
+                  {t(
+                    `Lo oscurecimos un poco (${custom.accent}) para que el texto blanco de los botones se lea.`,
+                    `We darkened it a little (${custom.accent}) so the white button text stays readable.`
+                  )}
+                </span>}
             </div>
           )}
         </Card>
 
         <Card>
-          <p className={eyebrow}>Color secundario</p>
-          <p className="mt-1 text-xs text-ink/55">El de los bloques y botones oscuros: &quot;Por qué yo&quot;, &quot;Colaboremos&quot; y las etiquetas del contacto.</p>
+          <p className={eyebrow}>{t("Color secundario", "Secondary color")}</p>
+          <p className="mt-1 text-xs text-ink/55">
+            {t("El de los bloques y botones oscuros: “Por qué yo”, “Colaboremos” y las etiquetas del contacto.", "Used on dark blocks and buttons: “Why me”, “Let's collaborate” and the contact labels.")}
+          </p>
           <div className="mt-sp-3 grid grid-cols-2 gap-sp-3 sm:grid-cols-4">
             {(Object.keys(SECONDARY) as SecondaryId[]).map((id) => {
               const preview = { ...design, secondary: id };
@@ -223,10 +248,10 @@ export default function DesignStudio({
               return (
                 <button key={id} type="button" aria-pressed={design.secondary === id} onClick={() => set("secondary", id)} className={tile(design.secondary === id)}>
                   <span className="flex h-9 items-center justify-center rounded-[10px] text-[10px] font-bold text-white" style={{ background: `rgb(${v["--c-inverse"]})` }}>
-                    Colaboremos
+                    {t("Colaboremos", "Let's collaborate")}
                   </span>
-                  <span className="text-xs font-semibold text-ink">{SECONDARY[id].label}</span>
-                  <span className="text-[11px] leading-tight text-ink/55">{SECONDARY[id].hint}</span>
+                  <span className="text-xs font-semibold text-ink">{(lang === "en" ? DESIGN_EN.secondary : SECONDARY)[id].label}</span>
+                  <span className="text-[11px] leading-tight text-ink/55">{(lang === "en" ? DESIGN_EN.secondary : SECONDARY)[id].hint}</span>
                 </button>
               );
             })}
@@ -234,8 +259,8 @@ export default function DesignStudio({
         </Card>
 
         <Card>
-          <p className={eyebrow}>Fondo decorativo · link en bio</p>
-          <p className="mt-1 text-xs text-ink/55">Textura de tu página de enlaces, pintada con tu color de acento.</p>
+          <p className={eyebrow}>{t("Fondo decorativo · link en bio", "Decorative background · link in bio")}</p>
+          <p className="mt-1 text-xs text-ink/55">{t("Textura de tu página de enlaces, pintada con tu color de acento.", "Texture for your links page, painted with your accent color.")}</p>
           <div className="mt-sp-3 grid grid-cols-3 gap-sp-3 sm:grid-cols-6" style={accentVars(design.accent, design.customAccent) as React.CSSProperties}>
             {(Object.keys(LINK_PATTERNS) as LinkPatternId[]).map((id) => {
               const p = LINK_PATTERNS[id];
@@ -259,7 +284,7 @@ export default function DesignStudio({
                       </>
                     )}
                   </span>
-                  <span className="text-center text-[11px] font-semibold leading-tight text-ink">{p.label}</span>
+                  <span className="text-center text-[11px] font-semibold leading-tight text-ink">{lang === "en" ? PATTERN_EN[id] : p.label}</span>
                 </button>
               );
             })}
@@ -267,7 +292,7 @@ export default function DesignStudio({
         </Card>
 
         <Card>
-          <p className={eyebrow}>Tipografía</p>
+          <p className={eyebrow}>{t("Tipografía", "Typography")}</p>
           <div className="mt-sp-3 grid grid-cols-2 gap-sp-3 sm:grid-cols-3">
             {(Object.keys(FONTS) as FontId[]).map((id) => {
               const font = FONTS[id];
@@ -279,9 +304,9 @@ export default function DesignStudio({
                   >
                     Aa
                   </span>
-                  <span className="text-xs font-semibold text-ink">{font.label}</span>
+                  <span className="text-xs font-semibold text-ink">{lang === "en" ? DESIGN_EN.fonts[id].label : font.label}</span>
                   <span className="text-[11px] text-ink/55" style={{ fontFamily: `var(${font.body})` }}>
-                    {font.hint}
+                    {lang === "en" ? DESIGN_EN.fonts[id].hint : font.hint}
                   </span>
                 </button>
               );
@@ -290,13 +315,13 @@ export default function DesignStudio({
         </Card>
 
         <Card>
-          <p className={eyebrow}>Portada</p>
+          <p className={eyebrow}>{t("Portada", "Cover")}</p>
           <div className="mt-sp-3 grid grid-cols-2 gap-sp-3 sm:grid-cols-4">
             {(Object.keys(HEROES) as HeroId[]).map((id) => (
               <button key={id} type="button" aria-pressed={design.hero === id} onClick={() => set("hero", id)} className={tile(design.hero === id)}>
                 <HeroSketch id={id} />
-                <span className="text-xs font-semibold text-ink">{HEROES[id].label}</span>
-                <span className="text-[11px] leading-tight text-ink/55">{HEROES[id].hint}</span>
+                <span className="text-xs font-semibold text-ink">{(lang === "en" ? DESIGN_EN.heroes : HEROES)[id].label}</span>
+                <span className="text-[11px] leading-tight text-ink/55">{(lang === "en" ? DESIGN_EN.heroes : HEROES)[id].hint}</span>
               </button>
             ))}
           </div>
@@ -304,18 +329,18 @@ export default function DesignStudio({
 
         <div className="grid gap-sp-4 md:grid-cols-2">
           <Card>
-            <p className={eyebrow}>Bordes</p>
+            <p className={eyebrow}>{t("Bordes", "Corners")}</p>
             <div className="mt-sp-3 grid grid-cols-3 gap-sp-2">
               {(Object.keys(CORNERS) as CornerId[]).map((id) => (
                 <button key={id} type="button" aria-pressed={design.corners === id} onClick={() => set("corners", id)} className={`${tile(design.corners === id)} items-center`}>
                   <span className="h-8 w-12 border-2 border-ink/60" style={{ borderRadius: 10 * CORNERS[id].scale }} />
-                  <span className="text-[11px] font-semibold text-ink">{CORNERS[id].label}</span>
+                  <span className="text-[11px] font-semibold text-ink">{lang === "en" ? DESIGN_EN.corners[id] : CORNERS[id].label}</span>
                 </button>
               ))}
             </div>
           </Card>
           <Card>
-            <p className={eyebrow}>Fondo</p>
+            <p className={eyebrow}>{t("Fondo", "Background")}</p>
             <div className="mt-sp-3 grid grid-cols-4 gap-sp-2">
               {(Object.keys(BACKGROUNDS) as BackgroundId[]).map((id) => {
                 const mini = isLinkPattern(id) ? patternImage(id, design.accent, { mini: true, dark: (STYLES[design.style] as StyleDef).dark }) : null;
@@ -332,7 +357,7 @@ export default function DesignStudio({
                         <span className="absolute inset-0 bg-coral opacity-50" style={{ maskImage: mask, WebkitMaskImage: mask, maskSize: "60px", WebkitMaskSize: "60px" }} />
                       ) : null}
                     </span>
-                    <span className="text-[11px] font-semibold text-ink">{BACKGROUNDS[id].label}</span>
+                    <span className="text-[11px] font-semibold text-ink">{lang === "en" ? DESIGN_EN.backgrounds[id] : BACKGROUNDS[id].label}</span>
                   </button>
                 );
               })}
@@ -341,8 +366,10 @@ export default function DesignStudio({
         </div>
 
         <Card>
-          <p className={eyebrow}>Orden de las secciones</p>
-          <p className="mt-1 text-xs text-ink/55">La portada va siempre arriba y el contacto al final. Las secciones vacías no se muestran aunque estén visibles.</p>
+          <p className={eyebrow}>{t("Orden de las secciones", "Section order")}</p>
+          <p className="mt-1 text-xs text-ink/55">
+            {t("La portada va siempre arriba y el contacto al final. Las secciones vacías no se muestran aunque estén visibles.", "The cover always goes first and contact last. Empty sections aren't shown even if visible.")}
+          </p>
           <ol className="mt-sp-3 flex flex-col gap-sp-2">
             {design.sections.map((section, index) => (
               <li key={section.id} className={`flex items-center gap-sp-3 rounded-[12px] border border-line px-sp-3 py-sp-2 ${section.hidden ? "bg-cream/60" : "bg-white"}`}>
@@ -352,14 +379,14 @@ export default function DesignStudio({
                   disableUp={index === 0}
                   disableDown={index === design.sections.length - 1}
                 />
-                <span className={`flex-1 text-sm ${section.hidden ? "text-ink/40 line-through" : "text-ink"}`}>{SECTIONS[section.id]}</span>
+                <span className={`flex-1 text-sm ${section.hidden ? "text-ink/40 line-through" : "text-ink"}`}>{sectionName(section.id)}</span>
                 <button
                   type="button"
                   onClick={() => set("sections", design.sections.map((s) => (s.id === section.id ? { ...s, hidden: !s.hidden } : s)))}
-                  aria-label={`${section.hidden ? "Mostrar" : "Ocultar"} ${SECTIONS[section.id]}`}
+                  aria-label={`${section.hidden ? t("Mostrar", "Show") : t("Ocultar", "Hide")} ${sectionName(section.id)}`}
                   className="rounded-full border border-line px-sp-3 py-1 text-xs font-semibold text-ink/70 hover:border-coral hover:text-ink"
                 >
-                  {section.hidden ? "Mostrar" : "Ocultar"}
+                  {section.hidden ? t("Mostrar", "Show") : t("Ocultar", "Hide")}
                 </button>
               </li>
             ))}
@@ -367,10 +394,10 @@ export default function DesignStudio({
         </Card>
 
         <Card className="flex flex-col gap-sp-4">
-          <p className={eyebrow}>Tu perfil</p>
+          <p className={eyebrow}>{t("Tu perfil", "Your profile")}</p>
           <div className="grid gap-sp-4 sm:grid-cols-[160px_1fr]">
             <ImageUploadField
-              label="Foto de perfil"
+              label={t("Foto de perfil", "Profile photo")}
               value={profile.photoUrl}
               onChange={(url) => setP("photoUrl", url)}
               aspect={HERO_PHOTO_ASPECT_OPTIONS}
@@ -378,11 +405,11 @@ export default function DesignStudio({
             />
             <div className="flex flex-col gap-sp-4">
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">Nombre público</span>
+                <span className="text-sm font-medium text-ink">{t("Nombre público", "Public name")}</span>
                 <input required value={profile.name} onChange={(e) => setP("name", e.target.value)} className={inputClass} />
               </label>
               <BilingualTextField
-                label="Bio (la descripción de la portada)"
+                label={t("Bio (la descripción de la portada)", "Bio (the cover description)")}
                 es={profile.description}
                 en={profile.descriptionEn}
                 onEsChange={(v) => setP("description", v)}
@@ -395,42 +422,42 @@ export default function DesignStudio({
           <div className="grid gap-sp-4 sm:grid-cols-2">
             <div>
               <ImageUploadField
-                label="Foto de la sección Contacto"
+                label={t("Foto de la sección Contacto", "Contact section photo")}
                 value={profile.contactPhotoUrl}
                 onChange={(url) => setP("contactPhotoUrl", url)}
                 aspect={9 / 16}
                 recommendedSize="900 × 1600 px"
               />
-              <p className="mt-1 text-xs text-ink/50">Vertical, como fondo de tus datos de contacto. Sin foto: un panel en tu color.</p>
+              <p className="mt-1 text-xs text-ink/50">{t("Vertical, como fondo de tus datos de contacto. Sin foto: un panel en tu color.", "Portrait, as the background of your contact details. No photo: a panel in your color.")}</p>
             </div>
             <div>
               <ImageUploadField
-                label="Imagen sobre tus marcas"
+                label={t("Imagen sobre tus marcas", "Image above your brands")}
                 value={profile.brandsBannerUrl}
                 onChange={(url) => setP("brandsBannerUrl", url)}
                 aspect={5 / 2}
                 recommendedSize="2000 × 800 px"
               />
-              <p className="mt-1 text-xs text-ink/50">Horizontal (5:2), arriba de la cinta de logos. Sin imagen: solo la cinta.</p>
+              <p className="mt-1 text-xs text-ink/50">{t("Horizontal (5:2), arriba de la cinta de logos. Sin imagen: solo la cinta.", "Landscape (5:2), above the logo strip. No image: just the strip.")}</p>
             </div>
           </div>
-          <p className="text-xs text-ink/50">Las fotos, el nombre y la bio aparecen en la vista previa cuando guardas.</p>
+          <p className="text-xs text-ink/50">{t("Las fotos, el nombre y la bio aparecen en la vista previa cuando guardas.", "Photos, name and bio show in the preview once you save.")}</p>
         </Card>
 
         <div className="sticky bottom-sp-3 z-10 flex flex-wrap items-center gap-sp-3 rounded-[16px] border border-line bg-white/95 p-sp-3 shadow-lg backdrop-blur">
           <button type="button" onClick={save} disabled={saving || !dirty || !profile.name.trim()} className={primaryButtonClass}>
-            {saving ? "Guardando…" : dirty ? "Guardar diseño" : "Guardado"}
+            {saving ? t("Guardando…", "Saving…") : dirty ? t("Guardar diseño", "Save design") : t("Guardado", "Saved")}
           </button>
           <button
             type="button"
             onClick={() => setDesign((d) => ({ ...DEFAULT_DESIGN, sections: d.sections }))}
             className={secondaryButtonClass}
           >
-            Volver al original
+            {t("Volver al original", "Back to original")}
           </button>
-          {dirty && <span className="text-xs text-ink/55">Tienes cambios sin guardar.</span>}
+          {dirty && <span className="text-xs text-ink/55">{t("Tienes cambios sin guardar.", "You have unsaved changes.")}</span>}
           <a href={siteUrl} target="_blank" rel="noreferrer" className="ml-auto text-sm font-semibold text-coral hover:underline">
-            Ver mi sitio ↗
+            {t("Ver mi sitio ↗", "View my site ↗")}
           </a>
         </div>
       </div>
@@ -438,8 +465,8 @@ export default function DesignStudio({
       <div className="xl:sticky xl:top-sp-4">
         <Card className="flex flex-col gap-sp-3">
           <div className="flex items-center justify-between gap-sp-3">
-            <p className={eyebrow}>Vista previa en vivo</p>
-            <div role="group" aria-label="Dispositivo" className="flex rounded-full border border-line p-0.5 text-xs font-semibold">
+            <p className={eyebrow}>{t("Vista previa en vivo", "Live preview")}</p>
+            <div role="group" aria-label={t("Dispositivo", "Device")} className="flex rounded-full border border-line p-0.5 text-xs font-semibold">
               {(["desktop", "mobile", "links"] as const).map((d) => (
                 <button
                   key={d}
@@ -448,7 +475,7 @@ export default function DesignStudio({
                   onClick={() => setDevice(d)}
                   className={`rounded-full px-sp-3 py-1 transition ${device === d ? "bg-ink text-cream" : "text-ink/60 hover:text-ink"}`}
                 >
-                  {d === "desktop" ? "Computadora" : d === "mobile" ? "Celular" : "Link en bio"}
+                  {d === "desktop" ? t("Computadora", "Desktop") : d === "mobile" ? t("Celular", "Mobile") : t("Link en bio", "Link in bio")}
                 </button>
               ))}
             </div>
@@ -473,6 +500,16 @@ function move<T>(list: T[], index: number, delta: number) {
 
 /** El sitio real en un iframe, con el diseño sin guardar (?disenio=…), escalado para que quepa. */
 function Preview({ path, design, device }: { path: string; design: Design; device: "desktop" | "mobile" }) {
+  const { t: tr, lang } = useT();
+  // Con el panel en inglés, la vista previa del sitio también empieza en inglés (si no se eligió otro idioma).
+  const [langReady, setLangReady] = useState(false);
+  useEffect(() => {
+    const cookies = document.cookie.split("; ");
+    if (lang === "en" && !cookies.some((c) => c.startsWith(`${LOCALE_COOKIE}=`))) {
+      document.cookie = `${LOCALE_COOKIE}=en; path=/; max-age=31536000`;
+    }
+    setLangReady(true);
+  }, [lang]);
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(600);
   const encoded = useMemo(() => encodePreview(design), [design]);
@@ -510,10 +547,10 @@ function Preview({ path, design, device }: { path: string; design: Design; devic
           transformOrigin: device === "mobile" ? "top center" : "top left",
         }}
       >
-        <iframe title="Vista previa de tu sitio" src={src} onLoad={() => setLoading(false)} className="h-full w-full border-0 bg-white" />
+        <iframe title={tr("Vista previa de tu sitio", "Preview of your site")} src={langReady ? src : undefined} onLoad={() => setLoading(false)} className="h-full w-full border-0 bg-white" />
       </div>
       {loading && (
-        <span className="absolute right-sp-3 top-sp-3 rounded-full bg-ink/80 px-sp-3 py-1 font-mono text-[10px] uppercase tracking-wide text-cream">Actualizando…</span>
+        <span className="absolute right-sp-3 top-sp-3 rounded-full bg-ink/80 px-sp-3 py-1 font-mono text-[10px] uppercase tracking-wide text-cream">{tr("Actualizando…", "Updating…")}</span>
       )}
     </div>
   );

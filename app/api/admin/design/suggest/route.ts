@@ -15,13 +15,13 @@ const schema = z.object({
 
 /** "Diséñalo por mí": propuesta de estilo, tipografía, color y portada según el nicho y la bio. */
 export async function POST(request: Request) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   const parsed = schema.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const hero = await prisma.hero.findFirst({ select: { name: true, niche: true, description: true } });
   const niche = hero?.niche ?? "";
   if (!isAiConfigured()) {
-    return NextResponse.json({ suggestion: fallbackDesign(niche, parsed.data.attempt), source: "reglas" });
+    return NextResponse.json({ suggestion: fallbackDesign(niche, parsed.data.attempt, lang), source: "reglas" });
   }
   try {
     const suggestion = await suggestDesign({
@@ -29,11 +29,12 @@ export async function POST(request: Request) {
       niche,
       bio: parsed.data.bio ?? hero?.description ?? "",
       current: parsed.data.current,
+      lang,
     });
     return NextResponse.json({ suggestion, source: "claude" });
   } catch (error) {
     console.error("No se pudo proponer un diseño con IA", error);
     // Si Claude falla, igual damos una propuesta (y avisamos por qué).
-    return NextResponse.json({ suggestion: fallbackDesign(niche, parsed.data.attempt), source: "reglas", warning: aiErrorMessage(error) });
+    return NextResponse.json({ suggestion: fallbackDesign(niche, parsed.data.attempt, lang), source: "reglas", warning: aiErrorMessage(error, lang) });
   }
 }

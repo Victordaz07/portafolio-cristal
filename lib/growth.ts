@@ -12,8 +12,15 @@ export const GOAL_CATEGORY_LABEL: Record<GoalCategory, string> = {
   habit: "Hábito",
 };
 
-export function categoryLabel(value: string) {
-  return GOAL_CATEGORY_LABEL[value as GoalCategory] ?? value;
+const GOAL_CATEGORY_LABEL_EN: Record<GoalCategory, string> = {
+  content: "Content",
+  audience: "Audience",
+  skill: "Skill",
+  habit: "Habit",
+};
+
+export function categoryLabel(value: string, lang: AdminLang = "es") {
+  return (lang === "en" ? GOAL_CATEGORY_LABEL_EN : GOAL_CATEGORY_LABEL)[value as GoalCategory] ?? value;
 }
 
 /** Fuentes automáticas para el valor actual de una meta. */
@@ -27,6 +34,20 @@ export const GOAL_SOURCES = {
 } as const;
 export type GoalSource = keyof typeof GOAL_SOURCES;
 
+export const GOAL_SOURCES_EN: Record<GoalSource, string> = {
+  manual: "Manual (you update it)",
+  instagram_followers: "Automatic: Instagram followers",
+  tiktok_followers: "Automatic: TikTok followers",
+  youtube_followers: "Automatic: YouTube subscribers",
+  facebook_followers: "Automatic: Facebook page followers",
+  feed_posts_month: "Automatic: Feed posts this month",
+};
+
+export function goalSourceLabel(source: string, lang: AdminLang = "es") {
+  const map: Record<string, string> = lang === "en" ? GOAL_SOURCES_EN : GOAL_SOURCES;
+  return map[source] ?? source;
+}
+
 export function isGoalSource(value: string): value is GoalSource {
   return value in GOAL_SOURCES;
 }
@@ -39,6 +60,12 @@ export const LOG_KIND_LABEL: Record<LogKind, string> = {
   learning: "Aprendizaje",
   journal: "Diario",
 };
+
+const LOG_KIND_LABEL_EN: Record<LogKind, string> = { milestone: "Milestone", learning: "Learning", journal: "Journal" };
+
+export function logKindLabel(kind: string, lang: AdminLang = "es") {
+  return (lang === "en" ? LOG_KIND_LABEL_EN : LOG_KIND_LABEL)[kind as LogKind] ?? kind;
+}
 
 export function goalPercent(current: number, target: number) {
   if (target <= 0) return 0;

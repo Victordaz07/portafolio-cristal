@@ -15,15 +15,15 @@ const schema = z.object({
 
 /** Consejos de IA para ejecutar la publicación en cada red. */
 export async function POST(request: Request) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   if (!isAiConfigured()) {
     return NextResponse.json({ error: t("Falta ANTHROPIC_API_KEY (Conectar cuentas → IA)", "ANTHROPIC_API_KEY is missing (Connect accounts → AI)") }, { status: 400 });
   }
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: t("Escribe al menos 6 caracteres y elige una red", "Write at least 6 characters and choose a network") }, { status: 400 });
   try {
-    return NextResponse.json({ tips: await suggestNetworkTips(parsed.data) });
+    return NextResponse.json({ tips: await suggestNetworkTips({ ...parsed.data, lang }) });
   } catch (error) {
-    return NextResponse.json({ error: aiErrorMessage(error) }, { status: error instanceof AiQuotaError ? 429 : 502 });
+    return NextResponse.json({ error: aiErrorMessage(error, lang) }, { status: error instanceof AiQuotaError ? 429 : 502 });
   }
 }

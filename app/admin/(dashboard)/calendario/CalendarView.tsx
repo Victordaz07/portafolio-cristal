@@ -8,21 +8,26 @@ import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import { useToast } from "@/components/admin/ToastContext";
 import { accentLinkClass } from "@/lib/admin-ui";
 import {
-  CONTENT_TYPE_LABEL,
   NETWORK_META,
-  POST_STATUS_LABEL,
+  contentTypeLabel,
+  postStatusLabel,
   formatTime,
   isPlanNetwork,
-  type ContentType,
 } from "@/lib/content-plan";
 import { addDays, formatDateKey, weekStartOf } from "@/lib/growth";
 import type { PostView } from "@/lib/posts-view";
+import { useT } from "@/components/admin/AdminLang";
 
 const MONTH_NAMES = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];
 const WEEKDAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+const MONTHS_EN = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+const WEEKDAYS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const eyebrowClass = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
 
 function NetworkBadges({ networks }: { networks: string[] }) {
@@ -57,6 +62,7 @@ export default function CalendarView({
   upcoming: PostView[];
   overdue: PostView[];
 }) {
+  const { t, lang } = useT();
   const router = useRouter();
   const { showToast } = useToast();
   const [selectedDay, setSelectedDay] = useState<string | null>(month === today.slice(0, 7) ? today : null);
@@ -80,16 +86,16 @@ export default function CalendarView({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "published" }),
     });
-    if (!response.ok) return showToast("error", "No se pudo actualizar");
-    showToast("success", "¡Marcada como publicada!");
+    if (!response.ok) return showToast("error", t("No se pudo actualizar", "Couldn't update"));
+    showToast("success", t("¡Marcada como publicada!", "Marked as published!"));
     router.refresh();
   }
 
   async function remove(post: PostView) {
     setDeleting(null);
     const response = await fetch(`/api/admin/posts/${post.id}`, { method: "DELETE" });
-    if (!response.ok) return showToast("error", "No se pudo borrar");
-    showToast("success", "Publicación borrada");
+    if (!response.ok) return showToast("error", t("No se pudo borrar", "Couldn't delete"));
+    showToast("success", t("Publicación borrada", "Post deleted"));
     router.refresh();
   }
 
@@ -100,33 +106,33 @@ export default function CalendarView({
         <NetworkBadges networks={post.networks} />
         <div className="min-w-0 flex-1">
           <p className={`truncate text-[13px] font-semibold ${published ? "text-ink/50 line-through" : "text-ink"}`}>
-            {post.caption.split("\n")[0] || "(sin texto)"}
+            {post.caption.split("\n")[0] || t("(sin texto)", "(no text)")}
           </p>
           <p className="truncate text-xs text-ink/55">
             {[
-              CONTENT_TYPE_LABEL[post.contentType as ContentType] ?? post.contentType,
+              contentTypeLabel(post.contentType, lang),
               post.brandName,
-              POST_STATUS_LABEL[post.status],
+              postStatusLabel(post.status, lang),
             ]
               .filter(Boolean)
               .join(" · ")}
           </p>
         </div>
         <span className="shrink-0 text-xs text-ink/55">
-          {showDate ? `${formatDateKey(post.dateKey, false)} · ` : ""}
-          {formatTime(post.time)}
+          {showDate ? `${formatDateKey(post.dateKey, false, lang)} · ` : ""}
+          {formatTime(post.time, lang)}
         </span>
         <span className="flex shrink-0 gap-sp-3">
           {!published && (
             <button type="button" onClick={() => markPublished(post)} className="text-xs font-semibold text-cobalt hover:underline">
-              Marcar publicada
+              {t("Marcar publicada", "Mark published")}
             </button>
           )}
           <Link href={`/admin/crear?id=${post.id}`} className={`${accentLinkClass} text-xs`}>
-            Editar
+            {t("Editar", "Edit")}
           </Link>
           <button type="button" onClick={() => setDeleting(post)} className="text-xs text-ink/40 hover:text-ink">
-            Borrar
+            {t("Borrar", "Delete")}
           </button>
         </span>
       </li>
@@ -137,9 +143,9 @@ export default function CalendarView({
     <div className="flex flex-col gap-sp-5">
       {overdue.length > 0 && (
         <Card className="border-coral/40">
-          <p className={`${eyebrowClass} mb-sp-2`}>¿Ya las publicaste?</p>
+          <p className={`${eyebrowClass} mb-sp-2`}>{t("¿Ya las publicaste?", "Already posted these?")}</p>
           <p className="mb-sp-2 text-[13px] text-ink/60">
-            Estas publicaciones ya pasaron su fecha. Márcalas como publicadas o cámbiales la fecha.
+            {t("Estas publicaciones ya pasaron su fecha. Márcalas como publicadas o cámbiales la fecha.", "These posts are past their date. Mark them as published or change the date.")}
           </p>
           <ul>
             {overdue.map((post) => (
@@ -152,18 +158,18 @@ export default function CalendarView({
       <div className="grid items-start gap-sp-4 lg:grid-cols-[1.4fr_1fr]">
         <Card>
           <div className="mb-sp-4 flex items-center justify-between gap-sp-3">
-            <Link href={`/admin/calendario?month=${prevMonth}`} className="rounded-full border border-line px-3 py-1 text-sm hover:border-coral" aria-label="Mes anterior">
+            <Link href={`/admin/calendario?month=${prevMonth}`} className="rounded-full border border-line px-3 py-1 text-sm hover:border-coral" aria-label={t("Mes anterior", "Previous month")}>
               ←
             </Link>
             <p className="font-fraunces text-xl font-semibold text-ink">
-              {MONTH_NAMES[monthIndex - 1]} {year}
+              {(lang === "en" ? MONTHS_EN : MONTH_NAMES)[monthIndex - 1]} {year}
             </p>
-            <Link href={`/admin/calendario?month=${nextMonth}`} className="rounded-full border border-line px-3 py-1 text-sm hover:border-coral" aria-label="Mes siguiente">
+            <Link href={`/admin/calendario?month=${nextMonth}`} className="rounded-full border border-line px-3 py-1 text-sm hover:border-coral" aria-label={t("Mes siguiente", "Next month")}>
               →
             </Link>
           </div>
           <div className="grid grid-cols-7 gap-1 text-center">
-            {WEEKDAYS.map((d) => (
+            {(lang === "en" ? WEEKDAYS_EN : WEEKDAYS).map((d) => (
               <p key={d} className="pb-sp-1 font-mono text-[10px] uppercase text-ink/50">
                 {d}
               </p>
@@ -211,15 +217,15 @@ export default function CalendarView({
         <div className="flex flex-col gap-sp-4">
           <Card>
             <div className="mb-sp-2 flex items-center justify-between gap-sp-3">
-              <p className={eyebrowClass}>{selectedDay ? formatDateKey(selectedDay) : "Elige un día"}</p>
+              <p className={eyebrowClass}>{selectedDay ? formatDateKey(selectedDay, true, lang) : t("Elige un día", "Pick a day")}</p>
               {selectedDay && (
                 <Link href={`/admin/crear?date=${selectedDay}`} className={`${accentLinkClass} text-xs`}>
-                  + Programar este día
+                  {t("+ Programar este día", "+ Schedule this day")}
                 </Link>
               )}
             </div>
             {selectedDay && selectedPosts.length === 0 && (
-              <p className="text-sm text-ink/60">Nada programado este día.</p>
+              <p className="text-sm text-ink/60">{t("Nada programado este día.", "Nothing scheduled this day.")}</p>
             )}
             <ul>
               {selectedPosts.map((post) => (
@@ -229,12 +235,12 @@ export default function CalendarView({
           </Card>
 
           <Card>
-            <p className={`${eyebrowClass} mb-sp-2`}>Próximas publicaciones</p>
+            <p className={`${eyebrowClass} mb-sp-2`}>{t("Próximas publicaciones", "Upcoming posts")}</p>
             {upcoming.length === 0 ? (
               <p className="text-sm text-ink/60">
-                No hay nada programado.{" "}
+                {t("No hay nada programado.", "Nothing scheduled.")}{" "}
                 <Link href="/admin/crear" className={accentLinkClass}>
-                  Crea tu próxima publicación
+                  {t("Crea tu próxima publicación", "Create your next post")}
                 </Link>
               </p>
             ) : (
@@ -250,8 +256,8 @@ export default function CalendarView({
 
       {deleting && (
         <ConfirmDialog
-          title="Borrar publicación"
-          description="¿Seguro que quieres borrar esta publicación del calendario?"
+          title={t("Borrar publicación", "Delete post")}
+          description={t("¿Seguro que quieres borrar esta publicación del calendario?", "Are you sure you want to delete this post from the calendar?")}
           onConfirm={() => remove(deleting)}
           onCancel={() => setDeleting(null)}
         />

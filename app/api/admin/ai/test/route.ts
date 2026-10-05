@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 /** Prueba mínima de conexión con Claude: pide un caption corto de ejemplo. */
 export async function POST() {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   if (!isAiConfigured()) {
     return NextResponse.json({ ok: false, error: t("Falta ANTHROPIC_API_KEY en las variables de entorno", "ANTHROPIC_API_KEY is missing from the environment variables") });
   }
@@ -49,6 +49,6 @@ export async function POST() {
       usage: { input: response.usage.input_tokens, output: response.usage.output_tokens },
     });
   } catch (error) {
-    return NextResponse.json({ ok: false, error: aiErrorMessage(error) });
+    return NextResponse.json({ ok: false, error: aiErrorMessage(error, lang) });
   }
 }

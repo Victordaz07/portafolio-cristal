@@ -12,8 +12,11 @@ import { ACCENTS, type AccentId } from "@/lib/theme";
 import { siteTemplate, suggestedBio, type Niche } from "@/lib/onboarding";
 import { parseEmbedUrl } from "@/lib/embeds";
 import { CREATOR_KINDS, type CreatorKind } from "@/lib/creator-kind";
+import { pickLabel } from "@/lib/admin-lang";
+import { useT } from "@/components/admin/AdminLang";
 
 const STEPS = ["Tu perfil", "Tus textos", "Tu mejor contenido", "Contacto y color"];
+const STEPS_EN = ["Your profile", "Your copy", "Your best content", "Contact & color"];
 const eyebrow = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
 
 interface Initial {
@@ -29,6 +32,7 @@ interface Initial {
 }
 
 export default function Wizard({ niches, initial }: { niches: Niche[]; initial: Initial }) {
+  const { t, lang } = useT();
   const router = useRouter();
   const { showToast } = useToast();
   const [step, setStep] = useState(0);
@@ -70,16 +74,16 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
 
   function stepError(): string | null {
     if (step === 0) {
-      if (v.displayName.trim().length < 2) return "Escribe tu nombre";
-      if (!v.niche) return "Elige tu nicho";
+      if (v.displayName.trim().length < 2) return t("Escribe tu nombre", "Enter your name");
+      if (!v.niche) return t("Elige tu nicho", "Pick your niche");
     }
-    if (step === 1 && v.bio.trim().length < 10) return "Escribe tu bio (al menos una frase)";
+    if (step === 1 && v.bio.trim().length < 10) return t("Escribe tu bio (al menos una frase)", "Write your bio (at least one sentence)");
     if (step === 2) {
       for (const p of v.pieces) {
-        if (p.url.trim() && !parseEmbedUrl(p.url.trim()).platform) return "Uno de los links no es de Instagram, TikTok ni Facebook";
+        if (p.url.trim() && !parseEmbedUrl(p.url.trim()).platform) return t("Uno de los links no es de Instagram, TikTok ni Facebook", "One of the links isn't from Instagram, TikTok or Facebook");
       }
     }
-    if (step === 3 && !/^\S+@\S+\.\S+$/.test(v.contactEmail.trim())) return "Escribe un correo válido para que las marcas te escriban";
+    if (step === 3 && !/^\S+@\S+\.\S+$/.test(v.contactEmail.trim())) return t("Escribe un correo válido para que las marcas te escriban", "Enter a valid email so brands can reach you");
     return null;
   }
 
@@ -115,7 +119,7 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
     });
     setSaving(false);
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast("error", data.error ?? "No se pudo crear tu sitio");
+    if (!response.ok) return showToast("error", data.error ?? t("No se pudo crear tu sitio", "Couldn't create your site"));
     setDone({ siteUrl: data.siteUrl });
     router.refresh();
   }
@@ -131,31 +135,31 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
       <div className="mx-auto flex max-w-2xl flex-col gap-sp-5 py-sp-5">
         <Card className="text-center">
           <p className="text-4xl">🎉</p>
-          <h1 className="mt-sp-3 font-fraunces text-3xl font-semibold italic text-ink">¡Tu sitio está listo, {firstName}!</h1>
-          <p className="mt-sp-2 text-ink/65">Este es el link para compartir con las marcas, en tu bio y en tus correos:</p>
+          <h1 className="mt-sp-3 font-fraunces text-3xl font-semibold italic text-ink">{t(`¡Tu sitio está listo, ${firstName}!`, `Your site is ready, ${firstName}!`)}</h1>
+          <p className="mt-sp-2 text-ink/65">{t("Este es el link para compartir con las marcas, en tu bio y en tus correos:", "This is the link to share with brands, in your bio and in your emails:")}</p>
           <p className="mt-sp-4 break-all rounded-[12px] bg-cream px-sp-4 py-sp-3 font-mono text-sm text-ink">{done.siteUrl}</p>
           <div className="mt-sp-4 flex flex-wrap justify-center gap-sp-3">
             <a href={done.siteUrl} target="_blank" rel="noreferrer" className={primaryButtonClass}>
-              Ver mi sitio ↗
+              {t("Ver mi sitio ↗", "View my site ↗")}
             </a>
             <button
               type="button"
               className={secondaryButtonClass}
-              onClick={() => navigator.clipboard.writeText(done.siteUrl).then(() => showToast("success", "Link copiado"))}
+              onClick={() => navigator.clipboard.writeText(done.siteUrl).then(() => showToast("success", t("Link copiado", "Link copied")))}
             >
-              Copiar link
+              {t("Copiar link", "Copy link")}
             </button>
           </div>
         </Card>
         <Card>
-          <p className={`${eyebrow} mb-sp-3`}>Siguientes pasos</p>
+          <p className={`${eyebrow} mb-sp-3`}>{t("Siguientes pasos", "Next steps")}</p>
           <ul className="flex flex-col gap-sp-3 text-sm">
             {[
-              { href: "/admin/conectar", title: "Conecta tu Instagram y tu TikTok", text: "Tus seguidores y métricas se actualizan solos." },
-              { href: "/admin/media-kit", title: "Agrega tus números", text: "Audiencia, colaboraciones y valoración para tu media kit." },
-              { href: "/admin/feed", title: "Sube más contenido", text: "Tus mejores piezas, con sus métricas." },
-              { href: "/admin/marcas", title: "Anota tus marcas", text: "Tratos, pagos y seguimientos en tu CRM." },
-              { href: "/admin/dominio", title: "Conecta tu dominio", text: "Si tienes uno, como tunombre.com." },
+              { href: "/admin/conectar", title: t("Conecta tu Instagram y tu TikTok", "Connect your Instagram and TikTok"), text: t("Tus seguidores y métricas se actualizan solos.", "Your followers and metrics update on their own.") },
+              { href: "/admin/media-kit", title: t("Agrega tus números", "Add your numbers"), text: t("Audiencia, colaboraciones y valoración para tu media kit.", "Audience, collaborations and rating for your media kit.") },
+              { href: "/admin/feed", title: t("Sube más contenido", "Upload more content"), text: t("Tus mejores piezas, con sus métricas.", "Your best pieces, with their metrics.") },
+              { href: "/admin/marcas", title: t("Anota tus marcas", "Track your brands"), text: t("Tratos, pagos y seguimientos en tu CRM.", "Deals, payments and follow-ups in your CRM.") },
+              { href: "/admin/dominio", title: t("Conecta tu dominio", "Connect your domain"), text: t("Si tienes uno, como tunombre.com.", "If you have one, like yourname.com.") },
             ].map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="flex items-center justify-between gap-sp-3 rounded-[12px] border border-line px-sp-4 py-sp-3 hover:border-coral">
@@ -169,7 +173,7 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
             ))}
           </ul>
           <Link href="/admin" className="mt-sp-4 inline-block text-sm font-semibold text-coral hover:underline">
-            Ir a mi panel →
+            {t("Ir a mi panel →", "Go to my dashboard →")}
           </Link>
         </Card>
       </div>
@@ -180,18 +184,19 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
     <div className="mx-auto flex max-w-3xl flex-col gap-sp-5 py-sp-3">
       <div className="flex flex-wrap items-end justify-between gap-sp-3">
         <div>
-          <p className={eyebrow}>Te damos la bienvenida a Foliocrew</p>
-          <h1 className="mt-sp-1 font-fraunces text-3xl font-semibold italic text-ink">Armemos tu sitio en 10 minutos</h1>
+          <p className={eyebrow}>{t("Te damos la bienvenida a Foliocrew", "Welcome to Foliocrew")}</p>
+          <h1 className="mt-sp-1 font-fraunces text-3xl font-semibold italic text-ink">{t("Armemos tu sitio en 10 minutos", "Let's build your site in 10 minutes")}</h1>
         </div>
         <button type="button" onClick={skip} className="text-xs text-ink/50 hover:text-ink">
-          Saltar por ahora
+          {t("Saltar por ahora", "Skip for now")}
         </button>
       </div>
 
       <div>
         <div className="mb-sp-2 flex justify-between text-xs text-ink/55">
           <span>
-            Paso {step + 1} de {STEPS.length} · <strong className="text-ink">{STEPS[step]}</strong>
+            {t(`Paso ${step + 1} de ${STEPS.length}`, `Step ${step + 1} of ${STEPS.length}`)} ·{" "}
+            <strong className="text-ink">{(lang === "en" ? STEPS_EN : STEPS)[step]}</strong>
           </span>
         </div>
         <div className="flex gap-1" aria-hidden>
@@ -205,25 +210,25 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
         {step === 0 && (
           <div className="flex flex-col gap-sp-4">
             <ImageUploadField
-              label="Tu foto (la de la portada de tu sitio)"
+              label={t("Tu foto (la de la portada de tu sitio)", "Your photo (your site's cover)")}
               value={v.photoUrl}
               onChange={(url) => set("photoUrl", url)}
               aspect={HERO_PHOTO_ASPECT_OPTIONS}
-              recommendedSize="1200 × 1500 px (vertical) o 1920 × 1080 px (horizontal)"
+              recommendedSize={t("1200 × 1500 px (vertical) o 1920 × 1080 px (horizontal)", "1200 × 1500 px (portrait) or 1920 × 1080 px (landscape)")}
             />
             <div className="grid gap-sp-4 sm:grid-cols-2">
               <label className={labelClass}>
-                <span className="text-sm font-medium text-ink">Tu nombre (como quieres que aparezca)</span>
+                <span className="text-sm font-medium text-ink">{t("Tu nombre (como quieres que aparezca)", "Your name (as you want it to appear)")}</span>
                 <input value={v.displayName} onChange={(e) => set("displayName", e.target.value)} className={inputClass} />
               </label>
               <label className={labelClass}>
-                <span className="text-sm font-medium text-ink">Ciudad / país (opcional)</span>
-                <input value={v.location} onChange={(e) => set("location", e.target.value)} placeholder="Santo Domingo, RD" className={inputClass} />
+                <span className="text-sm font-medium text-ink">{t("Ciudad / país (opcional)", "City / country (optional)")}</span>
+                <input value={v.location} onChange={(e) => set("location", e.target.value)} placeholder={t("Santo Domingo, RD", "Miami, FL")} className={inputClass} />
               </label>
             </div>
             <div>
-              <p className="mb-sp-2 text-sm font-medium text-ink">¿Cómo trabajas con marcas?</p>
-              <div className="grid gap-sp-2 sm:grid-cols-3" role="radiogroup" aria-label="¿Cómo trabajas con marcas?">
+              <p className="mb-sp-2 text-sm font-medium text-ink">{t("¿Cómo trabajas con marcas?", "How do you work with brands?")}</p>
+              <div className="grid gap-sp-2 sm:grid-cols-3" role="radiogroup" aria-label={t("¿Cómo trabajas con marcas?", "How do you work with brands?")}>
                 {CREATOR_KINDS.map((k) => (
                   <button
                     key={k.id}
@@ -235,14 +240,14 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
                       v.creatorKind === k.id ? "border-ink bg-ink text-cream" : "border-line bg-white text-ink hover:border-coral"
                     }`}
                   >
-                    <span className="text-sm font-semibold">{k.label}</span>
-                    <span className={`text-xs ${v.creatorKind === k.id ? "text-cream/75" : "text-ink/55"}`}>{k.hint}</span>
+                    <span className="text-sm font-semibold">{pickLabel(lang, k)}</span>
+                    <span className={`text-xs ${v.creatorKind === k.id ? "text-cream/75" : "text-ink/55"}`}>{lang === "en" ? k.hintEn : k.hint}</span>
                   </button>
                 ))}
               </div>
             </div>
             <div>
-              <p className="mb-sp-2 text-sm font-medium text-ink">¿De qué es tu contenido?</p>
+              <p className="mb-sp-2 text-sm font-medium text-ink">{t("¿De qué es tu contenido?", "What's your content about?")}</p>
               <div className="flex flex-wrap gap-sp-2">
                 {niches.map((n) => (
                   <button
@@ -254,7 +259,7 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
                       v.niche === n.id ? "bg-ink text-cream" : "border border-line bg-white text-ink hover:border-coral"
                     }`}
                   >
-                    {n.label}
+                    {pickLabel(lang, n)}
                   </button>
                 ))}
               </div>
@@ -265,28 +270,41 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
         {step === 1 && template && (
           <div className="flex flex-col gap-sp-5">
             <div>
-              <p className={`${eyebrow} mb-sp-2`}>Tu portada</p>
+              <p className={`${eyebrow} mb-sp-2`}>{t("Tu portada", "Your cover")}</p>
               <p className="font-fraunces text-2xl font-semibold text-ink">
-                {template.hero.headlinePlain} <em className="text-coral">{template.hero.headlineEmphasis}</em> {template.hero.headlineSuffix}
+                {lang === "en" ? (
+                  <>
+                    {template.hero.headlinePlainEn} <em className="text-coral">{template.hero.headlineEmphasisEn}</em> {template.hero.headlineSuffixEn}
+                  </>
+                ) : (
+                  <>
+                    {template.hero.headlinePlain} <em className="text-coral">{template.hero.headlineEmphasis}</em> {template.hero.headlineSuffix}
+                  </>
+                )}
               </p>
-              <p className="mt-sp-1 text-xs text-ink/50">Elegida para {niche?.label}. La cambias cuando quieras en Portada (Hero).</p>
+              <p className="mt-sp-1 text-xs text-ink/50">
+                {t(
+                  `Elegida para ${niche?.label}. La cambias cuando quieras en Portada (Hero).`,
+                  `Chosen for ${niche?.labelEn}. Change it anytime in Cover (Hero).`
+                )}
+              </p>
             </div>
             <label className={labelClass}>
-              <span className="text-sm font-medium text-ink">Tu bio (español)</span>
+              <span className="text-sm font-medium text-ink">{t("Tu bio (español)", "Your bio (Spanish)")}</span>
               <textarea rows={3} value={v.bio} onChange={(e) => setV((c) => ({ ...c, bio: e.target.value, bioEdited: true }))} className={inputClass} />
             </label>
             <label className={labelClass}>
-              <span className="text-sm font-medium text-ink">Tu bio (inglés, para marcas de EE. UU.)</span>
+              <span className="text-sm font-medium text-ink">{t("Tu bio (inglés, para marcas de EE. UU.)", "Your bio (English, for US brands)")}</span>
               <textarea rows={3} value={v.bioEn} onChange={(e) => setV((c) => ({ ...c, bioEn: e.target.value, bioEdited: true }))} className={inputClass} />
             </label>
             <div>
-              <p className={`${eyebrow} mb-sp-2`}>Agregar a tu sitio (podrás editarlo)</p>
+              <p className={`${eyebrow} mb-sp-2`}>{t("Agregar a tu sitio (podrás editarlo)", "Add to your site (you can edit it)")}</p>
               <div className="grid gap-sp-3 sm:grid-cols-3">
                 {(
                   [
-                    { key: "services", title: "Cómo trabajo", items: template.services.map((s) => s.title) },
-                    { key: "packages", title: "Paquetes", items: template.packages.map((p) => `${p.emoji} ${p.name}`) },
-                    { key: "faq", title: "Preguntas frecuentes", items: template.faq.map((f) => f.question) },
+                    { key: "services", title: t("Cómo trabajo", "How I work"), items: template.services.map((s) => (lang === "en" ? s.titleEn : s.title)) },
+                    { key: "packages", title: t("Paquetes", "Packages"), items: template.packages.map((p) => `${p.emoji} ${lang === "en" ? p.nameEn : p.name}`) },
+                    { key: "faq", title: t("Preguntas frecuentes", "FAQ"), items: template.faq.map((f) => (lang === "en" ? f.questionEn : f.question)) },
                   ] as const
                 ).map((group) => (
                   <label
@@ -311,7 +329,12 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
                   </label>
                 ))}
               </div>
-              <p className="mt-sp-2 text-xs text-ink/50">También se escribe tu texto de &quot;por qué trabajar conmigo&quot;. Todo queda en español e inglés.</p>
+              <p className="mt-sp-2 text-xs text-ink/50">
+                {t(
+                  "También se escribe tu texto de “por qué trabajar conmigo”. Todo queda en español e inglés.",
+                  "Your “why work with me” text is also written. Everything is in Spanish and English."
+                )}
+              </p>
             </div>
           </div>
         )}
@@ -319,8 +342,17 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
         {step === 2 && (
           <div className="flex flex-col gap-sp-4">
             <p className="text-sm text-ink/70">
-              Pega el link de tus <strong>3 mejores videos o fotos</strong> de Instagram, TikTok o Facebook (los que mostrarías a una marca). Puedes
-              dejarlo vacío y agregarlos después en Feed.
+              {lang === "en" ? (
+                <>
+                  Paste the link to your <strong>3 best videos or photos</strong> from Instagram, TikTok or Facebook (the ones you&apos;d show a brand). You
+                  can leave it empty and add them later in Feed.
+                </>
+              ) : (
+                <>
+                  Pega el link de tus <strong>3 mejores videos o fotos</strong> de Instagram, TikTok o Facebook (los que mostrarías a una marca). Puedes
+                  dejarlo vacío y agregarlos después en Feed.
+                </>
+              )}
             </p>
             {v.pieces.map((piece, i) => {
               const platform = piece.url.trim() ? parseEmbedUrl(piece.url.trim()).platform : null;
@@ -331,7 +363,7 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
                       Link {i + 1}
                       {piece.url.trim() && (
                         <span className={`font-mono text-[10px] uppercase ${platform ? "text-cobalt" : "text-red-600"}`}>
-                          {platform ?? "no reconocido"}
+                          {platform ?? t("no reconocido", "not recognized")}
                         </span>
                       )}
                     </span>
@@ -343,11 +375,11 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
                     />
                   </label>
                   <label className={labelClass}>
-                    <span className="text-xs font-medium text-ink">Descripción corta</span>
+                    <span className="text-xs font-medium text-ink">{t("Descripción corta", "Short description")}</span>
                     <input
                       value={piece.caption}
                       onChange={(e) => set("pieces", v.pieces.map((p, j) => (j === i ? { ...p, caption: e.target.value } : p)))}
-                      placeholder="Reseña sérum de vitamina C"
+                      placeholder={t("Reseña sérum de vitamina C", "Vitamin C serum review")}
                       className={inputClass}
                     />
                   </label>
@@ -360,25 +392,25 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
         {step === 3 && (
           <div className="flex flex-col gap-sp-4">
             <label className={labelClass}>
-              <span className="text-sm font-medium text-ink">Correo para marcas</span>
+              <span className="text-sm font-medium text-ink">{t("Correo para marcas", "Email for brands")}</span>
               <input type="email" value={v.contactEmail} onChange={(e) => set("contactEmail", e.target.value)} className={inputClass} />
             </label>
             <div className="grid gap-sp-4 sm:grid-cols-3">
               <label className={labelClass}>
                 <span className="text-sm font-medium text-ink">Instagram</span>
-                <input value={v.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@tuusuario" className={inputClass} />
+                <input value={v.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder={t("@tuusuario", "@yourhandle")} className={inputClass} />
               </label>
               <label className={labelClass}>
                 <span className="text-sm font-medium text-ink">TikTok</span>
-                <input value={v.tiktok} onChange={(e) => set("tiktok", e.target.value)} placeholder="@tuusuario" className={inputClass} />
+                <input value={v.tiktok} onChange={(e) => set("tiktok", e.target.value)} placeholder={t("@tuusuario", "@yourhandle")} className={inputClass} />
               </label>
               <label className={labelClass}>
-                <span className="text-sm font-medium text-ink">WhatsApp (opcional)</span>
+                <span className="text-sm font-medium text-ink">{t("WhatsApp (opcional)", "WhatsApp (optional)")}</span>
                 <input value={v.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="+1 809 000 0000" className={inputClass} />
               </label>
             </div>
             <div>
-              <p className="mb-sp-2 text-sm font-medium text-ink">El color de tu sitio</p>
+              <p className="mb-sp-2 text-sm font-medium text-ink">{t("El color de tu sitio", "Your site's color")}</p>
               <div className="flex flex-wrap gap-sp-3">
                 {(Object.keys(ACCENTS) as AccentId[]).map((id) => (
                   <button
@@ -391,7 +423,7 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
                     }`}
                   >
                     <span className="h-5 w-5 rounded-full" style={{ background: ACCENTS[id].accent }} />
-                    {ACCENTS[id].label}
+                    {pickLabel(lang, ACCENTS[id])}
                   </button>
                 ))}
               </div>
@@ -403,18 +435,18 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
       <div className="flex items-center justify-between gap-sp-3">
         {step > 0 ? (
           <button type="button" onClick={() => setStep((s) => s - 1)} className={secondaryButtonClass}>
-            ← Atrás
+            {t("← Atrás", "← Back")}
           </button>
         ) : (
           <span />
         )}
         {step < STEPS.length - 1 ? (
           <button type="button" onClick={next} className={primaryButtonClass}>
-            Siguiente →
+            {t("Siguiente →", "Next →")}
           </button>
         ) : (
           <button type="button" onClick={finish} disabled={saving} className={primaryButtonClass}>
-            {saving ? "Creando tu sitio…" : "Crear mi sitio ✨"}
+            {saving ? t("Creando tu sitio…", "Creating your site…") : t("Crear mi sitio ✨", "Create my site ✨")}
           </button>
         )}
       </div>

@@ -39,8 +39,9 @@ type GraphComment = {
   timestamp?: string;
   like_count?: number;
   hidden?: boolean;
-  replies?: GraphList<{ id: string; text?: string; username?: string; from?: GraphAuthor; timestamp?: string }>;
+  replies?: GraphList<GraphReply>;
 };
+type GraphReply = { id: string; text?: string; username?: string; from?: GraphAuthor; timestamp?: string };
 
 /** Usuario de quien escribió el comentario: `username` o, si Meta lo oculta, `from.username`. */
 function author(c: { username?: string; from?: GraphAuthor }) {
@@ -51,7 +52,12 @@ async function instagramToken() {
   const account = await prisma.socialAccount.findFirst({ where: { platform: "instagram" } });
   if (!account) return null;
   const { tokens } = await getFreshTokens(account);
-  return { token: tokens.accessToken, username: (account.username ?? "").replace(/^@/, "").toLowerCase() };
+  return {
+    token: tokens.accessToken,
+    username: (account.username ?? "").replace(/^@/, "").toLowerCase(),
+    /** Ids de la cuenta (user_id e id del token) para reconocer sus respuestas aunque Meta oculte el usuario. */
+    ids: [account.externalId, account.scopedId].filter(Boolean) as string[],
+  };
 }
 
 export async function isInstagramConnected() {
@@ -93,12 +99,22 @@ export async function fetchInstagramComments(mediaLimit = 8, stats?: CommentStat
         // Sus propios comentarios no son mensajes por responder.
         .filter((c) => author(c).toLowerCase() !== auth.username);
       if (stats) stats.own += all.length - others.length;
-      return others
-        .map<InboxComment>((c) => {
-          const replies = (c.replies?.data ?? []).map((r) => ({
+      const isOwn = (r: { username?: string; from?: GraphAuthor }) =>
+        author(r).toLowerCase() === auth.username || (!!r.from?.id && auth.ids.includes(r.from.id));
+      return Promise.all(
+        others.map<Promise<InboxComment>>(async (c) => {
+          let rawReplies = c.replies?.data ?? [];
+          if (rawReplies.some((r) => !author(r))) {
+            // En las respuestas anidadas Meta puede omitir el autor: el edge /replies lo trae completo.
+            const full = await fetchJson<GraphList<GraphReply>>(
+              `${GRAPH}/${c.id}/replies?${new URLSearchParams({ fields: "id,text,username,from,timestamp", access_token: auth.token })}`
+            ).catch(() => null);
+            if (full?.data?.length) rawReplies = full.data;
+          }
+          const replies = rawReplies.map((r) => ({
             id: r.id,
             text: r.text ?? "",
-            username: author(r),
+            username: author(r) || (isOwn(r) ? auth.username : ""),
             timestamp: r.timestamp ?? "",
           }));
           return {
@@ -108,7 +124,7 @@ export async function fetchInstagramComments(mediaLimit = 8, stats?: CommentStat
             timestamp: c.timestamp ?? "",
             likeCount: c.like_count ?? 0,
             hidden: !!c.hidden,
-            replied: replies.some((r) => r.username.toLowerCase() === auth.username),
+            replied: rawReplies.some(isOwn),
             replies,
             media: {
               id: m.id,
@@ -117,7 +133,8 @@ export async function fetchInstagramComments(mediaLimit = 8, stats?: CommentStat
               thumbnailUrl: m.media_type === "VIDEO" ? m.thumbnail_url ?? null : m.media_url ?? m.thumbnail_url ?? null,
             },
           };
-        });
+        })
+      );
     })
   );
   return perMedia.flat().sort((a, b) => b.timestamp.localeCompare(a.timestamp));
@@ -185,7 +202,29 @@ export async function diagnoseInstagramComments(mediaLimit = 8) {
       const withFrom = await safe<GraphList<{ id: string; from?: { id?: string; username?: string } }>>(
         `${GRAPH}/${m.id}/comments?${new URLSearchParams({ fields: "id,from", limit: "25", access_token: auth.token })}`
       );
+      // Autores de las respuestas: anidadas (replies{…}) y por el edge /replies de cada comentario.
+      const withReplies = await safe<GraphList<{ id: string; replies?: GraphList<GraphReply> }>>(
+        `${GRAPH}/${m.id}/comments?${new URLSearchParams({ fields: "id,replies{id,username,from}", limit: "25", access_token: auth.token })}`
+      );
+      const describe = (r: GraphReply) =>
+        `${r.username || r.from?.username || "(sin usuario)"}#${r.from?.id ? (auth.ids.includes(r.from.id) ? "id-propio" : "id") : "sin-id"}`;
+      const replies = withReplies.ok
+        ? await Promise.all(
+            (withReplies.data.data ?? [])
+              .filter((c) => c.replies?.data?.length)
+              .map(async (c) => {
+                const edge = await safe<GraphList<GraphReply>>(
+                  `${GRAPH}/${c.id}/replies?${new URLSearchParams({ fields: "id,username,from", access_token: auth.token })}`
+                );
+                return {
+                  nested: (c.replies?.data ?? []).map(describe),
+                  edge: edge.ok ? (edge.data.data ?? []).map(describe) : { error: edge.error },
+                };
+              })
+          )
+        : { error: withReplies.error };
       return {
+        replies,
         permalink: m.permalink ?? null,
         timestamp: m.timestamp ?? null,
         commentsCount: m.comments_count ?? 0,

@@ -1,70 +1,27 @@
 import type { Metadata } from "next";
-import {
-  Fraunces,
-  Bodoni_Moda,
-  Inter,
-  Space_Mono,
-  Parisienne,
-  Playfair_Display,
-  DM_Sans,
-  Cormorant_Garamond,
-  Fredoka,
-  Nunito,
-  Archivo,
-} from "next/font/google";
 import localFont from "next/font/local";
 import { getLocale } from "@/lib/locale";
 import { prisma } from "@/lib/prisma";
 import { accentVars } from "@/lib/theme";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-const parisienne = Parisienne({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-script",
-  display: "swap",
-});
-
-const bodoniModa = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["700"],
-  style: ["italic"],
-  variable: "--font-bodoni",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-space-mono",
-  display: "swap",
-});
+// Todas las tipografías viven en app/fonts (subconjunto latino de Google Fonts, licencia OFL): así el
+// build no depende de que Google responda bien, algo que ya tumbó deploys y la CI.
+const fraunces = localFont({ src: [{ path: "./fonts/fraunces-italic-500-600.woff2", weight: "500 600", style: "italic" }, { path: "./fonts/fraunces-normal-500-600.woff2", weight: "500 600", style: "normal" }], variable: "--font-fraunces", display: "swap" });
+const parisienne = localFont({ src: "./fonts/parisienne-normal-400.woff2", weight: "400", style: "normal", variable: "--font-script", display: "swap" });
+const bodoniModa = localFont({ src: "./fonts/bodoni-moda-italic-700.woff2", weight: "700", style: "italic", variable: "--font-bodoni", display: "swap" });
+const inter = localFont({ src: "./fonts/inter-normal-400-800.woff2", weight: "400 800", style: "normal", variable: "--font-inter", display: "swap" });
+const spaceMono = localFont({ src: [{ path: "./fonts/space-mono-normal-400.woff2", weight: "400", style: "normal" }, { path: "./fonts/space-mono-normal-700.woff2", weight: "700", style: "normal" }], variable: "--font-space-mono", display: "swap" });
 
 // Tipografías del Estudio de diseño (lib/design.ts → FONTS). Sin precarga: el navegador solo
 // descarga las que usa el sitio que está viendo.
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["500", "600", "700"], style: ["normal", "italic"], variable: "--font-playfair", display: "swap", preload: false });
-// Alojada en el proyecto: Google Fonts a veces responde mal a los builds de producción con esta fuente.
+const playfair = localFont({ src: [{ path: "./fonts/playfair-display-italic-500-700.woff2", weight: "500 700", style: "italic" }, { path: "./fonts/playfair-display-normal-500-700.woff2", weight: "500 700", style: "normal" }], variable: "--font-playfair", display: "swap", preload: false });
 const grotesk = localFont({ src: "./fonts/space-grotesk-latin.woff2", weight: "500 700", variable: "--font-grotesk", display: "swap", preload: false });
-const dmSans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-dmsans", display: "swap", preload: false });
-const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["500", "600", "700"], style: ["normal", "italic"], variable: "--font-cormorant", display: "swap", preload: false });
-const fredoka = Fredoka({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-fredoka", display: "swap", preload: false });
-const nunito = Nunito({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-nunito", display: "swap", preload: false });
-const archivo = Archivo({ subsets: ["latin"], weight: ["600", "800", "900"], variable: "--font-archivo", display: "swap", preload: false });
+const dmSans = localFont({ src: "./fonts/dm-sans-normal-400-700.woff2", weight: "400 700", style: "normal", variable: "--font-dmsans", display: "swap", preload: false });
+const cormorant = localFont({ src: [{ path: "./fonts/cormorant-garamond-italic-500-700.woff2", weight: "500 700", style: "italic" }, { path: "./fonts/cormorant-garamond-normal-500-700.woff2", weight: "500 700", style: "normal" }], variable: "--font-cormorant", display: "swap", preload: false });
+const fredoka = localFont({ src: "./fonts/fredoka-normal-500-700.woff2", weight: "500 700", style: "normal", variable: "--font-fredoka", display: "swap", preload: false });
+const nunito = localFont({ src: "./fonts/nunito-normal-400-800.woff2", weight: "400 800", style: "normal", variable: "--font-nunito", display: "swap", preload: false });
+const archivo = localFont({ src: "./fonts/archivo-normal-600-900.woff2", weight: "600 900", style: "normal", variable: "--font-archivo", display: "swap", preload: false });
 const designFonts = [playfair, grotesk, dmSans, cormorant, fredoka, nunito, archivo].map((f) => f.variable).join(" ");
 
 export const metadata: Metadata = {

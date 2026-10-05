@@ -48,6 +48,11 @@ function hoursSince(date: string) {
   return (Date.now() - new Date(date).getTime()) / 36e5;
 }
 
+// Con acceso estándar, Meta no entrega el usuario de quien comenta si no tiene rol en la app.
+function igName(username: string) {
+  return username ? `@${username}` : "Usuario de Instagram";
+}
+
 function timeAgo(date: string) {
   const hours = hoursSince(date);
   if (hours < 1) return `hace ${Math.max(1, Math.round(hours * 60))} min`;
@@ -290,7 +295,7 @@ export default function InboxManager({
           <ul className="flex flex-col gap-sp-3">
             {visible.map((item) => {
               const isForm = item.kind === "form";
-              const name = isForm ? `${item.msg.name} — ${item.msg.brand}` : `@${item.comment.username}`;
+              const name = isForm ? `${item.msg.name} — ${item.msg.brand}` : igName(item.comment.username);
               const text = isForm ? item.msg.message : item.comment.text;
               const client = isClient(isForm ? item.msg.brand : `${item.comment.username} ${item.comment.text}`);
               const unread = isForm && !item.msg.read;
@@ -344,7 +349,7 @@ export default function InboxManager({
                     <ul className="mt-sp-2 flex flex-col gap-1 border-l-2 border-lime pl-sp-3">
                       {item.comment.replies.slice(-2).map((reply) => (
                         <li key={reply.id} className="text-[12px] text-ink/65">
-                          <strong className="text-ink">@{reply.username}</strong> {reply.text}
+                          <strong className="text-ink">{igName(reply.username)}</strong> {reply.text}
                         </li>
                       ))}
                     </ul>

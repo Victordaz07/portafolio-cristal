@@ -1,8 +1,10 @@
 # Plan: Comunidad Foliocrew (el "LinkedIn de los creadores")
 
+> **Este es el detalle de la Comunidad (bloque A y D).** El camino completo está en `docs/plan-maestro.md`: empieza por ahí.
+>
 > **Si eres otra sesión de Claude retomando este trabajo:** lee este archivo completo antes de tocar código.
 > 1. Mira la sección **Estado** (abajo) y sigue con el primer paso sin marcar.
-> 2. Cada paso es un PR pequeño. Al terminarlo, marca su casilla **en este mismo archivo** dentro del mismo PR.
+> 2. Cada paso es un PR pequeño. Al terminarlo, marca su casilla **en este archivo y en `docs/plan-maestro.md`** dentro del mismo PR.
 > 3. Responde siempre en **español**. La persona dueña del proyecto está aprendiendo ("vibe coding"): explica en simple, sin jerga.
 > 4. Respeta las **Reglas del proyecto** (sección 2). No son opcionales.
 

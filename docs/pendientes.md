@@ -27,6 +27,7 @@ Cuando TikTok apruebe la app (está "In review"): en Vercel cambia `TIKTOK_CLIEN
 ## 4. Límite mensual de IA (opcional)
 Ya funciona con estos topes: Folio 60, Pro 300, Crew/cortesía 1000 sugerencias al mes.
 Para cambiarlos sin tocar código, en Vercel: `AI_MONTHLY_LIMIT_FOLIO`, `AI_MONTHLY_LIMIT_PRO`, `AI_MONTHLY_LIMIT_CREW`.
+Modelo: por defecto `claude-sonnet-5-5` (la mitad de precio que Opus). Para cambiarlo, variable `AI_MODEL` en Vercel.
 
 ## 5. Para crecer (cuando haya más usuarios)
 - **Next.js 16**: `npm audit` marca avisos en Next 14 (la mayoría son DoS de servidores propios; en Vercel el riesgo es bajo). Es una actualización grande: hacerla en una rama aparte y probar todo.

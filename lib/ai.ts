@@ -1,7 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-// Modelo de Claude para las funciones de IA del panel (captions, sugerencias).
-export const AI_MODEL = "claude-opus-5-5";
+// Modelo de Claude para las funciones de IA del panel (captions, sugerencias, diseño, playbooks).
+// Sonnet 5.5 cuesta la mitad que Opus 5.5 y sobra para textos cortos. Para cambiarlo sin tocar
+// código: variable AI_MODEL en Vercel (por ejemplo "claude-opus-5-5").
+export const AI_MODEL = process.env.AI_MODEL || "claude-sonnet-5-5";
 
 export function isAiConfigured() {
   return !!process.env.ANTHROPIC_API_KEY;

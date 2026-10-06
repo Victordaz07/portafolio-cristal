@@ -370,6 +370,7 @@ const guiaEs: ManualBlock[] = [
     paragraphs: [
       "Elige el tipo (post, carrusel, reel, video largo o historia), en qué redes va y si es para una marca. Escribe el caption o toca \"Sugerir con IA\": la IA te da 3 opciones usando el tema, la marca y tu estilo; toca la que te guste para usarla.",
       "Mientras escribes ves una vista previa por red y, a la derecha, consejos de la IA para ejecutarlo en cada una. También te avisa si pasas el límite de caracteres o de hashtags de alguna red.",
+      "Si la publicación es para una marca, revisamos que el texto diga que es publicidad y que se vea antes del \"ver más\" (en las primeras ~100 a 125 letras, según la red). Si falta, toca \"Agregar #publicidad al inicio\"; si está muy abajo, \"Mover el aviso al inicio\". #colaboración o #collab solos no bastan. En el Calendario marcamos con ⚠ las que todavía no lo tienen. Además, usa la etiqueta de colaboración pagada de cada red. Es una guía de referencia (FTC de EE. UU.), no asesoría legal.",
       "Elige día y hora y toca \"Programar\" (o guárdala como borrador). Por ahora no se publica sola: la ves en el Calendario y en el Resumen para subirla ese día.",
     ],
   },
@@ -565,6 +566,7 @@ const guiaEn: ManualBlock[] = [
     paragraphs: [
       "Pick the type (post, carousel, reel, long video or story), which networks it goes to and whether it's for a brand. Write the caption or tap \"Suggest with AI\": the AI gives you 3 options using the topic, the brand and your style; tap the one you like to use it.",
       "While you write you see a preview per network and, on the right, AI tips to execute it on each one. It also warns you if you go over a network's character or hashtag limit.",
+      "If the post is for a brand, we check that the text says it's an ad and that it shows before \"more\" (in the first ~100 to 125 characters, depending on the network). If it's missing, tap \"Add #ad at the start\"; if it's too far down, \"Move the disclosure to the start\". #collab or #colaboración alone aren't enough. In the Calendar we flag with ⚠ the ones that don't have it yet. Also use each network's paid partnership label. It's a reference guide (US FTC), not legal advice.",
       "Pick the day and time and tap \"Schedule\" (or save it as a draft). For now it doesn't publish itself: you see it in the Calendar and the Summary so you can upload it that day.",
     ],
   },

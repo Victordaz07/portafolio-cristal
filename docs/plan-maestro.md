@@ -30,7 +30,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] B2. Entregables y derechos de uso por trato
 - [x] B3. Facturas y recordatorios de cobro
 - [x] B4. Contrato simple con aceptación en línea
-- [ ] B5. Aviso de #publicidad (FTC) al crear contenido patrocinado
+- [x] B5. Aviso de #publicidad (FTC) al crear contenido patrocinado
 
 **C. Conseguir más tratos**
 - [ ] C1. Propuestas a marcas escritas con IA
@@ -210,6 +210,7 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
   - si la IA escribió el texto, recuerda marcar el contenido como hecho con IA en la red.
   Con la herramienta "Contenido de marca" de cada red, la divulgación funciona 17 veces mejor que un hashtag.
 - **Archivos:** función pura `lib/disclosure.ts` con pruebas, más el aviso en los formularios. Sin base de datos.
+- **Cómo quedó:** `#colaboración`, `#collab` y similares se tratan como **aviso débil** (la guía de la FTC no los considera suficientes); cuentan como claros `#ad`, `#publicidad`, `#patrocinado`, `#anuncio`, `#publi`, `#sponsored` y frases como "colaboración pagada" o "paid partnership". El límite visible es el menor de las redes elegidas (Instagram 125, TikTok y YouTube 100). El recordatorio de IA solo avisa del texto escrito con IA y pide activar la etiqueta "Hecho con IA" de la red si la imagen, el video o la voz también lo están. La IA de captions ahora pone el aviso **al inicio**, no al final. En el Calendario sale un ⚠ en las publicaciones para una marca que no lo tienen.
 
 ---
 

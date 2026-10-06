@@ -117,6 +117,11 @@ export default function CalendarView({
               .filter(Boolean)
               .join(" · ")}
           </p>
+          {post.disclosureIssue && (
+            <Link href={`/admin/crear?id=${post.id}`} className="text-[11px] font-semibold text-coral hover:underline">
+              {t("⚠ Falta el aviso de publicidad", "⚠ Ad disclosure missing")}
+            </Link>
+          )}
         </div>
         <span className="shrink-0 text-xs text-ink/55">
           {showDate ? `${formatDateKey(post.dateKey, false, lang)} · ` : ""}

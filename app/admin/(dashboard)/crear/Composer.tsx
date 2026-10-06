@@ -19,6 +19,7 @@ import {
 } from "@/lib/content-plan";
 import type { PostView } from "@/lib/posts-view";
 import { useT } from "@/components/admin/AdminLang";
+import DisclosureNotice from "@/components/admin/DisclosureNotice";
 
 const eyebrowClass = "font-mono text-[10px] uppercase tracking-[0.12em] text-ink/55";
 const TIPS_DEBOUNCE_MS = 2000;
@@ -76,6 +77,7 @@ export default function Composer({
   const [brandId, setBrandId] = useState<string | null>(initial?.brandId ?? null);
   const [topic, setTopic] = useState(initial?.topic ?? "");
   const [caption, setCaption] = useState(initial?.caption ?? "");
+  const [aiUsed, setAiUsed] = useState(false);
   const [mediaType, setMediaType] = useState<"image" | "video">((initial?.mediaType as "image" | "video") ?? "video");
   const [mediaUrl, setMediaUrl] = useState(initial?.mediaUrl ?? "");
   const [date, setDate] = useState(initial?.dateKey ?? defaultDate);
@@ -174,7 +176,7 @@ export default function Composer({
   }
 
   return (
-    <div className="grid items-start gap-sp-4 xl:grid-cols-[1.35fr_1fr]">
+    <div className="grid items-start gap-sp-4 xl:grid-cols-[1.35fr_1fr] [&>*]:min-w-0">
       <Card className="flex flex-col gap-sp-5 p-sp-5 sm:p-sp-6">
         <div>
           <p className={eyebrowClass}>{t("Tipo de publicación", "Post type")}</p>
@@ -272,6 +274,7 @@ export default function Composer({
               );
             })}
           </div>
+          {brandId && networks.length > 0 && <DisclosureNotice caption={caption} networks={networks} onChange={setCaption} aiUsed={aiUsed} />}
           {!aiConfigured && (
             <p className="text-xs text-ink/50">
               {t("Para usar la IA agrega", "To use AI, add")} <code className="font-mono">ANTHROPIC_API_KEY</code>{" "}
@@ -287,6 +290,7 @@ export default function Composer({
                   type="button"
                   onClick={() => {
                     setCaption(suggestion);
+                    setAiUsed(true);
                     setSuggestions([]);
                   }}
                   className="whitespace-pre-line rounded-[10px] border border-line bg-white p-sp-3 text-left text-[13px] text-ink transition hover:border-coral"

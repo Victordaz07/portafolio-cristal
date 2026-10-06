@@ -7,6 +7,7 @@ import { CRM_PLATFORMS, DEAL_STATUSES, DEAL_STATUS_META, type DealStatus } from 
 import { pickLabel } from "@/lib/admin-lang";
 import { LOGO_ASPECT_OPTIONS } from "@/lib/image-crop";
 import { useT } from "@/components/admin/AdminLang";
+import RateCalculator from "@/components/admin/RateCalculator";
 
 export interface BrandFormValues {
   name: string;
@@ -140,17 +141,25 @@ export default function BrandForm({
                 placeholder={t("nombre@marca.com", "name@brand.com")}
               />
             </Field>
-            <Field label={t("Valor del trato (USD)", "Deal value (USD)")}>
-              <input
-                type="number"
-                min={0}
-                step={1}
-                value={values.dealValue}
-                onChange={(e) => set("dealValue", e.target.value)}
-                className={inputClass}
-                placeholder="1200"
+            <div className="flex flex-col gap-sp-1">
+              <Field label={t("Valor del trato (USD)", "Deal value (USD)")}>
+                <input
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={values.dealValue}
+                  onChange={(e) => set("dealValue", e.target.value)}
+                  className={inputClass}
+                  placeholder="1200"
+                />
+              </Field>
+              <RateCalculator
+                className="self-start text-xs font-semibold text-coral hover:underline"
+                onUse={(value, summary) =>
+                  setValues((current) => ({ ...current, dealValue: String(value), packageDetail: current.packageDetail.trim() ? current.packageDetail : summary }))
+                }
               />
-            </Field>
+            </div>
             <Field label={t("Paquete", "Package")} hint={t("Qué vas a entregar, ej: 2 reels + 1 historia/mes", "What you'll deliver, e.g. 2 reels + 1 story/month")}>
               <input
                 value={values.packageDetail}

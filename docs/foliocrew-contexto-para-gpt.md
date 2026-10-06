@@ -143,6 +143,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
   - el estado del trato (prospecto, negociando, activo, terminado), el contacto, el valor y el paquete acordado;
   - las redes, el **próximo paso con fecha**, el **estado del pago** y tus notas;
   - el historial de cambios, que se guarda solo.
+  - **Calculadora "¿Cuánto cobro?":** sugiere un rango de precio (bajo, justo, alto) según la red, el formato, la cantidad, los derechos de uso, la exclusividad y el whitelisting, usando tus seguidores, vistas e interacción reales. Si participas en la Inteligencia, compara con tu nicho y muestra cuánto cobraron en promedio otros creadores de tu nicho.
 
   Desde aquí también manejas el carrusel de logos del sitio. **Los datos de los tratos nunca se ven en el sitio público.**
 - **Reseñas destacadas** y **Testimonios**.

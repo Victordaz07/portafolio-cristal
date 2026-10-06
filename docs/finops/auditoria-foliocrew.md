@@ -24,6 +24,11 @@ No hay Stripe, no hay suscripciones automáticas, no hay publicación automátic
 espacios" (representante) **no existe en código todavía**: solo existe impersonación de soporte, bien controlada por rol
 server-side (`app/api/admin/platform/impersonate/route.ts`).
 
+**Hallazgo adicional (detectado al cruzar con el modelo de costos, Fase 4)**: `lib/plans.ts` anuncia el plan Crew
+($49/mes) con la característica "Hasta 5 perfiles de creador", pero esa función no está construida (ver arriba). Es una
+promesa comercial sin respaldo técnico hoy — ver `docs/finops/modelo-costos.md` sección 5 para el detalle y la decisión
+pendiente (construirla o quitar la línea del plan).
+
 ## 1. Resultado principal
 
 **No se encontró ningún P0** (gasto descontrolado ilimitado o fuga de datos entre creadoras demostrada). El aislamiento

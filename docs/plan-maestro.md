@@ -58,7 +58,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] G1. Datos y permisos: interruptor "Embajadora" en la ficha de cuenta (Folio Pro gratis mientras sea embajadora)
 - [x] G2. Enlace `?ref=` que funciona como invitación al registro
 - [x] G3. Panel de la embajadora, kit para compartir e insignia en su sitio
-- [ ] G4. Referido que paga → recompensa de meses gratis (cron diario)
+- [x] G4. Referido que paga → recompensa de meses gratis (cron diario)
 - [ ] G5. Mérito automático y sección "Embajadoras" en la página de Foliocrew
 
 **F. Pendientes del dueño (no son código)**: ver la sección F.

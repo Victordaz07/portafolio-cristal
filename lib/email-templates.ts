@@ -723,3 +723,43 @@ function billingReminderEmailEn(p: { origin: string; name: string | null; kind: 
     text: textEn([hi(p.name), copy.line.replace(/<[^>]+>/g, ""), `How to pay: ${p.planUrl}`]),
   };
 }
+
+
+/** Aviso a la embajadora: ganó meses gratis porque alguien que invitó ya cumplió sus 30 días pagando. */
+export function ambassadorRewardEmail(p: { origin: string; name: string | null; months: number; panelUrl: string; lang?: MailLang }) {
+  if (p.lang === "en") {
+    const months = `${p.months} free ${p.months === 1 ? "month" : "months"}`;
+    return {
+      subject: `You earned ${months} 💜`,
+      html: layout({
+        lang: "en",
+        origin: p.origin,
+        preheader: `Someone you invited stayed: ${months} added to your plan.`,
+        title: `You earned ${months}!`,
+        body: [
+          escapeHtml(hi(p.name)),
+          `Someone who signed up with your ambassador link has been paying for 30 days. We added <strong>${escapeHtml(months)}</strong> to your plan. Thank you for spreading the word about Foliocrew.`,
+          "You can see your numbers and your sharing kit in your ambassador panel.",
+        ],
+        button: { label: "Open my ambassador panel", url: p.panelUrl },
+      }),
+      text: textEn([hi(p.name), `Someone who signed up with your ambassador link has been paying for 30 days. We added ${months} to your plan.`, `Your panel: ${p.panelUrl}`]),
+    };
+  }
+  const months = `${p.months} ${p.months === 1 ? "mes gratis" : "meses gratis"}`;
+  return {
+    subject: `Ganaste ${months} 💜`,
+    html: layout({
+      origin: p.origin,
+      preheader: `Alguien que invitaste se quedó: ${months} sumados a tu plan.`,
+      title: `¡Ganaste ${months}!`,
+      body: [
+        escapeHtml(hello(p.name)),
+        `Alguien que se registró con tu enlace de embajadora lleva 30 días pagando. Sumamos <strong>${escapeHtml(months)}</strong> a tu plan. Gracias por hablar bien de Foliocrew.`,
+        "Puedes ver tus números y tu kit para compartir en tu panel de embajadora.",
+      ],
+      button: { label: "Abrir mi panel de embajadora", url: p.panelUrl },
+    }),
+    text: text([hello(p.name), `Alguien que se registró con tu enlace de embajadora lleva 30 días pagando. Sumamos ${months} a tu plan.`, `Tu panel: ${p.panelUrl}`]),
+  };
+}

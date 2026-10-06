@@ -13,7 +13,7 @@
 ## Estado
 
 **Etapa 1: Muro de la comunidad**
-- [ ] Paso 1: Modelos y migración (CommunityProfile, CommunityPost, CommunityReply, CommunityReaction, CommunityReport, CommunityBlock) + rol de equipo `community`
+- [x] Paso 1: Modelos y migración (CommunityProfile, CommunityPost, CommunityReply, CommunityReaction, CommunityReport, CommunityBlock) + rol de equipo `community`
 - [ ] Paso 2: Perfil de comunidad (crear/editar, armado con los datos de Foliocrew) + página pública del perfil dentro del panel
 - [ ] Paso 3: Muro: publicar, listar con filtros, ver una publicación con sus respuestas
 - [ ] Paso 4: Respuestas, "me sirvió", "mejor respuesta" y reputación
@@ -335,6 +335,10 @@ Todas: `export const dynamic = "force-dynamic"`, validación con zod, errores en
 - Rol `community` en `lib/team-roles.ts`.
 - `lib/community.ts` con las constantes y funciones puras + `tests/community.test.ts`.
 - **Listo cuando:** lint, tsc, test y build pasan; la migración aplica en base vacía (lo prueba la CI).
+
+> **Hecho en el paso 1:** además de lo de arriba, `CommunityProfile` ya trae `emailNotify` y `lastSeenAt` (del paso 6),
+> para no hacer otra migración después. `lib/community.ts` tiene todas las etiquetas en español **e inglés**
+> (el panel es bilingüe: usa `useT()` / `getT()` y los helpers `postKindLabel(id, lang)`, `topicLabel`, `creatorTypeLabel`, `levelLabel`).
 
 ### Paso 2: Perfil
 - `ensureProfile(creatorId)`: si no existe, lo crea con `Hero.name`, `Hero.photoUrl`, `Hero.location`, el nicho

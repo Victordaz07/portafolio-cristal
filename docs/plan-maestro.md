@@ -17,7 +17,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 ## Estado
 
 **A. Comunidad, etapa 1: muro** (detalle en `docs/plan-comunidad.md`)
-- [ ] A1. Modelos, migración y rol de equipo `community`
+- [x] A1. Modelos, migración y rol de equipo `community`
 - [ ] A2. Perfil de comunidad
 - [ ] A3. Muro: publicar, listar, filtrar
 - [ ] A4. Respuestas, "me sirvió", mejor respuesta y reputación

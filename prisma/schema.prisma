@@ -69,6 +69,9 @@ model Creator {
   bioLinks          BioLink[]
   bioLinkGroups     BioLinkGroup[]
   payments          Payment[]
+  communityProfile  CommunityProfile?
+  communityPosts    CommunityPost[]
+  communityReplies  CommunityReply[]
 }
 
 model Hero {
@@ -742,4 +745,142 @@ model DataRequest {
 
   @@index([status, createdAt])
   @@index([creatorId])
+}
+
+// ─── Comunidad Foliocrew (entre cuentas: estos modelos NO van en TENANT_MODELS) ───
+
+/// Perfil de comunidad de una cuenta (1 por cuenta). Se arma con los datos de Foliocrew.
+model CommunityProfile {
+  id              String           @id @default(cuid())
+  creatorId       String           @unique
+  creator         Creator          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  displayName     String
+  /// "Creo videos de cocina saludable en TikTok"
+  headline        String           @default("")
+  bio             String           @default("")
+  avatarUrl       String?
+  city            String?
+  showCity        Boolean          @default(true)
+  showSite        Boolean          @default(true)
+  /// lib/community.ts → CREATOR_TYPES
+  creatorTypes    String[]         @default([])
+  /// id de lib/onboarding.ts → NICHES
+  niche           String?
+  languages       String[]         @default(["es"])
+  openToCollab    Boolean          @default(false)
+  reputation      Int              @default(0)
+  /// Moderación: la cuenta no puede publicar ni responder hasta esta fecha
+  mutedUntil      DateTime?
+  acceptedRulesAt DateTime?
+  /// Avisos por correo cuando responden o eligen su respuesta como la mejor
+  emailNotify     Boolean          @default(true)
+  /// Última visita al muro (para el contador de respuestas nuevas en el menú)
+  lastSeenAt      DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  posts           CommunityPost[]
+  replies         CommunityReply[]
+
+  @@index([niche])
+}
+
+model CommunityPost {
+  id             String           @id @default(cuid())
+  creatorId      String
+  creator        Creator          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  profileId      String
+  profile        CommunityProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  /// "pregunta" | "consejo" | "logro" | "colaboracion" | "recurso"
+  kind           String
+  topic          String           @default("otro")
+  title          String
+  body           String
+  imageUrl       String?
+  /// A qué tipo de creador va dirigido (para filtrar)
+  creatorTypes   String[]         @default([])
+  helpfulCount   Int              @default(0)
+  replyCount     Int              @default(0)
+  bestReplyId    String?
+  /// El equipo fija la pregunta de la semana
+  pinned         Boolean          @default(false)
+  fromTeam       Boolean          @default(false)
+  /// Oculto por moderación
+  hiddenAt       DateTime?
+  hiddenBy       String?
+  /// Borrado por el autor
+  deletedAt      DateTime?
+  lastActivityAt DateTime         @default(now())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  replies        CommunityReply[]
+
+  @@index([createdAt])
+  @@index([lastActivityAt])
+  @@index([kind, topic])
+  @@index([creatorId])
+}
+
+model CommunityReply {
+  id           String           @id @default(cuid())
+  postId       String
+  post         CommunityPost    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  creatorId    String
+  creator      Creator          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  profileId    String
+  profile      CommunityProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  body         String
+  helpfulCount Int              @default(0)
+  hiddenAt     DateTime?
+  hiddenBy     String?
+  deletedAt    DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([postId, createdAt])
+  @@index([creatorId])
+}
+
+/// "Me sirvió": una por cuenta y por publicación o respuesta.
+model CommunityReaction {
+  id         String   @id @default(cuid())
+  creatorId  String
+  /// "post" | "reply"
+  targetType String
+  targetId   String
+  createdAt  DateTime @default(now())
+
+  @@unique([creatorId, targetType, targetId])
+  @@index([targetType, targetId])
+}
+
+model CommunityReport {
+  id         String    @id @default(cuid())
+  /// creatorId de quien reporta
+  reporterId String
+  /// "post" | "reply" | "profile"
+  targetType String
+  targetId   String
+  /// "spam" | "ofensivo" | "estafa" | "otro"
+  reason     String
+  detail     String    @default("")
+  /// "open" | "actioned" | "dismissed"
+  status     String    @default("open")
+  handledBy  String?
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+
+  @@unique([reporterId, targetType, targetId])
+  @@index([status, createdAt])
+}
+
+model CommunityBlock {
+  id        String   @id @default(cuid())
+  /// creatorId de quien bloquea
+  blockerId String
+  /// creatorId bloqueado
+  blockedId String
+  createdAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockedId])
 }

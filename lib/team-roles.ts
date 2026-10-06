@@ -22,6 +22,13 @@ export const TEAM_ROLES = [
     hintEn: "Exports an account's data and handles copy, recovery or deletion requests.",
     hint: "Exporta datos de una cuenta y atiende pedidos de copia, recuperación o borrado.",
   },
+  {
+    id: "community",
+    label: "Comunidad",
+    labelEn: "Community",
+    hintEn: "Moderates the community: reviews reports, hides posts and pauses accounts that break the rules.",
+    hint: "Modera la comunidad: revisa reportes, oculta publicaciones y pausa cuentas que rompen las reglas.",
+  },
 ] as const;
 
 export type TeamRole = (typeof TEAM_ROLES)[number]["id"];

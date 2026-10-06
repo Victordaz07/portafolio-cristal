@@ -129,6 +129,9 @@ function foliocrewGroup(platformAdmin: boolean, team: { owner: boolean; roles: s
 }
 
 const OPEN_GROUPS_KEY = "admin-nav-open-groups";
+// Como mucho esta cantidad de grupos abiertos a la vez: con 7-8 grupos, dejar todo abierto
+// abrumaba. Al abrir uno nuevo que pasa el límite, se cierra solo el que llevaba más tiempo abierto.
+const MAX_OPEN_GROUPS = 2;
 
 function isActive(pathname: string, href: string, exact = false) {
   return href === "/admin" || exact ? pathname === href : pathname.startsWith(href);
@@ -172,23 +175,32 @@ export default function AdminShell({
   const router = useRouter();
   const { t } = useT();
   const NAV_GROUPS = navGroups(t, ambassador);
+  const extraGroup = foliocrewGroup(platformAdmin, team, t);
+  const allGroups = [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])];
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(navGroups(t).map((g) => [g.id, true]))
-  );
+  // Lista ordenada por apertura (el último en abrirse queda al final); como mucho MAX_OPEN_GROUPS
+  // a la vez. De entrada solo se abre el grupo de la página en la que estás, no los 7-8 de golpe.
+  const [openGroups, setOpenGroups] = useState<string[]>(() => {
+    const active = allGroups.find((g) => g.items.some((item) => isActive(pathname, item.href, item.exact)));
+    return active ? [active.id] : [];
+  });
 
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(OPEN_GROUPS_KEY);
-      if (saved) setOpenGroups((prev) => ({ ...prev, ...JSON.parse(saved) }));
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setOpenGroups(parsed.slice(-MAX_OPEN_GROUPS));
+      }
     } catch {
-      // Sin acceso a localStorage: todos los grupos quedan abiertos.
+      // Sin acceso a localStorage: queda el grupo de la página actual.
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function toggleGroup(id: string) {
     setOpenGroups((prev) => {
-      const next = { ...prev, [id]: !prev[id] };
+      const next = prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id].slice(-MAX_OPEN_GROUPS);
       try {
         window.localStorage.setItem(OPEN_GROUPS_KEY, JSON.stringify(next));
       } catch {
@@ -254,9 +266,9 @@ export default function AdminShell({
         </Link>
 
         <nav className="-mx-1 mt-sp-1 flex flex-1 flex-col gap-sp-1 overflow-y-auto px-1">
-          {[...NAV_GROUPS, ...[foliocrewGroup(platformAdmin, team, t)].filter((g): g is NavGroup => Boolean(g))].map((group) => {
+          {allGroups.map((group) => {
             const groupActive = group.items.some((item) => isActive(pathname, item.href, item.exact));
-            const open = openGroups[group.id] !== false;
+            const open = openGroups.includes(group.id);
             return (
               <div key={group.id}>
                 <button

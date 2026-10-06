@@ -28,7 +28,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] Respuestas de la IA en el idioma del panel (consejos, diseño, inteligencia)
 - [x] Correos (plantillas en `lib/email-templates.ts`, `lib/account-emails.ts`, avisos de soporte, ideas y datos)
 - [x] Página de venta `app/foliocrew` en inglés
-- [ ] Prueba completa en inglés (capturas) y en español (que nada se rompió)
+- [x] Prueba completa en inglés (capturas) y en español (que nada se rompió)
 
 ### Pantallas y componentes del panel
 - [x] `app/admin/(dashboard)/apariencia/DesignStudio.tsx`

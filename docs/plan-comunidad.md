@@ -14,7 +14,7 @@
 
 **Etapa 1: Muro de la comunidad**
 - [x] Paso 1: Modelos y migración (CommunityProfile, CommunityPost, CommunityReply, CommunityReaction, CommunityReport, CommunityBlock) + rol de equipo `community`
-- [ ] Paso 2: Perfil de comunidad (crear/editar, armado con los datos de Foliocrew) + página pública del perfil dentro del panel
+- [x] Paso 2: Perfil de comunidad (crear/editar, armado con los datos de Foliocrew) + página pública del perfil dentro del panel
 - [ ] Paso 3: Muro: publicar, listar con filtros, ver una publicación con sus respuestas
 - [ ] Paso 4: Respuestas, "me sirvió", "mejor respuesta" y reputación
 - [ ] Paso 5: Reportar, bloquear y moderación (Departamento de Comunidad en el Centro de mando)

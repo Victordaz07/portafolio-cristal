@@ -457,6 +457,15 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Acuerdos",
+    paragraphs: [
+      "Un acuerdo (contrato simple) deja por escrito qué entregas, cuánto te pagan, el anticipo, los derechos de uso, la exclusividad, las revisiones y la cancelación, antes de empezar. Así bajan mucho los problemas de marcas que desaparecen después de publicar.",
+      "Créalo desde Acuerdos → \"+ Nuevo acuerdo\" o desde un trato en Marcas (\"Crear acuerdo\"). Elige la plantilla (publicación patrocinada, UGC sin publicar, embajador mensual o afiliado), llena los huecos y mira a la derecha cómo queda el texto. Si vienes de un trato, se llena con su monto, entregables y derechos de uso.",
+      "Se guarda como borrador. Toca \"Enviar a la marca\": le llega un correo con un enlace. La marca lo lee, escribe su nombre y correo y lo acepta. Quedan guardados su nombre, correo, fecha, hora y dirección IP, y los dos reciben una copia por correo. El trato pasa a \"Activo\" solo.",
+      "Si la marca pide cambios, te avisamos con lo que escribió: tócalo para editarlo y volver a enviarlo. Un acuerdo aceptado ya no se puede cambiar. Es una plantilla de referencia: Foliocrew no es un despacho legal, y para acuerdos grandes conviene que lo revise un abogado.",
+    ],
+  },
+  {
     title: "Facturas",
     paragraphs: [
       "Primero completa tus datos para facturar (abajo en Facturas): el nombre que va en la factura, tu ciudad, cómo te pagan (PayPal, Zelle…), el plazo para pagar y el % de anticipo. Nunca pongas tu número de seguro social ni números de cuenta completos.",
@@ -626,6 +635,15 @@ const guiaEn: ManualBlock[] = [
       "Form: tap \"Reply\", pick a quick reply (for example, the one with your media kit link) or write your own, and tap \"Open in my email\". Your email app opens with everything ready to send, and the message is marked as replied.",
       "Instagram: your reply is posted right on the comment. You can also hide a comment (only you and its author can see it) or delete it.",
       "Direct messages (DMs) are coming later: they need Meta's review.",
+    ],
+  },
+  {
+    title: "Agreements",
+    paragraphs: [
+      "An agreement (simple contract) puts in writing what you deliver, how much you're paid, the deposit, usage rights, exclusivity, revisions and cancellation, before you start. That cuts down on brands that disappear after you post.",
+      "Create it from Agreements → \"+ New agreement\" or from a deal in Brands (\"Create agreement\"). Pick the template (sponsored post, UGC not posted, monthly ambassador or affiliate), fill in the blanks and see the text on the right. If you come from a deal, it's filled in with its amount, deliverables and usage rights.",
+      "It's saved as a draft. Tap \"Send to the brand\": they get an email with a link. The brand reads it, types their name and email and accepts it. Their name, email, date, time and IP address are recorded, and you both get a copy by email. The deal switches to \"Active\" on its own.",
+      "If the brand asks for changes, we let you know with what they wrote: tap it to edit and resend. An accepted agreement can no longer be changed. It's a reference template: Foliocrew is not a law firm, and for large agreements a lawyer should review it.",
     ],
   },
   {

@@ -151,6 +151,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Reseñas destacadas** y **Testimonios**.
 
 **Negocio**
+- **Acuerdos (contrato simple):** eliges una plantilla (publicación patrocinada, UGC sin publicar, embajador mensual o afiliado), llenas los huecos (entregables, pago y anticipo, derechos de uso, exclusividad, revisiones, cancelación) y ves cómo queda el texto, en español o inglés. Lo envías con un enlace; la marca lo lee y lo acepta en línea escribiendo su nombre y correo, y queda la constancia con fecha, hora y dirección IP. Los dos reciben una copia y el trato pasa a "activo". Es una plantilla de referencia, no asesoría legal.
 - **Facturas:** creas facturas para tus marcas (completas, de anticipo o de saldo, en español o inglés) y las envías con un enlace. La marca la ve, la descarga en PDF y puede avisar "Ya pagamos". Te avisamos cuando la abre; si se atrasa, le recordamos con amabilidad el día que vence y a los 7 y 14 días. Ves cuánto tienes por cobrar, lo vencido y lo cobrado en el mes.
 - **Bandeja:** en un solo lugar llegan los mensajes del formulario de tu sitio y los **comentarios de Instagram** (si conectaste tu cuenta).
   - Cada mensaje marca si está pendiente o respondido, y etiqueta como "Cliente" a las marcas de tu CRM.

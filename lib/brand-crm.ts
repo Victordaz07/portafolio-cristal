@@ -11,6 +11,10 @@ export const brandCrmInclude = {
     select: { id: true, caption: true, platform: true, createdAt: true },
   },
   deliverables: { orderBy: [{ order: "asc" }, { createdAt: "asc" }] },
+  contracts: {
+    orderBy: { createdAt: "asc" },
+    select: { id: true, template: true, status: true, title: true },
+  },
   invoices: {
     where: { status: { not: "void" } },
     orderBy: { createdAt: "asc" },

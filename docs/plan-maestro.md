@@ -29,7 +29,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] B1. Calculadora "¿Cuánto cobro?"
 - [x] B2. Entregables y derechos de uso por trato
 - [x] B3. Facturas y recordatorios de cobro
-- [ ] B4. Contrato simple con aceptación en línea
+- [x] B4. Contrato simple con aceptación en línea
 - [ ] B5. Aviso de #publicidad (FTC) al crear contenido patrocinado
 
 **C. Conseguir más tratos**
@@ -192,6 +192,7 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
   Los dos reciben copia por correo.
 - **Aviso fijo:** "Plantilla de referencia. Foliocrew no es un despacho legal; para acuerdos grandes consulta a un abogado."
 - **Listo cuando:** se acepta desde la página pública y queda el registro; el trato pasa a "activo".
+- **Cómo quedó:** el menú dice "Acuerdos" (`/admin/contratos`). Se agregaron `parties`, `title`, `viewedAt`, `bodyHash` (SHA-256 del texto aceptado), `declinedAt` y `declineReason`: la marca puede "pedir cambios" y el creador reabre el borrador. La cláusula de divulgación (#publicidad / FTC) ya viene en las plantillas con publicación. Un acuerdo aceptado no se cambia ni se borra.
 
 ### B5. Aviso de #publicidad (FTC)
 - **Por qué:** la FTC exige avisar del patrocinio en los primeros ~125 caracteres, y desde 2026 también avisar si se usó IA.

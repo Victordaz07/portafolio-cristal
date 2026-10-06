@@ -28,6 +28,7 @@ import BrandForm, { emptyBrandForm, toBrandPayload, type BrandFormValues } from 
 import DeliverablesSection from "./DeliverablesSection";
 import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
 import { INVOICE_STATUS_META, displayStatus, formatCents } from "@/lib/invoices";
+import { CONTRACT_STATUS_META, type ContractStatus } from "@/lib/contracts";
 import { pickLabel } from "@/lib/admin-lang";
 import { useT } from "@/components/admin/AdminLang";
 
@@ -579,6 +580,32 @@ function BrandDetail({
       )}
 
       {hasDeal && <DeliverablesSection brandId={brand.id} deliverables={brand.deliverables} onRequest={onRequest} />}
+
+      {hasDeal && (
+        <div>
+          <p className={eyebrowClass}>{t("Acuerdos", "Agreements")}</p>
+          {brand.contracts.length > 0 && (
+            <ul className="mt-sp-2 flex flex-col gap-sp-2">
+              {brand.contracts.map((c) => {
+                const st = (c.status in CONTRACT_STATUS_META ? c.status : "draft") as ContractStatus;
+                return (
+                  <li key={c.id}>
+                    <Link href={`/admin/contratos/${c.id}`} className="flex items-center gap-sp-3 text-[13px] hover:opacity-80">
+                      <span className="min-w-0 flex-1 truncate font-semibold text-ink">{c.title}</span>
+                      <span className={`rounded-full px-sp-2 py-0.5 font-mono text-[10px] uppercase ${CONTRACT_STATUS_META[st].className}`}>{pickLabel(lang, CONTRACT_STATUS_META[st])}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <div className="mt-sp-2 text-[13px]">
+            <Link href={`/admin/contratos/nueva?marca=${brand.id}`} className={accentLinkClass}>
+              {t("+ Crear acuerdo", "+ Create agreement")}
+            </Link>
+          </div>
+        </div>
+      )}
 
       {hasDeal && (
         <div>

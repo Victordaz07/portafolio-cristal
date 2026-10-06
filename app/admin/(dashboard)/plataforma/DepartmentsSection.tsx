@@ -8,6 +8,7 @@ import { TEAM_ROLES, type TeamRole } from "@/lib/team-roles";
 import { startOfMonth } from "@/lib/platform-stats";
 import { Stat, eyebrowClass } from "./charts";
 import { pickLabel, type AdminLang } from "@/lib/admin-lang";
+import { reportReasonLabel } from "@/lib/community";
 import { getT } from "@/lib/admin-lang-server";
 
 const DAY = 86_400_000;
@@ -18,11 +19,11 @@ const ago = (d: Date, lang: AdminLang) => {
   return days === 1 ? "ayer" : `hace ${days} días`;
 };
 
-/** Departamentos del equipo (ayuda, sugerencias, recuperación de datos) vistos desde el Centro de mando. */
+/** Departamentos del equipo (ayuda, sugerencias, recuperación de datos, comunidad) vistos desde el Centro de mando. */
 export default async function DepartmentsSection() {
   const { t, lang } = await getT();
   const month = startOfMonth();
-  const [members, tickets, ticketsClosedMonth, recentTickets, ideas, recentIdeas, dataOpen, dataDoneMonth, recentData] = await Promise.all([
+  const [members, tickets, ticketsClosedMonth, recentTickets, ideas, recentIdeas, dataOpen, dataDoneMonth, recentData, reportsOpen, reportsDoneMonth, recentReports, posts30] = await Promise.all([
     prismaRoot.teamMember.findMany({ where: { active: true }, orderBy: { createdAt: "asc" } }),
     prismaRoot.supportTicket.groupBy({ by: ["status"], _count: { _all: true } }),
     prismaRoot.supportTicket.count({ where: { status: "closed", updatedAt: { gte: month } } }),
@@ -42,6 +43,10 @@ export default async function DepartmentsSection() {
       take: 5,
       include: { creator: { select: { name: true } } },
     }),
+    prismaRoot.communityReport.count({ where: { status: "open" } }),
+    prismaRoot.communityReport.count({ where: { status: { not: "open" }, resolvedAt: { gte: month } } }),
+    prismaRoot.communityReport.findMany({ where: { status: "open" }, orderBy: { createdAt: "asc" }, take: 5 }),
+    prismaRoot.communityPost.count({ where: { createdAt: { gte: new Date(Date.now() - 30 * DAY) }, deletedAt: null } }),
   ]);
   const ticketCount = (s: string) => tickets.find((x) => x.status === s)?._count._all ?? 0;
   const ideaCount = (s: string) => ideas.find((i) => i.status === s)?._count._all ?? 0;
@@ -111,6 +116,28 @@ export default async function DepartmentsSection() {
         title: dataRequestKindLabel(d.kind, lang),
         meta: `${d.creator.name} · ${ago(d.createdAt, lang)}`,
         urgent: d.kind === "delete" || Date.now() - d.createdAt.getTime() > 2 * DAY,
+      })),
+    },
+    {
+      role: "community" as const,
+      title: t("🛡️ Comunidad", "🛡️ Community"),
+      text: t(
+        "Modera el muro de la comunidad: revisa reportes, oculta lo que rompe las reglas y pausa cuentas. La persona recibe un correo cuando se actúa.",
+        "Moderates the community wall: reviews reports, hides what breaks the rules and pauses accounts. The person gets an email when action is taken."
+      ),
+      href: "/admin/equipo/comunidad",
+      stats: [
+        { label: t("Reportes abiertos", "Open reports"), value: reportsOpen },
+        { label: t("Resueltos este mes", "Resolved this month"), value: reportsDoneMonth },
+        { label: t("Publicaciones (30 días)", "Posts (30 days)"), value: posts30 },
+      ],
+      empty: t("No hay reportes abiertos.", "No open reports."),
+      items: recentReports.map((rp) => ({
+        id: rp.id,
+        href: "/admin/equipo/comunidad",
+        title: `${reportReasonLabel(rp.reason, lang)} · ${rp.targetType}`,
+        meta: ago(rp.createdAt, lang),
+        urgent: rp.reason === "estafa",
       })),
     },
   ];

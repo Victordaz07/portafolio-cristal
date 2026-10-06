@@ -18,6 +18,7 @@ const ACTIONS: Record<string, [string, string]> = {
   team: ["Equipo", "Team"],
   "data-export": ["Copia de datos", "Data export"],
   "data-request": ["Pedido de datos", "Data request"],
+  community: ["Comunidad", "Community"],
 };
 
 const fmt = (d: Date, lang: AdminLang) => d.toLocaleString(dateLocale(lang), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -27,11 +28,12 @@ export default async function TeamHubPage() {
   const user = await teamUser();
   if (!user) notFound();
 
-  const [openTickets, waitingTickets, newIdeas, openData, members, activity] = await Promise.all([
+  const [openTickets, waitingTickets, newIdeas, openData, openReports, members, activity] = await Promise.all([
     hasRole(user, "support") ? prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0,
     hasRole(user, "support") ? prismaRoot.supportTicket.count({ where: { status: "waiting" } }) : 0,
     hasRole(user, "growth") ? prismaRoot.idea.count({ where: { status: "new" } }) : 0,
     hasRole(user, "data") ? prismaRoot.dataRequest.count({ where: { status: "open" } }) : 0,
+    hasRole(user, "community") ? prismaRoot.communityReport.count({ where: { status: "open" } }) : 0,
     user.owner ? prismaRoot.teamMember.count({ where: { active: true } }) : 0,
     user.owner ? prismaRoot.platformAction.findMany({ orderBy: { createdAt: "desc" }, take: 15 }) : [],
   ]);
@@ -58,6 +60,13 @@ export default async function TeamHubPage() {
       stat: t(`${openData} pedidos abiertos`, `${openData} open requests`),
       text: t("Pedidos de copia, recuperación o borrado de datos, y exportación de una cuenta.", "Requests for data copies, recovery or deletion, and account exports."),
     },
+    {
+      role: "community" as const,
+      href: "/admin/equipo/comunidad",
+      title: t("🛡️ Comunidad", "🛡️ Community"),
+      stat: t(`${openReports} reportes abiertos`, `${openReports} open reports`),
+      text: t("Reportes del muro: oculta lo que rompe las reglas, descarta lo que no procede y pausa cuentas.", "Wall reports: hide what breaks the rules, dismiss what isn't valid and pause accounts."),
+    },
   ].filter((c) => hasRole(user, c.role));
 
   return (
@@ -72,7 +81,7 @@ export default async function TeamHubPage() {
         }
       />
 
-      <div className="grid gap-sp-4 md:grid-cols-3">
+      <div className="grid gap-sp-4 md:grid-cols-2 xl:grid-cols-4">
         {centers.map((c) => (
           <Link key={c.href} href={c.href} className="block rounded-[18px] border border-line bg-white p-sp-5 transition hover:border-coral/40">
             <p className="font-semibold text-ink">{c.title}</p>

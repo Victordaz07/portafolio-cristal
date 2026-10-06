@@ -6,6 +6,8 @@ import { ensureProfile } from "@/lib/community-server";
 import { levelLabel } from "@/lib/community";
 import PageHeader from "@/components/admin/PageHeader";
 import ProfileForm from "./ProfileForm";
+import Card from "@/components/admin/Card";
+import BlockButton from "@/components/community/BlockButton";
 
 export const dynamic = "force-dynamic";
 
@@ -13,11 +15,18 @@ export default async function CommunityProfilePage() {
   const { t, lang } = await getT();
   const session = await getSession();
   if (!session) return null;
-  const [profile, creator, user] = await Promise.all([
+  const [profile, creator, user, blocks] = await Promise.all([
     ensureProfile(session.creatorId),
     prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { slug: true } }),
     prismaRoot.adminUser.findUnique({ where: { id: session.userId }, select: { emailVerifiedAt: true } }),
+    prismaRoot.communityBlock.findMany({ where: { blockerId: session.creatorId }, orderBy: { createdAt: "desc" }, select: { blockedId: true } }),
   ]);
+  const blockedPeople = blocks.length
+    ? await prismaRoot.creator.findMany({
+        where: { id: { in: blocks.map((b) => b.blockedId) } },
+        select: { slug: true, name: true, communityProfile: { select: { displayName: true } } },
+      })
+    : [];
   const firstTime = !profile.acceptedRulesAt;
 
   return (
@@ -69,6 +78,21 @@ export default async function CommunityProfilePage() {
           emailNotify: profile.emailNotify,
         }}
       />
+      {blockedPeople.length > 0 && (
+        <Card>
+          <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Cuentas que bloqueaste", "Accounts you blocked")}</p>
+          <ul className="flex flex-col gap-sp-2 text-sm">
+            {blockedPeople.map((b) => (
+              <li key={b.slug} className="flex items-center justify-between gap-sp-3">
+                <span>
+                  {b.communityProfile?.displayName ?? b.name} <span className="text-ink/45">@{b.slug}</span>
+                </span>
+                <BlockButton handle={b.slug} name={b.communityProfile?.displayName ?? b.name} blocked />
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
     </div>
   );
 }

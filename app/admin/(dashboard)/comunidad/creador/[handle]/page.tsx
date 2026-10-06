@@ -10,6 +10,8 @@ import { NICHES } from "@/lib/onboarding";
 import { dateLocale, pickLabel } from "@/lib/admin-lang";
 import Card from "@/components/admin/Card";
 import CommunityAvatar from "@/components/community/CommunityAvatar";
+import ReportButton from "@/components/community/ReportButton";
+import BlockButton from "@/components/community/BlockButton";
 
 export const dynamic = "force-dynamic";
 
@@ -77,10 +79,17 @@ export default async function CreatorCommunityProfilePage({ params }: { params: 
             )}
           </p>
         </div>
-        {isMe && (
+        {isMe ? (
           <Link href="/admin/comunidad/perfil" className="self-start text-sm font-semibold text-coral hover:underline">
             {t("Editar mi perfil", "Edit my profile")}
           </Link>
+        ) : (
+          !session.actorId && (
+            <div className="flex gap-sp-3 self-start">
+              <ReportButton targetType="profile" targetId={profile.id} />
+              <BlockButton handle={creator.slug} name={profile.displayName} blocked={false} />
+            </div>
+          )
         )}
       </Card>
 

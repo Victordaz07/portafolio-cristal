@@ -13,6 +13,7 @@ import PostOwnerActions from "./PostOwnerActions";
 import ReplyForm from "./ReplyForm";
 import ReplyActions from "./ReplyActions";
 import HelpfulButton from "@/components/community/HelpfulButton";
+import ReportButton from "@/components/community/ReportButton";
 
 export const dynamic = "force-dynamic";
 
@@ -100,6 +101,7 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
           <span>
             💬 {post.replyCount} {post.replyCount === 1 ? t("respuesta", "reply") : t("respuestas", "replies")}
           </span>
+          {!isMine && !readOnly && <ReportButton targetType="post" targetId={post.id} className="ml-auto" />}
           {isMine && (
             <PostOwnerActions
               postId={post.id}
@@ -149,6 +151,7 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
                 canPickBest={iAsked && r.creatorId !== session.creatorId}
                 isBest={r.id === post.bestReplyId}
               />
+              {r.creatorId !== session.creatorId && !readOnly && <ReportButton targetType="reply" targetId={r.id} />}
             </div>
           </Card>
         ))

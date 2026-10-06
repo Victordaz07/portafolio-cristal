@@ -38,7 +38,13 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     teamUser(),
     prisma.supportTicket.count({ where: { unreadByCustomer: true } }).catch(() => 0),
   ]);
-  const openTickets = hasRole(team, "support") ? await prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0;
+  const [openTickets, openReports] = await Promise.all([
+    hasRole(team, "support") ? prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0,
+    // Contenidos distintos con reportes abiertos (no el número de reportes).
+    hasRole(team, "community")
+      ? prismaRoot.communityReport.groupBy({ by: ["targetType", "targetId"], where: { status: "open" } }).then((g) => g.length)
+      : 0,
+  ]);
   const { t, lang } = await getT();
   const days = (n: number) => plural(lang, n, ["día", "días"], ["day", "days"]);
   const billing = creator ? billingState(creator) : null;
@@ -58,6 +64,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         team={team ? { owner: team.owner, roles: team.roles } : null}
         supportUnread={supportUnread}
         openTickets={openTickets}
+        openReports={openReports}
       >
         {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
         {billingNotice && (

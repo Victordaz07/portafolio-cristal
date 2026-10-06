@@ -17,7 +17,7 @@
 - [x] Paso 2: Perfil de comunidad (crear/editar, armado con los datos de Foliocrew) + página pública del perfil dentro del panel
 - [x] Paso 3: Muro: publicar, listar con filtros, ver una publicación con sus respuestas
 - [x] Paso 4: Respuestas, "me sirvió", "mejor respuesta" y reputación
-- [ ] Paso 5: Reportar, bloquear y moderación (Departamento de Comunidad en el Centro de mando)
+- [x] Paso 5: Reportar, bloquear y moderación (Departamento de Comunidad en el Centro de mando)
 - [ ] Paso 6: Avisos (correo + contador en el menú) y reglas de la comunidad
 - [ ] Paso 7: Pregunta de la semana con IA + sembrado inicial + lanzamiento
 

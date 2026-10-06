@@ -9,7 +9,7 @@ import type { T } from "@/lib/admin-lang";
 import { useT } from "./AdminLang";
 import LangSwitch from "./LangSwitch";
 
-type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets"; exact?: boolean };
+type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports"; exact?: boolean };
 type NavGroup = { id: string; title: string; items: NavItem[] };
 
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
@@ -96,6 +96,7 @@ function departmentItems(team: { owner: boolean; roles: string[] } | null, t: T)
   if (has("support")) items.push({ href: "/admin/equipo/soporte", label: t("Centro de ayuda", "Help center"), badgeKey: "tickets" });
   if (has("growth")) items.push({ href: "/admin/equipo/ideas", label: t("Centro de sugerencias", "Suggestions center") });
   if (has("data")) items.push({ href: "/admin/equipo/datos", label: t("Recuperación de datos", "Data recovery") });
+  if (has("community")) items.push({ href: "/admin/equipo/comunidad", label: t("Comunidad", "Community"), badgeKey: "reports" });
   if (team.owner) items.push({ href: "/admin/equipo/personas", label: t("Personas del equipo", "Team members") });
   return items;
 }
@@ -136,6 +137,7 @@ export default function AdminShell({
   team = null,
   supportUnread = 0,
   openTickets = 0,
+  openReports = 0,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -149,6 +151,7 @@ export default function AdminShell({
   supportUnread?: number;
   /** Tickets abiertos (para Soporte). */
   openTickets?: number;
+  openReports?: number;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -186,7 +189,7 @@ export default function AdminShell({
     router.refresh();
   }
 
-  const badges = { unread: unreadMessages, support: supportUnread, tickets: openTickets };
+  const badges = { unread: unreadMessages, support: supportUnread, tickets: openTickets, reports: openReports };
   const homeActive = isActive(pathname, "/admin");
 
   return (

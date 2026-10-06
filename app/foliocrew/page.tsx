@@ -182,7 +182,7 @@ export default async function FoliocrewHome({
           </div>
           <div className="flex items-center gap-sp-3">
             <LangSwitch tone="light" />
-            <Link href="/admin/login" className="hidden text-sm font-semibold text-[#251023]/70 hover:text-[#7F207B] sm:inline">
+            <Link href="/admin/login" className="text-sm font-semibold text-[#251023]/70 hover:text-[#7F207B]">
               {t("Entrar", "Sign in")}
             </Link>
             <a href="#lista" className="hidden rounded-full bg-[#251023] px-sp-4 py-sp-2 text-sm font-semibold text-[#FBF7F5] hover:opacity-90 sm:inline-block">

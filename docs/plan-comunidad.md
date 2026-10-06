@@ -18,7 +18,7 @@
 - [x] Paso 3: Muro: publicar, listar con filtros, ver una publicación con sus respuestas
 - [x] Paso 4: Respuestas, "me sirvió", "mejor respuesta" y reputación
 - [x] Paso 5: Reportar, bloquear y moderación (Departamento de Comunidad en el Centro de mando)
-- [ ] Paso 6: Avisos (correo + contador en el menú) y reglas de la comunidad
+- [x] Paso 6: Avisos (correo + contador en el menú) y reglas de la comunidad
 - [ ] Paso 7: Pregunta de la semana con IA + sembrado inicial + lanzamiento
 
 **Etapa 2: Conexiones y mensajes** (planear en detalle cuando termine la etapa 1)

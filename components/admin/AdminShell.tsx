@@ -9,7 +9,7 @@ import type { T } from "@/lib/admin-lang";
 import { useT } from "./AdminLang";
 import LangSwitch from "./LangSwitch";
 
-type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports"; exact?: boolean };
+type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports" | "community"; exact?: boolean };
 type NavGroup = { id: string; title: string; items: NavItem[] };
 
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
@@ -71,7 +71,7 @@ const navGroups = (t: T): NavGroup[] => [
     id: "comunidad",
     title: t("Comunidad", "Community"),
     items: [
-      { href: "/admin/comunidad", label: t("Muro", "Wall"), exact: true },
+      { href: "/admin/comunidad", label: t("Muro", "Wall"), exact: true, badgeKey: "community" },
       { href: "/admin/comunidad/perfil", label: t("Mi perfil", "My profile") },
     ],
   },
@@ -138,6 +138,7 @@ export default function AdminShell({
   supportUnread = 0,
   openTickets = 0,
   openReports = 0,
+  communityNew = 0,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -152,6 +153,7 @@ export default function AdminShell({
   /** Tickets abiertos (para Soporte). */
   openTickets?: number;
   openReports?: number;
+  communityNew?: number;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -189,7 +191,7 @@ export default function AdminShell({
     router.refresh();
   }
 
-  const badges = { unread: unreadMessages, support: supportUnread, tickets: openTickets, reports: openReports };
+  const badges = { unread: unreadMessages, support: supportUnread, tickets: openTickets, reports: openReports, community: communityNew };
   const homeActive = isActive(pathname, "/admin");
 
   return (

@@ -5,6 +5,7 @@ import { getSession } from "@/lib/tenant";
 import { getT } from "@/lib/admin-lang-server";
 import { participation } from "@/lib/community-server";
 import { REPUTATION, nextReputation } from "@/lib/community";
+import { notifyCommunity } from "@/lib/community-moderation";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const { id } = await params;
-  const post = await prismaRoot.communityPost.findUnique({ where: { id }, select: { creatorId: true, kind: true, bestReplyId: true, deletedAt: true } });
+  const post = await prismaRoot.communityPost.findUnique({ where: { id }, select: { creatorId: true, kind: true, title: true, bestReplyId: true, deletedAt: true } });
   if (!post || post.deletedAt || post.creatorId !== session.creatorId) {
     return NextResponse.json({ error: t("Solo quien preguntó puede elegir la mejor respuesta", "Only the person who asked can pick the best answer") }, { status: 403 });
   }
@@ -29,7 +30,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { replyId } = parsed.data;
   if (replyId === post.bestReplyId) return NextResponse.json({ ok: true });
   const reply = replyId
-    ? await prismaRoot.communityReply.findUnique({ where: { id: replyId }, select: { postId: true, creatorId: true, hiddenAt: true, deletedAt: true } })
+    ? await prismaRoot.communityReply.findUnique({ where: { id: replyId }, select: { postId: true, creatorId: true, body: true, hiddenAt: true, deletedAt: true } })
     : null;
   if (replyId && (!reply || reply.postId !== id || reply.hiddenAt || reply.deletedAt)) {
     return NextResponse.json({ error: t("No encontré esa respuesta", "Couldn't find that reply") }, { status: 404 });
@@ -47,5 +48,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     if (replyId) await adjust(replyId, REPUTATION.bestAnswer);
     await tx.communityPost.update({ where: { id }, data: { bestReplyId: replyId } });
   });
+  if (reply) {
+    const me = await prismaRoot.communityProfile.findUnique({ where: { id: can.profileId }, select: { displayName: true } });
+    await notifyCommunity("best", { toCreatorId: reply.creatorId, postId: id, postTitle: post.title, fromName: me?.displayName ?? "", excerpt: reply.body });
+  }
   return NextResponse.json({ ok: true });
 }

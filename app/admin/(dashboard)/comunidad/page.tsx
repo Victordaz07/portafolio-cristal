@@ -32,6 +32,24 @@ export default async function CommunityWallPage({ searchParams }: { searchParams
   ]);
   const joined = Boolean(profile.acceptedRulesAt);
 
+  // Novedades: respuestas de otras personas en mis publicaciones desde mi última visita.
+  const since = profile.lastSeenAt ?? profile.acceptedRulesAt;
+  const news =
+    joined && since && !session.actorId
+      ? await prismaRoot.communityReply.groupBy({
+          by: ["postId"],
+          where: { createdAt: { gt: since }, creatorId: { not: session.creatorId }, hiddenAt: null, deletedAt: null, post: { creatorId: session.creatorId, deletedAt: null, hiddenAt: null } },
+          _count: { _all: true },
+        })
+      : [];
+  const newsPosts = news.length
+    ? await prismaRoot.communityPost.findMany({ where: { id: { in: news.map((n) => n.postId) } }, select: { id: true, title: true } })
+    : [];
+  if (joined && !session.actorId) {
+    // Al ver el muro, el contador del menú vuelve a 0.
+    await prismaRoot.communityProfile.update({ where: { id: profile.id }, data: { lastSeenAt: new Date() } });
+  }
+
   const href = (change: Partial<Params>) => {
     const next = { tab, tipo: kind, tema: topic, creador: type, ...change };
     const qs = new URLSearchParams();
@@ -75,6 +93,27 @@ export default async function CommunityWallPage({ searchParams }: { searchParams
         <NewPostForm />
       )}
 
+      {newsPosts.length > 0 && (
+        <Card className="border-coral/40">
+          <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("🔔 Respuestas nuevas para ti", "🔔 New replies for you")}</p>
+          <ul className="flex flex-col gap-1 text-sm">
+            {newsPosts.map((p) => {
+              const count = news.find((n) => n.postId === p.id)?._count._all ?? 0;
+              return (
+                <li key={p.id}>
+                  <Link href={`/admin/comunidad/${p.id}`} className="font-semibold text-ink hover:text-coral">
+                    {p.title}
+                  </Link>{" "}
+                  <span className="text-ink/55">
+                    · {count} {count === 1 ? t("respuesta nueva", "new reply") : t("respuestas nuevas", "new replies")}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      )}
+
       <div className="flex flex-col gap-sp-3">
         <div className="flex flex-wrap items-center gap-sp-2">
           <Link href={href({ tab: "recientes" })} className={chip(tab === "recientes")}>
@@ -82,6 +121,9 @@ export default async function CommunityWallPage({ searchParams }: { searchParams
           </Link>
           <Link href={href({ tab: "destacadas" })} className={chip(tab === "destacadas")}>
             {t("🔥 Destacadas", "🔥 Top")}
+          </Link>
+          <Link href="/admin/comunidad/reglas" className="text-xs text-ink/50 hover:text-coral">
+            {t("Reglas", "Rules")}
           </Link>
           {filtered && (
             <Link href={href({ tipo: undefined, tema: undefined, creador: undefined })} className="ml-auto text-xs font-semibold text-coral hover:underline">

@@ -6,6 +6,7 @@ import { participation } from "@/lib/community-server";
 import { replySchema } from "@/lib/community-schemas";
 import { LIMITS } from "@/lib/community";
 import { tooManyAttempts } from "@/lib/rate-limit";
+import { notifyCommunity } from "@/lib/community-moderation";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { id } = await params;
   const post = await prismaRoot.communityPost.findUnique({
     where: { id },
-    select: { id: true, creatorId: true, hiddenAt: true, deletedAt: true, creator: { select: { status: true } } },
+    select: { id: true, creatorId: true, title: true, hiddenAt: true, deletedAt: true, creator: { select: { status: true } } },
   });
   if (!post || post.hiddenAt || post.deletedAt || post.creator.status !== "active") {
     return NextResponse.json({ error: t("Esa publicación ya no está disponible", "That post is no longer available") }, { status: 404 });
@@ -51,5 +52,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     }),
     prismaRoot.communityPost.update({ where: { id: post.id }, data: { replyCount: { increment: 1 }, lastActivityAt: now } }),
   ]);
+  if (post.creatorId !== session.creatorId) {
+    const me = await prismaRoot.communityProfile.findUnique({ where: { id: can.profileId }, select: { displayName: true } });
+    await notifyCommunity("reply", {
+      toCreatorId: post.creatorId,
+      postId: post.id,
+      postTitle: post.title,
+      fromName: me?.displayName ?? "",
+      excerpt: parsed.data.body,
+    });
+  }
   return NextResponse.json({ ok: true, id: reply.id }, { status: 201 });
 }

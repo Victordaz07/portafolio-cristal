@@ -171,6 +171,9 @@ export default function ProfileForm({ initial, firstTime }: { initial: Values; f
               <li key={r.es}>{lang === "en" ? r.en : r.es}</li>
             ))}
           </ol>
+          <a href="/admin/comunidad/reglas" target="_blank" className="text-xs font-semibold text-coral hover:underline">
+            {t("Leer las reglas completas ↗", "Read the full rules ↗")}
+          </a>
           <Check checked={accepted} onChange={setAccepted}>
             <strong>{t("Acepto las reglas de la comunidad", "I accept the community rules")}</strong>
           </Check>

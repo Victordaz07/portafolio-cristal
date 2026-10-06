@@ -19,7 +19,13 @@
 - [x] Paso 4: Respuestas, "me sirvió", "mejor respuesta" y reputación
 - [x] Paso 5: Reportar, bloquear y moderación (Departamento de Comunidad en el Centro de mando)
 - [x] Paso 6: Avisos (correo + contador en el menú) y reglas de la comunidad
-- [ ] Paso 7: Pregunta de la semana con IA + sembrado inicial + lanzamiento
+- [x] Paso 7: Pregunta de la semana con IA + sembrado inicial + lanzamiento
+
+> **Etapa 1 terminada en código.** Pendiente de personas (no de código):
+> - Sembrar 8–10 publicaciones reales del equipo (las escribe el dueño o Cristal desde su cuenta; nada inventado como si fuera de otros).
+> - Dar el rol **Comunidad** a Cristal en Equipo → Personas (si el dueño lo confirma).
+> - La pregunta de la semana se publica sola en el cron diario de Inteligencia (`/api/cron/insights`) si no hubo una en 6 días;
+>   el equipo también puede publicarla al momento desde Equipo → Comunidad. Sin `ANTHROPIC_API_KEY` usa preguntas de respaldo.
 
 **Etapa 2: Conexiones y mensajes** (planear en detalle cuando termine la etapa 1)
 - [ ] Conexiones (solicitar / aceptar / rechazar)

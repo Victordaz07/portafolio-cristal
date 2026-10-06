@@ -167,6 +167,15 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
   - **conectas tu propio dominio** (por ejemplo, `tunombre.com`, que compras y pagas tú donde quieras). El panel te dice exactamente qué registro poner en tu proveedor, comprueba la conexión y el sitio queda con HTTPS.
   - Cada persona creadora también tiene su dirección `tunombre.foliocrew.pro` (se activa con el lanzamiento del dominio de Foliocrew).
 
+**Comunidad** (solo para cuentas de Foliocrew)
+- **Muro de creadores** de todo tipo (YouTube, TikTok, Instagram, podcast, streaming, UGC, fotografía, escritura…): preguntas, consejos, logros, búsqueda de colaboraciones y recursos.
+- Filtros por tipo de publicación, tema y tipo de creador; pestañas "Recientes" y "Destacadas".
+- **"Me sirvió"** y **"Mejor respuesta"** dan puntos de reputación; hay niveles (Nuevo, Activo, Aporta, Referente).
+- Perfil de comunidad armado con los datos de Foliocrew; se puede marcar "me interesa colaborar".
+- Seguridad: reglas claras, **reportar** (anónimo), **bloquear**, y un equipo de Comunidad que modera. Avisos por correo cuando te responden.
+- Cada semana se fija una **pregunta de la semana** para conversar.
+- Todavía **no** hay mensajes directos entre creadores ni conexiones (está en los planes).
+
 **Ayuda**
 - **Manual de uso** bilingüe dentro del panel.
 - **Mi cuenta:** nombre, contraseña y dirección de tu sitio.
@@ -180,6 +189,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | **Publicar automáticamente** en las redes desde el calendario | Futuro (requiere aprobación de cada red) |
 | **Mensajes directos (DM)** de Instagram en la Bandeja | Futuro (requiere aprobación de Meta) |
 | Plan para agencias y managers (varias creadores) | Futuro |
+| **Conexiones y mensajes directos** entre creadores de la Comunidad | Próximamente (etapa 2 de la Comunidad) |
 
 ### 6. Problemas → cómo los resuelve Foliocrew
 

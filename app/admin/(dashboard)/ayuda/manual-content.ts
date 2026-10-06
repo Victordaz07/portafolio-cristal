@@ -461,6 +461,15 @@ const guiaEs: ManualBlock[] = [
       "Tu media kit público vive en /media-kit: cópialo desde Reportes con \"Copiar enlace\" y pégalo en tu bio o en tus correos.",
     ],
   },
+  {
+    title: "Comunidad",
+    paragraphs: [
+      "La Comunidad es un muro solo para cuentas de Foliocrew, con creadores de todo tipo (YouTube, TikTok, Instagram, podcast, streaming, UGC, fotografía…). La primera vez revisas tu perfil (ya viene armado con tus datos) y aceptas las reglas.",
+      "Puedes publicar una pregunta, un consejo, un logro, una búsqueda de colaboración o un recurso. Filtra el muro por tipo, tema o tipo de creador, y usa \"Destacadas\" para ver lo que más está ayudando.",
+      "Marca \"💡 Me sirvió\" en lo que te ayude y, si preguntaste, elige la \"Mejor respuesta\": así quien ayuda gana puntos y sube de nivel. Te avisamos por correo cuando te responden (lo puedes apagar en Mi perfil).",
+      "Si algo rompe las reglas, toca \"Reportar\" (es anónimo). También puedes bloquear a alguien desde su perfil. Cada semana el equipo fija una pregunta para conversar.",
+    ],
+  },
 ];
 
 const guiaEn: ManualBlock[] = [
@@ -607,6 +616,15 @@ const guiaEn: ManualBlock[] = [
       "Your growth in numbers: total followers and last-30-days growth, average engagement, posts this month, a month-by-month follower chart, the best day and time to post (based on the engagement of your posts with a date and metrics) and your revenue by brand.",
       "\"Actualizar desde redes conectadas\" (refresh from connected networks) saves today's followers for each connected network. Networks that aren't connected can be entered by hand. Under \"Reporte mensual (PDF)\", pick the month and tap \"Ver reporte\": choose \"Save as PDF\" when printing and send it to a brand.",
       "Your public media kit lives at /media-kit: copy the link from Reports (\"Copiar enlace\") and put it in your bio or emails.",
+    ],
+  },
+  {
+    title: "Community",
+    paragraphs: [
+      "The Community is a wall just for Foliocrew accounts, with every kind of creator (YouTube, TikTok, Instagram, podcast, streaming, UGC, photography…). The first time, you review your profile (it's already built from your details) and accept the rules.",
+      "You can post a question, a tip, a win, a collab request or a resource. Filter the wall by type, topic or creator type, and use \"Top\" to see what's helping most.",
+      "Mark \"💡 Helpful\" on what helps you and, if you asked, pick the \"Best answer\": that way whoever helps earns points and levels up. We email you when someone replies (you can turn it off in My profile).",
+      "If something breaks the rules, tap \"Report\" (it's anonymous). You can also block someone from their profile. Every week the team pins a question to talk about.",
     ],
   },
 ];

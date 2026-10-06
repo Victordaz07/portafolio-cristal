@@ -23,7 +23,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] A4. Respuestas, "me sirvió", mejor respuesta y reputación
 - [x] A5. Reportar, bloquear y Departamento de Comunidad
 - [x] A6. Avisos por correo, contador en el menú y reglas
-- [ ] A7. Pregunta de la semana con IA, sembrado y lanzamiento
+- [x] A7. Pregunta de la semana con IA, sembrado y lanzamiento
 
 **B. Cerrar y cobrar**
 - [ ] B1. Calculadora "¿Cuánto cobro?"

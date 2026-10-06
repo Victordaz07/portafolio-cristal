@@ -120,6 +120,8 @@ export async function feedPosts(viewerId: string, f: FeedFilters) {
     topic: true,
     title: true,
     body: true,
+    titleEn: true,
+    bodyEn: true,
     imageUrl: true,
     creatorTypes: true,
     helpfulCount: true,

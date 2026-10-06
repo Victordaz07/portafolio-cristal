@@ -18,3 +18,7 @@ export const postSchema = z.object({
   imageUrl: safeImageUrl.default(""),
   creatorTypes: z.array(z.string().refine(isCreatorType)).max(12).default([]),
 });
+
+export const replySchema = z.object({
+  body: z.string().trim().min(LIMITS.reply.min).max(LIMITS.reply.max),
+});

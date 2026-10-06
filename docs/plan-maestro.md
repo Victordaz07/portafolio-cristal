@@ -26,7 +26,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] A7. Pregunta de la semana con IA, sembrado y lanzamiento
 
 **B. Cerrar y cobrar**
-- [ ] B1. Calculadora "¿Cuánto cobro?"
+- [x] B1. Calculadora "¿Cuánto cobro?"
 - [ ] B2. Entregables y derechos de uso por trato
 - [ ] B3. Facturas y recordatorios de cobro
 - [ ] B4. Contrato simple con aceptación en línea

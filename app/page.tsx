@@ -64,14 +64,22 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /** Pie para las creadoras de Foliocrew (el sitio de Cristal mantiene su crédito propio). */
-function MadeWithFoliocrew() {
+function MadeWithFoliocrew({ locale, ambassadorLink }: { locale: string; ambassadorLink?: string | null }) {
   return (
-    <p className="py-sp-4 text-center text-xs text-ink/50">
-      Hecho con{" "}
-      <a href="https://foliocrew.pro" className="font-semibold text-ink/70 hover:text-coral">
-        Foliocrew
-      </a>
-    </p>
+    <div className="flex flex-col items-center gap-1 py-sp-4 text-center text-xs text-ink/50">
+      <p>
+        {locale === "en" ? "Made with" : "Hecho con"}{" "}
+        <a href="https://foliocrew.pro" className="font-semibold text-ink/70 hover:text-coral">
+          Foliocrew
+        </a>
+      </p>
+      {ambassadorLink && (
+        // Es un enlace con beneficio para quien lo comparte: rel="sponsored" y la palabra «Ambassador» lo dejan claro.
+        <a href={ambassadorLink} rel="sponsored noopener" className="rounded-full border border-line px-sp-3 py-0.5 font-mono text-[10px] uppercase tracking-widest text-ink/60 hover:border-coral hover:text-coral">
+          💜 Foliocrew Ambassador
+        </a>
+      )}
+    </div>
   );
 }
 
@@ -80,7 +88,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const locale = await getLocale();
   const copy = t(locale);
   // El sitio de Cristal (la creadora original) conserva el crédito de su diseñador.
-  const isFlagship = (await currentCreator()).slug === defaultCreatorSlug();
+  const owner = await currentCreator();
+  const isFlagship = owner.slug === defaultCreatorSlug();
+  const ambassadorLink = owner.ambassador && owner.ambassadorBadge && owner.referralCode ? `https://foliocrew.pro/?ref=${owner.referralCode}` : null;
   const sitePrefix = await sitePathPrefix();
 
   const navLinks = [
@@ -568,7 +578,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               {locale === "en" ? "Terms" : "Términos"}
             </Link>
           </div>
-          {isFlagship ? <CreatorCredit locale={locale} /> : <MadeWithFoliocrew />}
+          {isFlagship ? <CreatorCredit locale={locale} /> : <MadeWithFoliocrew locale={locale} ambassadorLink={ambassadorLink} />}
         </div>
       </footer>
     </SiteFrame>

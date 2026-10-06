@@ -55,3 +55,24 @@ export async function recordReferral(referrerId: string, referredId: string) {
   if (referrerId === referredId) return;
   await prismaRoot.referral.create({ data: { referrerId, referredId } }).catch((error) => console.error("No se pudo anotar el referido", error));
 }
+
+export interface ReferralStats {
+  /** Cuentas que se registraron con su enlace (todas, incluso las que ya pagaron o se fueron). */
+  registered: number;
+  /** Las que ya hicieron su primer pago confirmado (pagaron, se les dio la recompensa o se fueron después). */
+  paying: number;
+  /** Meses gratis que ya ganó. */
+  monthsEarned: number;
+}
+
+/** Los números de una embajadora (solo cantidades: nunca nombres ni correos de quien registró). */
+export async function referralStats(referrerId: string): Promise<ReferralStats> {
+  const rows = await prismaRoot.referral.groupBy({ by: ["status"], where: { referrerId }, _count: { _all: true }, _sum: { rewardMonths: true } });
+  const count = (status: string) => rows.find((r) => r.status === status)?._count._all ?? 0;
+  const registered = rows.reduce((sum, r) => sum + r._count._all, 0);
+  return {
+    registered,
+    paying: count("paid") + count("rewarded"),
+    monthsEarned: rows.reduce((sum, r) => sum + (r._sum.rewardMonths ?? 0), 0),
+  };
+}

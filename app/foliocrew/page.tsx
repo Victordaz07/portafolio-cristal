@@ -8,6 +8,7 @@ import { getT } from "@/lib/admin-lang-server";
 import type { AdminLang } from "@/lib/admin-lang";
 import { AdminLangProvider } from "@/components/admin/AdminLang";
 import LangSwitch from "@/components/admin/LangSwitch";
+import { incomingReferral } from "@/lib/ambassadors-server";
 
 const outfit = localFont({ src: "../fonts/outfit-normal-300-700.woff2", weight: "300 700", style: "normal", variable: "--font-outfit", display: "swap" });
 
@@ -149,9 +150,10 @@ function SitePhoneMockup({ lang }: { lang: AdminLang }) {
 export default async function FoliocrewHome({
   searchParams,
 }: {
-  searchParams: Promise<{ utm_source?: string; utm_medium?: string; utm_campaign?: string }>;
+  searchParams: Promise<{ utm_source?: string; utm_medium?: string; utm_campaign?: string; ref?: string }>;
 }) {
   const sp = await searchParams;
+  const referral = await incomingReferral(sp.ref);
   const utm: Utm = { utmSource: sp.utm_source, utmMedium: sp.utm_medium, utmCampaign: sp.utm_campaign };
   const prices = showPrices();
   const { t, lang } = await getT();
@@ -214,6 +216,16 @@ export default async function FoliocrewHome({
                 "Your portfolio, your media kit and your brand collaborations, all in one place. A professional site in English and Spanish, plus a dashboard to run your creator business."
               )}
             </p>
+            {referral && (
+              <div className="mt-sp-5 max-w-xl rounded-[18px] border border-[#B692E7]/50 bg-[#B692E7]/15 p-sp-4">
+                <p className="text-sm text-[#251023]/80">
+                  {t("💜 Te invitó una embajadora de Foliocrew. Con su enlace puedes crear tu cuenta ahora, sin esperar.", "💜 A Foliocrew ambassador invited you. With their link you can create your account now, no waiting.")}
+                </p>
+                <Link href="/admin/registro" className="mt-sp-3 inline-block rounded-full bg-[#251023] px-sp-4 py-sp-2 text-sm font-semibold text-[#FBF7F5] hover:opacity-90">
+                  {t("Crear mi cuenta", "Create my account")}
+                </Link>
+              </div>
+            )}
             <div className="mt-sp-5 max-w-xl">
               <WaitlistForm utm={utm} compact />
             </div>

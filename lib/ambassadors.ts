@@ -13,6 +13,9 @@ export const AMBASSADOR = {
   cookieDays: 30,
 } as const;
 
+/** Cookie donde se guarda el código del enlace (httpOnly, AMBASSADOR.cookieDays días). */
+export const REF_COOKIE = "fc_ref";
+
 /** Sin 0/O, 1/I/L: se lee y se dicta sin confundirse. */
 const CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
 export const REFERRAL_CODE_LENGTH = 8;

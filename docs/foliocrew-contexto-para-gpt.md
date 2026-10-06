@@ -151,6 +151,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Reseñas destacadas** y **Testimonios**.
 
 **Negocio**
+- **Facturas:** creas facturas para tus marcas (completas, de anticipo o de saldo, en español o inglés) y las envías con un enlace. La marca la ve, la descarga en PDF y puede avisar "Ya pagamos". Te avisamos cuando la abre; si se atrasa, le recordamos con amabilidad el día que vence y a los 7 y 14 días. Ves cuánto tienes por cobrar, lo vencido y lo cobrado en el mes.
 - **Bandeja:** en un solo lugar llegan los mensajes del formulario de tu sitio y los **comentarios de Instagram** (si conectaste tu cuenta).
   - Cada mensaje marca si está pendiente o respondido, y etiqueta como "Cliente" a las marcas de tu CRM.
   - Te avisa si un mensaje lleva más de 24 h sin respuesta.

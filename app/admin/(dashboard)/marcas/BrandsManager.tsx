@@ -27,6 +27,7 @@ import {
 import BrandForm, { emptyBrandForm, toBrandPayload, type BrandFormValues } from "./BrandForm";
 import DeliverablesSection from "./DeliverablesSection";
 import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
+import { INVOICE_STATUS_META, displayStatus, formatCents } from "@/lib/invoices";
 import { pickLabel } from "@/lib/admin-lang";
 import { useT } from "@/components/admin/AdminLang";
 
@@ -578,6 +579,39 @@ function BrandDetail({
       )}
 
       {hasDeal && <DeliverablesSection brandId={brand.id} deliverables={brand.deliverables} onRequest={onRequest} />}
+
+      {hasDeal && (
+        <div>
+          <p className={eyebrowClass}>{t("Facturas", "Invoices")}</p>
+          {brand.invoices.length > 0 && (
+            <ul className="mt-sp-2 flex flex-col gap-sp-2">
+              {brand.invoices.map((inv) => {
+                const st = displayStatus({ status: inv.status, dueAt: new Date(inv.dueAt), viewedAt: inv.viewedAt ? new Date(inv.viewedAt) : null });
+                return (
+                  <li key={inv.id}>
+                    <Link href={`/admin/facturas/${inv.id}`} className="flex items-center gap-sp-3 text-[13px] hover:opacity-80">
+                      <span className="font-mono font-semibold text-ink">{inv.number}</span>
+                      <span className="flex-1 text-ink/60">{formatCents(inv.subtotal, inv.currency, lang)}</span>
+                      <span className={`rounded-full px-sp-2 py-0.5 font-mono text-[10px] uppercase ${INVOICE_STATUS_META[st].className}`}>{pickLabel(lang, INVOICE_STATUS_META[st])}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <div className="mt-sp-2 flex flex-wrap gap-x-sp-4 gap-y-1 text-[13px]">
+            <Link href={`/admin/facturas/nueva?marca=${brand.id}`} className={accentLinkClass}>
+              {t("+ Crear factura", "+ Create invoice")}
+            </Link>
+            <Link href={`/admin/facturas/nueva?marca=${brand.id}&tipo=deposit`} className={accentLinkClass}>
+              {t("Factura de anticipo", "Deposit invoice")}
+            </Link>
+            <Link href={`/admin/facturas/nueva?marca=${brand.id}&tipo=balance`} className={accentLinkClass}>
+              {t("Factura de saldo", "Balance invoice")}
+            </Link>
+          </div>
+        </div>
+      )}
 
       <div>
         <p className={eyebrowClass}>{t("Publicaciones para esta marca", "Posts for this brand")}</p>

@@ -63,6 +63,7 @@ const navGroups = (t: T): NavGroup[] => [
     title: t("Negocio", "Business"),
     items: [
       { href: "/admin/mensajes", label: t("Bandeja", "Inbox"), badgeKey: "unread" },
+      { href: "/admin/facturas", label: t("Facturas", "Invoices") },
       { href: "/admin/reportes", label: t("Reportes", "Reports") },
       { href: "/admin/conectar", label: t("Conectar cuentas", "Connect accounts") },
     ],

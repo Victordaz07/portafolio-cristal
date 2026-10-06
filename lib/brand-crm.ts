@@ -11,6 +11,11 @@ export const brandCrmInclude = {
     select: { id: true, caption: true, platform: true, createdAt: true },
   },
   deliverables: { orderBy: [{ order: "asc" }, { createdAt: "asc" }] },
+  invoices: {
+    where: { status: { not: "void" } },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, number: true, kind: true, status: true, subtotal: true, currency: true, dueAt: true, viewedAt: true },
+  },
 } satisfies Prisma.BrandInclude;
 
 export type BrandWithCrm = Prisma.BrandGetPayload<{ include: typeof brandCrmInclude }>;

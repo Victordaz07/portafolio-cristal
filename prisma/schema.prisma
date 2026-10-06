@@ -76,6 +76,7 @@ model Creator {
   connectionsReceived CommunityConnection[]   @relation("ConnectionAddressee")
   conversationsA      CommunityConversation[] @relation("ConversationA")
   conversationsB      CommunityConversation[] @relation("ConversationB")
+  deliverables        Deliverable[]
 }
 
 model Hero {
@@ -191,8 +192,46 @@ model Brand {
   notes          String?
   events         BrandEvent[]
   scheduledPosts ScheduledPost[]
+  deliverables   Deliverable[]
+
+  // Derechos de uso y exclusividad del trato (B2)
+  /// Días que la marca puede usar el contenido en sus anuncios o redes
+  usageRightsDays     Int?
+  usageRightsStart    DateTime?
+  exclusivityDays     Int?
+  /// "Skincare", "bebidas"… (con quién no puede trabajar mientras dure)
+  exclusivityCategory String?
+  whitelisting        Boolean   @default(false)
+  /// Último aviso de "tus derechos de uso vencen pronto" (para no repetirlo)
+  usageReminderAt     DateTime?
 
   @@index([creatorId])
+}
+
+/// Lo que hay que entregarle a una marca en un trato (un reel, un set de fotos…).
+model Deliverable {
+  id         String    @id @default(cuid())
+  creatorId  String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator    Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  brandId    String
+  brand      Brand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  /// "Reel de 30 s con el producto"
+  title      String
+  /// instagram | tiktok | youtube | facebook | ugc | otro
+  network    String?
+  dueAt      DateTime?
+  /// todo | draft | in_review | approved | published (lib/deliverables.ts)
+  status     String    @default("todo")
+  /// Enlace a la publicación o al archivo entregado
+  proofUrl   String?
+  order      Int       @default(0)
+  /// Último aviso de "vence en 2 días" (se borra si cambia la fecha)
+  remindedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([creatorId])
+  @@index([brandId])
 }
 
 model BrandEvent {

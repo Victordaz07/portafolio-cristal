@@ -19,6 +19,7 @@ import { appTimeZone, getActivityStreak, todayKey } from "@/lib/growth-server";
 import { NETWORK_META, formatTime, isPlanNetwork, utcToZoned } from "@/lib/content-plan";
 import { pickLabel, type T } from "@/lib/admin-lang";
 import { getT } from "@/lib/admin-lang-server";
+import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
 
 // Iniciales y color por red, igual que en el diseño del panel v2.
 const PLATFORM_META: Record<string, { initials: string; className: string }> = {
@@ -63,6 +64,8 @@ export default async function AdminHomePage() {
     streak,
     upcomingPosts,
     scheduledCount,
+    dueDeliverables,
+    rightsBrands,
   ] = await Promise.all([
     prisma.contactMessage.count({ where: { read: false } }),
     prisma.contactMessage.findMany({
@@ -98,7 +101,23 @@ export default async function AdminHomePage() {
       include: { brand: { select: { name: true } } },
     }),
     prisma.scheduledPost.count({ where: { scheduledFor: { gte: new Date() }, status: "scheduled" } }),
+    // Entregables abiertos que vencen en 7 días (o ya se pasaron).
+    prisma.deliverable.findMany({
+      where: { status: { notIn: ["approved", "published"] }, dueAt: { lte: new Date(Date.now() + 7 * 86_400_000) } },
+      orderBy: { dueAt: "asc" },
+      take: 6,
+      select: { id: true, title: true, dueAt: true, brand: { select: { name: true } } },
+    }),
+    prisma.brand.findMany({
+      where: { usageRightsDays: { not: null }, usageRightsStart: { not: null } },
+      select: { id: true, name: true, usageRightsStart: true, usageRightsDays: true },
+    }),
   ]);
+  const rightsSoon = rightsBrands
+    .map((b) => ({ ...b, end: usageRightsEnd(b.usageRightsStart, b.usageRightsDays)! }))
+    .map((b) => ({ ...b, left: daysFromNow(b.end) }))
+    .filter((b) => b.left >= 0 && b.left <= 7)
+    .sort((a, b) => a.left - b.left);
   const tz = appTimeZone();
 
   const weekDone = weekActions.filter((a) => a.done).length;
@@ -202,6 +221,45 @@ export default async function AdminHomePage() {
               </ul>
             )}
           </Card>
+
+          {(dueDeliverables.length > 0 || rightsSoon.length > 0) && (
+            <Card>
+              <SectionTitle>{t("Entregas y derechos de uso", "Deliveries and usage rights")}</SectionTitle>
+              <ul className="divide-y divide-line">
+                {dueDeliverables.map((d) => {
+                  const late = d.dueAt && daysUntil(d.dueAt) < 0;
+                  return (
+                    <li key={d.id}>
+                      <Link href="/admin/marcas" className="flex items-center justify-between gap-sp-3 py-2.5 hover:opacity-80">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-ink">{d.title}</p>
+                          <p className="truncate text-xs text-ink/60">{d.brand.name}</p>
+                        </div>
+                        {d.dueAt && (
+                          <span className={`shrink-0 rounded-full px-sp-2 py-0.5 text-[11px] font-semibold ${late ? "bg-coral/15 text-coral" : "bg-lime/30 text-ink"}`}>
+                            {dueLabel(d.dueAt, lang)}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+                {rightsSoon.map((b) => (
+                  <li key={b.id}>
+                    <Link href="/admin/marcas" className="flex items-center justify-between gap-sp-3 py-2.5 hover:opacity-80">
+                      <p className="min-w-0 text-sm text-ink">
+                        {t(
+                          `Los derechos de uso de ${b.name} vencen ${b.left === 0 ? "hoy" : `en ${b.left} ${b.left === 1 ? "día" : "días"}`}: ¿renovar?`,
+                          `${b.name}'s usage rights expire ${b.left === 0 ? "today" : `in ${b.left} ${b.left === 1 ? "day" : "days"}`}: renew?`
+                        )}
+                      </p>
+                      <span className="shrink-0 rounded-full bg-coral/15 px-sp-2 py-0.5 text-[11px] font-semibold text-coral">💰</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
 
           <Card>
             <SectionTitle

@@ -25,6 +25,8 @@ import {
   type PaymentStatus,
 } from "@/lib/crm";
 import BrandForm, { emptyBrandForm, toBrandPayload, type BrandFormValues } from "./BrandForm";
+import DeliverablesSection from "./DeliverablesSection";
+import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
 import { pickLabel } from "@/lib/admin-lang";
 import { useT } from "@/components/admin/AdminLang";
 
@@ -67,6 +69,11 @@ function toFormValues(brand: BrandCrm): BrandFormValues {
     nextAction: brand.nextAction ?? "",
     nextActionDue: dateToInput(brand.nextActionDue),
     lastContactAt: dateToInput(brand.lastContactAt),
+    usageRightsDays: brand.usageRightsDays ? String(brand.usageRightsDays) : "",
+    usageRightsStart: dateToInput(brand.usageRightsStart),
+    exclusivityDays: brand.exclusivityDays ? String(brand.exclusivityDays) : "",
+    exclusivityCategory: brand.exclusivityCategory ?? "",
+    whitelisting: brand.whitelisting,
   };
 }
 
@@ -396,6 +403,12 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                       brand={selected}
                       onEdit={() => setEditing(true)}
                       onPatch={patchSelected}
+                      onRequest={async (url, method, body) => {
+                        const updated = await request(url, method, body);
+                        if (!updated) return false;
+                        replaceBrand(updated);
+                        return true;
+                      }}
                       onAddEvent={async (note, date) => {
                         const updated = await request(`${API_BASE}/${selected.id}/events`, "POST", { note, date });
                         if (!updated) return false;
@@ -422,11 +435,13 @@ function BrandDetail({
   onEdit,
   onPatch,
   onAddEvent,
+  onRequest,
 }: {
   brand: BrandCrm;
   onEdit: () => void;
   onPatch: (body: Record<string, unknown>, successMessage: string) => Promise<boolean>;
   onAddEvent: (note: string, date: string) => Promise<boolean>;
+  onRequest: (url: string, method: string, body?: unknown) => Promise<boolean>;
 }) {
   const { t, lang } = useT();
   const [notes, setNotes] = useState(brand.notes ?? "");
@@ -438,6 +453,26 @@ function BrandDetail({
 
   const hasDeal = isDealStatus(brand.dealStatus);
   const overdueDays = brand.nextActionDue ? -daysUntil(brand.nextActionDue) : 0;
+  const rightsEnd = usageRightsEnd(brand.usageRightsStart, brand.usageRightsDays);
+  const rightsLeft = rightsEnd ? daysFromNow(rightsEnd) : null;
+  const rightsSoon = rightsLeft != null && rightsLeft >= 0 && rightsLeft <= 7;
+  const terms = [
+    rightsEnd
+      ? rightsLeft! < 0
+        ? t(`Derechos de uso: vencieron el ${formatShortDate(rightsEnd, lang)}`, `Usage rights: expired on ${formatShortDate(rightsEnd, lang)}`)
+        : t(
+            `Derechos de uso: vencen el ${formatShortDate(rightsEnd, lang)} (en ${rightsLeft} ${rightsLeft === 1 ? "día" : "días"})`,
+            `Usage rights: expire on ${formatShortDate(rightsEnd, lang)} (in ${rightsLeft} ${rightsLeft === 1 ? "day" : "days"})`
+          )
+      : null,
+    brand.exclusivityDays
+      ? t(
+          `Exclusividad: ${brand.exclusivityDays} días${brand.exclusivityCategory ? ` en ${brand.exclusivityCategory}` : ""}`,
+          `Exclusivity: ${brand.exclusivityDays} days${brand.exclusivityCategory ? ` in ${brand.exclusivityCategory}` : ""}`
+        )
+      : null,
+    brand.whitelisting ? t("Incluye Spark Ads / whitelisting", "Includes Spark Ads / whitelisting") : null,
+  ].filter((x): x is string => Boolean(x));
 
   const facts = [
     { label: t("Valor del trato", "Deal value"), value: formatMoney(brand.dealValue) },
@@ -529,6 +564,20 @@ function BrandDetail({
           )}
         </div>
       )}
+
+      {hasDeal && terms.length > 0 && (
+        <ul className="flex flex-col gap-1 rounded-[12px] bg-cream px-sp-4 py-sp-3 text-[13px] text-ink">
+          {terms.map((line, i) => (
+            // La primera línea es la de derechos de uso: se resalta si vencen en 7 días o menos.
+            <li key={line} className={i === 0 && rightsEnd && rightsSoon ? "font-semibold text-coral" : ""}>
+              {line}
+              {i === 0 && rightsEnd && rightsSoon && t(" · ¿Renovar?", " · Renew?")}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {hasDeal && <DeliverablesSection brandId={brand.id} deliverables={brand.deliverables} onRequest={onRequest} />}
 
       <div>
         <p className={eyebrowClass}>{t("Publicaciones para esta marca", "Posts for this brand")}</p>

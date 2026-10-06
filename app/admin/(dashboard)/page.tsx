@@ -20,6 +20,7 @@ import { NETWORK_META, formatTime, isPlanNetwork, utcToZoned } from "@/lib/conte
 import { pickLabel, type T } from "@/lib/admin-lang";
 import { getT } from "@/lib/admin-lang-server";
 import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
+import { isUnanswered, pitchState } from "@/lib/pitch";
 
 // Iniciales y color por red, igual que en el diseño del panel v2.
 const PLATFORM_META: Record<string, { initials: string; className: string }> = {
@@ -66,6 +67,7 @@ export default async function AdminHomePage() {
     scheduledCount,
     dueDeliverables,
     rightsBrands,
+    pitchBrands,
   ] = await Promise.all([
     prisma.contactMessage.count({ where: { read: false } }),
     prisma.contactMessage.findMany({
@@ -112,7 +114,16 @@ export default async function AdminHomePage() {
       where: { usageRightsDays: { not: null }, usageRightsStart: { not: null } },
       select: { id: true, name: true, usageRightsStart: true, usageRightsDays: true },
     }),
+    // Propuestas enviadas a marcas que todavía no respondieron (C1).
+    prisma.brand.findMany({
+      where: { dealStatus: "prospect", pitchSentAt: { not: null }, pitchRepliedAt: null },
+      select: { id: true, name: true, dealStatus: true, pitchSentAt: true, pitchFollowUps: true, pitchRepliedAt: true },
+    }),
   ]);
+  const unansweredPitches = pitchBrands
+    .filter((b) => isUnanswered(b))
+    .map((b) => ({ ...b, state: pitchState(b) }))
+    .sort((a, b) => Number(b.state.phase === "followup-due") - Number(a.state.phase === "followup-due") || b.state.daysSince - a.state.daysSince);
   const rightsSoon = rightsBrands
     .map((b) => ({ ...b, end: usageRightsEnd(b.usageRightsStart, b.usageRightsDays)! }))
     .map((b) => ({ ...b, left: daysFromNow(b.end) }))
@@ -221,6 +232,38 @@ export default async function AdminHomePage() {
               </ul>
             )}
           </Card>
+
+          {unansweredPitches.length > 0 && (
+            <Card>
+              <SectionTitle>
+                {t(
+                  `Tienes ${unansweredPitches.length} ${unansweredPitches.length === 1 ? "propuesta sin respuesta" : "propuestas sin respuesta"}`,
+                  `You have ${unansweredPitches.length} ${unansweredPitches.length === 1 ? "proposal" : "proposals"} with no reply`
+                )}
+              </SectionTitle>
+              <ul className="divide-y divide-line">
+                {unansweredPitches.slice(0, 5).map((b) => (
+                  <li key={b.id}>
+                    <Link href="/admin/marcas" className="flex items-center justify-between gap-sp-3 py-2.5 hover:opacity-80">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-ink">{b.name}</p>
+                        <p className="truncate text-xs text-ink/60">{t(`Enviada hace ${b.state.daysSince} días`, `Sent ${b.state.daysSince} days ago`)}</p>
+                      </div>
+                      {b.state.phase === "followup-due" ? (
+                        <span className="shrink-0 rounded-full bg-coral/15 px-sp-2 py-0.5 text-[11px] font-semibold text-coral">
+                          {t(`Toca seguimiento ${b.state.followUpNumber}`, `Follow-up ${b.state.followUpNumber} due`)}
+                        </span>
+                      ) : (
+                        <span className="shrink-0 rounded-full bg-lime/30 px-sp-2 py-0.5 text-[11px] font-semibold text-ink">
+                          {b.state.phase === "exhausted" ? t("Sin respuesta", "No reply") : t("En espera", "Waiting")}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
 
           {(dueDeliverables.length > 0 || rightsSoon.length > 0) && (
             <Card>

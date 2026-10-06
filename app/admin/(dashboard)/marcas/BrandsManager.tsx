@@ -26,6 +26,8 @@ import {
 } from "@/lib/crm";
 import BrandForm, { emptyBrandForm, toBrandPayload, type BrandFormValues } from "./BrandForm";
 import DeliverablesSection from "./DeliverablesSection";
+import PitchWriter from "./PitchWriter";
+import PitchSection from "./PitchSection";
 import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
 import { INVOICE_STATUS_META, displayStatus, formatCents } from "@/lib/invoices";
 import { CONTRACT_STATUS_META, type ContractStatus } from "@/lib/contracts";
@@ -180,6 +182,16 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
     if (await patchSelected(toBrandPayload(values), t("Marca actualizada", "Brand updated"))) setEditing(false);
   }
 
+  /** Una propuesta guardada o un seguimiento anotado: el servidor devuelve la marca ya actualizada. */
+  function handlePitchSaved(saved: unknown) {
+    const brand = saved as BrandCrm;
+    setBrands((current) => (current.some((b) => b.id === brand.id) ? current.map((b) => (b.id === brand.id ? brand : b)) : [...current, brand]));
+    setView("deals");
+    setFilter("deals");
+    setSelectedId(brand.id);
+    setCreating(null);
+  }
+
   async function handleToggleActive(brand: BrandCrm) {
     const updated = brand.active
       ? await request(`${API_BASE}/${brand.id}`, "DELETE")
@@ -229,16 +241,19 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
             </button>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setCreating(view === "deals" ? "deal" : "logo");
-            setEditing(false);
-          }}
-          className="rounded-full bg-coral px-sp-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-moss"
-        >
-          {view === "deals" ? t("+ Nueva marca", "+ New brand") : t("+ Agregar logo", "+ Add logo")}
-        </button>
+        <div className="flex flex-wrap items-center gap-sp-2">
+          <PitchWriter onSaved={handlePitchSaved} className="rounded-full border border-line bg-white px-sp-4 py-2.5 text-sm font-semibold text-ink hover:border-coral" />
+          <button
+            type="button"
+            onClick={() => {
+              setCreating(view === "deals" ? "deal" : "logo");
+              setEditing(false);
+            }}
+            className="rounded-full bg-coral px-sp-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-moss"
+          >
+            {view === "deals" ? t("+ Nueva marca", "+ New brand") : t("+ Agregar logo", "+ Add logo")}
+          </button>
+        </div>
       </div>
 
       {creating && (
@@ -404,6 +419,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                       key={selected.id}
                       brand={selected}
                       onEdit={() => setEditing(true)}
+                      onPitchSaved={handlePitchSaved}
                       onPatch={patchSelected}
                       onRequest={async (url, method, body) => {
                         const updated = await request(url, method, body);
@@ -435,12 +451,14 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
 function BrandDetail({
   brand,
   onEdit,
+  onPitchSaved,
   onPatch,
   onAddEvent,
   onRequest,
 }: {
   brand: BrandCrm;
   onEdit: () => void;
+  onPitchSaved: (brand: unknown) => void;
   onPatch: (body: Record<string, unknown>, successMessage: string) => Promise<boolean>;
   onAddEvent: (note: string, date: string) => Promise<boolean>;
   onRequest: (url: string, method: string, body?: unknown) => Promise<boolean>;
@@ -578,6 +596,8 @@ function BrandDetail({
           ))}
         </ul>
       )}
+
+      <PitchSection brand={brand} onRequest={onRequest} onSaved={onPitchSaved} />
 
       {hasDeal && <DeliverablesSection brandId={brand.id} deliverables={brand.deliverables} onRequest={onRequest} />}
 

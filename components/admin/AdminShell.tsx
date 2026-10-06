@@ -8,9 +8,10 @@ import { MenuIcon, CloseIcon, LogoutIcon } from "@/components/icons";
 import type { T } from "@/lib/admin-lang";
 import { useT } from "./AdminLang";
 import LangSwitch from "./LangSwitch";
+import CommandPalette from "./CommandPalette";
 
 type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports" | "community" | "connections" | "messages"; exact?: boolean };
-type NavGroup = { id: string; title: string; items: NavItem[] };
+export type NavGroup = { id: string; title: string; items: NavItem[] };
 
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
 // nuevas del diseño (Metas, Bitácora, Calendario, Reportes…) se suman a su
@@ -264,6 +265,8 @@ export default function AdminShell({
           </span>
           {t("Resumen", "Overview")}
         </Link>
+
+        <CommandPalette groups={allGroups} badges={badges} t={t} onNavigate={() => setMobileOpen(false)} />
 
         <nav className="-mx-1 mt-sp-1 flex flex-1 flex-col gap-sp-1 overflow-y-auto px-1">
           {allGroups.map((group) => {

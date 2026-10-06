@@ -44,7 +44,7 @@ export async function suggestCaptions(input: {
 
 Escribe 3 opciones de caption para: ${CONTENT_TYPE_LABEL[input.contentType]} en ${networks}.
 Tema: ${input.topic || "contenido de su nicho"}.
-${input.brandName ? `Es una colaboración con la marca ${input.brandName}: menciónala de forma natural y agrega #publi o #ad al final.` : ""}
+${input.brandName ? `Es una colaboración pagada con la marca ${input.brandName}: menciónala de forma natural y empieza el caption con ${(input.lang ?? "es") === "en" ? "#ad" : "#publicidad"} (el aviso va AL INICIO de la primera línea, antes del gancho, para que se vea sin tocar «ver más»).` : ""}
 ${input.draft ? `Borrador actual (mejóralo, no lo repitas): ${input.draft}` : ""}
 Cada opción: gancho en la primera línea, máximo 3 líneas cortas y 3 a 5 hashtags relevantes al final.${languageNote(input.lang ?? "es")}`,
       },

@@ -130,6 +130,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
   - armas una publicación: tipo, redes, marca y fecha/hora;
   - la **IA te sugiere 3 captions** con tu estilo y tu nicho;
   - te avisa de los límites de cada red;
+  - si es para una marca, revisa que el texto diga **#publicidad** (o #ad) y que se vea antes del "ver más", con un botón para arreglarlo; el Calendario marca las que no lo tienen;
   - te da consejos por red y te muestra cómo se verá.
   - Queda en tu calendario como recordatorio. **Tú la publicas; todavía no se publica sola.**
 

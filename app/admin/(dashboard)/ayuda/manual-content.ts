@@ -457,6 +457,15 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Facturas",
+    paragraphs: [
+      "Primero completa tus datos para facturar (abajo en Facturas): el nombre que va en la factura, tu ciudad, cómo te pagan (PayPal, Zelle…), el plazo para pagar y el % de anticipo. Nunca pongas tu número de seguro social ni números de cuenta completos.",
+      "Crea una factura desde Facturas → \"+ Nueva factura\", o desde un trato en Marcas (\"Crear factura\", \"Factura de anticipo\" o \"Factura de saldo\"): se llena sola con la marca, el contacto, el paquete y el monto.",
+      "Se guarda como borrador. Cuando esté lista, toca \"Enviar a la marca\": le llega un correo con un enlace donde la ve, la descarga en PDF y puede avisar \"Ya pagamos\". Te avisamos cuando la abre y cuando dice que pagó.",
+      "Si se atrasa, le mandamos recordatorios amables el día que vence y a los 7 y 14 días (máximo 3). Cuando te llegue el dinero, toca \"Marcar pagada\": cuando todas las facturas de un trato están pagadas, el trato pasa a \"Pagado\" solo.",
+    ],
+  },
+  {
     title: "Reportes",
     paragraphs: [
       "Tu crecimiento en números: seguidores totales y de los últimos 30 días, engagement promedio, publicaciones del mes, un gráfico de seguidores mes a mes, el mejor día y horario para publicar (según el engagement de tus publicaciones con fecha y métricas) y tus ingresos por marca.",
@@ -617,6 +626,15 @@ const guiaEn: ManualBlock[] = [
       "Form: tap \"Reply\", pick a quick reply (for example, the one with your media kit link) or write your own, and tap \"Open in my email\". Your email app opens with everything ready to send, and the message is marked as replied.",
       "Instagram: your reply is posted right on the comment. You can also hide a comment (only you and its author can see it) or delete it.",
       "Direct messages (DMs) are coming later: they need Meta's review.",
+    ],
+  },
+  {
+    title: "Invoices",
+    paragraphs: [
+      "First fill in your billing details (at the bottom of Invoices): the name on the invoice, your city, how you get paid (PayPal, Zelle…), payment terms and deposit %. Never include your social security number or full account numbers.",
+      "Create an invoice from Invoices → \"+ New invoice\", or from a deal in Brands (\"Create invoice\", \"Deposit invoice\" or \"Balance invoice\"): it fills itself in with the brand, contact, package and amount.",
+      "It's saved as a draft. When it's ready, tap \"Send to the brand\": they get an email with a link where they can view it, download it as a PDF and tell you \"We paid\". We let you know when they open it and when they say they paid.",
+      "If it's late, we send friendly reminders on the due date and at 7 and 14 days (3 at most). When the money arrives, tap \"Mark as paid\": once all of a deal's invoices are paid, the deal switches to \"Paid\" on its own.",
     ],
   },
   {

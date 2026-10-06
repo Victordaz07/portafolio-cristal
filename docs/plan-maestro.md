@@ -28,7 +28,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 **B. Cerrar y cobrar**
 - [x] B1. Calculadora "¿Cuánto cobro?"
 - [x] B2. Entregables y derechos de uso por trato
-- [ ] B3. Facturas y recordatorios de cobro
+- [x] B3. Facturas y recordatorios de cobro
 - [ ] B4. Contrato simple con aceptación en línea
 - [ ] B5. Aviso de #publicidad (FTC) al crear contenido patrocinado
 
@@ -180,6 +180,7 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
   `paymentStatus` del `Brand` se actualiza solo: pasa a `paid` cuando todas sus facturas están pagadas.
 - **Seguridad:** el token es aleatorio y largo. La página pública no muestra datos de otros tratos. Límite de intentos en la ruta pública.
 - **Listo cuando:** se crea, se envía, la marca la ve (cambia a "vista"), llegan los recordatorios en la prueba y al marcarla pagada cambia el trato.
+- **Cómo quedó:** el estado guardado es draft | sent | paid | void; "vista" y "vencida" se calculan (viewedAt y dueAt). Se agregaron `issuer` (tus datos al enviar), `claimedPaidAt` y `overdueNotifiedAt`. Los datos para facturar viven en `BillingProfile`. Los recordatorios corren en `/api/cron/billing`; si la marca ya dijo "Ya pagamos" no se le insiste.
 
 ### B4. Contrato simple con aceptación en línea
 - **Por qué:** el "ghosting" de marcas después de publicar. Con contrato y anticipo, eso baja mucho.

@@ -77,6 +77,8 @@ model Creator {
   conversationsA      CommunityConversation[] @relation("ConversationA")
   conversationsB      CommunityConversation[] @relation("ConversationB")
   deliverables        Deliverable[]
+  invoices            Invoice[]
+  billingProfile      BillingProfile?
 }
 
 model Hero {
@@ -193,6 +195,7 @@ model Brand {
   events         BrandEvent[]
   scheduledPosts ScheduledPost[]
   deliverables   Deliverable[]
+  invoices       Invoice[]
 
   // Derechos de uso y exclusividad del trato (B2)
   /// Días que la marca puede usar el contenido en sus anuncios o redes
@@ -232,6 +235,77 @@ model Deliverable {
 
   @@index([creatorId])
   @@index([brandId])
+}
+
+/// Datos con los que el creador factura (B3). Nunca SSN/ITIN ni números de cuenta completos.
+model BillingProfile {
+  id             String   @id @default(cuid())
+  creatorId      String   @unique @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator        Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// Nombre legal o artístico que va en la factura
+  legalName      String   @default("")
+  /// "Miami, FL, EE. UU."
+  location       String   @default("")
+  /// Correo que ve la marca en la factura
+  email          String   @default("")
+  /// Cómo pagar: "PayPal: tu@correo · Zelle: …" (lo que el creador decida mostrar)
+  payTo          String   @default("")
+  /// Plazo de pago por defecto en días
+  termsDays      Int      @default(15)
+  depositPercent Int      @default(50)
+  invoicePrefix  String   @default("FC")
+  /// Consecutivo de la próxima factura
+  nextNumber     Int      @default(1)
+  /// Nota por defecto al pie de la factura
+  defaultNotes   String   @default("")
+  updatedAt      DateTime @updatedAt
+}
+
+/// Factura a una marca (B3). La marca la ve en /f/<publicToken> sin iniciar sesión.
+model Invoice {
+  id                String    @id @default(cuid())
+  creatorId         String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator           Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  brandId           String?
+  brand             Brand?    @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  /// "FC-2026-0007", consecutivo por cuenta
+  number            String
+  /// 32 bytes aleatorios en base64url: el enlace que recibe la marca
+  publicToken       String    @unique
+  /// full | deposit | balance (completa, anticipo, saldo)
+  kind              String    @default("full")
+  currency          String    @default("USD")
+  /// [{ description, quantity, unitAmount }] con montos en centavos
+  items             Json
+  /// Total en centavos
+  subtotal          Int
+  notes             String    @default("")
+  payTo             String
+  /// { name, company, email }
+  billTo            Json
+  /// Datos del creador al momento de facturar: { name, location, email }
+  issuer            Json
+  /// es | en
+  language          String    @default("es")
+  issuedAt          DateTime  @default(now())
+  dueAt             DateTime
+  /// draft | sent | paid | void ("vista" y "vencida" se calculan con viewedAt y dueAt)
+  status            String    @default("draft")
+  sentAt            DateTime?
+  viewedAt          DateTime?
+  paidAt            DateTime?
+  /// La marca tocó "Ya pagamos" (el creador lo confirma)
+  claimedPaidAt     DateTime?
+  lastReminderAt    DateTime?
+  remindersSent     Int       @default(0)
+  /// Ya se avisó al creador que venció (una vez)
+  overdueNotifiedAt DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([creatorId])
+  @@index([brandId])
+  @@index([status, dueAt])
 }
 
 model BrandEvent {

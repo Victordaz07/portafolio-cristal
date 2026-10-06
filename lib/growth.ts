@@ -1,3 +1,4 @@
+import type { AdminLang } from "./admin-lang";
 // Utilidades de Crecimiento (metas, plan semanal y bitácora). Sin dependencias de servidor:
 // se usan también en componentes de cliente.
 
@@ -11,8 +12,15 @@ export const GOAL_CATEGORY_LABEL: Record<GoalCategory, string> = {
   habit: "Hábito",
 };
 
-export function categoryLabel(value: string) {
-  return GOAL_CATEGORY_LABEL[value as GoalCategory] ?? value;
+const GOAL_CATEGORY_LABEL_EN: Record<GoalCategory, string> = {
+  content: "Content",
+  audience: "Audience",
+  skill: "Skill",
+  habit: "Habit",
+};
+
+export function categoryLabel(value: string, lang: AdminLang = "es") {
+  return (lang === "en" ? GOAL_CATEGORY_LABEL_EN : GOAL_CATEGORY_LABEL)[value as GoalCategory] ?? value;
 }
 
 /** Fuentes automáticas para el valor actual de una meta. */
@@ -26,6 +34,20 @@ export const GOAL_SOURCES = {
 } as const;
 export type GoalSource = keyof typeof GOAL_SOURCES;
 
+export const GOAL_SOURCES_EN: Record<GoalSource, string> = {
+  manual: "Manual (you update it)",
+  instagram_followers: "Automatic: Instagram followers",
+  tiktok_followers: "Automatic: TikTok followers",
+  youtube_followers: "Automatic: YouTube subscribers",
+  facebook_followers: "Automatic: Facebook page followers",
+  feed_posts_month: "Automatic: Feed posts this month",
+};
+
+export function goalSourceLabel(source: string, lang: AdminLang = "es") {
+  const map: Record<string, string> = lang === "en" ? GOAL_SOURCES_EN : GOAL_SOURCES;
+  return map[source] ?? source;
+}
+
 export function isGoalSource(value: string): value is GoalSource {
   return value in GOAL_SOURCES;
 }
@@ -38,6 +60,12 @@ export const LOG_KIND_LABEL: Record<LogKind, string> = {
   learning: "Aprendizaje",
   journal: "Diario",
 };
+
+const LOG_KIND_LABEL_EN: Record<LogKind, string> = { milestone: "Milestone", learning: "Learning", journal: "Journal" };
+
+export function logKindLabel(kind: string, lang: AdminLang = "es") {
+  return (lang === "en" ? LOG_KIND_LABEL_EN : LOG_KIND_LABEL)[kind as LogKind] ?? kind;
+}
 
 export function goalPercent(current: number, target: number) {
   if (target <= 0) return 0;
@@ -87,15 +115,18 @@ export function weekStartOf(key: string) {
 }
 
 const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /** "2026-09-28" → "28 sep 2026" */
-export function formatDateKey(key: string, withYear = true) {
+export function formatDateKey(key: string, withYear = true, lang: AdminLang = "es") {
   const [y, m, d] = key.split("-").map(Number);
+  if (lang === "en") return withYear ? `${MONTHS_EN[m - 1]} ${d}, ${y}` : `${MONTHS_EN[m - 1]} ${d}`;
   return withYear ? `${d} ${MONTHS[m - 1]} ${y}` : `${d} ${MONTHS[m - 1]}`;
 }
 
 /** "Semana del 28 sep al 4 oct" */
-export function weekLabel(weekStart: string) {
+export function weekLabel(weekStart: string, lang: AdminLang = "es") {
+  if (lang === "en") return `Week of ${formatDateKey(weekStart, false, "en")} – ${formatDateKey(addDays(weekStart, 6), false, "en")}`;
   return `Semana del ${formatDateKey(weekStart, false)} al ${formatDateKey(addDays(weekStart, 6), false)}`;
 }
 

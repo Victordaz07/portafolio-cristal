@@ -7,12 +7,12 @@
 // mismos hex del handoff; "accent" es el tono de los botones con texto blanco (contraste ≥ 3.5:1), por eso en
 // Terracota, Salvia y Dorado es un poco más oscuro que el segundo tono del anillo.
 export const ACCENTS = {
-  lila: { label: "Lila", accent: "#A866BE", dark: "#801F82", light: "#C3ACEA", ring: ["#C3ACEA", "#A866BE"] },
-  rosa: { label: "Rosa", accent: "#D6336C", dark: "#9C2963", light: "#F3B4D0", ring: ["#F3B4D0", "#D6336C"] },
-  terracota: { label: "Terracota", accent: "#C4613F", dark: "#B5533C", light: "#F0C3A0", ring: ["#F0C3A0", "#D9794F"] },
-  salvia: { label: "Salvia", accent: "#5A8A5E", dark: "#3F6B4A", light: "#BFE0B0", ring: ["#BFE0B0", "#6E9B6E"] },
-  azul: { label: "Azul", accent: "#3B6FD1", dark: "#1F4E8C", light: "#BFD9F7", ring: ["#BFD9F7", "#3B6FD1"] },
-  dorado: { label: "Dorado", accent: "#A9741C", dark: "#8A6A1E", light: "#E8CE8D", ring: ["#E8CE8D", "#C9A227"] },
+  lila: { label: "Lila", labelEn: "Lilac", accent: "#A866BE", dark: "#801F82", light: "#C3ACEA", ring: ["#C3ACEA", "#A866BE"] },
+  rosa: { label: "Rosa", labelEn: "Pink", accent: "#D6336C", dark: "#9C2963", light: "#F3B4D0", ring: ["#F3B4D0", "#D6336C"] },
+  terracota: { label: "Terracota", labelEn: "Terracotta", accent: "#C4613F", dark: "#B5533C", light: "#F0C3A0", ring: ["#F0C3A0", "#D9794F"] },
+  salvia: { label: "Salvia", labelEn: "Sage", accent: "#5A8A5E", dark: "#3F6B4A", light: "#BFE0B0", ring: ["#BFE0B0", "#6E9B6E"] },
+  azul: { label: "Azul", labelEn: "Blue", accent: "#3B6FD1", dark: "#1F4E8C", light: "#BFD9F7", ring: ["#BFD9F7", "#3B6FD1"] },
+  dorado: { label: "Dorado", labelEn: "Gold", accent: "#A9741C", dark: "#8A6A1E", light: "#E8CE8D", ring: ["#E8CE8D", "#C9A227"] },
 } as const;
 
 export type AccentId = keyof typeof ACCENTS;

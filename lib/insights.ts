@@ -33,14 +33,25 @@ export interface InsightStats {
   deals: number;
 }
 
-const PlaybookSchema = z.object({
+const PlaybookFields = {
   summary: z.string().describe("Resumen en 2 frases de lo que muestran los datos de este nicho"),
   whatWorks: z.array(z.string()).describe("3 a 5 patrones que se repiten en las publicaciones con mejor engagement"),
   whatDoesnt: z.array(z.string()).describe("2 a 4 patrones que se repiten en las de peor engagement"),
   hooks: z.array(z.string()).describe("3 a 5 tipos de gancho que funcionan, explicados (no copies captions)"),
   recommendations: z.array(z.string()).describe("3 a 5 recomendaciones concretas y accionables para crear el próximo contenido"),
+};
+const PlaybookSchema = z.object({
+  ...PlaybookFields,
+  en: z.object(PlaybookFields).describe("El mismo análisis, traducido a inglés natural (EE. UU.), para quien usa el panel en inglés"),
 });
-export type Playbook = z.infer<typeof PlaybookSchema>;
+type PlaybookCore = z.infer<z.ZodObject<typeof PlaybookFields>>;
+/** Playbook en español; `en` es la misma versión en inglés (los playbooks viejos no la tienen). */
+export type Playbook = PlaybookCore & { en?: PlaybookCore };
+
+/** El playbook en el idioma del panel (si no hay versión en inglés, el original). */
+export function playbookIn(pb: Playbook, lang: "es" | "en"): PlaybookCore {
+  return lang === "en" && pb.en ? pb.en : pb;
+}
 
 /** Quita lo que podría identificar a alguien: @usuarios, enlaces, correos y hashtags de marca muy largos. */
 export function anonymizeCaption(text: string) {

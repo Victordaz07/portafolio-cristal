@@ -8,10 +8,13 @@ import ReorderButtons from "@/components/admin/ReorderButtons";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass, rowCardClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
 import { STAT_ICONS, STAT_ICON_OPTIONS, StarIcon, type StatIconKey } from "@/components/icons";
+import { pickLabel } from "@/lib/admin-lang";
+import { useT } from "@/components/admin/AdminLang";
 
 const API_BASE = "/api/admin/stats";
 
 export default function StatsManager({ initialStats }: { initialStats: Stat[] }) {
+  const { t, lang } = useT();
   const { showToast } = useToast();
   const [stats, setStats] = useState(initialStats);
   const [label, setLabel] = useState("");
@@ -33,7 +36,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      showToast("error", data.error ?? "No se pudo agregar el stat");
+      showToast("error", data.error ?? t("No se pudo agregar el número", "Couldn't add the stat"));
       return;
     }
 
@@ -43,7 +46,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
     setLabelEn("");
     setValue("");
     setIcon("star");
-    showToast("success", "Stat agregado");
+    showToast("success", t("Número agregado", "Stat added"));
   }
 
   async function handleIconChange(stat: Stat, nextIcon: StatIconKey) {
@@ -54,7 +57,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
       body: JSON.stringify({ icon: nextIcon }),
     });
     if (!response.ok) {
-      showToast("error", "No se pudo actualizar el ícono");
+      showToast("error", t("No se pudo actualizar el ícono", "Couldn't update the icon"));
     }
   }
 
@@ -62,11 +65,11 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
     const response = await fetch(`${API_BASE}/${stat.id}`, { method: "DELETE" });
     setPendingDelete(null);
     if (!response.ok) {
-      showToast("error", "No se pudo eliminar");
+      showToast("error", t("No se pudo eliminar", "Couldn't delete"));
       return;
     }
     setStats((current) => current.filter((item) => item.id !== stat.id));
-    showToast("success", "Stat eliminado");
+    showToast("success", t("Número eliminado", "Stat deleted"));
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -94,7 +97,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
             <div className="flex-1">
               <p className="font-mono font-bold text-lg text-moss">{stat.value}</p>
               <p className="text-xs uppercase tracking-wide text-ink/60">
-                {stat.label}
+                {(lang === "en" && stat.labelEn) || stat.label}
                 {stat.labelEn && <span className="text-ink/40"> · {stat.labelEn}</span>}
               </p>
             </div>
@@ -105,7 +108,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
             >
               {STAT_ICON_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {pickLabel(lang, option)}
                 </option>
               ))}
             </select>
@@ -114,7 +117,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
               onClick={() => setPendingDelete(stat)}
               className={dangerLinkClass}
             >
-              Eliminar
+              {t("Eliminar", "Delete")}
             </button>
           </li>
         ))}
@@ -122,7 +125,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
 
       <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-wrap items-end gap-sp-3`}>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Número</span>
+          <span className="text-sm font-medium text-ink">{t("Número", "Number")}</span>
           <input
             required
             value={value}
@@ -132,17 +135,17 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Label</span>
+          <span className="text-sm font-medium text-ink">{t("Etiqueta (español)", "Label (Spanish)")}</span>
           <input
             required
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             className={inputClass}
-            placeholder="Seguidores"
+            placeholder={t("Seguidores", "Seguidores")}
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Label (English)</span>
+          <span className="text-sm font-medium text-ink">{t("Etiqueta (inglés)", "Label (English)")}</span>
           <input
             value={labelEn}
             onChange={(e) => setLabelEn(e.target.value)}
@@ -151,7 +154,7 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Ícono</span>
+          <span className="text-sm font-medium text-ink">{t("Ícono", "Icon")}</span>
           <select
             value={icon}
             onChange={(e) => setIcon(e.target.value as StatIconKey)}
@@ -159,20 +162,20 @@ export default function StatsManager({ initialStats }: { initialStats: Stat[] })
           >
             {STAT_ICON_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {pickLabel(lang, option)}
               </option>
             ))}
           </select>
         </label>
         <button type="submit" disabled={saving} className={primaryButtonClass}>
-          {saving ? "Agregando..." : "+ agregar stat"}
+          {saving ? t("Agregando...", "Adding...") : t("+ agregar número", "+ add stat")}
         </button>
       </form>
 
       {pendingDelete && (
         <ConfirmDialog
-          title="Eliminar stat"
-          description={`¿Eliminar "${pendingDelete.label}"? Esta acción no se puede deshacer.`}
+          title={t("Eliminar número", "Delete stat")}
+          description={t(`¿Eliminar "${pendingDelete.label}"? Esta acción no se puede deshacer.`, `Delete "${pendingDelete.label}"? This can't be undone.`)}
           onConfirm={() => handleDelete(pendingDelete)}
           onCancel={() => setPendingDelete(null)}
         />

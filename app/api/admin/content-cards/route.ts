@@ -3,6 +3,7 @@ import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "@/lib/social/thumbnail";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -35,10 +36,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const { t } = await getT();
   const body = await request.json().catch(() => null);
   const parsed = contentCardSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+    return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   }
 
   // Red de seguridad: si llega un link de miniatura temporal de Meta (p. ej. pegado a mano), se resube a Blob antes de guardarlo.

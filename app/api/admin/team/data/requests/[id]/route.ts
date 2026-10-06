@@ -7,6 +7,8 @@ import { dataRequestKindLabel } from "@/lib/data-export";
 import { sendEmail } from "@/lib/email";
 import { noticeEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
+import { getT } from "@/lib/admin-lang-server";
+import { mailLangFor } from "@/lib/email-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -17,17 +19,18 @@ const schema = z.object({
 
 /** El equipo de Datos resuelve (o rechaza) un pedido y se le avisa a la cuenta. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const user = await requireRole("data");
-  if (!user) return NextResponse.json({ error: "Solo el equipo de Recuperación de datos" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: t("Solo el equipo de Recuperación de datos", "Data recovery team only") }, { status: 403 });
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const { status, resolution } = parsed.data;
   if (status !== "open" && resolution.length < 3) {
-    return NextResponse.json({ error: "Escribe qué se hizo, para avisarle a la cuenta" }, { status: 400 });
+    return NextResponse.json({ error: t("Escribe qué se hizo, para avisarle a la cuenta", "Write what was done, so we can let the account know") }, { status: 400 });
   }
   const before = await prismaRoot.dataRequest.findUnique({ where: { id } });
-  if (!before) return NextResponse.json({ error: "No encontré ese pedido" }, { status: 404 });
+  if (!before) return NextResponse.json({ error: t("No encontré ese pedido", "Couldn't find that request") }, { status: 404 });
   const updated = await prismaRoot.dataRequest.update({
     where: { id },
     data:
@@ -40,14 +43,22 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (status !== "open" && before.status === "open") {
     try {
       const origin = await platformOrigin();
+      const lang = await mailLangFor(updated.requestedBy);
+      const en = lang === "en";
+      const kind = dataRequestKindLabel(updated.kind, lang);
       const mail = noticeEmail({
+        lang,
         origin,
-        subject: status === "done" ? `Listo: ${dataRequestKindLabel(updated.kind)}` : `Sobre tu pedido: ${dataRequestKindLabel(updated.kind)}`,
-        title: status === "done" ? "Tu pedido está resuelto" : "No pudimos completar tu pedido",
-        lines: [`Revisamos tu pedido «${dataRequestKindLabel(updated.kind)}».`],
+        subject: en
+          ? status === "done" ? `Done: ${kind}` : `About your request: ${kind}`
+          : status === "done" ? `Listo: ${kind}` : `Sobre tu pedido: ${kind}`,
+        title: en
+          ? status === "done" ? "Your request is resolved" : "We couldn't complete your request"
+          : status === "done" ? "Tu pedido está resuelto" : "No pudimos completar tu pedido",
+        lines: [en ? `We reviewed your “${kind}” request.` : `Revisamos tu pedido «${kind}».`],
         quote: resolution,
-        button: { label: "Ver en Mi cuenta", url: `${origin}/admin/cuenta#datos` },
-        note: "Si algo no quedó bien, respóndenos desde Soporte en tu panel.",
+        button: { label: en ? "See it in My account" : "Ver en Mi cuenta", url: `${origin}/admin/cuenta#datos` },
+        note: en ? "If something isn't right, reply to us from Support in your dashboard." : "Si algo no quedó bien, respóndenos desde Soporte en tu panel.",
       });
       await sendEmail({ to: updated.requestedBy, ...mail });
     } catch (error) {

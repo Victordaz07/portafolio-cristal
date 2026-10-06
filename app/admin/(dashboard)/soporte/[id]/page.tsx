@@ -7,10 +7,13 @@ import SupportThread from "@/components/admin/support/SupportThread";
 import ReplyBox from "@/components/admin/support/ReplyBox";
 import { SUPPORT_STATUS, supportCategoryLabel } from "@/lib/support";
 import CustomerTicketActions from "./CustomerTicketActions";
+import { pickLabel } from "@/lib/admin-lang";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function CustomerTicketPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t, lang } = await getT();
   const { id } = await params;
   const ticket = await prisma.supportTicket.findFirst({ where: { id } });
   if (!ticket) notFound();
@@ -22,21 +25,21 @@ export default async function CustomerTicketPage({ params }: { params: Promise<{
   return (
     <div className="flex flex-col gap-sp-5">
       <PageHeader
-        eyebrow={`Soporte · Ticket #${ticket.number}`}
+        eyebrow={t(`Soporte · Ticket #${ticket.number}`, `Support · Ticket #${ticket.number}`)}
         title={ticket.subject}
-        description={`${supportCategoryLabel(ticket.category)} · ${status.label}`}
+        description={`${supportCategoryLabel(ticket.category, lang)} · ${pickLabel(lang, status)}`}
         action={
           <Link href="/admin/soporte" className="text-sm font-medium text-coral hover:underline">
-            ← Todos mis tickets
+            {t("← Todos mis tickets", "← All my tickets")}
           </Link>
         }
       />
       <Card>
-        <SupportThread messages={messages} viewer="customer" />
+        <SupportThread messages={messages} viewer="customer" lang={lang} />
       </Card>
       <Card>
         {ticket.status === "closed" ? (
-          <p className="mb-sp-3 text-sm text-ink/70">Este ticket está cerrado. Si vuelve a pasar, escribe aquí y se reabre.</p>
+          <p className="mb-sp-3 text-sm text-ink/70">{t("Este ticket está cerrado. Si vuelve a pasar, escribe aquí y se reabre.", "This ticket is closed. If it happens again, write here and it will reopen.")}</p>
         ) : null}
         <ReplyBox url={`/api/admin/support/${ticket.id}`} />
         <div className="mt-sp-4 border-t border-line pt-sp-4">

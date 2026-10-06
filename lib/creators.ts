@@ -1,3 +1,4 @@
+import { makeT, type T } from "./admin-lang";
 import bcrypt from "bcryptjs";
 import { trialDays } from "./billing";
 import { NextResponse } from "next/server";
@@ -26,15 +27,17 @@ export function slugify(text: string) {
 }
 
 /** Mensaje de error si el nombre del sitio no sirve, o null si está bien. */
-export async function slugProblem(slug: string) {
-  if (!SLUG_PATTERN.test(slug)) return "Usa de 3 a 30 letras minúsculas, números o guiones (sin espacios ni tildes)";
-  if (RESERVED_SLUGS.has(slug)) return "Ese nombre está reservado; prueba con otro";
-  if (await prismaRoot.creator.findUnique({ where: { slug }, select: { id: true } })) return "Ese nombre ya está en uso";
+export async function slugProblem(slug: string, t: T = makeT("es")) {
+  if (!SLUG_PATTERN.test(slug)) {
+    return t("Usa de 3 a 30 letras minúsculas, números o guiones (sin espacios ni tildes)", "Use 3 to 30 lowercase letters, numbers or hyphens (no spaces or accents)");
+  }
+  if (RESERVED_SLUGS.has(slug)) return t("Ese nombre está reservado; prueba con otro", "That name is reserved; try another one");
+  if (await prismaRoot.creator.findUnique({ where: { slug }, select: { id: true } })) return t("Ese nombre ya está en uso", "That name is already taken");
   return null;
 }
 
 /** Registro de una creadora nueva: su espacio, su usuario y un sitio inicial listo para editar. */
-export async function createCreatorAccount(input: { name: string; slug: string; email: string; password: string }) {
+export async function createCreatorAccount(input: { name: string; slug: string; email: string; password: string; language?: "es" | "en" }) {
   const passwordHash = await bcrypt.hash(input.password, 12);
   const firstName = input.name.split(" ")[0];
   return prismaRoot.$transaction(async (tx) => {
@@ -43,7 +46,14 @@ export async function createCreatorAccount(input: { name: string; slug: string; 
       data: { slug: input.slug, name: input.name, trialEndsAt: days ? new Date(Date.now() + days * 86_400_000) : null },
     });
     const user = await tx.adminUser.create({
-      data: { email: input.email.toLowerCase(), passwordHash, name: input.name, creatorId: creator.id, lastLoginAt: new Date() },
+      data: {
+        email: input.email.toLowerCase(),
+        passwordHash,
+        name: input.name,
+        creatorId: creator.id,
+        lastLoginAt: new Date(),
+        language: input.language ?? "es",
+      },
     });
     await tx.hero.create({
       data: {

@@ -8,6 +8,8 @@ import { tooManyAttempts } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
 import { noticeEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
+import { getT } from "@/lib/admin-lang-server";
+import { mailLangFor } from "@/lib/email-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -18,37 +20,47 @@ const schema = z.object({
 
 /** La cuenta pide una copia, recuperar algo o borrar su cuenta. */
 export async function POST(request: Request) {
+  const { t } = await getT();
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Inicia sesión" }, { status: 401 });
-  if (session.actorId) return NextResponse.json({ error: "Este pedido lo hace la cuenta, no el equipo" }, { status: 403 });
+  if (!session) return NextResponse.json({ error: t("Inicia sesión", "Please sign in") }, { status: 401 });
+  if (session.actorId) return NextResponse.json({ error: t("Este pedido lo hace la cuenta, no el equipo", "Only the account can make this request, not the team") }, { status: 403 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Elige qué necesitas" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Elige qué necesitas", "Choose what you need") }, { status: 400 });
   const { kind, detail } = parsed.data;
   if (kind === "recover" && detail.length < 5) {
-    return NextResponse.json({ error: "Cuéntanos qué se perdió y más o menos cuándo" }, { status: 400 });
+    return NextResponse.json({ error: t("Cuéntanos qué se perdió y más o menos cuándo", "Tell us what was lost and roughly when") }, { status: 400 });
   }
   if (tooManyAttempts(`data-request:${session.creatorId}`, 5, 60 * 60_000)) {
-    return NextResponse.json({ error: "Mandaste varios pedidos seguidos. Espera un rato." }, { status: 429 });
+    return NextResponse.json({ error: t("Mandaste varios pedidos seguidos. Espera un rato.", "You sent several requests in a row. Wait a bit.") }, { status: 429 });
   }
   const [user, creator] = await Promise.all([
     prismaRoot.adminUser.findUnique({ where: { id: session.userId }, select: { email: true } }),
     prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true } }),
   ]);
-  if (!user) return NextResponse.json({ error: "Inicia sesión" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: t("Inicia sesión", "Please sign in") }, { status: 401 });
   const created = await prisma.dataRequest.create({ data: { kind, detail, requestedBy: user.email } });
 
   try {
     const origin = await platformOrigin();
-    const mail = noticeEmail({
-      origin,
-      subject: `Pedido de datos: ${dataRequestKindLabel(kind)} (${creator?.name ?? user.email})`,
-      title: "Nuevo pedido de datos",
-      lines: [`${creator?.name ?? "Una cuenta"} (${user.email}) pidió: ${dataRequestKindLabel(kind)}.`],
-      quote: detail || undefined,
-      button: { label: "Abrir el centro de datos", url: `${origin}/admin/equipo/datos` },
-    });
     const recipients = await teamEmailsWith("data");
-    await Promise.all(recipients.map((to) => sendEmail({ to, ...mail, replyTo: user.email })));
+    await Promise.all(
+      recipients.map(async (to) => {
+        const lang = await mailLangFor(to);
+        const en = lang === "en";
+        const label = dataRequestKindLabel(kind, lang);
+        const who = creator?.name ?? (en ? "An account" : "Una cuenta");
+        const mail = noticeEmail({
+          lang,
+          origin,
+          subject: en ? `Data request: ${label} (${creator?.name ?? user.email})` : `Pedido de datos: ${label} (${creator?.name ?? user.email})`,
+          title: en ? "New data request" : "Nuevo pedido de datos",
+          lines: [en ? `${who} (${user.email}) asked for: ${label}.` : `${who} (${user.email}) pidió: ${label}.`],
+          quote: detail || undefined,
+          button: { label: en ? "Open the data center" : "Abrir el centro de datos", url: `${origin}/admin/equipo/datos` },
+        });
+        return sendEmail({ to, ...mail, replyTo: user.email });
+      })
+    );
   } catch (error) {
     console.error("No se pudo avisar al equipo del pedido de datos", error);
   }

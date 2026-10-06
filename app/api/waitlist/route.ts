@@ -5,6 +5,7 @@ import { sendEmail } from "@/lib/email";
 import { waitlistJoinedEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
 import { clientIp, tooManyAttempts } from "@/lib/rate-limit";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -25,12 +26,13 @@ const waitlistSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const { t, lang } = await getT();
   // Límite simple por IP: 5 intentos por minuto.
   if (tooManyAttempts(`waitlist:${clientIp(request)}`, 5)) {
-    return NextResponse.json({ error: "Demasiados intentos; prueba en un minuto" }, { status: 429 });
+    return NextResponse.json({ error: t("Demasiados intentos; prueba en un minuto", "Too many attempts; try again in a minute") }, { status: 429 });
   }
   const parsed = waitlistSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Escribe un correo válido" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Escribe un correo válido", "Enter a valid email") }, { status: 400 });
   const { website, ...data } = parsed.data;
   // Bot: responde como si todo estuviera bien, pero no guarda nada.
   if (website) return NextResponse.json({ ok: true, position: null });
@@ -38,11 +40,11 @@ export async function POST(request: Request) {
   const existing = await prismaRoot.waitlistEntry.findUnique({ where: { email: data.email } });
   const entry =
     existing ??
-    (await prismaRoot.waitlistEntry.create({ data: { ...data, audience: data.audience ?? null } }));
+    (await prismaRoot.waitlistEntry.create({ data: { ...data, audience: data.audience ?? null, language: lang } }));
   const position = await prismaRoot.waitlistEntry.count({ where: { createdAt: { lte: entry.createdAt } } });
   if (!existing) {
     const origin = await platformOrigin();
-    const mail = waitlistJoinedEmail({ origin, position, shareUrl: `${origin}/?utm_source=referido` });
+    const mail = waitlistJoinedEmail({ lang, origin, position, shareUrl: `${origin}/?utm_source=referido` });
     await sendEmail({ to: entry.email, ...mail }).catch(() => {});
   }
   return NextResponse.json({ ok: true, position, already: Boolean(existing) });

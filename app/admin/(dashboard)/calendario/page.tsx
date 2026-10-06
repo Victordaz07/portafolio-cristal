@@ -5,6 +5,7 @@ import { appTimeZone, todayKey } from "@/lib/growth-server";
 import { zonedToUtc } from "@/lib/content-plan";
 import { toPostView } from "@/lib/posts-view";
 import CalendarView from "./CalendarView";
+import { getT } from "@/lib/admin-lang-server";
 
 function shiftMonth(month: string, delta: number) {
   const [y, m] = month.split("-").map(Number);
@@ -18,6 +19,7 @@ export default async function AdminCalendarPage({
   searchParams: Promise<{ month?: string }>;
 }) {
   const { month: monthParam } = await searchParams;
+  const { t } = await getT();
   const tz = appTimeZone();
   const today = todayKey();
   const month = monthParam && /^\d{4}-\d{2}$/.test(monthParam) ? monthParam : today.slice(0, 7);
@@ -48,15 +50,18 @@ export default async function AdminCalendarPage({
   return (
     <div>
       <PageHeader
-        eyebrow="Contenido"
-        title="Calendario"
-        description="Tu plan de publicaciones del mes. Por ahora el panel te recuerda qué publicar; la publicación automática llega cuando las redes aprueben la app."
+        eyebrow={t("Contenido", "Content")}
+        title={t("Calendario", "Calendar")}
+        description={t(
+          "Tu plan de publicaciones del mes. Por ahora el panel te recuerda qué publicar; la publicación automática llega cuando las redes aprueben la app.",
+          "Your posting plan for the month. For now the dashboard reminds you what to post; automatic publishing arrives once the networks approve the app."
+        )}
         action={
           <Link
             href="/admin/crear"
             className="inline-flex rounded-full bg-coral px-sp-5 py-2.5 text-sm font-bold text-white transition hover:bg-moss"
           >
-            + Programar publicación
+            {t("+ Programar publicación", "+ Schedule post")}
           </Link>
         }
       />

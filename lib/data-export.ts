@@ -3,24 +3,7 @@ import { prismaRoot } from "./prisma-root";
 // Copia de los datos de una cuenta (centro de Datos y recuperación). Nunca incluye contraseñas,
 // tokens de redes ni enlaces de acceso; las notas internas del equipo solo van si lo pide el equipo.
 
-export const DATA_REQUEST_KINDS = [
-  { id: "export", label: "Copia de mis datos", hint: "Te mandamos todo lo que guardamos de tu cuenta." },
-  { id: "recover", label: "Recuperar algo que borré", hint: "Cuéntanos qué se perdió y más o menos cuándo." },
-  { id: "delete", label: "Borrar mi cuenta y mis datos", hint: "Se borra todo para siempre. No se puede deshacer." },
-] as const;
-
-export type DataRequestKind = (typeof DATA_REQUEST_KINDS)[number]["id"];
-
-export const isDataRequestKind = (value: unknown): value is DataRequestKind =>
-  DATA_REQUEST_KINDS.some((k) => k.id === value);
-
-export const dataRequestKindLabel = (id: string) => DATA_REQUEST_KINDS.find((k) => k.id === id)?.label ?? id;
-
-export const DATA_REQUEST_STATUS: Record<string, { label: string; tone: string }> = {
-  open: { label: "En proceso", tone: "bg-lime/40 text-ink" },
-  done: { label: "Resuelto", tone: "bg-sage/30 text-cobalt-ink" },
-  rejected: { label: "No se pudo", tone: "bg-red-50 text-red-700" },
-};
+export { DATA_REQUEST_KINDS, DATA_REQUEST_STATUS, dataRequestKindLabel, isDataRequestKind, type DataRequestKind } from "./data-requests";
 
 export async function exportCreatorData(creatorId: string, { forTeam = false } = {}) {
   const where = { creatorId };

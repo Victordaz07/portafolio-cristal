@@ -15,6 +15,12 @@ export const PAYMENT_METHODS = {
 } as const;
 export type PaymentMethod = keyof typeof PAYMENT_METHODS;
 
+export const PAYMENT_METHODS_EN: Record<PaymentMethod, string> = { paypal: "PayPal", transfer: "Bank transfer", other: "Other" };
+
+/** Nombre del método de pago en el idioma del panel. */
+export const paymentMethodLabel = (method: string, lang: "es" | "en" = "es") =>
+  (lang === "en" ? PAYMENT_METHODS_EN : PAYMENT_METHODS)[method as PaymentMethod] ?? method;
+
 /** Planes que se pueden pagar desde el panel (Crew se arma a la medida). */
 export const PAYABLE_PLANS = PLANS.filter((p) => p.id !== "crew");
 export const PERIODS = [1, 3, 12] as const;
@@ -56,6 +62,17 @@ export const BILLING_LABEL: Record<BillingState, string> = {
   expired: "Vencido",
   none: "Sin plan",
 };
+
+export const BILLING_LABEL_EN: Record<BillingState, string> = {
+  comp: "Complimentary",
+  active: "Paid",
+  trial: "Free trial",
+  expired: "Expired",
+  none: "No plan",
+};
+
+/** Estado del plan en el idioma del panel. */
+export const billingLabel = (state: BillingState, lang: "es" | "en" = "es") => (lang === "en" ? BILLING_LABEL_EN : BILLING_LABEL)[state];
 
 /** Estado del plan hoy y hasta cuándo dura. */
 export function billingState(c: BillingFields, now = new Date()) {

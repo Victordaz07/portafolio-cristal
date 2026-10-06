@@ -12,7 +12,9 @@ import { kindInfo } from "@/lib/creator-kind";
 import { PLANS } from "@/lib/plans";
 import { creatorPerformance } from "@/lib/platform-analytics";
 import { formatCompact } from "@/lib/metrics";
-import { BILLING_LABEL, PAYMENT_METHODS, billingState, formatMoney, getPlan, type PaymentMethod } from "@/lib/billing";
+import { billingLabel, billingState, formatMoney, getPlan, paymentMethodLabel } from "@/lib/billing";
+import { dateLocale, pickLabel, type AdminLang } from "@/lib/admin-lang";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -30,12 +32,28 @@ const ACTION_LABEL: Record<string, string> = {
   email: "Cambió el correo de acceso",
 };
 
-const fmt = (d: Date | null | undefined) =>
-  d ? d.toLocaleString("es", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+const ACTION_LABEL_EN: Record<string, string> = {
+  pause: "Paused the account",
+  activate: "Reactivated the account",
+  impersonate: "Signed in as this account",
+  note: "Changed the internal note",
+  payment: "Confirmed a payment",
+  "payment-rejected": "Marked a payment as not found",
+  "comp-on": "Made the account complimentary",
+  "comp-off": "Removed complimentary",
+  plan: "Changed the plan",
+  trial: "Extended the free trial",
+  email: "Changed the sign-in email",
+};
+
+const fmtDate = (lang: AdminLang) => (d: Date | null | undefined) =>
+  d ? d.toLocaleString(dateLocale(lang), { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
 
 export default async function PlatformAccountPage({ params }: { params: Promise<{ id: string }> }) {
   const admin = await platformAdminUser();
   if (!admin) notFound();
+  const { t, lang } = await getT();
+  const fmt = fmtDate(lang);
   const { id } = await params;
   const creator = await prismaRoot.creator.findUnique({
     where: { id },
@@ -68,26 +86,30 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
   const isMine = creator.id === admin.creatorId;
 
   const facts: [string, string][] = [
-    ["Dirección", siteUrl.replace(/^https?:\/\//, "")],
-    ["Dominio propio", creator.customDomain ? `${creator.customDomain}${creator.customDomainVerifiedAt ? " ✓" : " (pendiente)"}` : "—"],
-    ["Tipo de creador", kindInfo(creator.creatorKind).label],
-    ["Alta", fmt(creator.createdAt)],
-    ["Asistente de bienvenida", creator.onboardedAt ? `Terminado ${fmt(creator.onboardedAt)}` : "Pendiente"],
-    ["Feed / marcas / mensajes", `${creator._count.contentCards} / ${creator._count.brands} / ${creator._count.contactMessages}`],
-    ["Publicaciones programadas / metas", `${creator._count.scheduledPosts} / ${creator._count.goals}`],
+    [t("Dirección", "Address"), siteUrl.replace(/^https?:\/\//, "")],
+    [t("Dominio propio", "Custom domain"), creator.customDomain ? `${creator.customDomain}${creator.customDomainVerifiedAt ? " ✓" : t(" (pendiente)", " (pending)")}` : "—"],
+    [t("Tipo de creador", "Creator type"), pickLabel(lang, kindInfo(creator.creatorKind))],
+    [t("Alta", "Joined"), fmt(creator.createdAt)],
+    [t("Asistente de bienvenida", "Onboarding"), creator.onboardedAt ? t(`Terminado ${fmt(creator.onboardedAt)}`, `Done ${fmt(creator.onboardedAt)}`) : t("Pendiente", "Pending")],
+    [t("Feed / marcas / mensajes", "Feed / brands / messages"), `${creator._count.contentCards} / ${creator._count.brands} / ${creator._count.contactMessages}`],
+    [t("Publicaciones programadas / metas", "Scheduled posts / goals"), `${creator._count.scheduledPosts} / ${creator._count.goals}`],
     [
-      "Redes conectadas",
+      t("Redes conectadas", "Connected networks"),
       creator.socialAccounts.length
         ? creator.socialAccounts.map((s) => `${s.platform}${s.username ? ` @${s.username.replace(/^@/, "")}` : ""}`).join(", ")
-        : "Ninguna",
+        : t("Ninguna", "None"),
     ],
   ];
 
   return (
     <div className="flex flex-col gap-sp-5">
-      <PageHeader eyebrow="Foliocrew · Cuentas" title={creator.name} description={`Ficha de soporte de ${creator.slug}.`} />
+      <PageHeader
+        eyebrow={t("Foliocrew · Cuentas", "Foliocrew · Accounts")}
+        title={creator.name}
+        description={t(`Ficha de soporte de ${creator.slug}.`, `Support profile for ${creator.slug}.`)}
+      />
       <Link href="/admin/plataforma" className="-mt-sp-3 text-sm font-medium text-coral hover:underline">
-        ← Todas las cuentas
+        {t("← Todas las cuentas", "← All accounts")}
       </Link>
       <AccountActions
         creatorId={creator.id}
@@ -101,7 +123,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
         creatorId={creator.id}
         plan={creator.plan}
         comp={creator.comp}
-        stateLabel={BILLING_LABEL[billing.state]}
+        stateLabel={billingLabel(billing.state, lang)}
         until={billing.until?.toISOString() ?? null}
         plans={PLANS.map((p) => ({ id: p.id, name: p.name, price: p.price }))}
         payments={payments.map((p) => ({
@@ -110,20 +132,20 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
           plan: getPlan(p.plan).name,
           months: p.months,
           amount: formatMoney(p.amountCents, p.currency),
-          method: PAYMENT_METHODS[p.method as PaymentMethod] ?? p.method,
+          method: paymentMethodLabel(p.method, lang),
           reference: p.reference,
           status: p.status,
           periodEnd: p.periodEnd?.toISOString() ?? null,
         }))}
       />
       <Card>
-        <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Rendimiento del contenido</p>
+        <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Rendimiento del contenido", "Content performance")}</p>
         <div className="grid gap-3 sm:grid-cols-4">
           {[
-            ["Engagement mediano", perf.medianEr == null ? "—" : `${perf.medianEr}%`],
-            ["Mediana de su nicho", perf.nicheMedianEr == null ? "—" : `${perf.nicheMedianEr}%`],
-            ["Mediana de la plataforma", perf.platformMedianEr == null ? "—" : `${perf.platformMedianEr}%`],
-            ["Publicaciones medidas", String(perf.posts)],
+            [t("Engagement mediano", "Median engagement"), perf.medianEr == null ? "—" : `${perf.medianEr}%`],
+            [t("Mediana de su nicho", "Their niche median"), perf.nicheMedianEr == null ? "—" : `${perf.nicheMedianEr}%`],
+            [t("Mediana de la plataforma", "Platform median"), perf.platformMedianEr == null ? "—" : `${perf.platformMedianEr}%`],
+            [t("Publicaciones medidas", "Measured posts"), String(perf.posts)],
           ].map(([label, value]) => (
             <div key={label} className="rounded-[14px] bg-cream p-sp-3">
               <p className="font-fraunces text-2xl font-semibold text-ink">{value}</p>
@@ -137,9 +159,9 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
               <li key={p.id} className="flex flex-wrap items-baseline gap-x-sp-2">
                 <strong className="font-mono text-ink">{p.er}%</strong>
                 <span className="text-xs text-ink/50">
-                  {formatCompact(p.views)} vistas · {p.platform}
+                  {formatCompact(p.views)} {t("vistas", "views")} · {p.platform}
                 </span>
-                <span className="min-w-0 flex-1 truncate text-ink/75">{p.caption || "(sin texto)"}</span>
+                <span className="min-w-0 flex-1 truncate text-ink/75">{p.caption || t("(sin texto)", "(no text)")}</span>
               </li>
             ))}
           </ul>
@@ -147,7 +169,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
       </Card>
       <div className="grid gap-sp-4 lg:grid-cols-2">
         <Card>
-          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">La cuenta</p>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("La cuenta", "The account")}</p>
           <dl className="grid gap-sp-2 text-sm">
             {facts.map(([label, value]) => (
               <div key={label} className="grid grid-cols-[11rem_1fr] gap-sp-2">
@@ -158,30 +180,32 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
           </dl>
         </Card>
         <Card>
-          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Usuarios</p>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Usuarios", "Users")}</p>
           <ul className="flex flex-col gap-sp-3 text-sm">
             {creator.users.map((u) => (
               <li key={u.email}>
                 <p className="font-semibold text-ink">
-                  {u.name ?? "—"} <span className="font-normal text-ink/50">({u.role === "owner" ? "dueño/a" : u.role})</span>
+                  {u.name ?? "—"} <span className="font-normal text-ink/50">({u.role === "owner" ? t("dueño/a", "owner") : u.role})</span>
                 </p>
                 <p className="break-all">
-                  {u.email} · {u.emailVerifiedAt ? "✓ correo confirmado" : "correo sin confirmar"}
+                  {u.email} · {u.emailVerifiedAt ? t("✓ correo confirmado", "✓ email confirmed") : t("correo sin confirmar", "email unconfirmed")}
                 </p>
-                <p className="text-xs text-ink/55">Último ingreso: {fmt(u.lastLoginAt)}</p>
+                <p className="text-xs text-ink/55">
+                  {t("Último ingreso:", "Last sign-in:")} {fmt(u.lastLoginAt)}
+                </p>
                 {!isMine && u.role === "owner" && <OwnerEmailForm creatorId={creator.id} name={creator.name} current={u.email} />}
               </li>
             ))}
           </ul>
         </Card>
         <Card>
-          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Uso de IA (últimos 6 meses)</p>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Uso de IA (últimos 6 meses)", "AI usage (last 6 months)")}</p>
           {months.length ? (
             <table className="w-full text-sm">
               <thead className="font-mono text-[10px] uppercase text-ink/50">
                 <tr>
-                  <th className="py-1 text-left">Mes</th>
-                  <th className="py-1 text-right">Sugerencias</th>
+                  <th className="py-1 text-left">{t("Mes", "Month")}</th>
+                  <th className="py-1 text-right">{t("Sugerencias", "Suggestions")}</th>
                   <th className="py-1 text-right">Tokens</th>
                 </tr>
               </thead>
@@ -190,22 +214,22 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
                   <tr key={month} className="border-t border-line">
                     <td className="py-1">{month}</td>
                     <td className="py-1 text-right font-mono">{row.count}</td>
-                    <td className="py-1 text-right font-mono">{row.tokens.toLocaleString("es")}</td>
+                    <td className="py-1 text-right font-mono">{row.tokens.toLocaleString(dateLocale(lang))}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <p className="text-sm text-ink/55">Todavía no pidió sugerencias de IA.</p>
+            <p className="text-sm text-ink/55">{t("Todavía no pidió sugerencias de IA.", "No AI suggestions requested yet.")}</p>
           )}
         </Card>
         <Card>
-          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Historial de administración</p>
+          <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Historial de administración", "Admin history")}</p>
           {actions.length ? (
             <ul className="flex flex-col gap-sp-2 text-sm">
               {actions.map((a) => (
                 <li key={a.id}>
-                  <span className="text-ink">{ACTION_LABEL[a.action] ?? a.action}</span>
+                  <span className="text-ink">{(lang === "en" ? ACTION_LABEL_EN : ACTION_LABEL)[a.action] ?? a.action}</span>
                   <span className="block text-xs text-ink/50">
                     {fmt(a.createdAt)} · {a.actorEmail}
                   {a.detail && a.action !== "note" ? ` · ${a.detail}` : ""}
@@ -214,7 +238,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-ink/55">Sin acciones todavía.</p>
+            <p className="text-sm text-ink/55">{t("Sin acciones todavía.", "No actions yet.")}</p>
           )}
         </Card>
       </div>

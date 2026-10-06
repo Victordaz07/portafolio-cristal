@@ -9,6 +9,7 @@ import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass, rowCardClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
 import { SERVICE_ICONS, SERVICE_ICON_OPTIONS, CameraIcon, type ServiceIconKey } from "@/components/icons";
+import { useT } from "@/components/admin/AdminLang";
 
 const API_BASE = "/api/admin/services";
 
@@ -21,6 +22,7 @@ const EMPTY = {
 };
 
 export default function ServicesManager({ initialServices }: { initialServices: Service[] }) {
+  const { t, lang } = useT();
   const { showToast } = useToast();
   const [services, setServices] = useState(initialServices);
   const [form, setForm] = useState<typeof EMPTY>(EMPTY);
@@ -39,25 +41,25 @@ export default function ServicesManager({ initialServices }: { initialServices: 
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      showToast("error", data.error ?? "No se pudo agregar el servicio");
+      showToast("error", data.error ?? t("No se pudo agregar el servicio", "Couldn't add the service"));
       return;
     }
 
     const created: Service = await response.json();
     setServices((current) => [...current, created]);
     setForm(EMPTY);
-    showToast("success", "Servicio agregado");
+    showToast("success", t("Servicio agregado", "Service added"));
   }
 
   async function handleDelete(service: Service) {
     const response = await fetch(`${API_BASE}/${service.id}`, { method: "DELETE" });
     setPendingDelete(null);
     if (!response.ok) {
-      showToast("error", "No se pudo eliminar");
+      showToast("error", t("No se pudo eliminar", "Couldn't delete"));
       return;
     }
     setServices((current) => current.filter((item) => item.id !== service.id));
-    showToast("success", "Servicio eliminado");
+    showToast("success", t("Servicio eliminado", "Service deleted"));
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -82,15 +84,15 @@ export default function ServicesManager({ initialServices }: { initialServices: 
                 <Icon className="h-4 w-4" />
               </span>
               <div className="flex-1">
-                <p className="font-medium text-ink">{service.title}</p>
-                <p className="text-sm text-ink/60">{service.description}</p>
+                <p className="font-medium text-ink">{(lang === "en" && service.titleEn) || service.title}</p>
+                <p className="text-sm text-ink/60">{(lang === "en" && service.descriptionEn) || service.description}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setPendingDelete(service)}
                 className={dangerLinkClass}
               >
-                Eliminar
+                {t("Eliminar", "Delete")}
               </button>
             </li>
           );
@@ -100,7 +102,7 @@ export default function ServicesManager({ initialServices }: { initialServices: 
       <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <div className="grid gap-sp-4 sm:grid-cols-2">
           <BilingualTextField
-            label="Título"
+            label={t("Título", "Title")}
             es={form.title}
             en={form.titleEn}
             onEsChange={(v) => setForm((c) => ({ ...c, title: v }))}
@@ -108,7 +110,7 @@ export default function ServicesManager({ initialServices }: { initialServices: 
             required
           />
           <label className="flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Ícono</span>
+            <span className="text-sm font-medium text-ink">{t("Ícono", "Icon")}</span>
             <select
               value={form.icon}
               onChange={(e) => setForm((c) => ({ ...c, icon: e.target.value as ServiceIconKey }))}
@@ -116,14 +118,14 @@ export default function ServicesManager({ initialServices }: { initialServices: 
             >
               {SERVICE_ICON_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {lang === "en" ? option.labelEn : option.label}
                 </option>
               ))}
             </select>
           </label>
         </div>
         <BilingualTextField
-          label="Descripción"
+          label={t("Descripción", "Description")}
           es={form.description}
           en={form.descriptionEn}
           onEsChange={(v) => setForm((c) => ({ ...c, description: v }))}
@@ -133,14 +135,14 @@ export default function ServicesManager({ initialServices }: { initialServices: 
           required
         />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-          {saving ? "Agregando..." : "+ agregar servicio"}
+          {saving ? t("Agregando...", "Adding...") : t("+ agregar servicio", "+ add service")}
         </button>
       </form>
 
       {pendingDelete && (
         <ConfirmDialog
-          title="Eliminar servicio"
-          description={`¿Eliminar "${pendingDelete.title}"?`}
+          title={t("Eliminar servicio", "Delete service")}
+          description={t(`¿Eliminar "${pendingDelete.title}"?`, `Delete "${pendingDelete.title}"?`)}
           onConfirm={() => handleDelete(pendingDelete)}
           onCancel={() => setPendingDelete(null)}
         />

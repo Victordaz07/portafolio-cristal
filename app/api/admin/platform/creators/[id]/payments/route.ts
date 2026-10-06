@@ -5,6 +5,7 @@ import { platformAdminUser } from "@/lib/platform-admin";
 import { PLANS } from "@/lib/plans";
 import { priceCents } from "@/lib/billing";
 import { confirmPayment } from "@/lib/billing-server";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -19,14 +20,15 @@ const schema = z.object({
 
 /** Registrar un pago que ya recibiste (PayPal, transferencia, efectivo…): queda confirmado. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const admin = await platformAdminUser();
-  if (!admin) return NextResponse.json({ error: "Solo para quien administra Foliocrew" }, { status: 403 });
+  if (!admin) return NextResponse.json({ error: t("Solo para quien administra Foliocrew", "Foliocrew admins only") }, { status: 403 });
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Revisa los datos del pago" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Revisa los datos del pago", "Check the payment details") }, { status: 400 });
   const { plan, months, amount, method, reference } = parsed.data;
   if (!(await prismaRoot.creator.findUnique({ where: { id }, select: { id: true } }))) {
-    return NextResponse.json({ error: "La cuenta no existe" }, { status: 404 });
+    return NextResponse.json({ error: t("La cuenta no existe", "The account doesn't exist") }, { status: 404 });
   }
   const payment = await prismaRoot.payment.create({
     data: {

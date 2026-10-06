@@ -5,12 +5,14 @@ import type { SiteSettings } from "@prisma/client";
 import { useToast } from "@/components/admin/ToastContext";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { inputClass, primaryButtonClass, cardClass, sectionTitleClass } from "@/lib/admin-ui";
+import { useT } from "@/components/admin/AdminLang";
 
 export default function SettingsForm({
   initialSettings,
 }: {
   initialSettings: SiteSettings | null;
 }) {
+  const { t } = useT();
   const { showToast } = useToast();
   const [form, setForm] = useState({
     whyMeText: initialSettings?.whyMeText ?? "",
@@ -42,17 +44,17 @@ export default function SettingsForm({
     setSaving(false);
 
     if (response.ok) {
-      showToast("success", "Cambios guardados");
+      showToast("success", t("Cambios guardados", "Changes saved"));
     } else {
       const data = await response.json().catch(() => ({}));
-      showToast("error", data.error ?? "No se pudo guardar");
+      showToast("error", data.error ?? t("No se pudo guardar", "Couldn't save"));
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className={`${cardClass} max-w-xl flex flex-col gap-sp-5`}>
       <BilingualTextField
-        label='Texto "Why me?"'
+        label={t('Texto "¿Por qué yo?"', 'Text "Why me?"')}
         es={form.whyMeText}
         en={form.whyMeTextEn}
         onEsChange={(v) => setForm((c) => ({ ...c, whyMeText: v }))}
@@ -63,11 +65,11 @@ export default function SettingsForm({
       />
 
       <h2 className={sectionTitleClass}>
-        Pie de página — &quot;Conéctate conmigo&quot;
+        {t("Pie de página — \"Conéctate conmigo\"", "Footer — \"Connect with me\"")}
       </h2>
 
       <BilingualTextField
-        label="Texto de introducción"
+        label={t("Texto de introducción", "Intro text")}
         es={form.footerIntro}
         en={form.footerIntroEn}
         onEsChange={(v) => setForm((c) => ({ ...c, footerIntro: v }))}
@@ -77,7 +79,7 @@ export default function SettingsForm({
       />
 
       <BilingualTextField
-        label="Mensaje de agradecimiento"
+        label={t("Mensaje de agradecimiento", "Thank-you message")}
         es={form.supportMessage}
         en={form.supportMessageEn}
         onEsChange={(v) => setForm((c) => ({ ...c, supportMessage: v }))}
@@ -86,11 +88,11 @@ export default function SettingsForm({
         rows={2}
       />
 
-      <h2 className={sectionTitleClass}>¿Hablamos?</h2>
+      <h2 className={sectionTitleClass}>{t("¿Hablamos?", "Let's talk?")}</h2>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Email de contacto</span>
+          <span className="text-sm font-medium text-ink">{t("Email de contacto", "Contact email")}</span>
           <input
             type="email"
             required
@@ -100,7 +102,7 @@ export default function SettingsForm({
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Email de colaboraciones (opcional)</span>
+          <span className="text-sm font-medium text-ink">{t("Email de colaboraciones (opcional)", "Collaborations email (optional)")}</span>
           <input
             type="email"
             value={form.collabsEmail}
@@ -109,7 +111,7 @@ export default function SettingsForm({
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">WhatsApp (opcional)</span>
+          <span className="text-sm font-medium text-ink">{t("WhatsApp (opcional)", "WhatsApp (optional)")}</span>
           <input
             value={form.whatsapp}
             onChange={(e) => setForm((c) => ({ ...c, whatsapp: e.target.value }))}
@@ -118,7 +120,7 @@ export default function SettingsForm({
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Sitio web (opcional)</span>
+          <span className="text-sm font-medium text-ink">{t("Sitio web (opcional)", "Website (optional)")}</span>
           <input
             type="url"
             value={form.websiteUrl}
@@ -129,7 +131,7 @@ export default function SettingsForm({
         </label>
       </div>
 
-      <h2 className={sectionTitleClass}>Sígueme</h2>
+      <h2 className={sectionTitleClass}>{t("Sígueme", "Follow me")}</h2>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className="flex flex-col gap-sp-1">
@@ -139,7 +141,7 @@ export default function SettingsForm({
             value={form.instagramHandle}
             onChange={(e) => setForm((c) => ({ ...c, instagramHandle: e.target.value }))}
             className={inputClass}
-            placeholder="@usuario"
+            placeholder={t("@usuario", "@username")}
           />
         </label>
         <label className="flex flex-col gap-sp-1">
@@ -149,20 +151,20 @@ export default function SettingsForm({
             value={form.tiktokHandle}
             onChange={(e) => setForm((c) => ({ ...c, tiktokHandle: e.target.value }))}
             className={inputClass}
-            placeholder="@usuario"
+            placeholder={t("@usuario", "@username")}
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">YouTube (opcional)</span>
+          <span className="text-sm font-medium text-ink">{t("YouTube (opcional)", "YouTube (optional)")}</span>
           <input
             value={form.youtubeHandle}
             onChange={(e) => setForm((c) => ({ ...c, youtubeHandle: e.target.value }))}
             className={inputClass}
-            placeholder="/canal"
+            placeholder={t("/canal", "/channel")}
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Facebook (opcional)</span>
+          <span className="text-sm font-medium text-ink">{t("Facebook (opcional)", "Facebook (optional)")}</span>
           <input
             value={form.facebookHandle}
             onChange={(e) => setForm((c) => ({ ...c, facebookHandle: e.target.value }))}
@@ -170,7 +172,7 @@ export default function SettingsForm({
           />
         </label>
         <label className="flex flex-col gap-sp-1">
-          <span className="text-sm font-medium text-ink">Pinterest (opcional)</span>
+          <span className="text-sm font-medium text-ink">{t("Pinterest (opcional)", "Pinterest (optional)")}</span>
           <input
             value={form.pinterestHandle}
             onChange={(e) => setForm((c) => ({ ...c, pinterestHandle: e.target.value }))}
@@ -180,7 +182,7 @@ export default function SettingsForm({
       </div>
 
       <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-        {saving ? "Guardando..." : "Guardar cambios"}
+        {saving ? t("Guardando...", "Saving...") : t("Guardar cambios", "Save changes")}
       </button>
     </form>
   );

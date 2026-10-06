@@ -6,6 +6,8 @@ import {
   hideInstagramComment,
   replyToInstagramComment,
 } from "@/lib/social/instagram-comments";
+import { getT } from "@/lib/admin-lang-server";
+import type { T } from "@/lib/admin-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -14,16 +16,17 @@ const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("hide"), hide: z.boolean() }),
 ]);
 
-function apiError(error: unknown) {
-  const message = error instanceof Error ? error.message : "Instagram rechazó la acción";
+function apiError(error: unknown, t: T) {
+  const message = error instanceof Error ? error.message : t("Instagram rechazó la acción", "Instagram rejected the action");
   return NextResponse.json({ error: message }, { status: 502 });
 }
 
 /** Responder u ocultar/mostrar un comentario. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   const parsed = actionSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   try {
     if (parsed.data.action === "reply") {
       const reply = await replyToInstagramComment(id, parsed.data.message);
@@ -34,16 +37,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     await hideInstagramComment(id, parsed.data.hide);
     return NextResponse.json({ ok: true });
   } catch (error) {
-    return apiError(error);
+    return apiError(error, t);
   }
 }
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   try {
     await deleteInstagramComment(id);
     return NextResponse.json({ ok: true });
   } catch (error) {
-    return apiError(error);
+    return apiError(error, t);
   }
 }

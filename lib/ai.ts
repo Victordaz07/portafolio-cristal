@@ -56,6 +56,19 @@ export class AiQuotaError extends Error {
   }
 }
 
+export class AiRateError extends Error {
+  constructor() {
+    super("Demasiadas sugerencias seguidas. Espera un rato e inténtalo de nuevo.");
+  }
+}
+
+/** La IA se negó a responder (filtro de seguridad). */
+export class AiRefusalError extends Error {
+  constructor() {
+    super("La IA no pudo generar esta sugerencia");
+  }
+}
+
 // Sugerencias de IA por mes según el plan (cada caption, consejo o diseño cuenta 1). Se pueden
 // cambiar sin tocar código con AI_MONTHLY_LIMIT_FOLIO / _PRO / _CREW en Vercel.
 const DEFAULT_AI_LIMITS: Record<string, number> = { folio: 60, pro: 300, crew: 1000 };
@@ -86,7 +99,7 @@ export async function assertAiQuota() {
   if (used >= limit) throw new AiQuotaError(limit);
   // Además, como freno de abuso: no más de 30 pedidos por hora.
   if (tooManyAttempts(`ai:${creatorId}`, 30, 60 * 60_000)) {
-    throw new Error("Demasiadas sugerencias seguidas. Espera un rato e inténtalo de nuevo.");
+    throw new AiRateError();
   }
 }
 
@@ -108,11 +121,16 @@ export async function recordAiUsage(kind: "caption" | "tips" | "design", usage?:
 }
 
 /** Mensaje de error legible para el panel a partir de un error de la API de Claude. */
-export function aiErrorMessage(error: unknown) {
-  if (error instanceof AiQuotaError) return error.message;
-  if (error instanceof Anthropic.AuthenticationError) return "La ANTHROPIC_API_KEY no es válida";
-  if (error instanceof Anthropic.PermissionDeniedError) return "La clave no tiene permiso para este modelo";
-  if (error instanceof Anthropic.RateLimitError) return "Límite de uso alcanzado; intenta en un momento";
+export function aiErrorMessage(error: unknown, lang: "es" | "en" = "es") {
+  const en = lang === "en";
+  if (error instanceof AiQuotaError) {
+    return en ? `You reached this month's limit of ${error.limit} AI suggestions. It resets on the 1st.` : error.message;
+  }
+  if (error instanceof Anthropic.AuthenticationError) return en ? "The ANTHROPIC_API_KEY isn't valid" : "La ANTHROPIC_API_KEY no es válida";
+  if (error instanceof Anthropic.PermissionDeniedError) return en ? "The key doesn't have permission for this model" : "La clave no tiene permiso para este modelo";
+  if (error instanceof Anthropic.RateLimitError) return en ? "Usage limit reached; try again in a moment" : "Límite de uso alcanzado; intenta en un momento";
   if (error instanceof Anthropic.APIError) return `Error ${error.status}: ${error.message}`;
-  return error instanceof Error ? error.message : "Error desconocido";
+  if (error instanceof AiRateError) return en ? "Too many suggestions in a row. Wait a bit and try again." : error.message;
+  if (error instanceof AiRefusalError) return en ? "The AI couldn't generate this suggestion" : error.message;
+  return error instanceof Error ? error.message : en ? "Unknown error" : "Error desconocido";
 }

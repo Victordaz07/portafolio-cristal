@@ -11,6 +11,20 @@ export const CONTENT_TYPE_LABEL: Record<ContentType, string> = {
   story: "Historia",
 };
 
+export const CONTENT_TYPE_LABEL_EN: Record<ContentType, string> = {
+  post: "Post / Photo",
+  carousel: "Carousel",
+  reel: "Reel / Short video",
+  long_video: "Long video",
+  story: "Story",
+};
+
+/** Nombre del tipo de contenido en el idioma del panel. */
+export function contentTypeLabel(type: string, lang: "es" | "en" = "es") {
+  const map = lang === "en" ? CONTENT_TYPE_LABEL_EN : CONTENT_TYPE_LABEL;
+  return map[type as ContentType] ?? type;
+}
+
 export const PLAN_NETWORKS = ["instagram", "tiktok", "youtube", "facebook"] as const;
 export type PlanNetwork = (typeof PLAN_NETWORKS)[number];
 
@@ -35,6 +49,12 @@ export const POST_STATUS_LABEL: Record<string, string> = {
   published: "Publicada",
 };
 
+const POST_STATUS_LABEL_EN: Record<string, string> = { draft: "Draft", scheduled: "Scheduled", published: "Published" };
+
+export function postStatusLabel(status: string, lang: "es" | "en" = "es") {
+  return (lang === "en" ? POST_STATUS_LABEL_EN : POST_STATUS_LABEL)[status] ?? status;
+}
+
 /** Proporción de la vista previa según la red y el tipo de contenido. */
 export function previewAspect(network: PlanNetwork, type: ContentType) {
   if (type === "story" || type === "reel") return "9 / 16";
@@ -44,32 +64,45 @@ export function previewAspect(network: PlanNetwork, type: ContentType) {
 }
 
 /** Avisos antes de programar: límites de texto, hashtags y combinaciones que la red no admite. */
-export function planWarnings(caption: string, type: ContentType, networks: PlanNetwork[]) {
+export function planWarnings(caption: string, type: ContentType, networks: PlanNetwork[], lang: "es" | "en" = "es") {
+  const en = lang === "en";
   const warnings: string[] = [];
   const hashtags = caption.match(/#[\w\u00C0-\u024F]+/g)?.length ?? 0;
   for (const network of networks) {
     const meta = NETWORK_META[network];
     if (caption.length > meta.captionLimit) {
-      warnings.push(`${meta.label}: el texto tiene ${caption.length} caracteres y el máximo es ${meta.captionLimit}.`);
+      warnings.push(
+        en
+          ? `${meta.label}: the text has ${caption.length} characters and the limit is ${meta.captionLimit}.`
+          : `${meta.label}: el texto tiene ${caption.length} caracteres y el máximo es ${meta.captionLimit}.`
+      );
     }
   }
   if (networks.includes("instagram") && hashtags > 30) {
-    warnings.push(`Instagram: máximo 30 hashtags (tienes ${hashtags}).`);
+    warnings.push(en ? `Instagram: 30 hashtags max (you have ${hashtags}).` : `Instagram: máximo 30 hashtags (tienes ${hashtags}).`);
   }
   if (networks.includes("youtube")) {
     const firstLine = caption.split("\n")[0] ?? "";
     if (firstLine.length > 100) {
-      warnings.push("YouTube: la primera línea se usa como título y debe tener máximo 100 caracteres.");
+      warnings.push(
+        en
+          ? "YouTube: the first line is used as the title and must be 100 characters max."
+          : "YouTube: la primera línea se usa como título y debe tener máximo 100 caracteres."
+      );
     }
     if (type === "story" || type === "carousel" || type === "post") {
-      warnings.push(`YouTube no admite "${CONTENT_TYPE_LABEL[type]}": solo videos y Shorts.`);
+      warnings.push(
+        en
+          ? `YouTube doesn't support "${CONTENT_TYPE_LABEL_EN[type]}": only videos and Shorts.`
+          : `YouTube no admite "${CONTENT_TYPE_LABEL[type]}": solo videos y Shorts.`
+      );
     }
   }
   if (networks.includes("tiktok") && type === "long_video") {
-    warnings.push("TikTok: los videos largos funcionan, pero el formato vertical corto rinde mejor.");
+    warnings.push(en ? "TikTok: long videos work, but short vertical videos perform better." : "TikTok: los videos largos funcionan, pero el formato vertical corto rinde mejor.");
   }
   if (networks.includes("tiktok") && type === "story") {
-    warnings.push("TikTok: las historias no se pueden publicar por la API; súbela desde la app.");
+    warnings.push(en ? "TikTok: stories can't be published via the API; upload it from the app." : "TikTok: las historias no se pueden publicar por la API; súbela desde la app.");
   }
   return warnings;
 }
@@ -113,8 +146,8 @@ export function utcToZoned(date: Date | string, timeZone: string) {
 }
 
 /** "18:00" → "6:00 p. m." */
-export function formatTime(time: string) {
+export function formatTime(time: string, lang: "es" | "en" = "es") {
   const [hh, mm] = time.split(":").map(Number);
-  const suffix = hh < 12 ? "a. m." : "p. m.";
+  const suffix = lang === "en" ? (hh < 12 ? "AM" : "PM") : hh < 12 ? "a. m." : "p. m.";
   return `${hh % 12 === 0 ? 12 : hh % 12}:${String(mm).padStart(2, "0")} ${suffix}`;
 }

@@ -10,6 +10,7 @@ import { useToast } from "@/components/admin/ToastContext";
 import { TikTokIcon, InstagramIcon, FacebookIcon } from "@/components/icons";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { LOGO_ASPECT_OPTIONS } from "@/lib/image-crop";
+import { useT } from "@/components/admin/AdminLang";
 
 type SocialPlatform = Exclude<Platform, "ugc">;
 
@@ -69,6 +70,7 @@ export default function ContentCardForm({
   onSubmit: (values: ContentCardFormValues) => Promise<void>;
   onCancel?: () => void;
 }) {
+  const { t } = useT();
   const [mode, setMode] = useState<"social" | "ugc">(initial?.platform === "ugc" ? "ugc" : "social");
   const [postUrl, setPostUrl] = useState(initial?.postUrl ?? "");
   const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? "");
@@ -99,7 +101,7 @@ export default function ContentCardForm({
       });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        showToast("error", data.error ?? "No se pudo crear la marca");
+        showToast("error", data.error ?? t("No se pudo crear la marca", "Couldn't create the brand"));
         return;
       }
       const created = await response.json();
@@ -108,7 +110,7 @@ export default function ContentCardForm({
       setShowNewBrand(false);
       setNewBrandName("");
       setNewBrandLogoUrl("");
-      showToast("success", "Marca creada");
+      showToast("success", t("Marca creada", "Brand created"));
     } finally {
       setCreatingBrand(false);
     }
@@ -171,7 +173,7 @@ export default function ContentCardForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-sp-4">
       <div className="flex flex-col gap-sp-1 max-w-md">
-        <span className="text-sm font-medium text-ink">Tipo de tarjeta</span>
+        <span className="text-sm font-medium text-ink">{t("Tipo de tarjeta", "Card type")}</span>
         <div className="flex gap-sp-2">
           <button
             type="button"
@@ -180,7 +182,7 @@ export default function ContentCardForm({
               mode === "social" ? "border-coral bg-coral/10 text-ink" : "border-line text-ink/60 hover:border-coral"
             }`}
           >
-            Post de red social
+            {t("Post de red social", "Social media post")}
           </button>
           <button
             type="button"
@@ -189,19 +191,19 @@ export default function ContentCardForm({
               mode === "ugc" ? "border-coral bg-coral/10 text-ink" : "border-line text-ink/60 hover:border-coral"
             }`}
           >
-            Foto de portafolio (sin red social)
+            {t("Foto de portafolio (sin red social)", "Portfolio photo (no social network)")}
           </button>
         </div>
         <span className="text-xs text-ink/50">
           {mode === "ugc"
-            ? "Solo sube la foto, describe el trabajo y opcionalmente marca la marca para la que lo hiciste. No necesita link a ninguna red social."
-            : "Vincula un post existente de TikTok, Instagram o Facebook, o sube tu propio video/foto."}
+            ? t("Solo sube la foto, describe el trabajo y opcionalmente marca la marca para la que lo hiciste. No necesita link a ninguna red social.", "Just upload the photo, describe the work and optionally tag the brand you made it for. No social media link needed.")
+            : t("Vincula un post existente de TikTok, Instagram o Facebook, o sube tu propio video/foto.", "Link an existing TikTok, Instagram or Facebook post, or upload your own video/photo.")}
         </span>
       </div>
 
       {mode === "ugc" && (
         <div className="flex flex-col gap-sp-1 max-w-xs">
-          <span className="text-sm font-medium text-ink">Marca (opcional)</span>
+          <span className="text-sm font-medium text-ink">{t("Marca (opcional)", "Brand (optional)")}</span>
           {!showNewBrand && (
             <>
               <select
@@ -215,16 +217,16 @@ export default function ContentCardForm({
                 }}
                 className={inputClass}
               >
-                <option value="">Sin marca</option>
+                <option value="">{t("Sin marca", "No brand")}</option>
                 {brands.map((brand) => (
                   <option key={brand.id} value={brand.id}>
                     {brand.name}
                   </option>
                 ))}
-                <option value={NEW_BRAND_VALUE}>+ agregar nueva marca</option>
+                <option value={NEW_BRAND_VALUE}>{t("+ agregar nueva marca", "+ add new brand")}</option>
               </select>
               <span className="text-xs text-ink/50">
-                Si la marca tiene logo cargado, se mostrará sobre la foto.
+                {t("Si la marca tiene logo cargado, se mostrará sobre la foto.", "If the brand has a logo uploaded, it will show over the photo.")}
               </span>
             </>
           )}
@@ -232,21 +234,21 @@ export default function ContentCardForm({
           {showNewBrand && (
             <div className="flex flex-col gap-sp-3 rounded-md border border-line bg-cream p-sp-4">
               <label className="flex flex-col gap-sp-1">
-                <span className="text-sm font-medium text-ink">Nombre de la marca</span>
+                <span className="text-sm font-medium text-ink">{t("Nombre de la marca", "Brand name")}</span>
                 <input
                   value={newBrandName}
                   onChange={(e) => setNewBrandName(e.target.value)}
-                  placeholder="Nombre de la marca"
+                  placeholder={t("Nombre de la marca", "Brand name")}
                   className={inputClass}
                 />
               </label>
               <ImageUploadField
-                label="Logo (opcional)"
+                label={t("Logo (opcional)", "Logo (optional)")}
                 value={newBrandLogoUrl}
                 onChange={setNewBrandLogoUrl}
                 aspect={LOGO_ASPECT_OPTIONS}
                 outputFormat="png"
-                recommendedSize="fondo transparente"
+                recommendedSize={t("fondo transparente", "transparent background")}
               />
               <div className="flex gap-sp-3">
                 <button
@@ -255,7 +257,7 @@ export default function ContentCardForm({
                   onClick={handleCreateBrand}
                   className={secondaryButtonClass}
                 >
-                  {creatingBrand ? "Creando..." : "Crear marca"}
+                  {creatingBrand ? t("Creando...", "Creating...") : t("Crear marca", "Create brand")}
                 </button>
                 <button
                   type="button"
@@ -266,7 +268,7 @@ export default function ContentCardForm({
                   }}
                   className="text-sm text-ink/60 hover:underline"
                 >
-                  Cancelar
+                  {t("Cancelar", "Cancel")}
                 </button>
               </div>
             </div>
@@ -292,7 +294,7 @@ export default function ContentCardForm({
 
           <div className="flex flex-col gap-sp-1 max-w-xs">
             <span className="text-sm font-medium text-ink">
-              Ícono de plataforma que se muestra en la tarjeta
+              {t("Ícono de plataforma que se muestra en la tarjeta", "Platform icon shown on the card")}
             </span>
             <div className="flex items-center gap-sp-3">
               <select
@@ -302,7 +304,7 @@ export default function ContentCardForm({
                 className={`${inputClass} flex-1`}
               >
                 <option value="" disabled>
-                  Elegir...
+                  {t("Elegir...", "Choose...")}
                 </option>
                 {PLATFORM_OPTIONS.map((option) => (
                   <option key={option} value={option}>
@@ -320,7 +322,7 @@ export default function ContentCardForm({
               )}
             </div>
             <span className="text-xs text-ink/50">
-              Se detecta automáticamente al pegar la URL, pero puedes cambiarlo aquí si el ícono no es el correcto.
+              {t("Se detecta automáticamente al pegar la URL, pero puedes cambiarlo aquí si el ícono no es el correcto.", "It's detected automatically when you paste the URL, but you can change it here if the icon isn't right.")}
             </span>
           </div>
         </>
@@ -329,7 +331,7 @@ export default function ContentCardForm({
       {mode === "social" && !type && (
         <label className="flex flex-col gap-sp-1 max-w-xs">
           <span className="text-sm font-medium text-ink">
-            Tipo de contenido {postUrl ? "— no pude detectarlo, selecciónalo:" : ""}
+            {t("Tipo de contenido", "Content type")} {postUrl ? t("— no pude detectarlo, selecciónalo:", "— I couldn't detect it, choose it:") : ""}
           </span>
           <select
             required
@@ -338,10 +340,10 @@ export default function ContentCardForm({
             className={inputClass}
           >
             <option value="" disabled>
-              Elegir...
+              {t("Elegir...", "Choose...")}
             </option>
             <option value="video">Video</option>
-            <option value="photo">Foto</option>
+            <option value="photo">{t("Foto", "Photo")}</option>
           </select>
         </label>
       )}
@@ -351,18 +353,18 @@ export default function ContentCardForm({
           kind="video"
           label={
             postUrl
-              ? "Video propio (opcional): súbelo aquí para que se reproduzca directo en el sitio, sin depender del embed de la plataforma"
-              : "Sube el video: como no hay URL de post, esto es obligatorio para que la tarjeta tenga contenido"
+              ? t("Video propio (opcional): súbelo aquí para que se reproduzca directo en el sitio, sin depender del embed de la plataforma", "Your own video (optional): upload it here so it plays directly on the site, without relying on the platform embed")
+              : t("Sube el video: como no hay URL de post, esto es obligatorio para que la tarjeta tenga contenido", "Upload the video: since there's no post URL, this is required for the card to have content")
           }
           value={videoUrl}
           onChange={setVideoUrl}
-          recommendedSize="1080 × 1920 px (vertical, 9:16)"
+          recommendedSize={t("1080 × 1920 px (vertical, 9:16)", "1080 × 1920 px (portrait, 9:16)")}
         />
       )}
 
       {mode === "social" && type === "video" && (
         <ImageUploadField
-          label="Miniatura (opcional): sube una foto/screenshot para la vista previa en la cuadrícula. TikTok normalmente ya trae una automática; Instagram y Facebook no, así que se recomienda subir una aquí."
+          label={t("Miniatura (opcional): sube una foto/screenshot para la vista previa en la cuadrícula. TikTok normalmente ya trae una automática; Instagram y Facebook no, así que se recomienda subir una aquí.", "Thumbnail (optional): upload a photo/screenshot for the grid preview. TikTok usually provides one automatically; Instagram and Facebook don't, so uploading one here is recommended.")}
           value={thumbnailUrl}
           onChange={setThumbnailUrl}
           aspect={9 / 16}
@@ -375,8 +377,8 @@ export default function ContentCardForm({
           kind="photo"
           label={
             postUrl
-              ? "Foto propia (opcional): súbela aquí para que se muestre directo en el sitio, sin depender del embed de la plataforma"
-              : "Sube la foto: como no hay URL de post, esto es obligatorio para que la tarjeta tenga contenido"
+              ? t("Foto propia (opcional): súbela aquí para que se muestre directo en el sitio, sin depender del embed de la plataforma", "Your own photo (optional): upload it here so it shows directly on the site, without relying on the platform embed")
+              : t("Sube la foto: como no hay URL de post, esto es obligatorio para que la tarjeta tenga contenido", "Upload the photo: since there's no post URL, this is required for the card to have content")
           }
           value={photoUrl}
           onChange={setPhotoUrl}
@@ -386,7 +388,7 @@ export default function ContentCardForm({
       )}
 
       <BilingualTextField
-        label="Descripción / caption"
+        label={t("Descripción / caption", "Description / caption")}
         es={caption}
         en={captionEn}
         onEsChange={setCaption}
@@ -397,14 +399,14 @@ export default function ContentCardForm({
       />
 
       <div className="flex flex-col gap-sp-1 max-w-xs">
-        <span className="text-sm font-medium text-ink">Categoría</span>
+        <span className="text-sm font-medium text-ink">{t("Categoría", "Category")}</span>
         {isNewCategory ? (
           <div className="flex gap-sp-2">
             <input
               required
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="Nueva categoría"
+              placeholder={t("Nueva categoría", "New category")}
               className={inputClass}
             />
             {existingCategories.length > 0 && (
@@ -416,7 +418,7 @@ export default function ContentCardForm({
                 }}
                 className="text-sm text-ink/60 hover:underline"
               >
-                Cancelar
+                {t("Cancelar", "Cancel")}
               </button>
             )}
           </div>
@@ -438,27 +440,27 @@ export default function ContentCardForm({
                 {cat}
               </option>
             ))}
-            <option value={NEW_CATEGORY_VALUE}>+ nueva categoría</option>
+            <option value={NEW_CATEGORY_VALUE}>{t("+ nueva categoría", "+ new category")}</option>
           </select>
         )}
         <input
           value={categoryEn}
           onChange={(e) => setCategoryEn(e.target.value)}
-          placeholder="Category (English)"
+          placeholder={t("Categoría (inglés)", "Category (English)")}
           className={inputClass}
         />
       </div>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <BilingualTextField
-          label={type === "photo" ? "Likes (opcional)" : "Views (opcional)"}
+          label={type === "photo" ? t("Likes (opcional)", "Likes (optional)") : t("Vistas (opcional)", "Views (optional)")}
           es={statPrimary}
           en={statPrimaryEn}
           onEsChange={setStatPrimary}
           onEnChange={setStatPrimaryEn}
         />
         <BilingualTextField
-          label={type === "photo" ? "Saves (opcional)" : "Engagement rate (opcional)"}
+          label={type === "photo" ? t("Guardados (opcional)", "Saves (optional)") : t("Engagement (opcional)", "Engagement rate (optional)")}
           es={statSecondary}
           en={statSecondaryEn}
           onEsChange={setStatSecondary}
@@ -472,11 +474,11 @@ export default function ContentCardForm({
           disabled={saving || !platform || !type || !category || (!postUrl && !videoUrl && !photoUrl)}
           className={primaryButtonClass}
         >
-          {saving ? "Guardando..." : submitLabel}
+          {saving ? t("Guardando...", "Saving...") : submitLabel}
         </button>
         {onCancel && (
           <button type="button" onClick={onCancel} className={secondaryButtonClass}>
-            Cancelar
+            {t("Cancelar", "Cancel")}
           </button>
         )}
       </div>

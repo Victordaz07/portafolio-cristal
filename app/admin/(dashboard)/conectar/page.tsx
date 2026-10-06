@@ -8,6 +8,8 @@ import { isTokenEncryptionConfigured } from "@/lib/token-crypto";
 import { isAiConfigured, AI_MODEL } from "@/lib/ai";
 import { siteConfig } from "@/lib/site-config";
 import ConnectManager, { type PlatformCard, type SetupItem } from "./ConnectManager";
+import { socialCopyList } from "@/lib/social/copy-en";
+import { getT } from "@/lib/admin-lang-server";
 
 export default async function AdminConnectPage({
   searchParams,
@@ -15,6 +17,7 @@ export default async function AdminConnectPage({
   searchParams: Promise<{ connected?: string; error?: string }>;
 }) {
   const query = await searchParams;
+  const { t, lang } = await getT();
   const headerList = await headers();
   const host = headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
   const proto = headerList.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
@@ -48,9 +51,9 @@ export default async function AdminConnectPage({
       redirectUri: getRedirectUri(id, requestUrl),
       consoleUrl: provider.consoleUrl,
       scopes: provider.scopes,
-      can: provider.can,
-      later: provider.later,
-      cannot: provider.cannot,
+      can: socialCopyList(lang, provider.can),
+      later: socialCopyList(lang, provider.later),
+      cannot: socialCopyList(lang, provider.cannot),
       account: account && JSON.parse(JSON.stringify(account)),
     };
   });
@@ -65,24 +68,24 @@ export default async function AdminConnectPage({
     {
       key: "TOKEN_ENCRYPTION_KEY",
       ok: isTokenEncryptionConfigured(),
-      help: "Cifra los tokens de las redes en la base de datos. Obligatoria para conectar cualquier red.",
+      help: t("Cifra los tokens de las redes en la base de datos. Obligatoria para conectar cualquier red.", "Encrypts the social network tokens in the database. Required to connect any network."),
     },
     {
       key: "PLATFORM_NAME",
       ok: !!process.env.PLATFORM_NAME,
-      help: `Nombre comercial de la plataforma (hoy: "${siteConfig.platformName}"). Sale en las páginas de privacidad y términos; usa el mismo nombre que le pongas a las apps de cada red.`,
+      help: t(`Nombre comercial de la plataforma (hoy: "${siteConfig.platformName}"). Sale en las páginas de privacidad y términos; usa el mismo nombre que le pongas a las apps de cada red.`, `Platform trade name (now: "${siteConfig.platformName}"). It appears on the privacy and terms pages; use the same name you give each network's app.`),
       optional: true,
     },
     {
       key: "LEGAL_CONTACT_EMAIL",
       ok: !!process.env.LEGAL_CONTACT_EMAIL,
-      help: `Correo para temas de privacidad y borrado de datos (hoy: ${siteConfig.legalEmail}). Ideal: uno de tu dominio, ej. privacidad@tu-dominio.com.`,
+      help: t(`Correo para temas de privacidad y borrado de datos (hoy: ${siteConfig.legalEmail}). Ideal: uno de tu dominio, ej. privacidad@tu-dominio.com.`, `Email for privacy and data deletion matters (now: ${siteConfig.legalEmail}). Ideally one on your domain, e.g. privacy@your-domain.com.`),
       optional: true,
     },
     {
       key: "APP_URL",
       ok: !!process.env.APP_URL,
-      help: `URL fija del sitio (ej: https://tu-dominio.com). Si falta se usa ${getAppUrl(requestUrl)}, que en los previews de Vercel cambia y las redes rechazarán.`,
+      help: t(`URL fija del sitio (ej: https://tu-dominio.com). Si falta se usa ${getAppUrl(requestUrl)}, que en los previews de Vercel cambia y las redes rechazarán.`, `Fixed site URL (e.g. https://your-domain.com). If missing, ${getAppUrl(requestUrl)} is used, which changes on Vercel previews and the networks will reject it.`),
       optional: true,
     },
   ];
@@ -90,9 +93,9 @@ export default async function AdminConnectPage({
   return (
     <div>
       <PageHeader
-        eyebrow="Negocio"
-        title="Conectar cuentas"
-        description="Conecta tus redes con su login oficial y prueba que las APIs respondan. Nada de esto se muestra en tu sitio público."
+        eyebrow={t("Negocio", "Business")}
+        title={t("Conectar cuentas", "Connect accounts")}
+        description={t("Conecta tus redes con su login oficial y prueba que las APIs respondan. Nada de esto se muestra en tu sitio público.", "Connect your social accounts with their official login and test that the APIs respond. None of this is shown on your public site.")}
       />
       <ConnectManager
         cards={cards}
@@ -101,10 +104,10 @@ export default async function AdminConnectPage({
         flash={{ connected: query.connected ?? null, error: query.error ?? null }}
         domainMismatch={domainMismatch}
         reviewUrls={[
-          { label: "Sitio web / página principal", url: `${getAppUrl(requestUrl)}/` },
-          { label: "Política de privacidad", url: `${getAppUrl(requestUrl)}/privacidad?lang=en` },
-          { label: "Términos de servicio", url: `${getAppUrl(requestUrl)}/terminos?lang=en` },
-          { label: "Instrucciones para eliminar datos", url: `${getAppUrl(requestUrl)}/eliminar-datos?lang=en` },
+          { label: t("Sitio web / página principal", "Website / home page"), url: `${getAppUrl(requestUrl)}/` },
+          { label: t("Política de privacidad", "Privacy policy"), url: `${getAppUrl(requestUrl)}/privacidad?lang=en` },
+          { label: t("Términos de servicio", "Terms of service"), url: `${getAppUrl(requestUrl)}/terminos?lang=en` },
+          { label: t("Instrucciones para eliminar datos", "Data deletion instructions"), url: `${getAppUrl(requestUrl)}/eliminar-datos?lang=en` },
         ]}
       />
     </div>

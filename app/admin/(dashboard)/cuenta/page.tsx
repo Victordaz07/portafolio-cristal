@@ -12,14 +12,18 @@ import { isPlatformAdminEmail } from "@/lib/platform-admin";
 import ShareInsightsButton from "@/components/admin/ShareInsightsButton";
 import DataRequestForm from "./DataRequestForm";
 import { DATA_REQUEST_STATUS, dataRequestKindLabel } from "@/lib/data-export";
+import { getT } from "@/lib/admin-lang-server";
+import { dateLocale, pickLabel, type AdminLang, type T } from "@/lib/admin-lang";
 
-const fmtDate = (d: Date) => d.toLocaleString("es", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const fmtDateIn = (d: Date, lang: AdminLang) => d.toLocaleString(dateLocale(lang), { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
 /** "Motivo: Ticket #3: …" → "Ticket #3: …" (el registro guarda el motivo de cada acceso). */
-const accessReason = (detail: string | null) => (detail?.startsWith("Motivo: ") ? detail.slice(8) : "Ayuda de soporte");
+const accessReason = (detail: string | null, t: T) => (detail?.startsWith("Motivo: ") ? detail.slice(8) : t("Ayuda de soporte", "Support help"));
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ correo?: string }> }) {
   const { correo } = await searchParams;
+  const { t, lang } = await getT();
+  const fmtDate = (d: Date) => fmtDateIn(d, lang);
   const session = await getSession();
   const [user, creator] = session
     ? await Promise.all([
@@ -41,14 +45,14 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="flex flex-col gap-sp-5">
-      <PageHeader eyebrow="Ayuda" title="Mi cuenta" description="Tus datos de acceso y la dirección de tu sitio." />
+      <PageHeader eyebrow={t("Ayuda", "Help")} title={t("Mi cuenta", "My account")} description={t("Tus datos de acceso y la dirección de tu sitio.", "Your sign-in details and your site address.")} />
       <Card>
-        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Tu sitio</p>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Tu sitio", "Your site")}</p>
         <p className="font-mono text-sm text-ink">{siteUrl.replace("https://", "")}</p>
         <p className="mt-sp-1 text-xs text-ink/55">
-          Para conectar tu propio dominio o ver tus otras direcciones, ve a{" "}
+          {t("Para conectar tu propio dominio o ver tus otras direcciones, ve a", "To connect your own domain or see your other addresses, go to")}{" "}
           <Link href="/admin/dominio" className="font-semibold text-coral hover:underline">
-            Mi dominio
+            {t("Mi dominio", "My domain")}
           </Link>
           .
         </p>
@@ -56,59 +60,70 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       {correo === "confirmado" && (
         <Card>
           <p role="status" className="text-sm text-ink">
-            ✅ <strong>Correo confirmado.</strong> Te avisaremos aquí cuando una marca te escriba.
+            ✅ <strong>{t("Correo confirmado.", "Email confirmed.")}</strong> {t("Te avisaremos aquí cuando una marca te escriba.", "We'll let you know here when a brand writes to you.")}
           </p>
         </Card>
       )}
       {correo === "vencido" && (
         <Card>
           <p role="alert" className="text-sm text-ink">
-            Ese enlace venció o ya se usó.{user?.emailVerifiedAt ? " Tu correo ya está confirmado." : " Pide uno nuevo con el botón de arriba."}
+            {t("Ese enlace venció o ya se usó.", "That link expired or was already used.")}
+            {user?.emailVerifiedAt
+              ? t(" Tu correo ya está confirmado.", " Your email is already confirmed.")
+              : t(" Pide uno nuevo con el botón de arriba.", " Request a new one with the button above.")}
           </p>
         </Card>
       )}
       <Card>
-        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Correo de la cuenta</p>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Correo de la cuenta", "Account email")}</p>
         <p className="text-sm text-ink">
           <span className="font-mono">{user?.email}</span>{" "}
           {user?.emailVerifiedAt ? (
-            <span className="ml-1 rounded-full bg-sage/30 px-[8px] py-0.5 font-mono text-[10px] uppercase text-cobalt-ink">Confirmado</span>
+            <span className="ml-1 rounded-full bg-sage/30 px-[8px] py-0.5 font-mono text-[10px] uppercase text-cobalt-ink">{t("Confirmado", "Confirmed")}</span>
           ) : (
-            <span className="ml-1 rounded-full bg-cream px-[8px] py-0.5 font-mono text-[10px] uppercase text-ink/60">Sin confirmar</span>
+            <span className="ml-1 rounded-full bg-cream px-[8px] py-0.5 font-mono text-[10px] uppercase text-ink/60">{t("Sin confirmar", "Unconfirmed")}</span>
           )}
         </p>
         {!emailConfigured() && (
-          <p className="mt-sp-1 text-xs text-ink/55">Los correos automáticos todavía no están activos en Foliocrew.</p>
+          <p className="mt-sp-1 text-xs text-ink/55">{t("Los correos automáticos todavía no están activos en Foliocrew.", "Automatic emails aren't active on Foliocrew yet.")}</p>
         )}
       </Card>
       {creator && <CreatorKindPicker initial={creatorKind(creator.creatorKind)} />}
       <Card>
-        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Inteligencia Foliocrew</p>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Inteligencia Foliocrew", "Foliocrew Intelligence")}</p>
         <p className="text-sm text-ink">
           {creator?.shareInsights
-            ? `Participas desde el ${creator.shareInsightsAt?.toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) ?? "inicio"}. Tus métricas cuentan de forma anónima y agregada, y ves la comparativa de tu nicho en Reportes.`
-            : "No participas. Si te sumas, ves qué funciona en tu nicho (horarios, formatos, ganchos) y tus métricas ayudan, de forma anónima, a las demás."}
+            ? t(
+                `Participas desde el ${creator.shareInsightsAt?.toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) ?? "inicio"}. Tus métricas cuentan de forma anónima y agregada, y ves la comparativa de tu nicho en Reportes.`,
+                `You've been participating since ${creator.shareInsightsAt?.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" }) ?? "the start"}. Your metrics count anonymously and in aggregate, and you see your niche comparison in Reports.`
+              )
+            : t(
+                "No participas. Si te sumas, ves qué funciona en tu nicho (horarios, formatos, ganchos) y tus métricas ayudan, de forma anónima, a los demás.",
+                "You're not participating. If you join, you see what works in your niche (times, formats, hooks) and your metrics anonymously help others."
+              )}
         </p>
         <p className="mt-sp-1 text-xs text-ink/55">
-          Nunca se muestra tu nombre, usuario ni marcas. Más detalles en la{" "}
-          <Link href="/privacidad" className="font-semibold text-coral hover:underline">
-            política de privacidad
+          {t("Nunca se muestra tu nombre, usuario ni marcas. Más detalles en la", "Your name, username and brands are never shown. More details in the")}{" "}
+          <Link href={lang === "en" ? "/privacidad?lang=en" : "/privacidad"} className="font-semibold text-coral hover:underline">
+            {t("política de privacidad", "privacy policy")}
           </Link>
           .
         </p>
         <div className="mt-sp-3">
           {creator?.shareInsights ? (
-            <ShareInsightsButton share={false} label="Dejar de participar" variant="ghost" />
+            <ShareInsightsButton share={false} label={t("Dejar de participar", "Stop participating")} variant="ghost" />
           ) : (
-            <ShareInsightsButton share label="Sumarme" />
+            <ShareInsightsButton share label={t("Sumarme", "Join")} />
           )}
         </div>
       </Card>
       <Card>
         <div id="datos" className="scroll-mt-sp-6" />
-        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Tus datos</p>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Tus datos", "Your data")}</p>
         {session?.actorId ? (
-          <p className="text-sm text-ink/70">Mientras el equipo ayuda en esta cuenta, la descarga y los pedidos de datos no están disponibles.</p>
+          <p className="text-sm text-ink/70">
+            {t("Mientras el equipo ayuda en esta cuenta, la descarga y los pedidos de datos no están disponibles.", "While the team is helping on this account, data downloads and requests aren't available.")}
+          </p>
         ) : (
           <DataRequestForm />
         )}
@@ -119,8 +134,8 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
               return (
                 <li key={r.id} className="flex flex-col gap-sp-1">
                   <div className="flex flex-wrap items-center gap-sp-2">
-                    <span className="font-semibold text-ink">{dataRequestKindLabel(r.kind)}</span>
-                    <span className={`rounded-full px-[8px] py-px font-mono text-[10px] uppercase ${status.tone}`}>{status.label}</span>
+                    <span className="font-semibold text-ink">{dataRequestKindLabel(r.kind, lang)}</span>
+                    <span className={`rounded-full px-[8px] py-px font-mono text-[10px] uppercase ${status.tone}`}>{pickLabel(lang, status)}</span>
                     <span className="font-mono text-xs text-ink/50">{fmtDate(r.createdAt)}</span>
                   </div>
                   {r.resolution && <p className="text-ink/70">💬 {r.resolution}</p>}
@@ -131,12 +146,15 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         )}
       </Card>
       <Card>
-        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Accesos del equipo de Foliocrew</p>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Accesos del equipo de Foliocrew", "Foliocrew team access")}</p>
         <p className="text-sm text-ink/70">
-          Cada vez que alguien del equipo entra a tu cuenta para ayudarte (o saca una copia de tus datos) queda anotado aquí, con el motivo.
+          {t(
+            "Cada vez que alguien del equipo entra a tu cuenta para ayudarte (o saca una copia de tus datos) queda anotado aquí, con el motivo.",
+            "Every time someone from the team signs in to your account to help you (or exports a copy of your data), it's logged here with the reason."
+          )}
         </p>
         {teamAccess.length === 0 ? (
-          <p className="mt-sp-2 text-sm text-ink/60">Nadie del equipo ha entrado a tu cuenta.</p>
+          <p className="mt-sp-2 text-sm text-ink/60">{t("Nadie del equipo ha entrado a tu cuenta.", "Nobody from the team has signed in to your account.")}</p>
         ) : (
           <ul className="mt-sp-3 flex flex-col gap-sp-2 text-sm">
             {teamAccess.map((a) => (
@@ -144,7 +162,9 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
                 <span className="font-mono text-xs text-ink/50">{fmtDate(a.createdAt)}</span>
                 <span className="font-semibold text-ink">{a.actorEmail}</span>
                 <span className="text-ink/70">
-                  {a.action === "data-export" ? "Sacó una copia de tus datos" : `Entró a tu cuenta · ${accessReason(a.detail)}`}
+                  {a.action === "data-export"
+                    ? t("Sacó una copia de tus datos", "Exported a copy of your data")
+                    : `${t("Entró a tu cuenta", "Signed in to your account")} · ${accessReason(a.detail, t)}`}
                 </span>
               </li>
             ))}

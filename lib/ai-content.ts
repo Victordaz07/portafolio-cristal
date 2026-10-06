@@ -1,11 +1,17 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, assertAiQuota, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
+import { AI_MODEL, AiRefusalError, assertAiQuota, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
 import { CONTENT_TYPE_LABEL, NETWORK_META, type ContentType, type PlanNetwork } from "@/lib/content-plan";
 
 const SYSTEM = `Eres asistente de una persona creadora de contenido que trabaja con marcas (el contexto dice si publica en sus redes, hace UGC o ambas cosas).
 Escribes en español neutro latino, con tono cercano, auténtico y nada exagerado.
 No inventas datos sobre productos ni prometes resultados. Respeta las reglas y límites de cada red.`;
+
+/** Idioma de la respuesta: el del panel de quien la pide. */
+const languageNote = (lang: "es" | "en") =>
+  lang === "en"
+    ? "\nIMPORTANT: write everything in natural US English (captions, hashtags and tips), even if the context above is in Spanish."
+    : "";
 
 // Si un filtro de seguridad rechaza la petición, la API la reintenta sola con otro modelo.
 const SAFETY = { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const };
@@ -20,6 +26,7 @@ export async function suggestCaptions(input: {
   networks: PlanNetwork[];
   brandName?: string | null;
   draft?: string;
+  lang?: "es" | "en";
 }) {
   await assertAiQuota();
   const context = await getCreatorContext();
@@ -39,12 +46,12 @@ Escribe 3 opciones de caption para: ${CONTENT_TYPE_LABEL[input.contentType]} en 
 Tema: ${input.topic || "contenido de su nicho"}.
 ${input.brandName ? `Es una colaboración con la marca ${input.brandName}: menciónala de forma natural y agrega #publi o #ad al final.` : ""}
 ${input.draft ? `Borrador actual (mejóralo, no lo repitas): ${input.draft}` : ""}
-Cada opción: gancho en la primera línea, máximo 3 líneas cortas y 3 a 5 hashtags relevantes al final.`,
+Cada opción: gancho en la primera línea, máximo 3 líneas cortas y 3 a 5 hashtags relevantes al final.${languageNote(input.lang ?? "es")}`,
       },
     ],
   });
   await recordAiUsage("caption", response.usage);
-  if (response.stop_reason === "refusal") throw new Error("La IA no pudo generar esta sugerencia");
+  if (response.stop_reason === "refusal") throw new AiRefusalError();
   return response.parsed_output?.captions.slice(0, 3) ?? [];
 }
 
@@ -57,7 +64,7 @@ const TipsSchema = z.object({
   ),
 });
 
-export async function suggestNetworkTips(input: { caption: string; contentType: ContentType; networks: PlanNetwork[] }) {
+export async function suggestNetworkTips(input: { caption: string; contentType: ContentType; networks: PlanNetwork[]; lang?: "es" | "en" }) {
   await assertAiQuota();
   const labels = input.networks.map((n) => NETWORK_META[n].label);
   const response = await getAiClient().beta.messages.parse({
@@ -75,12 +82,12 @@ Caption:
 ${input.caption}
 """
 Para cada red da 2 o 3 consejos breves (una línea cada uno) sobre cómo ejecutarlo ahí: duración o formato,
-gancho de los primeros segundos, ajuste del texto o hashtags, y mejor hora si aplica. Sin introducciones.`,
+gancho de los primeros segundos, ajuste del texto o hashtags, y mejor hora si aplica. Sin introducciones.${languageNote(input.lang ?? "es")}`,
       },
     ],
   });
   await recordAiUsage("tips", response.usage);
-  if (response.stop_reason === "refusal") throw new Error("La IA no pudo analizar este caption");
+  if (response.stop_reason === "refusal") throw new AiRefusalError();
   const byLabel = new Map(response.parsed_output?.networks.map((n) => [n.network.toLowerCase(), n.tips]) ?? []);
   return input.networks.map((network) => ({
     network,

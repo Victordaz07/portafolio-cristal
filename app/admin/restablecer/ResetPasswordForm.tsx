@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useT } from "@/components/admin/AdminLang";
 
 const inputClass = "rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral";
 
 export default function ResetPasswordForm({ token }: { token: string }) {
+  const { t } = useT();
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -14,8 +16,8 @@ export default function ResetPasswordForm({ token }: { token: string }) {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (password.length < 8) return setError("La contraseña debe tener al menos 8 caracteres");
-    if (password !== confirm) return setError("Las contraseñas no coinciden");
+    if (password.length < 8) return setError(t("La contraseña debe tener al menos 8 caracteres", "Password must be at least 8 characters"));
+    if (password !== confirm) return setError(t("Las contraseñas no coinciden", "Passwords don't match"));
     setError("");
     setLoading(true);
     const response = await fetch("/api/admin/password/reset", {
@@ -29,19 +31,19 @@ export default function ResetPasswordForm({ token }: { token: string }) {
       return;
     }
     const body = (await response.json().catch(() => ({}))) as { error?: string };
-    setError(body.error ?? "No se pudo guardar; intenta de nuevo");
+    setError(body.error ?? t("No se pudo guardar; intenta de nuevo", "Couldn't save; try again"));
     setLoading(false);
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-sp-4">
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Contraseña nueva</span>
+        <span className="text-sm font-medium text-ink">{t("Contraseña nueva", "New password")}</span>
         <input type="password" required minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className={inputClass} />
-        <span className="text-xs text-ink/50">Mínimo 8 caracteres.</span>
+        <span className="text-xs text-ink/50">{t("Mínimo 8 caracteres.", "At least 8 characters.")}</span>
       </label>
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Repite la contraseña</span>
+        <span className="text-sm font-medium text-ink">{t("Repite la contraseña", "Repeat the password")}</span>
         <input type="password" required autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className={inputClass} />
       </label>
       {error && (
@@ -54,7 +56,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
         disabled={loading}
         className="mt-sp-2 rounded-sm bg-coral text-white font-medium py-sp-3 hover:opacity-90 disabled:opacity-60 transition"
       >
-        {loading ? "Guardando…" : "Guardar y entrar"}
+        {loading ? t("Guardando…", "Saving…") : t("Guardar y entrar", "Save and sign in")}
       </button>
     </form>
   );

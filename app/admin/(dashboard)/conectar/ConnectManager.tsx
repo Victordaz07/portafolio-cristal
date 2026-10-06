@@ -8,6 +8,9 @@ import { useToast } from "@/components/admin/ToastContext";
 import { primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { formatShortDate, daysUntil } from "@/lib/crm";
 import type { PlatformId, RecentItem, SocialProfile } from "@/lib/social/types";
+import { socialCopy, socialError } from "@/lib/social/copy-en";
+import { dateLocale, type AdminLang } from "@/lib/admin-lang";
+import { useT } from "@/components/admin/AdminLang";
 
 export interface PlatformCard {
   id: PlatformId;
@@ -67,12 +70,13 @@ const BADGES: Record<PlatformId, { initials: string; className: string }> = {
 
 const eyebrowClass = "font-mono text-[10px] uppercase tracking-[0.12em] text-ink/55";
 
-function formatCount(value: number | null | undefined) {
+function formatCount(value: number | null | undefined, lang: AdminLang = "es") {
   if (value == null) return "—";
-  return value.toLocaleString("es-ES");
+  return value.toLocaleString(dateLocale(lang));
 }
 
 function CopyButton({ value }: { value: string }) {
+  const { t } = useT();
   const [copied, setCopied] = useState(false);
   return (
     <button
@@ -88,33 +92,34 @@ function CopyButton({ value }: { value: string }) {
       }}
       className="shrink-0 rounded-full border border-line px-2.5 py-1 text-[11px] font-semibold text-ink/70 hover:border-coral hover:text-coral"
     >
-      {copied ? "¡Copiado!" : "Copiar"}
+      {copied ? t("¡Copiado!", "Copied!") : t("Copiar", "Copy")}
     </button>
   );
 }
 
 function StatusPill({ card }: { card: PlatformCard }) {
+  const { t } = useT();
   if (card.account) {
     return card.account.lastError ? (
       <span className="rounded-full bg-coral/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-coral">
-        Con error
+        {t("Con error", "Error")}
       </span>
     ) : (
       <span className="rounded-full bg-sage/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-cobalt">
-        Conectada
+        {t("Conectada", "Connected")}
       </span>
     );
   }
   if (!card.configured) {
     return (
       <span className="rounded-full bg-ink/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-ink/60">
-        Sin configurar
+        {t("Sin configurar", "Not set up")}
       </span>
     );
   }
   return (
     <span className="rounded-full bg-lime/35 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-ink">
-      Lista para conectar
+      {t("Lista para conectar", "Ready to connect")}
     </span>
   );
 }
@@ -136,6 +141,7 @@ export default function ConnectManager({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const { t, lang } = useT();
   const [results, setResults] = useState<Partial<Record<PlatformId, TestResult>>>({});
   const [testing, setTesting] = useState<PlatformId | null>(null);
   const [confirmDisconnect, setConfirmDisconnect] = useState<PlatformCard | null>(null);
@@ -150,10 +156,10 @@ export default function ConnectManager({
       const response = await fetch(`/api/admin/connect/${card.id}/test`, { method: "POST" });
       const result: TestResult = await response.json();
       setResults((current) => ({ ...current, [card.id]: result }));
-      showToast(result.ok ? "success" : "error", result.ok ? `${card.label} respondió bien` : `${card.label}: falló la prueba`);
+      showToast(result.ok ? "success" : "error", result.ok ? t(`${card.label} respondió bien`, `${card.label} responded OK`) : t(`${card.label}: falló la prueba`, `${card.label}: the test failed`));
       router.refresh();
     } catch {
-      showToast("error", "No se pudo hacer la prueba");
+      showToast("error", t("No se pudo hacer la prueba", "Couldn't run the test"));
     } finally {
       setTesting(null);
     }
@@ -163,11 +169,11 @@ export default function ConnectManager({
     setConfirmDisconnect(null);
     const response = await fetch(`/api/admin/connect/${card.id}`, { method: "DELETE" });
     if (!response.ok) {
-      showToast("error", "No se pudo desconectar");
+      showToast("error", t("No se pudo desconectar", "Couldn't disconnect"));
       return;
     }
     setResults((current) => ({ ...current, [card.id]: undefined }));
-    showToast("success", `${card.label} desconectada`);
+    showToast("success", t(`${card.label} desconectada`, `${card.label} disconnected`));
     router.refresh();
   }
 
@@ -177,7 +183,7 @@ export default function ConnectManager({
       const response = await fetch("/api/admin/ai/test", { method: "POST" });
       setAiResult(await response.json());
     } catch {
-      setAiResult({ ok: false, error: "No se pudo contactar al servidor" });
+      setAiResult({ ok: false, error: t("No se pudo contactar al servidor", "Couldn't reach the server") });
     } finally {
       setAiTesting(false);
     }
@@ -187,29 +193,29 @@ export default function ConnectManager({
     <div className="flex flex-col gap-sp-5">
       {connectedLabel && (
         <p className="rounded-[14px] bg-sage/30 px-sp-4 py-sp-3 text-sm font-semibold text-cobalt">
-          ✓ {connectedLabel} quedó conectada. Toca “Probar” para ver qué devuelve la API.
+          ✓ {t(`${connectedLabel} quedó conectada. Toca “Probar” para ver qué devuelve la API.`, `${connectedLabel} is connected. Tap “Test” to see what the API returns.`)}
         </p>
       )}
       {flash.error && (
         <p className="rounded-[14px] bg-coral/15 px-sp-4 py-sp-3 text-sm font-semibold text-moss">
-          No se pudo conectar — {flash.error}
+          {t("No se pudo conectar", "Couldn't connect")} — {flash.error}
         </p>
       )}
 
       {domainMismatch && (
         <p className="rounded-[14px] bg-lime/35 px-sp-4 py-sp-3 text-sm text-ink">
-          <strong>Ojo:</strong> estás en <code className="font-mono text-xs">{domainMismatch.currentOrigin}</code>, pero{" "}
-          <code className="font-mono text-xs">APP_URL</code> es{" "}
-          <code className="font-mono text-xs">{domainMismatch.appUrl}</code>. Para conectar, abre el panel desde{" "}
+          <strong>{t("Ojo:", "Heads up:")}</strong> {t("estás en", "you're on")} <code className="font-mono text-xs">{domainMismatch.currentOrigin}</code>, {t("pero", "but")}{" "}
+          <code className="font-mono text-xs">APP_URL</code> {t("es", "is")}{" "}
+          <code className="font-mono text-xs">{domainMismatch.appUrl}</code>. {t("Para conectar, abre el panel desde", "To connect, open the dashboard from")}{" "}
           <a href={`${domainMismatch.appUrl}/admin/conectar`} className="font-semibold text-coral hover:underline">
             {domainMismatch.appUrl}
           </a>
-          ; si no, la red te devolverá a una dirección donde no tienes la sesión iniciada.
+          {t("; si no, la red te devolverá a una dirección donde no tienes la sesión iniciada.", "; otherwise the network will send you back to an address where you aren't signed in.")}
         </p>
       )}
 
       <Card>
-        <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">Configuración general</p>
+        <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Configuración general", "General setup")}</p>
         <ul className="flex flex-col gap-sp-3">
           {setup.map((item) => (
             <li key={item.key} className="flex gap-sp-3 text-sm">
@@ -224,7 +230,7 @@ export default function ConnectManager({
               <div>
                 <code className="font-mono text-[13px] font-bold text-ink">{item.key}</code>
                 {!item.ok && (
-                  <span className="ml-sp-2 text-xs text-ink/50">{item.optional ? "recomendada" : "falta"}</span>
+                  <span className="ml-sp-2 text-xs text-ink/50">{item.optional ? t("recomendada", "recommended") : t("falta", "missing")}</span>
                 )}
                 <p className="text-[13px] text-ink/60">{item.help}</p>
               </div>
@@ -232,17 +238,17 @@ export default function ConnectManager({
           ))}
         </ul>
         <p className="mt-sp-4 text-xs text-ink/50">
-          Las variables se agregan en Vercel → tu proyecto → Settings → Environment Variables, y luego hay que
-          volver a desplegar. La guía paso a paso está en <code>docs/conectar-cuentas.md</code>.
+          {t("Las variables se agregan en Vercel → tu proyecto → Settings → Environment Variables, y luego hay que volver a desplegar. La guía paso a paso está en", "Variables are added in Vercel → your project → Settings → Environment Variables, then you redeploy. The step-by-step guide is in")}{" "}
+          <code>docs/conectar-cuentas.md</code>.
         </p>
       </Card>
 
       <Card>
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-coral">URLs para las apps de cada red</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("URLs para las apps de cada red", "URLs for each network's app")}</p>
         <p className="mt-sp-1 text-[13px] text-ink/60">
-          Meta, TikTok y Google piden estas páginas al crear la app y para aprobarla. Van en inglés (
-          <code className="font-mono text-xs">?lang=en</code>) porque los revisores leen en inglés; en tu sitio se ven en
-          español.
+          {t("Meta, TikTok y Google piden estas páginas al crear la app y para aprobarla. Van en inglés", "Meta, TikTok and Google ask for these pages when you create the app and to approve it. They're in English")} (
+          <code className="font-mono text-xs">?lang=en</code>){" "}
+          {t("porque los revisores leen en inglés; en tu sitio se ven en español.", "because reviewers read English; visitors can switch languages on your site.")}
         </p>
         <ul className="mt-sp-3 flex flex-col gap-sp-2">
           {reviewUrls.map((item) => (
@@ -298,18 +304,19 @@ export default function ConnectManager({
                         ? `${account.displayName} · @${account.username.replace(/^@/, "")}`
                         : account.username
                           ? `@${account.username.replace(/^@/, "")}`
-                          : account.displayName ?? "Cuenta conectada"}
+                          : account.displayName ?? t("Cuenta conectada", "Connected account")}
                     </p>
                     <p className="text-xs text-ink/60">
-                      {formatCount(account.followers)} seguidores · conectada el {formatShortDate(account.connectedAt)}
-                      {expiresIn != null && ` · token vence ${expiresIn <= 0 ? "ya (se renueva al probar)" : `en ${expiresIn}d`}`}
+                      {formatCount(account.followers, lang)} {t("seguidores", "followers")} · {t("conectada el", "connected on")} {formatShortDate(account.connectedAt, lang)}
+                      {expiresIn != null &&
+                        ` · ${t("token vence", "token expires")} ${expiresIn <= 0 ? t("ya (se renueva al probar)", "now (renews when you test)") : t(`en ${expiresIn}d`, `in ${expiresIn}d`)}`}
                     </p>
-                    {account.lastError && <p className="mt-1 text-xs font-semibold text-coral">Último error: {account.lastError}</p>}
+                    {account.lastError && <p className="mt-1 text-xs font-semibold text-coral">{t("Último error:", "Last error:")} {socialError(lang, account.lastError)}</p>}
                   </div>
                 </div>
               ) : !card.configured ? (
                 <div className="rounded-[14px] bg-cream px-sp-4 py-sp-3 text-[13px] text-ink/70">
-                  Faltan estas variables de entorno:{" "}
+                  {t("Faltan estas variables de entorno:", "These environment variables are missing:")}{" "}
                   {card.missingEnv.map((key) => (
                     <code key={key} className="mr-1 rounded bg-white px-1.5 py-0.5 font-mono text-xs font-bold text-ink">
                       {key}
@@ -319,7 +326,7 @@ export default function ConnectManager({
               ) : null}
 
               <div>
-                <p className={eyebrowClass}>URL de redirección (cópiala en la consola de {card.label})</p>
+                <p className={eyebrowClass}>{t(`URL de redirección (cópiala en la consola de ${card.label})`, `Redirect URL (paste it in the ${card.label} console)`)}</p>
                 <div className="mt-sp-1 flex items-center gap-sp-2">
                   <code className="min-w-0 flex-1 truncate rounded-[10px] border border-line bg-white px-sp-3 py-sp-2 font-mono text-[11px] text-ink">
                     {card.redirectUri}
@@ -327,16 +334,16 @@ export default function ConnectManager({
                   <CopyButton value={card.redirectUri} />
                 </div>
                 <p className="mt-sp-1 text-[11px] text-ink/45">
-                  Permisos que se piden: {card.scopes.map((s) => s.replace("https://www.googleapis.com/auth/", "")).join(", ")} ·{" "}
+                  {t("Permisos que se piden:", "Requested permissions:")} {card.scopes.map((s) => s.replace("https://www.googleapis.com/auth/", "")).join(", ")} ·{" "}
                   <a href={card.consoleUrl} target="_blank" rel="noreferrer" className="text-coral hover:underline">
-                    Abrir consola ↗
+                    {t("Abrir consola ↗", "Open console ↗")}
                   </a>
                 </p>
               </div>
 
               <div className="grid gap-sp-3 sm:grid-cols-3">
                 <div>
-                  <p className={eyebrowClass}>Ya funciona</p>
+                  <p className={eyebrowClass}>{t("Ya funciona", "Works now")}</p>
                   <ul className="mt-sp-1 flex flex-col gap-1 text-[13px] text-ink/80">
                     {card.can.map((line) => (
                       <li key={line}>✓ {line}</li>
@@ -344,7 +351,7 @@ export default function ConnectManager({
                   </ul>
                 </div>
                 <div>
-                  <p className={eyebrowClass}>Posible más adelante</p>
+                  <p className={eyebrowClass}>{t("Posible más adelante", "Possible later")}</p>
                   <ul className="mt-sp-1 flex flex-col gap-1 text-[13px] text-ink/70">
                     {card.later.map((line) => (
                       <li key={line}>◷ {line}</li>
@@ -352,7 +359,7 @@ export default function ConnectManager({
                   </ul>
                 </div>
                 <div>
-                  <p className={eyebrowClass}>No se puede</p>
+                  <p className={eyebrowClass}>{t("No se puede", "Not possible")}</p>
                   <ul className="mt-sp-1 flex flex-col gap-1 text-[13px] text-ink/60">
                     {card.cannot.map((line) => (
                       <li key={line}>✕ {line}</li>
@@ -365,11 +372,11 @@ export default function ConnectManager({
                 {card.configured && encryptionReady ? (
                   // Navegación completa (no fetch): la red muestra su propia pantalla de login.
                   <a href={`/api/admin/connect/${card.id}/start`} className={account ? secondaryButtonClass : primaryButtonClass}>
-                    {account ? "Volver a conectar" : `Conectar ${card.label}`}
+                    {account ? t("Volver a conectar", "Reconnect") : t(`Conectar ${card.label}`, `Connect ${card.label}`)}
                   </a>
                 ) : (
                   <span className={`${secondaryButtonClass} cursor-not-allowed opacity-50`}>
-                    {card.configured ? "Falta TOKEN_ENCRYPTION_KEY" : "Configura las variables primero"}
+                    {card.configured ? t("Falta TOKEN_ENCRYPTION_KEY", "TOKEN_ENCRYPTION_KEY is missing") : t("Configura las variables primero", "Set up the variables first")}
                   </span>
                 )}
                 {account && (
@@ -380,14 +387,14 @@ export default function ConnectManager({
                       disabled={testing === card.id}
                       className={primaryButtonClass}
                     >
-                      {testing === card.id ? "Probando…" : "Probar"}
+                      {testing === card.id ? t("Probando…", "Testing…") : t("Probar", "Test")}
                     </button>
                     <button
                       type="button"
                       onClick={() => setConfirmDisconnect(card)}
                       className="px-sp-2 text-sm font-medium text-ink/50 hover:text-ink"
                     >
-                      Desconectar
+                      {t("Desconectar", "Disconnect")}
                     </button>
                   </>
                 )}
@@ -406,41 +413,41 @@ export default function ConnectManager({
               ✦
             </span>
             <div>
-              <h2 className="font-fraunces text-[22px] font-semibold text-ink">IA (Claude)</h2>
-              <p className="text-xs text-ink/55">Para “Sugerir con IA” en Crear publicación · modelo {ai.model}</p>
+              <h2 className="font-fraunces text-[22px] font-semibold text-ink">{t("IA (Claude)", "AI (Claude)")}</h2>
+              <p className="text-xs text-ink/55">{t("Para “Sugerir con IA” en Crear publicación · modelo", "For “Suggest with AI” in Create post · model")} {ai.model}</p>
             </div>
           </div>
           {ai.configured ? (
             <span className="rounded-full bg-sage/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-cobalt">
-              Configurada
+              {t("Configurada", "Set up")}
             </span>
           ) : (
             <span className="rounded-full bg-ink/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-ink/60">
-              Sin configurar
+              {t("Sin configurar", "Not set up")}
             </span>
           )}
         </div>
         {!ai.configured && (
           <p className="text-[13px] text-ink/70">
-            Falta <code className="font-mono font-bold">ANTHROPIC_API_KEY</code>. Créala en{" "}
+            {t("Falta", "Missing")} <code className="font-mono font-bold">ANTHROPIC_API_KEY</code>. {t("Créala en", "Create it at")}{" "}
             <a href="https://platform.claude.com/settings/keys" target="_blank" rel="noreferrer" className="text-coral hover:underline">
               platform.claude.com ↗
             </a>{" "}
-            y agrégala en Vercel.
+            {t("y agrégala en Vercel.", "and add it in Vercel.")}
           </p>
         )}
         <div>
           <button type="button" onClick={runAiTest} disabled={!ai.configured || aiTesting} className={primaryButtonClass}>
-            {aiTesting ? "Probando…" : "Probar IA"}
+            {aiTesting ? t("Probando…", "Testing…") : t("Probar IA", "Test AI")}
           </button>
         </div>
         {aiResult &&
           (aiResult.ok ? (
             <div className="rounded-[14px] bg-ink p-sp-4 text-cream">
-              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-lime">Respuesta de prueba</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-lime">{t("Respuesta de prueba", "Test response")}</p>
               <p className="mt-sp-2 font-fraunces text-lg italic">{aiResult.sample}</p>
               <p className="mt-sp-2 text-xs text-cream/60">
-                {aiResult.model} · {aiResult.ms} ms · {aiResult.usage?.input} tokens de entrada / {aiResult.usage?.output} de salida
+                {aiResult.model} · {aiResult.ms} ms · {aiResult.usage?.input} {t("tokens de entrada", "input tokens")} / {aiResult.usage?.output} {t("de salida", "output")}
               </p>
             </div>
           ) : (
@@ -450,9 +457,9 @@ export default function ConnectManager({
 
       {confirmDisconnect && (
         <ConfirmDialog
-          title={`Desconectar ${confirmDisconnect.label}`}
-          description="Se borran los tokens guardados. Para quitar el permiso por completo, revócalo también desde la configuración de la red."
-          confirmLabel="Desconectar"
+          title={t(`Desconectar ${confirmDisconnect.label}`, `Disconnect ${confirmDisconnect.label}`)}
+          description={t("Se borran los tokens guardados. Para quitar el permiso por completo, revócalo también desde la configuración de la red.", "The saved tokens are deleted. To remove the permission completely, also revoke it from the network's settings.")}
+          confirmLabel={t("Desconectar", "Disconnect")}
           onConfirm={() => disconnect(confirmDisconnect)}
           onCancel={() => setConfirmDisconnect(null)}
         />
@@ -462,11 +469,12 @@ export default function ConnectManager({
 }
 
 function TestResultView({ result }: { result: TestResult }) {
+  const { t, lang } = useT();
   if (!result.ok) {
     return (
       <div className="rounded-[14px] bg-coral/15 px-sp-4 py-sp-3 text-sm text-moss">
-        <p className="font-semibold">La API respondió con error</p>
-        <p className="mt-1 break-words font-mono text-xs">{result.error}</p>
+        <p className="font-semibold">{t("La API respondió con error", "The API returned an error")}</p>
+        <p className="mt-1 break-words font-mono text-xs">{result.error && socialError(lang, result.error)}</p>
       </div>
     );
   }
@@ -474,26 +482,26 @@ function TestResultView({ result }: { result: TestResult }) {
   return (
     <div className="rounded-[14px] bg-ink p-sp-4 text-cream">
       <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-lime">
-        Respuesta de la API{result.refreshed ? " · token renovado" : ""}
+        {t("Respuesta de la API", "API response")}{result.refreshed ? t(" · token renovado", " · token renewed") : ""}
       </p>
       {profile && (
         <div className="mt-sp-2 grid grid-cols-2 gap-sp-3 sm:grid-cols-4">
           <div>
-            <p className="font-fraunces text-xl font-semibold">{formatCount(profile.followers)}</p>
-            <p className="text-[11px] text-cream/60">Seguidores</p>
+            <p className="font-fraunces text-xl font-semibold">{formatCount(profile.followers, lang)}</p>
+            <p className="text-[11px] text-cream/60">{t("Seguidores", "Followers")}</p>
           </div>
           {Object.entries(profile.extra).map(([label, value]) => (
             <div key={label}>
               <p className="truncate font-fraunces text-xl font-semibold">
-                {typeof value === "number" ? formatCount(value) : value ?? "—"}
+                {typeof value === "number" ? formatCount(value, lang) : socialCopy(lang, String(value ?? "—"))}
               </p>
-              <p className="text-[11px] text-cream/60">{label}</p>
+              <p className="text-[11px] text-cream/60">{socialCopy(lang, label)}</p>
             </div>
           ))}
         </div>
       )}
       <p className="mt-sp-4 font-mono text-[10px] uppercase tracking-[0.12em] text-lime">
-        Publicaciones recientes ({result.recent?.length ?? 0})
+        {t("Publicaciones recientes", "Recent posts")} ({result.recent?.length ?? 0})
       </p>
       {result.recent && result.recent.length > 0 ? (
         <ul className="mt-sp-2 flex flex-col gap-sp-2">
@@ -512,12 +520,12 @@ function TestResultView({ result }: { result: TestResult }) {
                   rel="noreferrer"
                   className="block truncate text-[13px] font-semibold hover:underline"
                 >
-                  {item.title || "(sin texto)"}
+                  {item.title || t("(sin texto)", "(no text)")}
                 </a>
                 <p className="text-[11px] text-cream/60">
                   {[
-                    item.publishedAt ? formatShortDate(item.publishedAt) : null,
-                    ...Object.entries(item.metrics).map(([label, value]) => `${formatCount(value)} ${label.toLowerCase()}`),
+                    item.publishedAt ? formatShortDate(item.publishedAt, lang) : null,
+                    ...Object.entries(item.metrics).map(([label, value]) => `${formatCount(value, lang)} ${socialCopy(lang, label).toLowerCase()}`),
                   ]
                     .filter(Boolean)
                     .join(" · ")}
@@ -527,7 +535,7 @@ function TestResultView({ result }: { result: TestResult }) {
           ))}
         </ul>
       ) : (
-        <p className="mt-sp-2 text-[13px] text-cream/60">La API no devolvió publicaciones.</p>
+        <p className="mt-sp-2 text-[13px] text-cream/60">{t("La API no devolvió publicaciones.", "The API returned no posts.")}</p>
       )}
     </div>
   );

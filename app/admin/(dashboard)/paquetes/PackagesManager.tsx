@@ -8,6 +8,7 @@ import ReorderButtons from "@/components/admin/ReorderButtons";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass, rowCardStartClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
+import { useT } from "@/components/admin/AdminLang";
 
 const API_BASE = "/api/admin/packages";
 
@@ -21,6 +22,7 @@ function toItems(text: string) {
 }
 
 export default function PackagesManager({ initialPackages }: { initialPackages: Package[] }) {
+  const { t, lang } = useT();
   const { showToast } = useToast();
   const [packages, setPackages] = useState(initialPackages);
   const [form, setForm] = useState(EMPTY);
@@ -31,7 +33,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
     event.preventDefault();
     const items = toItems(form.itemsText);
     if (items.length === 0) {
-      showToast("error", "Agrega al menos un ítem");
+      showToast("error", t("Agrega al menos un ítem", "Add at least one item"));
       return;
     }
 
@@ -51,25 +53,25 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      showToast("error", data.error ?? "No se pudo agregar el paquete");
+      showToast("error", data.error ?? t("No se pudo agregar el paquete", "Couldn't add the package"));
       return;
     }
 
     const created: Package = await response.json();
     setPackages((current) => [...current, created]);
     setForm(EMPTY);
-    showToast("success", "Paquete agregado");
+    showToast("success", t("Paquete agregado", "Package added"));
   }
 
   async function handleDelete(pkg: Package) {
     const response = await fetch(`${API_BASE}/${pkg.id}`, { method: "DELETE" });
     setPendingDelete(null);
     if (!response.ok) {
-      showToast("error", "No se pudo eliminar");
+      showToast("error", t("No se pudo eliminar", "Couldn't delete"));
       return;
     }
     setPackages((current) => current.filter((item) => item.id !== pkg.id));
-    showToast("success", "Paquete eliminado");
+    showToast("success", t("Paquete eliminado", "Package deleted"));
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -90,7 +92,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
             />
             <div className="flex-1">
               <p className="font-medium text-ink">
-                {pkg.emoji} {pkg.name}
+                {pkg.emoji} {(lang === "en" && pkg.nameEn) || pkg.name}
                 {pkg.nameEn && <span className="text-ink/40"> · {pkg.nameEn}</span>}
               </p>
               <ul className="mt-sp-1 list-disc pl-sp-5 text-sm text-ink/60">
@@ -111,7 +113,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
               onClick={() => setPendingDelete(pkg)}
               className={dangerLinkClass}
             >
-              Eliminar
+              {t("Eliminar", "Delete")}
             </button>
           </li>
         ))}
@@ -128,7 +130,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
             />
           </label>
           <BilingualTextField
-            label="Nombre del paquete"
+            label={t("Nombre del paquete", "Package name")}
             es={form.name}
             en={form.nameEn}
             onEsChange={(v) => setForm((c) => ({ ...c, name: v }))}
@@ -137,7 +139,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
           />
         </div>
         <BilingualTextField
-          label="Qué incluye (un ítem por línea)"
+          label={t("Qué incluye (un ítem por línea)", "What's included (one item per line)")}
           es={form.itemsText}
           en={form.itemsTextEn}
           onEsChange={(v) => setForm((c) => ({ ...c, itemsText: v }))}
@@ -147,14 +149,14 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
           required
         />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-          {saving ? "Agregando..." : "+ agregar paquete"}
+          {saving ? t("Agregando...", "Adding...") : t("+ agregar paquete", "+ add package")}
         </button>
       </form>
 
       {pendingDelete && (
         <ConfirmDialog
-          title="Eliminar paquete"
-          description={`¿Eliminar "${pendingDelete.name}"?`}
+          title={t("Eliminar paquete", "Delete package")}
+          description={t(`¿Eliminar "${pendingDelete.name}"?`, `Delete "${pendingDelete.name}"?`)}
           onConfirm={() => handleDelete(pendingDelete)}
           onCancel={() => setPendingDelete(null)}
         />

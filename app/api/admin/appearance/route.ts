@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { ACCENTS } from "@/lib/theme";
 import { BACKGROUNDS, CORNERS, FONTS, HEROES, SECONDARY, SECTION_IDS, STYLES, normalizeSections } from "@/lib/design";
 import { LINK_PATTERNS } from "@/lib/bio-links";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -40,17 +41,18 @@ const schema = z.object({
 
 /** Guarda el perfil público (nombre, foto, bio) y el diseño del sitio (Estudio de diseño). */
 export async function PATCH(request: Request) {
+  const { t } = await getT();
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Revisa el nombre, la foto y las opciones de diseño" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Revisa el nombre, la foto y las opciones de diseño", "Check the name, the photo and the design options") }, { status: 400 });
   const d = parsed.data;
-  if (d.accentColor === "custom" && !d.customAccent) return NextResponse.json({ error: "Elige tu color propio" }, { status: 400 });
+  if (d.accentColor === "custom" && !d.customAccent) return NextResponse.json({ error: t("Elige tu color propio", "Choose your custom color") }, { status: 400 });
 
   const [hero, settings] = await Promise.all([
     prisma.hero.findFirst({ select: { id: true } }),
     prisma.siteSettings.findFirst({ select: { id: true } }),
   ]);
   if (!hero || !settings) {
-    return NextResponse.json({ error: "Primero completa la Portada (Hero) y Contacto y pie" }, { status: 400 });
+    return NextResponse.json({ error: t("Primero completa la Portada (Hero) y Contacto y pie", "First complete the Cover (Hero) and Contact & footer") }, { status: 400 });
   }
   await prisma.$transaction([
     prisma.hero.update({

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prismaRoot } from "@/lib/prisma-root";
 import { requireRole, teamDisplayName } from "@/lib/team";
 import { notifyCustomerOfReply } from "@/lib/support-notify";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,13 +15,14 @@ const replySchema = z.object({
 
 /** El equipo responde un ticket o agrega una nota interna. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const user = await requireRole("support");
-  if (!user) return NextResponse.json({ error: "Solo el equipo del Centro de ayuda" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: t("Solo el equipo del Centro de ayuda", "Help center team only") }, { status: 403 });
   const { id } = await params;
   const ticket = await prismaRoot.supportTicket.findUnique({ where: { id } });
-  if (!ticket) return NextResponse.json({ error: "No encontré ese ticket" }, { status: 404 });
+  if (!ticket) return NextResponse.json({ error: t("No encontré ese ticket", "Couldn't find that ticket") }, { status: 404 });
   const parsed = replySchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Escribe la respuesta" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Escribe la respuesta", "Write the reply") }, { status: 400 });
   const { message, internal } = parsed.data;
   const name = teamDisplayName(user);
 
@@ -47,11 +49,12 @@ const patchSchema = z.object({
 
 /** Cambiar estado o asignación de un ticket. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const user = await requireRole("support");
-  if (!user) return NextResponse.json({ error: "Solo el equipo del Centro de ayuda" }, { status: 403 });
+  if (!user) return NextResponse.json({ error: t("Solo el equipo del Centro de ayuda", "Help center team only") }, { status: 403 });
   const { id } = await params;
   const parsed = patchSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const { status, assignedTo } = parsed.data;
   const updated = await prismaRoot.supportTicket
     .update({
@@ -62,6 +65,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       },
     })
     .catch(() => null);
-  if (!updated) return NextResponse.json({ error: "No encontré ese ticket" }, { status: 404 });
+  if (!updated) return NextResponse.json({ error: t("No encontré ese ticket", "Couldn't find that ticket") }, { status: 404 });
   return NextResponse.json({ ok: true });
 }

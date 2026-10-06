@@ -58,18 +58,20 @@ export function toBrandData(input: BrandFieldsInput) {
 /** Entradas automáticas del historial cuando cambia el estado del trato o del pago. */
 export function autoEventNotes(
   before: { dealStatus: string | null; paymentStatus: string | null },
-  input: BrandFieldsInput
+  input: BrandFieldsInput,
+  lang: "es" | "en" = "es"
 ) {
+  const en = lang === "en";
   const notes: string[] = [];
   if (input.dealStatus !== undefined && input.dealStatus !== before.dealStatus) {
     notes.push(
       input.dealStatus
-        ? `Estado: ${DEAL_STATUS_META[input.dealStatus].label}`
-        : "Trato quitado (solo portafolio)"
+        ? `${en ? "Status" : "Estado"}: ${DEAL_STATUS_META[input.dealStatus][en ? "labelEn" : "label"]}`
+        : en ? "Deal removed (portfolio only)" : "Trato quitado (solo portafolio)"
     );
   }
   if (input.paymentStatus !== undefined && input.paymentStatus !== before.paymentStatus && input.paymentStatus) {
-    notes.push(`Pago: ${PAYMENT_STATUS_META[input.paymentStatus].label}`);
+    notes.push(`${en ? "Payment" : "Pago"}: ${PAYMENT_STATUS_META[input.paymentStatus][en ? "labelEn" : "label"]}`);
   }
   return notes;
 }

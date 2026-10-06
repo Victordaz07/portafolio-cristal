@@ -3,8 +3,10 @@ import PageHeader from "@/components/admin/PageHeader";
 import { sessionCreatorSite } from "@/lib/site-url";
 import { ensureLinkGroups } from "@/lib/link-page";
 import LinkEditor from "./LinkEditor";
+import { getT } from "@/lib/admin-lang-server";
 
 export default async function AdminLinksPage() {
+  const { t } = await getT();
   const [groups, site, settings, hero] = await Promise.all([
     ensureLinkGroups(),
     sessionCreatorSite(),
@@ -30,9 +32,9 @@ export default async function AdminLinksPage() {
   return (
     <div>
       <PageHeader
-        eyebrow="Landing"
-        title="Link en bio"
-        description="Tu página para la bio de Instagram y TikTok. Decide qué se ve, en qué orden y cómo: toca cualquier parte de la vista previa para editarla."
+        eyebrow={t("Landing", "Landing page")}
+        title={t("Link en bio", "Link in bio")}
+        description={t("Tu página para la bio de Instagram y TikTok. Decide qué se ve, en qué orden y cómo: toca cualquier parte de la vista previa para editarla.", "Your page for your Instagram and TikTok bio. Decide what shows, in what order and how: tap any part of the preview to edit it.")}
       />
       <LinkEditor
         initialGroups={groups}

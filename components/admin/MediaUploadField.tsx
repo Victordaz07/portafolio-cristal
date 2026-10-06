@@ -6,6 +6,7 @@ import { useToast } from "./ToastContext";
 import ImageCropModal, { type AspectOption } from "./ImageCropModal";
 import { cropMimeFor, extensionFor } from "@/lib/image-crop";
 import { MAX_VIDEO_BYTES, MAX_PHOTO_BYTES, formatMb } from "@/lib/upload-limits";
+import { useT } from "@/components/admin/AdminLang";
 
 const DIACRITICS_PATTERN = new RegExp("[\\u0300-\\u036f]", "g");
 
@@ -34,6 +35,7 @@ export default function MediaUploadField({
   /** Texto corto de la medida ideal, ej. "1080 × 1350 px". */
   recommendedSize?: string;
 }) {
+  const { t } = useT();
   const { showToast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -41,16 +43,19 @@ export default function MediaUploadField({
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [cropIsNewFile, setCropIsNewFile] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
-  const noun = kind === "video" ? "el video" : "la foto";
+  const noun = kind === "video" ? t("el video", "the video") : t("la foto", "the photo");
   const aspectOptions: AspectOption[] | null =
-    kind === "photo" && aspect != null ? (Array.isArray(aspect) ? aspect : [{ label: "Recorte", value: aspect }]) : null;
+    kind === "photo" && aspect != null ? (Array.isArray(aspect) ? aspect : [{ label: t("Recorte", "Crop"), value: aspect }]) : null;
 
   async function uploadFile(file: File) {
     const maxBytes = kind === "video" ? MAX_VIDEO_BYTES : MAX_PHOTO_BYTES;
     if (file.size > maxBytes) {
       showToast(
         "error",
-        `${kind === "video" ? "El video" : "La foto"} pesa demasiado (máximo ${formatMb(maxBytes)}). Comprímelo o achícalo e inténtalo de nuevo.`
+        t(
+          `${kind === "video" ? "El video" : "La foto"} pesa demasiado (máximo ${formatMb(maxBytes)}). Comprímelo o achícalo e inténtalo de nuevo.`,
+          `The ${kind === "video" ? "video" : "photo"} is too large (max ${formatMb(maxBytes)}). Compress or shrink it and try again.`
+        )
       );
       return;
     }
@@ -66,7 +71,7 @@ export default function MediaUploadField({
       });
       onChange(blob.url);
     } catch (error) {
-      showToast("error", error instanceof Error ? error.message : `No se pudo subir ${noun}`);
+      showToast("error", error instanceof Error ? error.message : t(`No se pudo subir ${noun}`, `Couldn't upload ${noun}`));
     } finally {
       setUploading(false);
     }
@@ -77,7 +82,10 @@ export default function MediaUploadField({
     if (file.size > maxBytes) {
       showToast(
         "error",
-        `${kind === "video" ? "El video" : "La foto"} pesa demasiado (máximo ${formatMb(maxBytes)}). Comprímelo o achícalo e inténtalo de nuevo.`
+        t(
+          `${kind === "video" ? "El video" : "La foto"} pesa demasiado (máximo ${formatMb(maxBytes)}). Comprímelo o achícalo e inténtalo de nuevo.`,
+          `The ${kind === "video" ? "video" : "photo"} is too large (max ${formatMb(maxBytes)}). Compress or shrink it and try again.`
+        )
       );
       return;
     }
@@ -107,7 +115,7 @@ export default function MediaUploadField({
     closeCrop();
   }
 
-  const formatHint = kind === "video" ? "MP4 o MOV" : "JPG, PNG o WebP";
+  const formatHint = kind === "video" ? t("MP4 o MOV", "MP4 or MOV") : t("JPG, PNG o WebP", "JPG, PNG or WebP");
 
   return (
     <div className="flex flex-col gap-sp-2">
@@ -124,7 +132,7 @@ export default function MediaUploadField({
           const file = event.dataTransfer.files?.[0];
           const expected = kind === "video" ? "video/" : "image/";
           if (file && file.type.startsWith(expected)) handleFile(file);
-          else if (file) showToast("error", kind === "video" ? "Ese archivo no es un video" : "Ese archivo no es una imagen");
+          else if (file) showToast("error", kind === "video" ? t("Ese archivo no es un video", "That file isn't a video") : t("Ese archivo no es una imagen", "That file isn't an image"));
         }}
         className={`group flex cursor-pointer flex-wrap items-center gap-sp-3 rounded-[14px] border border-dashed p-sp-3 transition ${
           dragging ? "border-coral bg-coral/5" : "border-line bg-white hover:border-coral"
@@ -148,10 +156,14 @@ export default function MediaUploadField({
         </span>
         <span className="flex min-w-[150px] flex-1 flex-col gap-1">
           <span className="inline-flex w-fit items-center whitespace-nowrap rounded-full bg-ink px-sp-4 py-1.5 text-xs font-semibold text-cream group-hover:bg-coral">
-            {uploading ? `Subiendo… ${progress}%` : value ? `Cambiar ${kind === "video" ? "video" : "foto"}` : `Elegir ${kind === "video" ? "video" : "foto"}`}
+            {uploading
+              ? t(`Subiendo… ${progress}%`, `Uploading… ${progress}%`)
+              : value
+                ? t(`Cambiar ${kind === "video" ? "video" : "foto"}`, `Change ${kind === "video" ? "video" : "photo"}`)
+                : t(`Elegir ${kind === "video" ? "video" : "foto"}`, `Choose ${kind === "video" ? "video" : "photo"}`)}
           </span>
           <span className="text-xs text-ink/55">
-            o arrástralo aquí · {recommendedSize ? `ideal ${recommendedSize} · ` : ""}{formatHint} · máx. {formatMb(maxBytesFor(kind))}
+            {t("o arrástralo aquí", "or drag it here")} · {recommendedSize ? `${t("ideal", "ideal")} ${recommendedSize} · ` : ""}{formatHint} · {t("máx.", "max")} {formatMb(maxBytesFor(kind))}
           </span>
         </span>
         <input
@@ -177,11 +189,11 @@ export default function MediaUploadField({
               }}
               className="w-fit text-xs text-ink/55 hover:text-coral"
             >
-              Ajustar encuadre
+              {t("Ajustar encuadre", "Adjust framing")}
             </button>
           )}
           <button type="button" onClick={() => onChange("")} className="w-fit text-xs text-ink/50 hover:text-red-600">
-            Quitar {kind === "video" ? "video" : "foto"}
+            {kind === "video" ? t("Quitar video", "Remove video") : t("Quitar foto", "Remove photo")}
           </button>
         </div>
       )}

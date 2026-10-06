@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useT } from "@/components/admin/AdminLang";
 
 const inputClass = "rounded-sm border border-line px-sp-3 py-sp-2 text-ink outline-none focus:border-coral";
 
@@ -16,6 +17,7 @@ function slugify(text: string) {
 }
 
 export default function RegisterForm({ rootDomain }: { rootDomain: string }) {
+  const { t } = useT();
   const router = useRouter();
   const [values, setValues] = useState({ name: "", slug: "", email: "", password: "", inviteCode: "" });
   const [slugEdited, setSlugEdited] = useState(false);
@@ -45,18 +47,18 @@ export default function RegisterForm({ rootDomain }: { rootDomain: string }) {
       return;
     }
     const data = await response.json().catch(() => ({}));
-    setError(data.error ?? "No se pudo crear la cuenta");
+    setError(data.error ?? t("No se pudo crear la cuenta", "Couldn't create the account"));
     setStatus("idle");
   }
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-sp-4">
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Tu nombre</span>
+        <span className="text-sm font-medium text-ink">{t("Tu nombre", "Your name")}</span>
         <input required value={values.name} onChange={(e) => set("name", e.target.value)} autoComplete="name" className={inputClass} />
       </label>
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Nombre de tu sitio</span>
+        <span className="text-sm font-medium text-ink">{t("Nombre de tu sitio", "Your site name")}</span>
         <div className="flex items-center overflow-hidden rounded-sm border border-line focus-within:border-coral">
           <input
             required
@@ -71,20 +73,20 @@ export default function RegisterForm({ rootDomain }: { rootDomain: string }) {
           <span className="shrink-0 bg-cream px-sp-2 py-sp-2 font-mono text-xs text-ink/60">.{rootDomain}</span>
         </div>
         <span id="slug-ayuda" className="text-xs text-ink/50">
-          Será la dirección de tu portafolio. Más adelante puedes conectar tu propio dominio.
+          {t("Será la dirección de tu portafolio. Más adelante puedes conectar tu propio dominio.", "This will be your portfolio address. You can connect your own domain later.")}
         </span>
       </label>
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Correo</span>
+        <span className="text-sm font-medium text-ink">{t("Correo", "Email")}</span>
         <input type="email" required value={values.email} onChange={(e) => set("email", e.target.value)} autoComplete="email" className={inputClass} />
       </label>
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Contraseña</span>
+        <span className="text-sm font-medium text-ink">{t("Contraseña", "Password")}</span>
         <input type="password" required minLength={8} value={values.password} onChange={(e) => set("password", e.target.value)} autoComplete="new-password" className={inputClass} />
-        <span className="text-xs text-ink/50">Mínimo 8 caracteres.</span>
+        <span className="text-xs text-ink/50">{t("Mínimo 8 caracteres.", "At least 8 characters.")}</span>
       </label>
       <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">Código de invitación</span>
+        <span className="text-sm font-medium text-ink">{t("Código de invitación", "Invite code")}</span>
         <input required value={values.inviteCode} onChange={(e) => set("inviteCode", e.target.value)} className={inputClass} />
       </label>
       {error && (
@@ -97,7 +99,7 @@ export default function RegisterForm({ rootDomain }: { rootDomain: string }) {
         disabled={status === "loading"}
         className="mt-sp-2 rounded-sm bg-coral py-sp-3 font-medium text-white transition hover:opacity-90 disabled:opacity-60"
       >
-        {status === "loading" ? "Creando tu espacio…" : "Crear mi cuenta"}
+        {status === "loading" ? t("Creando tu espacio…", "Creating your space…") : t("Crear mi cuenta", "Create my account")}
       </button>
     </form>
   );

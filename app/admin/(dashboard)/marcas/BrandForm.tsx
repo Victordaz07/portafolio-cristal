@@ -4,7 +4,9 @@ import { useState } from "react";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { CRM_PLATFORMS, DEAL_STATUSES, DEAL_STATUS_META, type DealStatus } from "@/lib/crm";
+import { pickLabel } from "@/lib/admin-lang";
 import { LOGO_ASPECT_OPTIONS } from "@/lib/image-crop";
+import { useT } from "@/components/admin/AdminLang";
 
 export interface BrandFormValues {
   name: string;
@@ -70,6 +72,7 @@ export default function BrandForm({
   onSubmit: (values: BrandFormValues) => Promise<void>;
   onCancel?: () => void;
 }) {
+  const { t, lang } = useT();
   const [values, setValues] = useState<BrandFormValues>(initial ?? emptyBrandForm);
   const [saving, setSaving] = useState(false);
   const set = <K extends keyof BrandFormValues>(key: K, value: BrandFormValues[K]) =>
@@ -95,19 +98,19 @@ export default function BrandForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-sp-5">
       <div className="grid gap-sp-4 sm:grid-cols-2">
-        <Field label="Nombre">
+        <Field label={t("Nombre", "Name")}>
           <input required value={values.name} onChange={(e) => set("name", e.target.value)} className={inputClass} />
         </Field>
-        <Field label="Estado del trato">
+        <Field label={t("Estado del trato", "Deal status")}>
           <select
             value={values.dealStatus}
             onChange={(e) => set("dealStatus", e.target.value as BrandFormValues["dealStatus"])}
             className={inputClass}
           >
-            <option value="">Sin trato (solo portafolio)</option>
+            <option value="">{t("Sin trato (solo portafolio)", "No deal (portfolio only)")}</option>
             {DEAL_STATUSES.map((status) => (
               <option key={status} value={status}>
-                {DEAL_STATUS_META[status].label}
+                {pickLabel(lang, DEAL_STATUS_META[status])}
               </option>
             ))}
           </select>
@@ -117,27 +120,27 @@ export default function BrandForm({
       {hasDeal && (
         <fieldset className="flex flex-col gap-sp-4 rounded-[14px] border border-line bg-cream/60 p-sp-4">
           <legend className="px-sp-1 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">
-            Datos del trato
+            {t("Datos del trato", "Deal details")}
           </legend>
           <div className="grid gap-sp-4 sm:grid-cols-2">
-            <Field label="Contacto">
+            <Field label={t("Contacto", "Contact")}>
               <input
                 value={values.contactName}
                 onChange={(e) => set("contactName", e.target.value)}
                 className={inputClass}
-                placeholder="Nombre de la persona"
+                placeholder={t("Nombre de la persona", "Person's name")}
               />
             </Field>
-            <Field label="Email del contacto">
+            <Field label={t("Email del contacto", "Contact email")}>
               <input
                 type="email"
                 value={values.contactEmail}
                 onChange={(e) => set("contactEmail", e.target.value)}
                 className={inputClass}
-                placeholder="nombre@marca.com"
+                placeholder={t("nombre@marca.com", "name@brand.com")}
               />
             </Field>
-            <Field label="Valor del trato (USD)">
+            <Field label={t("Valor del trato (USD)", "Deal value (USD)")}>
               <input
                 type="number"
                 min={0}
@@ -148,22 +151,22 @@ export default function BrandForm({
                 placeholder="1200"
               />
             </Field>
-            <Field label="Paquete" hint="Qué vas a entregar, ej: 2 reels + 1 historia/mes">
+            <Field label={t("Paquete", "Package")} hint={t("Qué vas a entregar, ej: 2 reels + 1 historia/mes", "What you'll deliver, e.g. 2 reels + 1 story/month")}>
               <input
                 value={values.packageDetail}
                 onChange={(e) => set("packageDetail", e.target.value)}
                 className={inputClass}
               />
             </Field>
-            <Field label="Próximo paso">
+            <Field label={t("Próximo paso", "Next step")}>
               <input
                 value={values.nextAction}
                 onChange={(e) => set("nextAction", e.target.value)}
                 className={inputClass}
-                placeholder="Enviar media kit"
+                placeholder={t("Enviar media kit", "Send media kit")}
               />
             </Field>
-            <Field label="Fecha límite del próximo paso">
+            <Field label={t("Fecha límite del próximo paso", "Next step due date")}>
               <input
                 type="date"
                 value={values.nextActionDue}
@@ -171,7 +174,7 @@ export default function BrandForm({
                 className={inputClass}
               />
             </Field>
-            <Field label="Último contacto">
+            <Field label={t("Último contacto", "Last contact")}>
               <input
                 type="date"
                 value={values.lastContactAt}
@@ -181,7 +184,7 @@ export default function BrandForm({
             </Field>
           </div>
           <div className="flex flex-col gap-sp-2">
-            <span className="text-sm font-medium text-ink">Plataformas</span>
+            <span className="text-sm font-medium text-ink">{t("Plataformas", "Platforms")}</span>
             <div className="flex flex-wrap gap-sp-2">
               {CRM_PLATFORMS.map((platform) => {
                 const selected = values.platforms.includes(platform);
@@ -206,15 +209,15 @@ export default function BrandForm({
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <ImageUploadField
-          label="Logo (opcional)"
+          label={t("Logo (opcional)", "Logo (optional)")}
           value={values.logoUrl}
           onChange={(url) => set("logoUrl", url)}
           aspect={LOGO_ASPECT_OPTIONS}
           outputFormat="png"
-          recommendedSize="fondo transparente"
+          recommendedSize={t("fondo transparente", "transparent background")}
         />
         <div className="flex flex-col gap-sp-4">
-          <Field label="Sitio web (opcional)" hint="Si lo agregas, el logo será clickeable en el sitio.">
+          <Field label={t("Sitio web (opcional)", "Website (optional)")} hint={t("Si lo agregas, el logo será clickeable en el sitio.", "If you add it, the logo will be clickable on the site.")}>
             <input
               type="url"
               value={values.websiteUrl}
@@ -225,18 +228,18 @@ export default function BrandForm({
           </Field>
           <label className="flex items-center gap-sp-2">
             <input type="checkbox" checked={values.active} onChange={(e) => set("active", e.target.checked)} />
-            <span className="text-sm text-ink">Mostrar el logo en el carrusel del sitio público</span>
+            <span className="text-sm text-ink">{t("Mostrar el logo en el carrusel del sitio público", "Show the logo in the public site carousel")}</span>
           </label>
         </div>
       </div>
 
       <div className="flex gap-sp-3">
         <button type="submit" disabled={saving} className={primaryButtonClass}>
-          {saving ? "Guardando..." : submitLabel}
+          {saving ? t("Guardando...", "Saving...") : submitLabel}
         </button>
         {onCancel && (
           <button type="button" onClick={onCancel} className={secondaryButtonClass}>
-            Cancelar
+            {t("Cancelar", "Cancel")}
           </button>
         )}
       </div>

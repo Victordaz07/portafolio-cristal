@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -36,10 +37,11 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  const { t } = await getT();
   const body = await request.json().catch(() => null);
   const parsed = heroSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+    return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   }
 
   const data = {

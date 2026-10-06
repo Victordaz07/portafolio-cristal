@@ -10,6 +10,7 @@ import BilingualTextField from "@/components/admin/BilingualTextField";
 import { swapOrder } from "@/lib/reorder";
 import { inputClass, primaryButtonClass, rowCardClass, cardClass, dangerLinkClass } from "@/lib/admin-ui";
 import { QuoteIcon } from "@/components/icons";
+import { useT } from "@/components/admin/AdminLang";
 
 const API_BASE = "/api/admin/testimonials";
 
@@ -20,6 +21,7 @@ export default function TestimonialsManager({
 }: {
   initialTestimonials: Testimonial[];
 }) {
+  const { t, lang } = useT();
   const { showToast } = useToast();
   const [testimonials, setTestimonials] = useState(initialTestimonials);
   const [form, setForm] = useState(EMPTY);
@@ -42,25 +44,25 @@ export default function TestimonialsManager({
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      showToast("error", data.error ?? "No se pudo agregar el testimonio");
+      showToast("error", data.error ?? t("No se pudo agregar el testimonio", "Couldn't add the testimonial"));
       return;
     }
 
     const created: Testimonial = await response.json();
     setTestimonials((current) => [...current, created]);
     setForm(EMPTY);
-    showToast("success", "Testimonio agregado");
+    showToast("success", t("Testimonio agregado", "Testimonial added"));
   }
 
   async function handleDelete(testimonial: Testimonial) {
     const response = await fetch(`${API_BASE}/${testimonial.id}`, { method: "DELETE" });
     setPendingDelete(null);
     if (!response.ok) {
-      showToast("error", "No se pudo eliminar");
+      showToast("error", t("No se pudo eliminar", "Couldn't delete"));
       return;
     }
     setTestimonials((current) => current.filter((item) => item.id !== testimonial.id));
-    showToast("success", "Testimonio eliminado");
+    showToast("success", t("Testimonio eliminado", "Testimonial deleted"));
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -92,9 +94,9 @@ export default function TestimonialsManager({
               </span>
             )}
             <div className="flex-1">
-              <p className="text-sm text-ink/70">&quot;{testimonial.quote}&quot;</p>
+              <p className="text-sm text-ink/70">&quot;{(lang === "en" && testimonial.quoteEn) || testimonial.quote}&quot;</p>
               <p className="text-sm font-medium text-ink">
-                {testimonial.name} <span className="text-ink/50">— {testimonial.role}</span>
+                {testimonial.name} <span className="text-ink/50">— {(lang === "en" && testimonial.roleEn) || testimonial.role}</span>
               </p>
             </div>
             <button
@@ -102,7 +104,7 @@ export default function TestimonialsManager({
               onClick={() => setPendingDelete(testimonial)}
               className={dangerLinkClass}
             >
-              Eliminar
+              {t("Eliminar", "Delete")}
             </button>
           </li>
         ))}
@@ -110,7 +112,7 @@ export default function TestimonialsManager({
 
       <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
         <BilingualTextField
-          label="Cita"
+          label={t("Cita", "Quote")}
           es={form.quote}
           en={form.quoteEn}
           onEsChange={(v) => set("quote", v)}
@@ -121,7 +123,7 @@ export default function TestimonialsManager({
         />
         <div className="grid gap-sp-4 sm:grid-cols-2">
           <label className="flex flex-col gap-sp-1">
-            <span className="text-sm font-medium text-ink">Nombre</span>
+            <span className="text-sm font-medium text-ink">{t("Nombre", "Name")}</span>
             <input
               required
               value={form.name}
@@ -130,7 +132,7 @@ export default function TestimonialsManager({
             />
           </label>
           <BilingualTextField
-            label="Rol / marca"
+            label={t("Rol / marca", "Role / brand")}
             es={form.role}
             en={form.roleEn}
             onEsChange={(v) => set("role", v)}
@@ -139,21 +141,21 @@ export default function TestimonialsManager({
           />
         </div>
         <ImageUploadField
-          label="Foto (opcional)"
+          label={t("Foto (opcional)", "Photo (optional)")}
           value={form.photoUrl}
           onChange={(url) => set("photoUrl", url)}
           aspect={1}
           recommendedSize="400 × 400 px"
         />
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-          {saving ? "Agregando..." : "+ agregar testimonio"}
+          {saving ? t("Agregando...", "Adding...") : t("+ agregar testimonio", "+ add testimonial")}
         </button>
       </form>
 
       {pendingDelete && (
         <ConfirmDialog
-          title="Eliminar testimonio"
-          description={`¿Eliminar el testimonio de "${pendingDelete.name}"?`}
+          title={t("Eliminar testimonio", "Delete testimonial")}
+          description={t(`¿Eliminar el testimonio de "${pendingDelete.name}"?`, `Delete the testimonial from "${pendingDelete.name}"?`)}
           onConfirm={() => handleDelete(pendingDelete)}
           onCancel={() => setPendingDelete(null)}
         />

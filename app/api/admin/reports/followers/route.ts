@@ -5,6 +5,7 @@ import { PROVIDERS } from "@/lib/social/providers";
 import { getFreshTokens } from "@/lib/social/accounts";
 import { isPlatformId } from "@/lib/social/types";
 import { recordFollowerSnapshot } from "@/lib/reports";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -38,8 +39,9 @@ const manualSchema = z.object({
 
 /** Registro manual (para redes sin conectar o para cargar meses anteriores). */
 export async function PUT(request: Request) {
+  const { t } = await getT();
   const parsed = manualSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Revisa la red, la fecha y el número" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Revisa la red, la fecha y el número", "Check the network, the date and the number") }, { status: 400 });
   await recordFollowerSnapshot(parsed.data.platform, parsed.data.followers, "manual", parsed.data.date);
   return NextResponse.json({ ok: true });
 }

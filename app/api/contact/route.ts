@@ -6,6 +6,7 @@ import { sendEmail } from "@/lib/email";
 import { brandMessageEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
 import { clientIp, tooManyAttempts } from "@/lib/rate-limit";
+import { getT } from "@/lib/admin-lang-server";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -16,12 +17,13 @@ const contactSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const { t } = await getT();
   if (tooManyAttempts(`contact:${clientIp(request)}`, 5)) {
-    return NextResponse.json({ error: "Demasiados mensajes; prueba en un minuto" }, { status: 429 });
+    return NextResponse.json({ error: t("Demasiados mensajes; prueba en un minuto", "Too many messages; try again in a minute") }, { status: 429 });
   }
   const parsed = contactSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return NextResponse.json({ error: "Revisa los campos del formulario" }, { status: 400 });
+    return NextResponse.json({ error: t("Revisa los campos del formulario", "Check the form fields") }, { status: 400 });
   }
   const data = parsed.data;
 
@@ -32,12 +34,13 @@ export async function POST(request: Request) {
     const creatorId = await currentCreatorId();
     const [settings, owner] = await Promise.all([
       prisma.siteSettings.findFirst({ select: { contactEmail: true } }),
-      prismaRoot.adminUser.findFirst({ where: { creatorId, role: "owner" }, orderBy: { createdAt: "asc" }, select: { email: true, name: true } }),
+      prismaRoot.adminUser.findFirst({ where: { creatorId, role: "owner" }, orderBy: { createdAt: "asc" }, select: { email: true, name: true, language: true } }),
     ]);
     const to = settings?.contactEmail || owner?.email;
     if (to) {
       const origin = await platformOrigin();
       const mail = brandMessageEmail({
+        lang: owner?.language === "en" ? "en" : "es",
         origin,
         creatorName: owner?.name ?? null,
         fromName: data.name,

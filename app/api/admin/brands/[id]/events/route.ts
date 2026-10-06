@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { currentCreatorId } from "@/lib/tenant";
 import { brandCrmInclude } from "@/lib/brand-crm";
 import { dateInputToDate } from "@/lib/crm";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,17 +18,18 @@ const eventSchema = z.object({
 
 /** Agrega una entrada manual al historial del acuerdo y la marca como último contacto. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const parsed = eventSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Escribe qué pasó en el acuerdo" }, { status: 400 });
+    return NextResponse.json({ error: t("Escribe qué pasó en el acuerdo", "Write what happened in the deal") }, { status: 400 });
   }
 
   const date = parsed.data.date ? dateInputToDate(parsed.data.date) : new Date();
   const existing = await prisma.brand.findUnique({ where: { id }, select: { lastContactAt: true } });
   if (!existing) {
-    return NextResponse.json({ error: "Marca no encontrada" }, { status: 404 });
+    return NextResponse.json({ error: t("Marca no encontrada", "Brand not found") }, { status: 404 });
   }
 
   const brand = await prisma.brand.update({

@@ -1,13 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { AI_MODEL, aiErrorMessage, getAiClient, isAiConfigured } from "@/lib/ai";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
 /** Prueba mínima de conexión con Claude: pide un caption corto de ejemplo. */
 export async function POST() {
+  const { t, lang } = await getT();
   if (!isAiConfigured()) {
-    return NextResponse.json({ ok: false, error: "Falta ANTHROPIC_API_KEY en las variables de entorno" });
+    return NextResponse.json({ ok: false, error: t("Falta ANTHROPIC_API_KEY en las variables de entorno", "ANTHROPIC_API_KEY is missing from the environment variables") });
   }
 
   const started = Date.now();
@@ -22,14 +24,16 @@ export async function POST() {
       messages: [
         {
           role: "user",
-          content:
+          content: t(
             "Escribe un caption de una sola línea, en español y con tono cercano, para un reel de rutina de skincare de una persona creadora de contenido UGC. Responde solo con el caption.",
+            "Write a one-line caption, in English with a friendly tone, for a skincare routine reel by a content creator. Reply with the caption only."
+          ),
         },
       ],
     });
 
     if (response.stop_reason === "refusal") {
-      return NextResponse.json({ ok: false, error: "Claude rechazó la petición de prueba" });
+      return NextResponse.json({ ok: false, error: t("Claude rechazó la petición de prueba", "Claude rejected the test request") });
     }
     const text = response.content
       .filter((block): block is Anthropic.Beta.BetaTextBlock => block.type === "text")
@@ -45,6 +49,6 @@ export async function POST() {
       usage: { input: response.usage.input_tokens, output: response.usage.output_tokens },
     });
   } catch (error) {
-    return NextResponse.json({ ok: false, error: aiErrorMessage(error) });
+    return NextResponse.json({ ok: false, error: aiErrorMessage(error, lang) });
   }
 }

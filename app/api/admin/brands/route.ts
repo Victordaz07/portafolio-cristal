@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { brandCrmInclude, brandFieldsSchema, toBrandData, autoEventNotes } from "@/lib/brand-crm";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -12,16 +13,17 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const { t, lang } = await getT();
   const body = await request.json().catch(() => null);
   const parsed = brandCreateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+    return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   }
 
   const maxOrder = await prisma.brand.aggregate({ _max: { order: true } });
   // El orden de una marca nueva siempre va al final del carrusel.
   const input = { ...parsed.data, order: undefined };
-  const notes = autoEventNotes({ dealStatus: null, paymentStatus: null }, input);
+  const notes = autoEventNotes({ dealStatus: null, paymentStatus: null }, input, lang);
   const brand = await prisma.brand.create({
     data: {
       ...(toBrandData(input) as { name: string }),

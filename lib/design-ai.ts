@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, assertAiQuota, getAiClient, recordAiUsage } from "./ai";
+import { AI_MODEL, AiRefusalError, assertAiQuota, getAiClient, recordAiUsage } from "./ai";
 import { ACCENTS } from "./theme";
-import { BACKGROUNDS, CORNERS, FONTS, HEROES, STYLES, type BackgroundId, type CornerId, type FontId, type HeroId, type StyleId } from "./design";
+import { BACKGROUNDS, CORNERS, DESIGN_EN, FONTS, HEROES, STYLES, type BackgroundId, type CornerId, type FontId, type HeroId, type StyleId } from "./design";
 import { nicheOf } from "./platform-analytics";
 
 // "Diséñalo por mí": Claude propone una combinación del Estudio de diseño según el nicho y la bio.
@@ -39,7 +39,13 @@ const catalog = () =>
     `Bordes: ${keys(CORNERS).join(", ")}. Fondos: ${keys(BACKGROUNDS).join(", ")}.`,
   ].join("\n");
 
-export async function suggestDesign(input: { name: string; niche: string; bio: string; current?: Partial<DesignSuggestion> }): Promise<DesignSuggestion> {
+export async function suggestDesign(input: {
+  name: string;
+  niche: string;
+  bio: string;
+  current?: Partial<DesignSuggestion>;
+  lang?: "es" | "en";
+}): Promise<DesignSuggestion> {
   await assertAiQuota();
   const response = await getAiClient().beta.messages.parse({
     model: AI_MODEL,
@@ -49,7 +55,7 @@ export async function suggestDesign(input: { name: string; niche: string; bio: s
     fallbacks: "default",
     system: `Eres directora de arte de Foliocrew, una plataforma de portafolios para creadores de contenido (incluidos creadores UGC).
 Eliges una combinación de diseño coherente para el sitio de una persona creadora: que transmita su nicho y su personalidad
-y que las marcas la vean profesional. Respondes en español neutro.`,
+y que las marcas la vean profesional. ${input.lang === "en" ? "Write the \"reason\" in natural US English." : "Respondes en español neutro."}`,
     messages: [
       {
         role: "user",
@@ -65,12 +71,12 @@ Elige una combinación (estilo, tipografía, acento, portada, bordes y fondo) y 
     ],
   });
   await recordAiUsage("design", response.usage);
-  if (response.stop_reason === "refusal" || !response.parsed_output) throw new Error("La IA no pudo proponer un diseño");
+  if (response.stop_reason === "refusal" || !response.parsed_output) throw new AiRefusalError();
   return response.parsed_output as DesignSuggestion;
 }
 
 /** Sin IA configurada: una propuesta razonable por nicho. */
-export function fallbackDesign(niche: string, variant = 0): DesignSuggestion {
+export function fallbackDesign(niche: string, variant = 0, lang: "es" | "en" = "es"): DesignSuggestion {
   const byNiche: Record<string, Omit<DesignSuggestion, "reason">[]> = {
     belleza: [
       { style: "soft", font: "elegante", accent: "rosa", hero: "centered", corners: "redondo", background: "degradado" },
@@ -105,6 +111,9 @@ export function fallbackDesign(niche: string, variant = 0): DesignSuggestion {
   const pick = options[variant % options.length];
   return {
     ...pick,
-    reason: `Una combinación pensada para ${nicheOf(niche).label === "Otros / varios" ? "tu contenido" : nicheOf(niche).label.toLowerCase()}: ${STYLES[pick.style].description.toLowerCase()} Puedes ajustar cada detalle abajo.`,
+    reason:
+      lang === "en"
+        ? `A combination designed for ${nicheOf(niche).id === "otro" ? "your content" : nicheOf(niche).labelEn.toLowerCase()}: ${DESIGN_EN.styles[pick.style].description.toLowerCase()} You can tweak every detail below.`
+        : `Una combinación pensada para ${nicheOf(niche).id === "otro" ? "tu contenido" : nicheOf(niche).label.toLowerCase()}: ${STYLES[pick.style].description.toLowerCase()} Puedes ajustar cada detalle abajo.`,
   };
 }

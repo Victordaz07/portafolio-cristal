@@ -4,6 +4,7 @@ import { appTimeZone, todayKey } from "@/lib/growth-server";
 import { isAiConfigured } from "@/lib/ai";
 import { toPostView } from "@/lib/posts-view";
 import Composer from "./Composer";
+import { getT } from "@/lib/admin-lang-server";
 
 export default async function AdminCreatePage({
   searchParams,
@@ -11,6 +12,7 @@ export default async function AdminCreatePage({
   searchParams: Promise<{ id?: string; date?: string }>;
 }) {
   const { id, date } = await searchParams;
+  const { t } = await getT();
   const tz = appTimeZone();
   const [brands, post] = await Promise.all([
     // Primero las marcas con trato abierto: son las más probables para una publicación.
@@ -26,7 +28,7 @@ export default async function AdminCreatePage({
 
   return (
     <div>
-      <PageHeader eyebrow="Contenido" title={post ? "Editar publicación" : "Crear publicación"} />
+      <PageHeader eyebrow={t("Contenido", "Content")} title={post ? t("Editar publicación", "Edit post") : t("Crear publicación", "Create post")} />
       <Composer
         key={post?.id ?? "new"}
         brands={[...dealBrands, ...otherBrands].map(({ id, name }) => ({ id, name }))}

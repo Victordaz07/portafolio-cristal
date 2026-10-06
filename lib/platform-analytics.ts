@@ -15,7 +15,7 @@ export const MIN_VIEWS = 100;
 export function nicheOf(label: string | null | undefined) {
   const text = (label || "").trim().toLowerCase();
   const found = NICHES.find((n) => n.id !== "otro" && (n.label.toLowerCase() === text || n.labelEn.toLowerCase() === text || text.includes(n.label.toLowerCase())));
-  return found ? { id: found.id, label: found.label } : { id: "otro", label: "Otros / varios" };
+  return found ? { id: found.id, label: found.label, labelEn: found.labelEn } : { id: "otro", label: "Otros / varios", labelEn: "Other / mixed" };
 }
 
 export function median(values: number[]) {
@@ -68,7 +68,7 @@ export type PlatformPost = Awaited<ReturnType<typeof allPosts>>[number];
 // ─── Resumen ───
 
 /** Altas de cuentas por semana (últimas N semanas, lunes a domingo). */
-export async function signupsByWeek(weeks = 12) {
+export async function signupsByWeek(weeks = 12, lang: "es" | "en" = "es") {
   const now = new Date();
   const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((now.getUTCDay() + 6) % 7)));
   const start = new Date(monday.getTime() - (weeks - 1) * 7 * DAY);
@@ -78,7 +78,7 @@ export async function signupsByWeek(weeks = 12) {
     const to = new Date(from.getTime() + 7 * DAY);
     return {
       week: from.toISOString().slice(0, 10),
-      label: from.toLocaleDateString("es", { day: "numeric", month: "short", timeZone: "UTC" }),
+      label: from.toLocaleDateString(lang === "en" ? "en-US" : "es", { day: "numeric", month: "short", timeZone: "UTC" }),
       count: creators.filter((c) => c.createdAt >= from && c.createdAt < to).length,
     };
   });
@@ -142,6 +142,7 @@ export async function creatorLeaderboard() {
       slug: c.slug,
       status: c.status,
       niche: nicheOf(c.hero?.niche).label,
+      nicheEn: nicheOf(c.hero?.niche).labelEn,
       followers,
       growth,
       networks: Array.from(byPlatform.keys()),
@@ -221,7 +222,7 @@ export async function nicheBenchmarks() {
   const ids = new Set(Array.from(nicheByCreator.values()).map((n) => n.id));
   return Array.from(ids)
     .map((id) => {
-      const label = Array.from(nicheByCreator.values()).find((n) => n.id === id)!.label;
+      const { label, labelEn } = Array.from(nicheByCreator.values()).find((n) => n.id === id)!;
       const mine = posts.filter((p) => p.niche.id === id);
       const nicheDeals = deals.filter((d) => nicheByCreator.get(d.creatorId)?.id === id).map((d) => d.dealValue ?? 0);
       const byType = groupStats(mine, (p) => (p.type === "photo" ? "Foto" : "Video"));
@@ -229,6 +230,7 @@ export async function nicheBenchmarks() {
       return {
         id,
         label,
+        labelEn,
         creators: Array.from(nicheByCreator.values()).filter((n) => n.id === id).length,
         posts: mine.length,
         medianEr: median(mine.map((p) => p.er)),

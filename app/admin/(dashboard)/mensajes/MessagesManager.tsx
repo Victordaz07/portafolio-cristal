@@ -8,6 +8,9 @@ import Card from "@/components/admin/Card";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import { accentLinkClass, inputClass } from "@/lib/admin-ui";
 import type { InboxComment } from "@/lib/social/instagram-comments";
+import type { AdminLang, T } from "@/lib/admin-lang";
+import { socialError } from "@/lib/social/copy-en";
+import { useT } from "@/components/admin/AdminLang";
 
 const MESSAGES_API = "/api/admin/messages";
 const IG_API = "/api/admin/inbox/instagram";
@@ -35,8 +38,21 @@ const COMMENT_REPLIES = [
   "Lo puedes encontrar en el link de mi bio",
   "¡Me alegra que te haya gustado!",
 ];
+const COMMENT_REPLIES_EN = [
+  "Thanks for your comment! 💛",
+  "I'll DM you the details",
+  "You can find it at the link in my bio",
+  "So glad you liked it!",
+];
 
-function formReplies(mediaKitUrl: string) {
+function formReplies(mediaKitUrl: string, lang: AdminLang) {
+  if (lang === "en") {
+    return [
+      `Thanks for reaching out! I'd love to collaborate. Here's my media kit with my numbers and packages: ${mediaKitUrl}`,
+      "Could you share the brief, dates and approximate budget? That way I can put together a proposal.",
+      "Thanks for thinking of me! My schedule is full right now, but I'd love to work together later on.",
+    ];
+  }
   return [
     `¡Gracias por escribirme! Me encantaría colaborar. Aquí está mi media kit con mis números y paquetes: ${mediaKitUrl}`,
     "¿Me compartes el brief, las fechas y el presupuesto aproximado? Así te preparo una propuesta.",
@@ -49,15 +65,18 @@ function hoursSince(date: string) {
 }
 
 // Con acceso estándar, Meta no entrega el usuario de quien comenta si no tiene rol en la app.
-function igName(username: string) {
-  return username ? `@${username}` : "Usuario de Instagram";
+function igName(username: string, t: T) {
+  return username ? `@${username}` : t("Usuario de Instagram", "Instagram user");
 }
 
-function timeAgo(date: string) {
+function timeAgo(date: string, t: T) {
   const hours = hoursSince(date);
-  if (hours < 1) return `hace ${Math.max(1, Math.round(hours * 60))} min`;
-  if (hours < 24) return `hace ${Math.round(hours)} h`;
-  return `hace ${Math.round(hours / 24)} d`;
+  if (hours < 1) {
+    const min = Math.max(1, Math.round(hours * 60));
+    return t(`hace ${min} min`, `${min} min ago`);
+  }
+  if (hours < 24) return t(`hace ${Math.round(hours)} h`, `${Math.round(hours)} h ago`);
+  return t(`hace ${Math.round(hours / 24)} d`, `${Math.round(hours / 24)} d ago`);
 }
 
 function SourceBadge({ kind }: { kind: Item["kind"] }) {
@@ -88,6 +107,7 @@ export default function InboxManager({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const { t, lang } = useT();
   const [messages, setMessages] = useState(initialMessages);
   const [comments, setComments] = useState<InboxComment[]>([]);
   const [igStats, setIgStats] = useState<{ reported: number; own: number } | null>(null);
@@ -110,7 +130,7 @@ export default function InboxManager({
     const response = await fetch(IG_API).catch(() => null);
     const data = response ? await response.json().catch(() => null) : null;
     if (!response?.ok || !data) {
-      setIgError(data?.error ?? "No se pudieron cargar los comentarios");
+      setIgError(data?.error ?? t("No se pudieron cargar los comentarios", "Couldn't load the comments"));
       setIgState("error");
       return;
     }
@@ -121,6 +141,7 @@ export default function InboxManager({
 
   useEffect(() => {
     if (instagramUsername !== null) loadComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo al montar o al cambiar la cuenta
   }, [instagramUsername]);
 
   const isClient = (text: string) =>
@@ -141,9 +162,9 @@ export default function InboxManager({
     instagram: comments.length,
   };
   const chips: { id: Filter; label: string; show: boolean }[] = [
-    { id: "all", label: "Todas", show: true },
-    { id: "pending", label: "Por responder", show: true },
-    { id: "form", label: "Formulario", show: true },
+    { id: "all", label: t("Todas", "All"), show: true },
+    { id: "pending", label: t("Por responder", "To reply"), show: true },
+    { id: "form", label: t("Formulario", "Form"), show: true },
     { id: "instagram", label: "Instagram", show: instagramUsername !== null },
   ];
 
@@ -154,7 +175,7 @@ export default function InboxManager({
       body: JSON.stringify(body),
     });
     if (!response.ok) {
-      showToast("error", "No se pudo actualizar el mensaje");
+      showToast("error", t("No se pudo actualizar el mensaje", "Couldn't update the message"));
       return false;
     }
     const updated = await response.json();
@@ -175,18 +196,18 @@ export default function InboxManager({
 
   async function sendEmail(msg: InboxMessage) {
     const draft = (drafts[msg.id] ?? "").trim();
-    const subject = `Re: Colaboración con ${msg.brand}`;
-    const body = `Hola ${msg.name.split(" ")[0]},\n\n${draft}\n\n— ${signature}`;
+    const subject = t(`Re: Colaboración con ${msg.brand}`, `Re: Collaboration with ${msg.brand}`);
+    const body = t(`Hola ${msg.name.split(" ")[0]},\n\n${draft}\n\n— ${signature}`, `Hi ${msg.name.split(" ")[0]},\n\n${draft}\n\n— ${signature}`);
     window.location.href = `mailto:${msg.email}?${new URLSearchParams({ subject, body }).toString().replace(/\+/g, "%20")}`;
     if (await patchMessage(msg.id, { replied: true })) {
       setOpenReply(null);
-      showToast("success", "Se abrió tu correo y el mensaje quedó como respondido");
+      showToast("success", t("Se abrió tu correo y el mensaje quedó como respondido", "Your email opened and the message was marked as replied"));
     }
   }
 
   async function sendComment(comment: InboxComment) {
     const message = (drafts[comment.id] ?? "").trim();
-    if (!message) return showToast("error", "Escribe una respuesta");
+    if (!message) return showToast("error", t("Escribe una respuesta", "Write a reply"));
     setBusy(comment.id);
     const response = await fetch(`${IG_API}/${comment.id}`, {
       method: "POST",
@@ -195,7 +216,7 @@ export default function InboxManager({
     });
     setBusy(null);
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast("error", data.error ?? "Instagram no aceptó la respuesta");
+    if (!response.ok) return showToast("error", data.error ?? t("Instagram no aceptó la respuesta", "Instagram didn't accept the reply"));
     setComments((current) =>
       current.map((c) =>
         c.id === comment.id
@@ -209,7 +230,7 @@ export default function InboxManager({
     );
     setDrafts((d) => ({ ...d, [comment.id]: "" }));
     setOpenReply(null);
-    showToast("success", "Respuesta publicada en Instagram");
+    showToast("success", t("Respuesta publicada en Instagram", "Reply posted on Instagram"));
   }
 
   async function toggleHidden(comment: InboxComment) {
@@ -221,23 +242,23 @@ export default function InboxManager({
     });
     setBusy(null);
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast("error", data.error ?? "No se pudo cambiar el comentario");
+    if (!response.ok) return showToast("error", data.error ?? t("No se pudo cambiar el comentario", "Couldn't change the comment"));
     setComments((current) => current.map((c) => (c.id === comment.id ? { ...c, hidden: !c.hidden } : c)));
-    showToast("success", comment.hidden ? "Comentario visible de nuevo" : "Comentario oculto");
+    showToast("success", comment.hidden ? t("Comentario visible de nuevo", "Comment visible again") : t("Comentario oculto", "Comment hidden"));
   }
 
   async function remove(item: Item) {
     setDeleting(null);
     const response = await fetch(item.kind === "form" ? `${MESSAGES_API}/${item.id}` : `${IG_API}/${item.id}`, { method: "DELETE" });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) return showToast("error", data.error ?? "No se pudo borrar");
+    if (!response.ok) return showToast("error", data.error ?? t("No se pudo borrar", "Couldn't delete"));
     if (item.kind === "form") {
       setMessages((current) => current.filter((m) => m.id !== item.id));
       router.refresh();
     } else {
       setComments((current) => current.filter((c) => c.id !== item.id));
     }
-    showToast("success", "Borrado");
+    showToast("success", t("Borrado", "Deleted"));
   }
 
   return (
@@ -261,47 +282,48 @@ export default function InboxManager({
 
       {igState === "off" && (
         <Card className="flex flex-wrap items-center justify-between gap-sp-3 text-sm text-ink/70">
-          <span>Conecta Instagram para ver y responder los comentarios de tus publicaciones aquí mismo.</span>
+          <span>{t("Conecta Instagram para ver y responder los comentarios de tus publicaciones aquí mismo.", "Connect Instagram to see and reply to the comments on your posts right here.")}</span>
           <Link href="/admin/conectar" className={accentLinkClass}>
-            Conectar Instagram →
+            {t("Conectar Instagram →", "Connect Instagram →")}
           </Link>
         </Card>
       )}
-      {igState === "loading" && <p className="text-sm text-ink/55">Cargando comentarios de Instagram…</p>}
+      {igState === "loading" && <p className="text-sm text-ink/55">{t("Cargando comentarios de Instagram…", "Loading Instagram comments…")}</p>}
       {igState === "error" && (
         <Card className="flex flex-wrap items-center justify-between gap-sp-3 border-coral/40 text-sm text-ink/70">
-          <span>Instagram: {igError}</span>
+          <span>Instagram: {socialError(lang, igError)}</span>
           <button type="button" onClick={loadComments} className={accentLinkClass}>
-            Reintentar
+            {t("Reintentar", "Retry")}
           </button>
         </Card>
       )}
 
       {igState === "ready" && comments.length === 0 && igStats && igStats.reported > igStats.own && (
         <Card className="border-coral/40 text-sm text-ink/70">
-          Instagram dice que tus publicaciones recientes tienen {igStats.reported} comentario{igStats.reported === 1 ? "" : "s"}, pero no
-          entregó ninguno de otras cuentas. Mientras la app de Meta esté en <strong>modo desarrollo</strong>, solo llegan los comentarios de
-          cuentas agregadas como evaluadoras (Instagram testers); cuando Meta apruebe la app, aparecerán los de cualquier persona.
-          {igStats.own > 0 && ` (${igStats.own} son tuyos y no se muestran aquí.)`}
+          {t(
+            `Instagram dice que tus publicaciones recientes tienen ${igStats.reported} comentario${igStats.reported === 1 ? "" : "s"}, pero no entregó ninguno de otras cuentas. Mientras la app de Meta esté en modo desarrollo, solo llegan los comentarios de cuentas agregadas como evaluadoras (Instagram testers); cuando Meta apruebe la app, aparecerán los de cualquier persona.`,
+            `Instagram says your recent posts have ${igStats.reported} comment${igStats.reported === 1 ? "" : "s"}, but it didn't return any from other accounts. While the Meta app is in development mode, only comments from accounts added as Instagram testers come through; once Meta approves the app, everyone's will appear.`
+          )}
+          {igStats.own > 0 && t(` (${igStats.own} son tuyos y no se muestran aquí.)`, ` (${igStats.own} are yours and aren't shown here.)`)}
         </Card>
       )}
 
       <Card>
         {visible.length === 0 ? (
           <p className="text-sm text-ink/60">
-            {filter === "pending" ? "¡Todo respondido! No tienes nada pendiente. 🎉" : "Todavía no hay mensajes aquí."}
+            {filter === "pending" ? t("¡Todo respondido! No tienes nada pendiente. 🎉", "All replied! Nothing pending. 🎉") : t("Todavía no hay mensajes aquí.", "No messages here yet.")}
           </p>
         ) : (
           <ul className="flex flex-col gap-sp-3">
             {visible.map((item) => {
               const isForm = item.kind === "form";
-              const name = isForm ? `${item.msg.name} — ${item.msg.brand}` : igName(item.comment.username);
+              const name = isForm ? `${item.msg.name} — ${item.msg.brand}` : igName(item.comment.username, t);
               const text = isForm ? item.msg.message : item.comment.text;
               const client = isClient(isForm ? item.msg.brand : `${item.comment.username} ${item.comment.text}`);
               const unread = isForm && !item.msg.read;
               const overdue = isForm && item.pending && hoursSince(item.date) >= 24;
               const replyOpen = openReply === item.id;
-              const quickReplies = isForm ? formReplies(kitUrl) : COMMENT_REPLIES;
+              const quickReplies = isForm ? formReplies(kitUrl, lang) : lang === "en" ? COMMENT_REPLIES_EN : COMMENT_REPLIES;
               return (
                 <li
                   key={`${item.kind}-${item.id}`}
@@ -312,15 +334,15 @@ export default function InboxManager({
                       <SourceBadge kind={item.kind} />
                       <span className="truncate text-[13px] font-semibold text-ink">{name}</span>
                       {client && (
-                        <span className="rounded-full bg-lime/40 px-[7px] py-0.5 font-mono text-[9px] uppercase text-ink">Cliente</span>
+                        <span className="rounded-full bg-lime/40 px-[7px] py-0.5 font-mono text-[9px] uppercase text-ink">{t("Cliente", "Client")}</span>
                       )}
                       {unread && (
-                        <span className="rounded-full bg-coral px-[7px] py-0.5 font-mono text-[9px] uppercase text-white">Nuevo</span>
+                        <span className="rounded-full bg-coral px-[7px] py-0.5 font-mono text-[9px] uppercase text-white">{t("Nuevo", "New")}</span>
                       )}
-                      <span className="text-[11px] text-ink/55">{timeAgo(item.date)}</span>
+                      <span className="text-[11px] text-ink/55">{timeAgo(item.date, t)}</span>
                     </div>
                     <span className={`font-mono text-[11px] uppercase ${item.pending ? "text-coral" : "text-cobalt"}`}>
-                      {item.pending ? "Pendiente" : "Respondido"}
+                      {item.pending ? t("Pendiente", "Pending") : t("Respondido", "Replied")}
                     </span>
                   </div>
 
@@ -330,16 +352,16 @@ export default function InboxManager({
                     </p>
                   ) : (
                     <p className="mb-1.5 text-[11px] text-ink/55">
-                      En:{" "}
+                      {t("En:", "On:")}{" "}
                       {item.comment.media.permalink ? (
                         <a href={item.comment.media.permalink} target="_blank" rel="noreferrer" className="underline hover:text-coral">
-                          {item.comment.media.caption || "tu publicación"}
+                          {item.comment.media.caption || t("tu publicación", "your post")}
                         </a>
                       ) : (
-                        item.comment.media.caption || "tu publicación"
+                        item.comment.media.caption || t("tu publicación", "your post")
                       )}
                       {item.comment.likeCount > 0 && ` · ♥ ${item.comment.likeCount}`}
-                      {item.comment.hidden && " · Oculto (solo lo ven tú y quien lo escribió)"}
+                      {item.comment.hidden && t(" · Oculto (solo lo ven tú y quien lo escribió)", " · Hidden (only you and the author can see it)")}
                     </p>
                   )}
 
@@ -349,7 +371,7 @@ export default function InboxManager({
                     <ul className="mt-sp-2 flex flex-col gap-1 border-l-2 border-lime pl-sp-3">
                       {item.comment.replies.slice(-2).map((reply) => (
                         <li key={reply.id} className="text-[12px] text-ink/65">
-                          <strong className="text-ink">{igName(reply.username)}</strong> {reply.text}
+                          <strong className="text-ink">{igName(reply.username, t)}</strong> {reply.text}
                         </li>
                       ))}
                     </ul>
@@ -357,7 +379,7 @@ export default function InboxManager({
 
                   {overdue && (
                     <p className="mt-sp-2 text-[11px] text-coral">
-                      Lleva más de 24 h sin respuesta. Las marcas suelen quedarse con quien contesta primero.
+                      {t("Lleva más de 24 h sin respuesta. Las marcas suelen quedarse con quien contesta primero.", "No reply for over 24 h. Brands usually go with whoever answers first.")}
                     </p>
                   )}
 
@@ -380,7 +402,7 @@ export default function InboxManager({
                           rows={isForm ? 3 : 1}
                           value={drafts[item.id] ?? ""}
                           onChange={(e) => setDrafts((d) => ({ ...d, [item.id]: e.target.value }))}
-                          placeholder={isForm ? "Escribe tu respuesta (se abre en tu correo)…" : "Escribe una respuesta…"}
+                          placeholder={isForm ? t("Escribe tu respuesta (se abre en tu correo)…", "Write your reply (opens in your email)…") : t("Escribe una respuesta…", "Write a reply…")}
                           className={`${inputClass} flex-1 text-[13px]`}
                         />
                         <button
@@ -389,7 +411,7 @@ export default function InboxManager({
                           onClick={() => (isForm ? sendEmail(item.msg) : sendComment(item.comment))}
                           className="self-end rounded-full bg-cobalt px-sp-4 py-sp-2 text-xs font-semibold text-cream disabled:opacity-50"
                         >
-                          {busy === item.id ? "Enviando…" : isForm ? "Abrir en mi correo" : "Responder en Instagram"}
+                          {busy === item.id ? t("Enviando…", "Sending…") : isForm ? t("Abrir en mi correo", "Open in my email") : t("Responder en Instagram", "Reply on Instagram")}
                         </button>
                       </div>
                     </div>
@@ -397,7 +419,7 @@ export default function InboxManager({
 
                   <div className="mt-sp-2 flex flex-wrap items-center gap-x-sp-4 gap-y-1 text-xs">
                     <button type="button" onClick={() => toggleReply(item)} className="font-semibold text-moss hover:underline">
-                      {replyOpen ? "Cancelar" : item.pending ? "Responder" : "Responder de nuevo"}
+                      {replyOpen ? t("Cancelar", "Cancel") : item.pending ? t("Responder", "Reply") : t("Responder de nuevo", "Reply again")}
                     </button>
                     {isForm ? (
                       <>
@@ -406,19 +428,19 @@ export default function InboxManager({
                           onClick={() => patchMessage(item.id, { replied: item.pending })}
                           className="text-ink/60 hover:text-ink"
                         >
-                          {item.pending ? "Marcar respondido" : "Marcar pendiente"}
+                          {item.pending ? t("Marcar respondido", "Mark replied") : t("Marcar pendiente", "Mark pending")}
                         </button>
                         <button type="button" onClick={() => patchMessage(item.id, { read: !item.msg.read })} className="text-ink/60 hover:text-ink">
-                          {item.msg.read ? "Marcar no leído" : "Marcar leído"}
+                          {item.msg.read ? t("Marcar no leído", "Mark unread") : t("Marcar leído", "Mark read")}
                         </button>
                       </>
                     ) : (
                       <button type="button" disabled={busy === item.id} onClick={() => toggleHidden(item.comment)} className="text-ink/60 hover:text-ink">
-                        {item.comment.hidden ? "Mostrar" : "Ocultar"}
+                        {item.comment.hidden ? t("Mostrar", "Show") : t("Ocultar", "Hide")}
                       </button>
                     )}
                     <button type="button" onClick={() => setDeleting(item)} className="text-ink/40 hover:text-ink">
-                      Borrar
+                      {t("Borrar", "Delete")}
                     </button>
                   </div>
                 </li>
@@ -429,17 +451,19 @@ export default function InboxManager({
       </Card>
 
       <p className="text-xs text-ink/50">
-        Mensajes directos (DM) de Instagram y Facebook: próximamente. Requieren la revisión de la app por parte de Meta, y la red
-        solo deja responder dentro de las 24 h siguientes al último mensaje.
+        {t(
+          "Mensajes directos (DM) de Instagram y Facebook: próximamente. Requieren la revisión de la app por parte de Meta, y la red solo deja responder dentro de las 24 h siguientes al último mensaje.",
+          "Instagram and Facebook direct messages (DMs): coming soon. They require Meta's app review, and the network only allows replies within 24 h of the last message."
+        )}
       </p>
 
       {deleting && (
         <ConfirmDialog
-          title={deleting.kind === "form" ? "Borrar mensaje" : "Borrar comentario"}
+          title={deleting.kind === "form" ? t("Borrar mensaje", "Delete message") : t("Borrar comentario", "Delete comment")}
           description={
             deleting.kind === "form"
-              ? "¿Seguro que quieres borrar este mensaje del formulario?"
-              : "Se borrará el comentario de tu publicación en Instagram. No se puede deshacer."
+              ? t("¿Seguro que quieres borrar este mensaje del formulario?", "Are you sure you want to delete this form message?")
+              : t("Se borrará el comentario de tu publicación en Instagram. No se puede deshacer.", "The comment will be deleted from your Instagram post. This can't be undone.")
           }
           onConfirm={() => remove(deleting)}
           onCancel={() => setDeleting(null)}

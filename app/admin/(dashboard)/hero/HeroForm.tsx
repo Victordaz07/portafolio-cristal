@@ -8,6 +8,7 @@ import { HERO_PHOTO_ASPECT_OPTIONS } from "@/lib/image-crop";
 import BilingualTextField from "@/components/admin/BilingualTextField";
 import HeroPreview from "@/components/admin/HeroPreview";
 import { inputClass, labelClass, primaryButtonClass, cardClass } from "@/lib/admin-ui";
+import { useT } from "@/components/admin/AdminLang";
 
 type HeroFormValues = Omit<
   Hero,
@@ -63,6 +64,7 @@ const EMPTY: HeroFormValues = {
 };
 
 export default function HeroForm({ initialHero }: { initialHero: Hero | null }) {
+  const { t, lang } = useT();
   const { showToast } = useToast();
   const [form, setForm] = useState(
     initialHero
@@ -93,6 +95,8 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
       : EMPTY
   );
   const [saving, setSaving] = useState(false);
+  // La vista previa muestra la versión en inglés si el panel está en inglés y ya la escribiste.
+  const pick = (es: string, en: string) => (lang === "en" && en.trim() ? en : es);
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -109,10 +113,10 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
     setSaving(false);
 
     if (response.ok) {
-      showToast("success", "Hero actualizado");
+      showToast("success", t("Hero actualizado", "Hero updated"));
     } else {
       const data = await response.json().catch(() => ({}));
-      showToast("error", data.error ?? "No se pudo guardar");
+      showToast("error", data.error ?? t("No se pudo guardar", "Couldn't save"));
     }
   }
 
@@ -121,7 +125,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
       <form onSubmit={handleSubmit} className={`${cardClass} flex flex-col gap-sp-5`}>
         <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">Nombre</span>
+          <span className="text-sm font-medium text-ink">{t("Nombre", "Name")}</span>
           <input
             required
             value={form.name}
@@ -130,7 +134,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           />
         </label>
         <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">Ubicación</span>
+          <span className="text-sm font-medium text-ink">{t("Ubicación", "Location")}</span>
           <input
             required
             value={form.location}
@@ -141,7 +145,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
       </div>
 
       <BilingualTextField
-        label="Nicho"
+        label={t("Nicho", "Niche")}
         es={form.niche}
         en={form.nicheEn}
         onEsChange={(v) => set("niche", v)}
@@ -150,7 +154,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
       />
 
       <BilingualTextField
-        label="Badge (pill arriba del título)"
+        label={t("Badge (pill arriba del título)", "Badge (pill above the title)")}
         es={form.badgeLabel}
         en={form.badgeLabelEn}
         onEsChange={(v) => set("badgeLabel", v)}
@@ -160,7 +164,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
 
       <div className="grid gap-sp-4 sm:grid-cols-3">
         <BilingualTextField
-          label="Título — línea 1"
+          label={t("Título — línea 1", "Title — line 1")}
           es={form.headlinePlain}
           en={form.headlinePlainEn}
           onEsChange={(v) => set("headlinePlain", v)}
@@ -168,7 +172,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           required
         />
         <BilingualTextField
-          label="Título — palabra en color"
+          label={t("Título — palabra en color", "Title — highlighted word")}
           es={form.headlineEmphasis}
           en={form.headlineEmphasisEn}
           onEsChange={(v) => set("headlineEmphasis", v)}
@@ -176,7 +180,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           required
         />
         <BilingualTextField
-          label="Título — resto de la línea 2"
+          label={t("Título — resto de la línea 2", "Title — rest of line 2")}
           es={form.headlineSuffix}
           en={form.headlineSuffixEn}
           onEsChange={(v) => set("headlineSuffix", v)}
@@ -186,7 +190,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
 
       <div>
         <BilingualTextField
-          label="Descripción"
+          label={t("Descripción", "Description")}
           es={form.description}
           en={form.descriptionEn}
           onEsChange={(v) => set("description", v)}
@@ -195,33 +199,35 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           rows={3}
         />
         <span className="text-xs text-ink/50">
-          Usa **texto** para negrita oscura y __texto__ para negrita en color de acento.
+          {t("Usa **texto** para negrita oscura y __texto__ para negrita en color de acento.", "Use **text** for dark bold and __text__ for accent-colored bold.")}
         </span>
       </div>
 
       <ImageUploadField
-        label="Foto (escritorio)"
+        label={t("Foto (escritorio)", "Photo (desktop)")}
         value={form.photoUrl}
         onChange={(url) => set("photoUrl", url)}
         aspect={HERO_PHOTO_ASPECT_OPTIONS}
-        recommendedSize="1200 × 1500 px (vertical) o 1920 × 1080 px (horizontal)"
+        recommendedSize={t("1200 × 1500 px (vertical) o 1920 × 1080 px (horizontal)", "1200 × 1500 px (portrait) or 1920 × 1080 px (landscape)")}
       />
 
       <ImageUploadField
-        label="Foto (mobile)"
+        label={t("Foto (mobile)", "Photo (mobile)")}
         value={form.photoUrlMobile}
         onChange={(url) => set("photoUrlMobile", url)}
         aspect={1}
         recommendedSize="1200 × 1200 px"
       />
       <p className="-mt-sp-4 text-xs text-ink/50">
-        Se usa aparte para pantallas de teléfono — puede ser un recorte o composición distinta a la
-        de escritorio.
+        {t(
+          "Se usa aparte para pantallas de teléfono — puede ser un recorte o composición distinta a la de escritorio.",
+          "Used separately for phone screens — it can be a different crop or composition from the desktop one."
+        )}
       </p>
 
       <div className="grid gap-sp-4 sm:grid-cols-2">
         <BilingualTextField
-          label="CTA primario — texto"
+          label={t("CTA primario — texto", "Primary CTA — text")}
           es={form.ctaPrimaryLabel}
           en={form.ctaPrimaryLabelEn}
           onEsChange={(v) => set("ctaPrimaryLabel", v)}
@@ -229,7 +235,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           required
         />
         <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">CTA primario — link</span>
+          <span className="text-sm font-medium text-ink">{t("CTA primario — link", "Primary CTA — link")}</span>
           <input
             required
             value={form.ctaPrimaryHref}
@@ -238,7 +244,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           />
         </label>
         <BilingualTextField
-          label="CTA secundario — texto"
+          label={t("CTA secundario — texto", "Secondary CTA — text")}
           es={form.ctaSecondaryLabel}
           en={form.ctaSecondaryLabelEn}
           onEsChange={(v) => set("ctaSecondaryLabel", v)}
@@ -246,7 +252,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
           required
         />
         <label className={labelClass}>
-          <span className="text-sm font-medium text-ink">CTA secundario — link</span>
+          <span className="text-sm font-medium text-ink">{t("CTA secundario — link", "Secondary CTA — link")}</span>
           <input
             required
             value={form.ctaSecondaryHref}
@@ -257,27 +263,29 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
       </div>
 
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
-          {saving ? "Guardando..." : "Guardar cambios"}
+          {saving ? t("Guardando…", "Saving…") : t("Guardar cambios", "Save changes")}
         </button>
       </form>
 
       <div className="lg:sticky lg:top-sp-6">
         <p className="mb-sp-2 font-mono text-[10px] uppercase tracking-widest text-moss">
-          Vista previa en vivo
+          {t("Vista previa en vivo", "Live preview")}
         </p>
         <HeroPreview
-          badgeLabel={form.badgeLabel}
-          headlinePlain={form.headlinePlain}
-          headlineEmphasis={form.headlineEmphasis}
-          headlineSuffix={form.headlineSuffix}
-          description={form.description}
+          badgeLabel={pick(form.badgeLabel, form.badgeLabelEn)}
+          headlinePlain={pick(form.headlinePlain, form.headlinePlainEn)}
+          headlineEmphasis={pick(form.headlineEmphasis, form.headlineEmphasisEn)}
+          headlineSuffix={pick(form.headlineSuffix, form.headlineSuffixEn)}
+          description={pick(form.description, form.descriptionEn)}
           photoUrl={form.photoUrl}
-          ctaPrimaryLabel={form.ctaPrimaryLabel}
-          ctaSecondaryLabel={form.ctaSecondaryLabel}
+          ctaPrimaryLabel={pick(form.ctaPrimaryLabel, form.ctaPrimaryLabelEn)}
+          ctaSecondaryLabel={pick(form.ctaSecondaryLabel, form.ctaSecondaryLabelEn)}
         />
         <p className="mt-sp-2 text-xs text-ink/50">
-          Aproximación del hero de escritorio — el sitio real puede variar levemente en tamaños y
-          saltos de línea.
+          {t(
+            "Aproximación del hero de escritorio — el sitio real puede variar levemente en tamaños y saltos de línea.",
+            "Approximation of the desktop hero — the real site may vary slightly in sizes and line breaks."
+          )}
         </p>
       </div>
     </div>

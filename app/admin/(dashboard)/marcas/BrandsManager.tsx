@@ -25,6 +25,8 @@ import {
   type PaymentStatus,
 } from "@/lib/crm";
 import BrandForm, { emptyBrandForm, toBrandPayload, type BrandFormValues } from "./BrandForm";
+import { pickLabel } from "@/lib/admin-lang";
+import { useT } from "@/components/admin/AdminLang";
 
 // Las fechas llegan como string (JSON), tanto desde la página como desde la API.
 type Serialized<T> = T extends Date
@@ -69,13 +71,14 @@ function toFormValues(brand: BrandCrm): BrandFormValues {
 }
 
 function StatusBadge({ status }: { status: string | null }) {
+  const { t, lang } = useT();
   if (!isDealStatus(status)) {
-    return <Badge>Portafolio</Badge>;
+    return <Badge>{t("Portafolio", "Portfolio")}</Badge>;
   }
   const meta = DEAL_STATUS_META[status];
   return (
     <span className={`rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide ${meta.className}`}>
-      {meta.label}
+      {pickLabel(lang, meta)}
     </span>
   );
 }
@@ -95,6 +98,7 @@ function BrandLogo({ brand, size = "h-10 w-10" }: { brand: BrandCrm; size?: stri
 
 export default function BrandsManager({ initialBrands }: { initialBrands: BrandCrm[] }) {
   const { showToast } = useToast();
+  const { t, lang } = useT();
   const [brands, setBrands] = useState(initialBrands);
   const [view, setView] = useState<View>("deals");
   const [filter, setFilter] = useState<Filter>(() =>
@@ -135,7 +139,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      showToast("error", data.error ?? "No se pudo guardar");
+      showToast("error", data.error ?? t("No se pudo guardar", "Couldn't save"));
       return null;
     }
     return data as BrandCrm;
@@ -160,11 +164,11 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
       if (filter !== "all" && filter !== "deals" && filter !== created.dealStatus) setFilter("deals");
     }
     setSelectedId(created.id);
-    showToast("success", "Marca agregada");
+    showToast("success", t("Marca agregada", "Brand added"));
   }
 
   async function handleUpdate(values: BrandFormValues) {
-    if (await patchSelected(toBrandPayload(values), "Marca actualizada")) setEditing(false);
+    if (await patchSelected(toBrandPayload(values), t("Marca actualizada", "Brand updated"))) setEditing(false);
   }
 
   async function handleToggleActive(brand: BrandCrm) {
@@ -173,7 +177,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
       : await request(`${API_BASE}/${brand.id}`, "PATCH", { active: true });
     if (!updated) return;
     replaceBrand(updated);
-    showToast("success", updated.active ? "Visible en el carrusel" : "Oculta del carrusel");
+    showToast("success", updated.active ? t("Visible en el carrusel", "Visible in the carousel") : t("Oculta del carrusel", "Hidden from the carousel"));
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -182,13 +186,13 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
   }
 
   const filterChips: { id: Filter; label: string; count: number }[] = [
-    { id: "deals", label: "En trato", count: brands.filter((b) => isDealStatus(b.dealStatus)).length },
+    { id: "deals", label: t("En trato", "In deals"), count: brands.filter((b) => isDealStatus(b.dealStatus)).length },
     ...DEAL_STATUSES.map((status) => ({
       id: status,
-      label: DEAL_STATUS_META[status].label,
+      label: pickLabel(lang, DEAL_STATUS_META[status]),
       count: brands.filter((b) => b.dealStatus === status).length,
     })),
-    { id: "all", label: "Todas", count: brands.length },
+    { id: "all", label: t("Todas", "All"), count: brands.length },
   ];
 
   return (
@@ -197,8 +201,8 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
         <div className="inline-flex rounded-full border border-line bg-white p-1">
           {(
             [
-              { id: "deals", label: "Tratos" },
-              { id: "carousel", label: "Carrusel del sitio" },
+              { id: "deals", label: t("Tratos", "Deals") },
+              { id: "carousel", label: t("Carrusel del sitio", "Site carousel") },
             ] as const
           ).map((tab) => (
             <button
@@ -224,18 +228,18 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
           }}
           className="rounded-full bg-coral px-sp-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-moss"
         >
-          {view === "deals" ? "+ Nueva marca" : "+ Agregar logo"}
+          {view === "deals" ? t("+ Nueva marca", "+ New brand") : t("+ Agregar logo", "+ Add logo")}
         </button>
       </div>
 
       {creating && (
         <Card className="mb-sp-5">
           <p className="mb-sp-4 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">
-            {creating === "deal" ? "Nueva marca" : "Nuevo logo para el carrusel"}
+            {creating === "deal" ? t("Nueva marca", "New brand") : t("Nuevo logo para el carrusel", "New carousel logo")}
           </p>
           <BrandForm
             initial={creating === "logo" ? { ...emptyBrandForm, dealStatus: "", active: true } : undefined}
-            submitLabel="Agregar marca"
+            submitLabel={t("Agregar marca", "Add brand")}
             onSubmit={handleCreate}
             onCancel={() => setCreating(null)}
           />
@@ -245,7 +249,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
       {view === "carousel" ? (
         <div>
           <p className="mb-sp-4 text-sm text-ink/60">
-            El orden de esta lista es el orden del carrusel de logos en el sitio público.
+            {t("El orden de esta lista es el orden del carrusel de logos en el sitio público.", "The order of this list is the order of the logo carousel on the public site.")}
           </p>
           <ul className="flex flex-col gap-sp-3">
             {brands.map((brand, index) => (
@@ -259,7 +263,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                 <BrandLogo brand={brand} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-ink">{brand.name}</p>
-                  {!brand.active && <Badge className="mt-1">Oculta del sitio</Badge>}
+                  {!brand.active && <Badge className="mt-1">{t("Oculta del sitio", "Hidden from site")}</Badge>}
                 </div>
                 <button
                   type="button"
@@ -271,14 +275,14 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                   }}
                   className={accentLinkClass}
                 >
-                  Editar
+                  {t("Editar", "Edit")}
                 </button>
                 <button
                   type="button"
                   onClick={() => handleToggleActive(brand)}
                   className="text-sm font-medium text-ink/60 transition hover:text-ink"
                 >
-                  {brand.active ? "Ocultar" : "Mostrar"}
+                  {brand.active ? t("Ocultar", "Hide") : t("Mostrar", "Show")}
                 </button>
               </li>
             ))}
@@ -308,8 +312,8 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
               {visibleBrands.length === 0 && (
                 <Card className="text-sm text-ink/60">
                   {filter === "deals"
-                    ? "Todavía no tienes tratos. Crea una marca nueva o abre “Todas” y asígnale un estado."
-                    : "No hay marcas en este estado."}
+                    ? t("Todavía no tienes tratos. Crea una marca nueva o abre “Todas” y asígnale un estado.", "You don't have deals yet. Create a new brand or open “All” and give it a status.")
+                    : t("No hay marcas en este estado.", "No brands in this status.")}
                 </Card>
               )}
               {visibleBrands.map((brand) => {
@@ -317,8 +321,8 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                 const overdue = brand.nextActionDue && daysUntil(brand.nextActionDue) < 0;
                 const meta = [
                   brand.dealValue != null ? formatMoney(brand.dealValue) : null,
-                  brand.lastContactAt ? formatShortDate(brand.lastContactAt) : null,
-                  isPaymentStatus(brand.paymentStatus) ? PAYMENT_STATUS_META[brand.paymentStatus].label : null,
+                  brand.lastContactAt ? formatShortDate(brand.lastContactAt, lang) : null,
+                  isPaymentStatus(brand.paymentStatus) ? pickLabel(lang, PAYMENT_STATUS_META[brand.paymentStatus]) : null,
                 ].filter(Boolean);
                 return (
                   <li key={brand.id}>
@@ -344,7 +348,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                         <span className="truncate text-[15px] font-semibold">{brand.name}</span>
                         {isSelected ? (
                           <span className="rounded-full bg-white px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-ink">
-                            {isDealStatus(brand.dealStatus) ? DEAL_STATUS_META[brand.dealStatus].label : "Portafolio"}
+                            {isDealStatus(brand.dealStatus) ? pickLabel(lang, DEAL_STATUS_META[brand.dealStatus]) : t("Portafolio", "Portfolio")}
                           </span>
                         ) : (
                           <StatusBadge status={brand.dealStatus} />
@@ -361,7 +365,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                             overdue ? (isSelected ? "text-lime" : "text-coral") : isSelected ? "text-cream/70" : "text-ink/50"
                           }`}
                         >
-                          {dueLabel(brand.nextActionDue)}
+                          {dueLabel(brand.nextActionDue, lang)}
                         </p>
                       )}
                     </button>
@@ -376,12 +380,12 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                   {editing ? (
                     <>
                       <p className="mb-sp-4 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">
-                        Editar {selected.name}
+                        {t("Editar", "Edit")} {selected.name}
                       </p>
                       <BrandForm
                         key={selected.id}
                         initial={toFormValues(selected)}
-                        submitLabel="Guardar cambios"
+                        submitLabel={t("Guardar cambios", "Save changes")}
                         onSubmit={handleUpdate}
                         onCancel={() => setEditing(false)}
                       />
@@ -396,14 +400,14 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                         const updated = await request(`${API_BASE}/${selected.id}/events`, "POST", { note, date });
                         if (!updated) return false;
                         replaceBrand(updated);
-                        showToast("success", "Agregado al historial");
+                        showToast("success", t("Agregado al historial", "Added to history"));
                         return true;
                       }}
                     />
                   )}
                 </Card>
               ) : (
-                <Card className="text-sm text-ink/60">Elige una marca para ver su detalle.</Card>
+                <Card className="text-sm text-ink/60">{t("Elige una marca para ver su detalle.", "Choose a brand to see its details.")}</Card>
               )}
             </div>
           </div>
@@ -424,6 +428,7 @@ function BrandDetail({
   onPatch: (body: Record<string, unknown>, successMessage: string) => Promise<boolean>;
   onAddEvent: (note: string, date: string) => Promise<boolean>;
 }) {
+  const { t, lang } = useT();
   const [notes, setNotes] = useState(brand.notes ?? "");
   const [eventNote, setEventNote] = useState("");
   const [eventDate, setEventDate] = useState(() => dateToInput(new Date()));
@@ -435,20 +440,20 @@ function BrandDetail({
   const overdueDays = brand.nextActionDue ? -daysUntil(brand.nextActionDue) : 0;
 
   const facts = [
-    { label: "Valor del trato", value: formatMoney(brand.dealValue) },
-    { label: "Plataformas", value: brand.platforms.length ? brand.platforms.join(", ") : "—" },
-    { label: "Último contacto", value: formatShortDate(brand.lastContactAt) },
+    { label: t("Valor del trato", "Deal value"), value: formatMoney(brand.dealValue) },
+    { label: t("Plataformas", "Platforms"), value: brand.platforms.length ? brand.platforms.join(", ") : "—" },
+    { label: t("Último contacto", "Last contact"), value: formatShortDate(brand.lastContactAt, lang) },
     {
-      label: "Próximo paso",
+      label: t("Próximo paso", "Next step"),
       value: brand.nextAction || "—",
-      sub: brand.nextActionDue ? `${formatShortDate(brand.nextActionDue)} · ${dueLabel(brand.nextActionDue)}` : null,
+      sub: brand.nextActionDue ? `${formatShortDate(brand.nextActionDue, lang)} · ${dueLabel(brand.nextActionDue, lang)}` : null,
     },
-    { label: "Paquete", value: brand.packageDetail || "—" },
+    { label: t("Paquete", "Package"), value: brand.packageDetail || "—" },
   ];
 
   async function saveNotes() {
     if (notes === (brand.notes ?? "")) return;
-    await onPatch({ notes }, "Notas guardadas");
+    await onPatch({ notes }, t("Notas guardadas", "Notes saved"));
   }
 
   async function addEvent(event: React.FormEvent) {
@@ -476,7 +481,7 @@ function BrandDetail({
         <div className="flex items-center gap-sp-3">
           <StatusBadge status={brand.dealStatus} />
           <button type="button" onClick={onEdit} className={accentLinkClass}>
-            Editar datos
+            {t("Editar datos", "Edit details")}
           </button>
         </div>
       </div>
@@ -493,13 +498,13 @@ function BrandDetail({
         </div>
       ) : (
         <p className="rounded-[12px] bg-cream px-sp-4 py-sp-3 text-sm text-ink/70">
-          Esta marca solo aparece en tu portafolio. Elige un estado abajo para empezar a darle seguimiento como trato.
+          {t("Esta marca solo aparece en tu portafolio. Elige un estado abajo para empezar a darle seguimiento como trato.", "This brand only appears in your portfolio. Choose a status below to start tracking it as a deal.")}
         </p>
       )}
 
       {hasDeal && (
         <div>
-          <p className={eyebrowClass}>Pago</p>
+          <p className={eyebrowClass}>{t("Pago", "Payment")}</p>
           <div className="mt-sp-2 flex flex-wrap gap-sp-2">
             {PAYMENT_STATUSES.map((status: PaymentStatus) => {
               const active = brand.paymentStatus === status;
@@ -507,29 +512,29 @@ function BrandDetail({
                 <button
                   key={status}
                   type="button"
-                  onClick={() => !active && onPatch({ paymentStatus: status }, "Pago actualizado")}
+                  onClick={() => !active && onPatch({ paymentStatus: status }, t("Pago actualizado", "Payment updated"))}
                   className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
                     active ? PAYMENT_STATUS_META[status].className + " ring-1 ring-current" : "bg-cream text-ink/60 hover:text-ink"
                   }`}
                 >
-                  {PAYMENT_STATUS_META[status].label}
+                  {pickLabel(lang, PAYMENT_STATUS_META[status])}
                 </button>
               );
             })}
           </div>
           {overdueDays > 0 && brand.nextAction && (
             <p className="mt-sp-3 text-[13px] font-semibold text-coral">
-              Vencido hace {overdueDays} {overdueDays === 1 ? "día" : "días"} — {brand.nextAction}
+              {t(`Vencido hace ${overdueDays} ${overdueDays === 1 ? "día" : "días"}`, `Overdue by ${overdueDays} ${overdueDays === 1 ? "day" : "days"}`)} — {brand.nextAction}
             </p>
           )}
         </div>
       )}
 
       <div>
-        <p className={eyebrowClass}>Publicaciones para esta marca</p>
+        <p className={eyebrowClass}>{t("Publicaciones para esta marca", "Posts for this brand")}</p>
         {brand.contentCards.length === 0 ? (
           <p className="mt-sp-2 text-[13px] text-ink/55">
-            Ninguna todavía. Vincúlala desde el formulario de una tarjeta del{" "}
+            {t("Ninguna todavía. Vincúlala desde el formulario de una tarjeta del", "None yet. Link it from a card form in the")}{" "}
             <Link href="/admin/feed" className={accentLinkClass}>
               Feed
             </Link>
@@ -547,7 +552,7 @@ function BrandDetail({
                     {meta.initials}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-[13px] text-ink">{card.caption}</span>
-                  <span className="shrink-0 text-xs text-ink/50">{formatShortDate(card.createdAt)}</span>
+                  <span className="shrink-0 text-xs text-ink/50">{formatShortDate(card.createdAt, lang)}</span>
                 </li>
               );
             })}
@@ -556,7 +561,7 @@ function BrandDetail({
       </div>
 
       <div>
-        <p className={eyebrowClass}>Estado del trato</p>
+        <p className={eyebrowClass}>{t("Estado del trato", "Deal status")}</p>
         <div className="mt-sp-2 flex flex-wrap gap-sp-2">
           {DEAL_STATUSES.map((status) => {
             const active = brand.dealStatus === status;
@@ -564,22 +569,22 @@ function BrandDetail({
               <button
                 key={status}
                 type="button"
-                onClick={() => !active && onPatch({ dealStatus: status }, `Estado: ${DEAL_STATUS_META[status].label}`)}
+                onClick={() => !active && onPatch({ dealStatus: status }, `${t("Estado", "Status")}: ${pickLabel(lang, DEAL_STATUS_META[status])}`)}
                 className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
                   active ? "bg-ink text-cream" : "bg-cream text-ink/70 hover:text-ink"
                 }`}
               >
-                {DEAL_STATUS_META[status].label}
+                {pickLabel(lang, DEAL_STATUS_META[status])}
               </button>
             );
           })}
           {hasDeal && (
             <button
               type="button"
-              onClick={() => onPatch({ dealStatus: null }, "Trato quitado")}
+              onClick={() => onPatch({ dealStatus: null }, t("Trato quitado", "Deal removed"))}
               className="rounded-full px-3.5 py-1.5 text-xs font-semibold text-ink/45 hover:text-ink"
             >
-              Quitar trato
+              {t("Quitar trato", "Remove deal")}
             </button>
           )}
         </div>
@@ -588,46 +593,46 @@ function BrandDetail({
       {hasDeal && (
         <>
           <label className="flex flex-col gap-sp-2">
-            <span className={eyebrowClass}>Notas</span>
+            <span className={eyebrowClass}>{t("Notas", "Notes")}</span>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               onBlur={saveNotes}
               rows={4}
               className={`${inputClass} resize-y`}
-              placeholder="Condiciones, tiempos de pago, lo que pidió la marca…"
+              placeholder={t("Condiciones, tiempos de pago, lo que pidió la marca…", "Terms, payment timing, what the brand asked for…")}
             />
-            <span className="text-xs text-ink/45">Se guardan solas al salir del campo.</span>
+            <span className="text-xs text-ink/45">{t("Se guardan solas al salir del campo.", "They save automatically when you leave the field.")}</span>
           </label>
 
           <div>
-            <p className={eyebrowClass}>Historial del acuerdo</p>
+            <p className={eyebrowClass}>{t("Historial del acuerdo", "Deal history")}</p>
             <form onSubmit={addEvent} className="mt-sp-2 flex flex-col gap-sp-2 sm:flex-row">
               <input
                 type="date"
                 value={eventDate}
                 onChange={(e) => setEventDate(e.target.value)}
                 className={`${inputClass} sm:w-40`}
-                aria-label="Fecha"
+                aria-label={t("Fecha", "Date")}
               />
               <input
                 value={eventNote}
                 onChange={(e) => setEventNote(e.target.value)}
                 className={`${inputClass} flex-1`}
-                placeholder="Ej: Contraoferta de la marca: $800"
-                aria-label="Qué pasó"
+                placeholder={t("Ej: Contraoferta de la marca: $800", "E.g.: Brand counteroffer: $800")}
+                aria-label={t("Qué pasó", "What happened")}
               />
               <button type="submit" disabled={addingEvent || !eventNote.trim()} className={secondaryButtonClass}>
-                Agregar
+                {t("Agregar", "Add")}
               </button>
             </form>
             {brand.events.length === 0 ? (
-              <p className="mt-sp-3 text-[13px] text-ink/55">Sin movimientos todavía.</p>
+              <p className="mt-sp-3 text-[13px] text-ink/55">{t("Sin movimientos todavía.", "No activity yet.")}</p>
             ) : (
               <ul className="mt-sp-3 flex flex-col gap-sp-2">
                 {brand.events.map((event) => (
                   <li key={event.id} className="flex gap-sp-3 text-[13px]">
-                    <span className="w-14 shrink-0 font-mono text-[11px] text-ink/50">{formatShortDate(event.date)}</span>
+                    <span className="w-14 shrink-0 font-mono text-[11px] text-ink/50">{formatShortDate(event.date, lang)}</span>
                     <span className="text-ink">{event.note}</span>
                   </li>
                 ))}

@@ -3,6 +3,7 @@ import { issueAuthToken } from "./auth-tokens";
 import { sendEmail } from "./email";
 import { emailChangedEmail, passwordChangedEmail, verifyEmail, welcomeEmail } from "./email-templates";
 import { creatorSiteUrl, platformOrigin } from "./site-url";
+import { asMailLang, mailLangFor } from "./email-lang";
 
 // Correos de la cuenta (bienvenida, confirmar correo, aviso de contraseña cambiada).
 // Nunca lanzan error: si el correo falla, la acción de la persona igual se completa.
@@ -14,6 +15,7 @@ async function userWithCreator(userId: string) {
       id: true,
       email: true,
       name: true,
+      language: true,
       creator: { select: { slug: true, customDomain: true, customDomainVerifiedAt: true } },
     },
   });
@@ -26,6 +28,7 @@ export async function sendWelcomeEmail(userId: string) {
   const origin = await platformOrigin();
   const token = await issueAuthToken(user.id, "verify");
   const mail = welcomeEmail({
+    lang: asMailLang(user.language),
     origin,
     name: user.name,
     siteUrl: await creatorSiteUrl(user.creator),
@@ -41,7 +44,7 @@ export async function sendVerificationEmail(userId: string) {
   if (!user) return;
   const origin = await platformOrigin();
   const token = await issueAuthToken(user.id, "verify");
-  const mail = verifyEmail({ origin, name: user.name, verifyUrl: `${origin}/api/admin/verify-email?token=${token}` });
+  const mail = verifyEmail({ lang: asMailLang(user.language), origin, name: user.name, verifyUrl: `${origin}/api/admin/verify-email?token=${token}` });
   return sendEmail({ to: user.email, ...mail });
 }
 
@@ -50,12 +53,14 @@ export async function sendPasswordChangedEmail(userId: string) {
   const user = await userWithCreator(userId);
   if (!user) return;
   const origin = await platformOrigin();
-  const mail = passwordChangedEmail({ origin, name: user.name, forgotUrl: `${origin}/admin/recuperar` });
+  const mail = passwordChangedEmail({ lang: asMailLang(user.language), origin, name: user.name, forgotUrl: `${origin}/admin/recuperar` });
   return sendEmail({ to: user.email, ...mail });
 }
 
 /** Aviso de seguridad al correo ANTERIOR: la cuenta ahora entra con otro correo. */
 export async function sendEmailChangedNotice(oldEmail: string, name: string | null, newEmail: string) {
   const origin = await platformOrigin();
-  return sendEmail({ to: oldEmail, ...emailChangedEmail({ origin, name, newEmail }) });
+  // El aviso va al correo anterior, pero la persona es la misma: usamos el idioma de su panel.
+  const lang = await mailLangFor(newEmail);
+  return sendEmail({ to: oldEmail, ...emailChangedEmail({ lang, origin, name, newEmail }) });
 }

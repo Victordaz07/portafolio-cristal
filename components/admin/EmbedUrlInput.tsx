@@ -4,6 +4,7 @@ import { useState } from "react";
 import { parseEmbedUrl, platformLabel, type Platform, type ContentType } from "@/lib/embeds";
 import PlatformEmbed from "@/components/embeds/PlatformEmbed";
 import { inputClass, secondaryButtonClass } from "@/lib/admin-ui";
+import { useT } from "@/components/admin/AdminLang";
 
 function isUnresolvedTikTokShortLink(rawUrl: string): boolean {
   try {
@@ -29,6 +30,7 @@ export default function EmbedUrlInput({
   platform: Platform | null;
   type: ContentType | null;
 }) {
+  const { t } = useT();
   const [showPreview, setShowPreview] = useState(false);
   const [resolving, setResolving] = useState(false);
   const [fetchingThumbnail, setFetchingThumbnail] = useState(false);
@@ -85,13 +87,13 @@ export default function EmbedUrlInput({
 
   return (
     <div className="flex flex-col gap-sp-2">
-      <span className="text-sm font-medium text-ink">URL del post</span>
+      <span className="text-sm font-medium text-ink">{t("URL del post", "Post URL")}</span>
       <div className="flex flex-wrap items-center gap-sp-3">
         <input
           type="url"
           value={url}
           onChange={(e) => handleChange(e.target.value)}
-          placeholder="https://www.tiktok.com/@usuario/video/..."
+          placeholder={t("https://www.tiktok.com/@usuario/video/...", "https://www.tiktok.com/@user/video/...")}
           className={`${inputClass} flex-1 min-w-[240px]`}
         />
         {platform && (
@@ -105,19 +107,19 @@ export default function EmbedUrlInput({
           onClick={handleLoadPreview}
           className={secondaryButtonClass}
         >
-          {resolving ? "Resolviendo enlace..." : fetchingThumbnail ? "Buscando portada..." : "Cargar preview"}
+          {resolving ? t("Resolviendo enlace...", "Resolving link...") : fetchingThumbnail ? t("Buscando portada...", "Finding cover...") : t("Cargar preview", "Load preview")}
         </button>
       </div>
 
       <p className="text-xs text-ink/50">
-        Puedes dejarlo en blanco si vas a subir tu propio video más abajo, sin depender de una publicación existente.
+        {t("Puedes dejarlo en blanco si vas a subir tu propio video más abajo, sin depender de una publicación existente.", "You can leave it blank if you'll upload your own video below, without relying on an existing post.")}
         {(platform === "instagram" || platform === "facebook") &&
-          " Al cargar el preview intentamos traer la portada automáticamente; si no aparece, puedes subir una manualmente más abajo."}
+          t(" Al cargar el preview intentamos traer la portada automáticamente; si no aparece, puedes subir una manualmente más abajo.", " When loading the preview we try to fetch the cover automatically; if it doesn't appear, you can upload one manually below.")}
       </p>
 
       {!platform && url && (
         <p className="text-xs text-red-600">
-          No reconozco la plataforma de esa URL (debe ser de TikTok, Instagram o Facebook).
+          {t("No reconozco la plataforma de esa URL (debe ser de TikTok, Instagram o Facebook).", "I don't recognize that URL's platform (it must be TikTok, Instagram or Facebook).")}
         </p>
       )}
 

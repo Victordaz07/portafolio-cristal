@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prismaRoot } from "@/lib/prisma-root";
 import { logPlatformAction } from "@/lib/platform-admin";
 import { isTeamRole, requireOwner } from "@/lib/team";
+import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
@@ -14,31 +15,33 @@ const schema = z.object({
 
 /** Cambiar roles, nombre o pausar el acceso de alguien del equipo. Solo el Dueño. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const owner = await requireOwner();
-  if (!owner) return NextResponse.json({ error: "Solo el Dueño de Foliocrew" }, { status: 403 });
+  if (!owner) return NextResponse.json({ error: t("Solo el Dueño de Foliocrew", "Foliocrew Owner only") }, { status: 403 });
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const roles = parsed.data.roles ? Array.from(new Set(parsed.data.roles.filter(isTeamRole))) : undefined;
-  if (roles && !roles.length) return NextResponse.json({ error: "Deja al menos un rol (o quita a la persona)" }, { status: 400 });
+  if (roles && !roles.length) return NextResponse.json({ error: t("Deja al menos un rol (o quita a la persona)", "Keep at least one role (or remove the person)") }, { status: 400 });
   const member = await prismaRoot.teamMember
     .update({
       where: { id },
       data: { ...(roles ? { roles } : {}), ...(parsed.data.active !== undefined ? { active: parsed.data.active } : {}), ...(parsed.data.name !== undefined ? { name: parsed.data.name || null } : {}) },
     })
     .catch(() => null);
-  if (!member) return NextResponse.json({ error: "No encontré a esa persona" }, { status: 404 });
+  if (!member) return NextResponse.json({ error: t("No encontré a esa persona", "Couldn't find that person") }, { status: 404 });
   await logPlatformAction(owner.email, "team", null, `Equipo: ${member.email} → ${member.active ? member.roles.join(", ") : "acceso pausado"}`);
   return NextResponse.json({ ok: true });
 }
 
 /** Quitar a alguien del equipo (su cuenta de Foliocrew sigue igual). */
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { t } = await getT();
   const owner = await requireOwner();
-  if (!owner) return NextResponse.json({ error: "Solo el Dueño de Foliocrew" }, { status: 403 });
+  if (!owner) return NextResponse.json({ error: t("Solo el Dueño de Foliocrew", "Foliocrew Owner only") }, { status: 403 });
   const { id } = await params;
   const member = await prismaRoot.teamMember.delete({ where: { id } }).catch(() => null);
-  if (!member) return NextResponse.json({ error: "No encontré a esa persona" }, { status: 404 });
+  if (!member) return NextResponse.json({ error: t("No encontré a esa persona", "Couldn't find that person") }, { status: 404 });
   await logPlatformAction(owner.email, "team", null, `Equipo: ${member.email} quitado`);
   return NextResponse.json({ ok: true });
 }

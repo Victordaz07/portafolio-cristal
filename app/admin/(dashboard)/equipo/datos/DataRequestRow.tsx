@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/admin/ToastContext";
 import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
-import { DATA_REQUEST_STATUS, dataRequestKindLabel } from "@/lib/data-export";
+import { DATA_REQUEST_STATUS, dataRequestKindLabel } from "@/lib/data-requests";
+import { pickLabel } from "@/lib/admin-lang";
+import { useT } from "@/components/admin/AdminLang";
 
 type Request = {
   id: string;
@@ -21,6 +23,7 @@ type Request = {
 };
 
 export default function DataRequestRow({ request: r }: { request: Request }) {
+  const { t, lang } = useT();
   const router = useRouter();
   const { showToast } = useToast();
   const [resolution, setResolution] = useState(r.resolution ?? "");
@@ -36,16 +39,16 @@ export default function DataRequestRow({ request: r }: { request: Request }) {
     });
     const data = (await response.json().catch(() => ({}))) as { error?: string };
     setBusy(false);
-    if (!response.ok) return showToast("error", data.error ?? "No se pudo guardar");
-    showToast("success", next === "open" ? "Pedido reabierto" : "Listo. Le avisamos a la cuenta por correo.");
+    if (!response.ok) return showToast("error", data.error ?? t("No se pudo guardar", "Couldn't save"));
+    showToast("success", next === "open" ? t("Pedido reabierto", "Request reopened") : t("Listo. Le avisamos a la cuenta por correo.", "Done. We emailed the account."));
     router.refresh();
   }
 
   return (
     <li className="flex flex-col gap-sp-2 border-t border-line pt-sp-4 first:border-0 first:pt-0">
       <div className="flex flex-wrap items-center gap-sp-2">
-        <span className={`font-semibold ${r.kind === "delete" ? "text-red-700" : "text-ink"}`}>{dataRequestKindLabel(r.kind)}</span>
-        <span className={`rounded-full px-[8px] py-px font-mono text-[10px] uppercase ${status.tone}`}>{status.label}</span>
+        <span className={`font-semibold ${r.kind === "delete" ? "text-red-700" : "text-ink"}`}>{dataRequestKindLabel(r.kind, lang)}</span>
+        <span className={`rounded-full px-[8px] py-px font-mono text-[10px] uppercase ${status.tone}`}>{pickLabel(lang, status)}</span>
         <span className="text-sm text-ink/70">
           {r.account} · {r.requestedBy}
         </span>
@@ -59,22 +62,22 @@ export default function DataRequestRow({ request: r }: { request: Request }) {
             maxLength={2000}
             value={resolution}
             onChange={(e) => setResolution(e.target.value)}
-            placeholder="Qué se hizo (la cuenta lo recibe por correo). Ej.: Te mandamos la copia a tu correo."
+            placeholder={t("Qué se hizo (la cuenta lo recibe por correo). Ej.: Te mandamos la copia a tu correo.", "What was done (the account gets it by email). E.g.: We sent the copy to your email.")}
           />
           <div className="flex flex-wrap gap-sp-2">
             <a href={`/api/admin/team/data/export/${r.creatorId}`} className={secondaryButtonClass} download>
-              ⬇️ Copia de la cuenta
+              {t("⬇️ Copia de la cuenta", "⬇️ Account copy")}
             </a>
             <button type="button" className={primaryButtonClass} disabled={busy} onClick={() => save("done")}>
-              Marcar resuelto
+              {t("Marcar resuelto", "Mark resolved")}
             </button>
             <button type="button" className={secondaryButtonClass} disabled={busy} onClick={() => save("rejected")}>
-              No se puede
+              {t("No se puede", "Can't be done")}
             </button>
           </div>
           {r.kind === "delete" && (
             <p className="text-xs text-red-700">
-              Borrar una cuenta lo hace el Dueño, a mano. Antes, confirma por correo que la persona de verdad lo pidió.
+              {t("Borrar una cuenta lo hace el Dueño, a mano. Antes, confirma por correo que la persona de verdad lo pidió.", "Deleting an account is done manually by the Owner. First, confirm by email that the person really asked for it.")}
             </p>
           )}
         </>
@@ -84,7 +87,7 @@ export default function DataRequestRow({ request: r }: { request: Request }) {
             💬 {r.resolution} — {r.handledBy} · {r.resolvedAt}
           </span>
           <button type="button" className="text-xs font-semibold text-coral hover:underline" disabled={busy} onClick={() => save("open")}>
-            Reabrir
+            {t("Reabrir", "Reopen")}
           </button>
         </div>
       )}

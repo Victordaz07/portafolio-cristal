@@ -7,16 +7,20 @@ import { dataRequestKindLabel } from "@/lib/data-export";
 import { TEAM_ROLES, type TeamRole } from "@/lib/team-roles";
 import { startOfMonth } from "@/lib/platform-stats";
 import { Stat, eyebrowClass } from "./charts";
+import { pickLabel, type AdminLang } from "@/lib/admin-lang";
+import { getT } from "@/lib/admin-lang-server";
 
 const DAY = 86_400_000;
-const ago = (d: Date) => {
+const ago = (d: Date, lang: AdminLang) => {
   const days = Math.floor((Date.now() - d.getTime()) / DAY);
+  if (lang === "en") return days <= 0 ? "today" : days === 1 ? "yesterday" : `${days} days ago`;
   if (days <= 0) return "hoy";
   return days === 1 ? "ayer" : `hace ${days} días`;
 };
 
 /** Departamentos del equipo (ayuda, sugerencias, recuperación de datos) vistos desde el Centro de mando. */
 export default async function DepartmentsSection() {
+  const { t, lang } = await getT();
   const month = startOfMonth();
   const [members, tickets, ticketsClosedMonth, recentTickets, ideas, recentIdeas, dataOpen, dataDoneMonth, recentData] = await Promise.all([
     prismaRoot.teamMember.findMany({ where: { active: true }, orderBy: { createdAt: "asc" } }),
@@ -39,7 +43,7 @@ export default async function DepartmentsSection() {
       include: { creator: { select: { name: true } } },
     }),
   ]);
-  const ticketCount = (s: string) => tickets.find((t) => t.status === s)?._count._all ?? 0;
+  const ticketCount = (s: string) => tickets.find((x) => x.status === s)?._count._all ?? 0;
   const ideaCount = (s: string) => ideas.find((i) => i.status === s)?._count._all ?? 0;
   const owners = adminEmails();
   const peopleWith = (role: TeamRole) => [
@@ -50,53 +54,62 @@ export default async function DepartmentsSection() {
   const departments = [
     {
       role: "support" as const,
-      title: "🎧 Centro de ayuda",
-      text: "Tickets de las cuentas cuando algo no funciona. Responde, deja notas internas y entra a una cuenta (con motivo) para ayudar.",
+      title: t("🎧 Centro de ayuda", "🎧 Help center"),
+      text: t(
+        "Tickets de las cuentas cuando algo no funciona. Responde, deja notas internas y entra a una cuenta (con motivo) para ayudar.",
+        "Account tickets when something isn't working. Reply, leave internal notes and enter an account (with a reason) to help."
+      ),
       href: "/admin/equipo/soporte",
       stats: [
-        { label: "Abiertos", value: ticketCount("open") },
-        { label: "Esperando a la cuenta", value: ticketCount("waiting") },
-        { label: "Cerrados este mes", value: ticketsClosedMonth },
+        { label: t("Abiertos", "Open"), value: ticketCount("open") },
+        { label: t("Esperando a la cuenta", "Waiting on account"), value: ticketCount("waiting") },
+        { label: t("Cerrados este mes", "Closed this month"), value: ticketsClosedMonth },
       ],
-      empty: "No hay tickets pendientes. 🎉",
-      items: recentTickets.map((t) => ({
-        id: t.id,
-        href: `/admin/equipo/soporte/${t.id}`,
-        title: `#${t.number} ${t.subject}`,
-        meta: `${t.creator.name} · ${t.status === "open" ? "abierto" : "esperando"} · ${ago(t.lastActivityAt)}`,
-        urgent: t.status === "open" && Date.now() - t.lastActivityAt.getTime() > DAY,
+      empty: t("No hay tickets pendientes. 🎉", "No pending tickets. 🎉"),
+      items: recentTickets.map((tk) => ({
+        id: tk.id,
+        href: `/admin/equipo/soporte/${tk.id}`,
+        title: `#${tk.number} ${tk.subject}`,
+        meta: `${tk.creator.name} · ${tk.status === "open" ? t("abierto", "open") : t("esperando", "waiting")} · ${ago(tk.lastActivityAt, lang)}`,
+        urgent: tk.status === "open" && Date.now() - tk.lastActivityAt.getTime() > DAY,
       })),
     },
     {
       role: "growth" as const,
-      title: "💡 Centro de sugerencias",
-      text: "Ideas de las cuentas para mejorar Foliocrew e ideas del equipo. Cuando una se planea o se lanza, la cuenta recibe un correo.",
+      title: t("💡 Centro de sugerencias", "💡 Suggestions center"),
+      text: t(
+        "Ideas de las cuentas para mejorar Foliocrew e ideas del equipo. Cuando una se planea o se lanza, la cuenta recibe un correo.",
+        "Ideas from accounts to improve Foliocrew, plus team ideas. When one is planned or launched, the account gets an email."
+      ),
       href: "/admin/equipo/ideas",
-      stats: IDEA_STATUS.filter((s) => s.id !== "declined").map((s) => ({ label: s.label, value: ideaCount(s.id) })),
-      empty: "No hay sugerencias por revisar.",
+      stats: IDEA_STATUS.filter((s) => s.id !== "declined").map((s) => ({ label: pickLabel(lang, s), value: ideaCount(s.id) })),
+      empty: t("No hay sugerencias por revisar.", "No suggestions to review."),
       items: recentIdeas.map((i) => ({
         id: i.id,
         href: "/admin/equipo/ideas",
         title: i.title,
-        meta: `${i.creatorId ? i.authorName || i.authorEmail : "Idea del equipo"} · ${ago(i.createdAt)}`,
+        meta: `${i.creatorId ? i.authorName || i.authorEmail : t("Idea del equipo", "Team idea")} · ${ago(i.createdAt, lang)}`,
         urgent: false,
       })),
     },
     {
       role: "data" as const,
-      title: "🛟 Recuperación de datos",
-      text: "Pedidos de copia, recuperación o borrado de datos de una cuenta. Cada copia que saca el equipo queda registrada y la cuenta la ve.",
+      title: t("🛟 Recuperación de datos", "🛟 Data recovery"),
+      text: t(
+        "Pedidos de copia, recuperación o borrado de datos de una cuenta. Cada copia que saca el equipo queda registrada y la cuenta la ve.",
+        "Requests to copy, recover or delete an account's data. Every copy the team exports is logged and the account can see it."
+      ),
       href: "/admin/equipo/datos",
       stats: [
-        { label: "Pedidos abiertos", value: dataOpen },
-        { label: "Resueltos este mes", value: dataDoneMonth },
+        { label: t("Pedidos abiertos", "Open requests"), value: dataOpen },
+        { label: t("Resueltos este mes", "Resolved this month"), value: dataDoneMonth },
       ],
-      empty: "No hay pedidos de datos abiertos.",
+      empty: t("No hay pedidos de datos abiertos.", "No open data requests."),
       items: recentData.map((d) => ({
         id: d.id,
         href: "/admin/equipo/datos",
-        title: dataRequestKindLabel(d.kind),
-        meta: `${d.creator.name} · ${ago(d.createdAt)}`,
+        title: dataRequestKindLabel(d.kind, lang),
+        meta: `${d.creator.name} · ${ago(d.createdAt, lang)}`,
         urgent: d.kind === "delete" || Date.now() - d.createdAt.getTime() > 2 * DAY,
       })),
     },
@@ -115,7 +128,7 @@ export default async function DepartmentsSection() {
                 <p className="mt-sp-1 text-sm text-ink/70">{d.text}</p>
               </div>
               <Link href={d.href} className="rounded-full bg-ink px-sp-4 py-2 text-sm font-semibold text-cream hover:bg-coral">
-                Abrir departamento →
+                {t("Abrir departamento →", "Open department →")}
               </Link>
             </div>
 
@@ -127,7 +140,7 @@ export default async function DepartmentsSection() {
 
             <div className="mt-sp-5 grid gap-sp-5 md:grid-cols-[2fr_1fr]">
               <div>
-                <p className={`${eyebrowClass} mb-sp-2`}>Para atender</p>
+                <p className={`${eyebrowClass} mb-sp-2`}>{t("Para atender", "To handle")}</p>
                 {d.items.length === 0 ? (
                   <p className="text-sm text-ink/60">{d.empty}</p>
                 ) : (
@@ -145,18 +158,18 @@ export default async function DepartmentsSection() {
                 )}
               </div>
               <div>
-                <p className={`${eyebrowClass} mb-sp-2`}>Quién atiende</p>
+                <p className={`${eyebrowClass} mb-sp-2`}>{t("Quién atiende", "Who handles it")}</p>
                 <ul className="flex flex-col gap-sp-1 text-sm">
                   {people.map((p) => (
                     <li key={p.key} className="flex flex-wrap items-center gap-sp-1">
                       <span className="text-ink">{p.name}</span>
-                      {p.owner && <span className="rounded-full bg-ink px-[6px] py-px font-mono text-[9px] uppercase text-cream">Dueño</span>}
+                      {p.owner && <span className="rounded-full bg-ink px-[6px] py-px font-mono text-[9px] uppercase text-cream">{t("Dueño", "Owner")}</span>}
                     </li>
                   ))}
                 </ul>
-                <p className="mt-sp-2 text-xs text-ink/50">{role?.hint}</p>
+                <p className="mt-sp-2 text-xs text-ink/50">{lang === "en" ? role?.hintEn : role?.hint}</p>
                 <Link href="/admin/equipo/personas" className="mt-sp-2 inline-block text-xs font-semibold text-coral hover:underline">
-                  Sumar a alguien →
+                  {t("Sumar a alguien →", "Add someone →")}
                 </Link>
               </div>
             </div>

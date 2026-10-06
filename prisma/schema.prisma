@@ -42,36 +42,38 @@ model Creator {
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
-  hero              Hero?
-  stats             Stat[]
-  contentCards      ContentCard[]
-  brands            Brand[]
-  brandEvents       BrandEvent[]
-  reviews           Review[]
-  services          Service[]
-  testimonials      Testimonial[]
-  packages          Package[]
-  faqItems          FaqItem[]
-  contactMessages   ContactMessage[]
-  users             AdminUser[]
-  siteSettings      SiteSettings?
-  socialAccounts    SocialAccount[]
-  inboxReplies      InboxReply[]
-  supportTickets    SupportTicket[]
-  ideas             Idea[]
-  dataRequests      DataRequest[]
-  goals             Goal[]
-  actionItems       ActionItem[]
-  logEntries        LogEntry[]
-  scheduledPosts    ScheduledPost[]
-  followerSnapshots FollowerSnapshot[]
-  aiUsage           AiUsage[]
-  bioLinks          BioLink[]
-  bioLinkGroups     BioLinkGroup[]
-  payments          Payment[]
-  communityProfile  CommunityProfile?
-  communityPosts    CommunityPost[]
-  communityReplies  CommunityReply[]
+  hero                Hero?
+  stats               Stat[]
+  contentCards        ContentCard[]
+  brands              Brand[]
+  brandEvents         BrandEvent[]
+  reviews             Review[]
+  services            Service[]
+  testimonials        Testimonial[]
+  packages            Package[]
+  faqItems            FaqItem[]
+  contactMessages     ContactMessage[]
+  users               AdminUser[]
+  siteSettings        SiteSettings?
+  socialAccounts      SocialAccount[]
+  inboxReplies        InboxReply[]
+  supportTickets      SupportTicket[]
+  ideas               Idea[]
+  dataRequests        DataRequest[]
+  goals               Goal[]
+  actionItems         ActionItem[]
+  logEntries          LogEntry[]
+  scheduledPosts      ScheduledPost[]
+  followerSnapshots   FollowerSnapshot[]
+  aiUsage             AiUsage[]
+  bioLinks            BioLink[]
+  bioLinkGroups       BioLinkGroup[]
+  payments            Payment[]
+  communityProfile    CommunityProfile?
+  communityPosts      CommunityPost[]
+  communityReplies    CommunityReply[]
+  connectionsSent     CommunityConnection[] @relation("ConnectionRequester")
+  connectionsReceived CommunityConnection[] @relation("ConnectionAddressee")
 }
 
 model Hero {
@@ -874,6 +876,25 @@ model CommunityReport {
 
   @@unique([reporterId, targetType, targetId])
   @@index([status, createdAt])
+}
+
+/// Conexión entre dos cuentas (como LinkedIn). Una sola fila por par: se valida en el código.
+model CommunityConnection {
+  id          String    @id @default(cuid())
+  requesterId String
+  requester   Creator   @relation("ConnectionRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addresseeId String
+  addressee   Creator   @relation("ConnectionAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+  /// "pending" | "accepted" | "declined" (rechazar es silencioso: quien pidió sigue viendo "enviada")
+  status      String    @default("pending")
+  /// Mensaje corto opcional con la solicitud
+  note        String    @default("")
+  createdAt   DateTime  @default(now())
+  respondedAt DateTime?
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId, status])
+  @@index([requesterId, status])
 }
 
 model CommunityBlock {

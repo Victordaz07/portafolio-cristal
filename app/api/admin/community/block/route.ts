@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prismaRoot } from "@/lib/prisma-root";
 import { getSession } from "@/lib/tenant";
 import { getT } from "@/lib/admin-lang-server";
+import { removeConnectionBetween } from "@/lib/community-connections";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,8 @@ export async function POST(request: Request) {
       update: {},
     })
     .catch(() => null);
+  // Al bloquear también se corta la conexión (o la solicitud pendiente).
+  await removeConnectionBetween(session.creatorId, blockedId);
   return NextResponse.json({ ok: true });
 }
 

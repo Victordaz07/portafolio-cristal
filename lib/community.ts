@@ -108,6 +108,9 @@ export const LIMITS = {
   postsFirstDay: 2,
   repliesPerHour: 30,
   reportsPerHour: 20,
+  /** Solicitudes de conexión por día y largo de la nota que las acompaña. */
+  connectionsPerDay: 20,
+  connectionNote: 300,
   /** Minutos para editar después de publicar. */
   editMinutes: 30,
   /** Reportes abiertos que avisan al equipo / ocultan solo el contenido. */
@@ -217,4 +220,20 @@ export function splitLinks(text: string): { text: string; href?: string }[] {
   }
   if (last < text.length) parts.push({ text: text.slice(last) });
   return parts;
+}
+
+// ─── Conexiones ───
+
+export type ConnectionRow = { requesterId: string; addresseeId: string; status: string };
+export type ConnectionState = "none" | "outgoing" | "incoming" | "connected";
+
+/**
+ * Cómo ve `me` la conexión con otra persona. Rechazar es silencioso: quien pidió sigue viendo
+ * "enviada" y quien rechazó vuelve a ver "conectar" (si después pide, se acepta sola).
+ */
+export function connectionState(row: ConnectionRow | null | undefined, me: string): ConnectionState {
+  if (!row) return "none";
+  if (row.status === "accepted") return "connected";
+  if (row.requesterId === me) return "outgoing";
+  return row.status === "pending" ? "incoming" : "none";
 }

@@ -468,6 +468,7 @@ const guiaEs: ManualBlock[] = [
       "Puedes publicar una pregunta, un consejo, un logro, una búsqueda de colaboración o un recurso. Filtra el muro por tipo, tema o tipo de creador, y usa \"Destacadas\" para ver lo que más está ayudando.",
       "Marca \"💡 Me sirvió\" en lo que te ayude y, si preguntaste, elige la \"Mejor respuesta\": así quien ayuda gana puntos y sube de nivel. Te avisamos por correo cuando te responden (lo puedes apagar en Mi perfil).",
       "Si algo rompe las reglas, toca \"Reportar\" (es anónimo). También puedes bloquear a alguien desde su perfil. Cada semana el equipo fija una pregunta para conversar.",
+      "Para conectar con alguien, entra a su perfil y toca \"+ Conectar\" (puedes agregar una nota). Las solicitudes que te llegan están en Comunidad → Conexiones, donde las aceptas o rechazas. Rechazar es discreto: la otra persona no recibe aviso.",
     ],
   },
 ];
@@ -625,6 +626,7 @@ const guiaEn: ManualBlock[] = [
       "You can post a question, a tip, a win, a collab request or a resource. Filter the wall by type, topic or creator type, and use \"Top\" to see what's helping most.",
       "Mark \"💡 Helpful\" on what helps you and, if you asked, pick the \"Best answer\": that way whoever helps earns points and levels up. We email you when someone replies (you can turn it off in My profile).",
       "If something breaks the rules, tap \"Report\" (it's anonymous). You can also block someone from their profile. Every week the team pins a question to talk about.",
+      "To connect with someone, open their profile and tap \"+ Connect\" (you can add a note). Requests you receive are in Community → Connections, where you accept or decline them. Declining is discreet: the other person isn't notified.",
     ],
   },
 ];

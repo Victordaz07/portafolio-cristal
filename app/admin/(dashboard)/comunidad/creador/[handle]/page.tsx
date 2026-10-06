@@ -4,7 +4,8 @@ import { prismaRoot } from "@/lib/prisma-root";
 import { getSession } from "@/lib/tenant";
 import { getT } from "@/lib/admin-lang-server";
 import { blockedIds, profileByHandle } from "@/lib/community-server";
-import { creatorTypeLabel, levelLabel, postKindLabel } from "@/lib/community";
+import { connectionState, creatorTypeLabel, levelLabel, postKindLabel } from "@/lib/community";
+import { connectionBetween } from "@/lib/community-connections";
 import { creatorSiteUrl } from "@/lib/site-url";
 import { NICHES } from "@/lib/onboarding";
 import { dateLocale, pickLabel } from "@/lib/admin-lang";
@@ -12,6 +13,7 @@ import Card from "@/components/admin/Card";
 import CommunityAvatar from "@/components/community/CommunityAvatar";
 import ReportButton from "@/components/community/ReportButton";
 import BlockButton from "@/components/community/BlockButton";
+import ConnectButton from "@/components/community/ConnectButton";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +29,7 @@ export default async function CreatorCommunityProfilePage({ params }: { params: 
   const isMe = creator.id === session.creatorId;
   if (!isMe && (await blockedIds(session.creatorId)).includes(creator.id)) notFound();
 
-  const [posts, siteUrl] = await Promise.all([
+  const [posts, siteUrl, connection, connections] = await Promise.all([
     prismaRoot.communityPost.findMany({
       where: { creatorId: creator.id, hiddenAt: null, deletedAt: null },
       orderBy: { createdAt: "desc" },
@@ -35,7 +37,10 @@ export default async function CreatorCommunityProfilePage({ params }: { params: 
       select: { id: true, kind: true, title: true, replyCount: true, helpfulCount: true, createdAt: true },
     }),
     profile.showSite ? creatorSiteUrl(creator) : Promise.resolve(null),
+    isMe ? Promise.resolve(null) : connectionBetween(session.creatorId, creator.id),
+    prismaRoot.communityConnection.count({ where: { status: "accepted", OR: [{ requesterId: creator.id }, { addresseeId: creator.id }] } }),
   ]);
+  const state = connectionState(connection, session.creatorId);
   const niche = NICHES.find((n) => n.id === profile.niche);
   const fmt = (d: Date) => d.toLocaleDateString(dateLocale(lang), { day: "numeric", month: "short" });
 
@@ -68,6 +73,9 @@ export default async function CreatorCommunityProfilePage({ params }: { params: 
           </div>
           {profile.bio && <p className="mt-sp-3 whitespace-pre-line text-sm text-ink/75">{profile.bio}</p>}
           <p className="mt-sp-3 flex flex-wrap gap-x-sp-4 gap-y-1 text-sm text-ink/60">
+            <span>
+              🤝 {connections} {connections === 1 ? t("conexión", "connection") : t("conexiones", "connections")}
+            </span>
             {profile.showCity && profile.city && <span>📍 {profile.city}</span>}
             {profile.languages.length > 0 && (
               <span>🗣️ {profile.languages.map((l) => (l === "en" ? t("Inglés", "English") : t("Español", "Spanish"))).join(" · ")}</span>
@@ -85,9 +93,15 @@ export default async function CreatorCommunityProfilePage({ params }: { params: 
           </Link>
         ) : (
           !session.actorId && (
-            <div className="flex gap-sp-3 self-start">
-              <ReportButton targetType="profile" targetId={profile.id} />
-              <BlockButton handle={creator.slug} name={profile.displayName} blocked={false} />
+            <div className="flex flex-col items-start gap-sp-3 self-start sm:items-end">
+              <ConnectButton handle={creator.slug} name={profile.displayName} state={state} connectionId={connection?.id ?? null} />
+              {state === "incoming" && connection?.note && (
+                <p className="max-w-xs rounded-[12px] bg-cream px-sp-3 py-sp-2 text-sm italic text-ink/70">“{connection.note}”</p>
+              )}
+              <div className="flex gap-sp-3">
+                <ReportButton targetType="profile" targetId={profile.id} />
+                <BlockButton handle={creator.slug} name={profile.displayName} blocked={false} />
+              </div>
             </div>
           )
         )}

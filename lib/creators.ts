@@ -37,7 +37,7 @@ export async function slugProblem(slug: string, t: T = makeT("es")) {
 }
 
 /** Registro de una creadora nueva: su espacio, su usuario y un sitio inicial listo para editar. */
-export async function createCreatorAccount(input: { name: string; slug: string; email: string; password: string }) {
+export async function createCreatorAccount(input: { name: string; slug: string; email: string; password: string; language?: "es" | "en" }) {
   const passwordHash = await bcrypt.hash(input.password, 12);
   const firstName = input.name.split(" ")[0];
   return prismaRoot.$transaction(async (tx) => {
@@ -46,7 +46,14 @@ export async function createCreatorAccount(input: { name: string; slug: string; 
       data: { slug: input.slug, name: input.name, trialEndsAt: days ? new Date(Date.now() + days * 86_400_000) : null },
     });
     const user = await tx.adminUser.create({
-      data: { email: input.email.toLowerCase(), passwordHash, name: input.name, creatorId: creator.id, lastLoginAt: new Date() },
+      data: {
+        email: input.email.toLowerCase(),
+        passwordHash,
+        name: input.name,
+        creatorId: creator.id,
+        lastLoginAt: new Date(),
+        language: input.language ?? "es",
+      },
     });
     await tx.hero.create({
       data: {

@@ -35,10 +35,10 @@ export default function HeroPreview({
             </span>
 
             <h3 className="mt-sp-2 font-fraunces text-lg font-semibold leading-tight tracking-[-0.01em] text-ink">
-              {headlinePlain || "Título"}
+              {headlinePlain || t("Título", "Title")}
               <br />
               <em className="font-fraunces not-italic text-lime">
-                {headlineEmphasis || "énfasis"}
+                {headlineEmphasis || t("énfasis", "emphasis")}
               </em>{" "}
               {headlineSuffix}
             </h3>

@@ -26,7 +26,7 @@ const waitlistSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   // Límite simple por IP: 5 intentos por minuto.
   if (tooManyAttempts(`waitlist:${clientIp(request)}`, 5)) {
     return NextResponse.json({ error: t("Demasiados intentos; prueba en un minuto", "Too many attempts; try again in a minute") }, { status: 429 });
@@ -40,11 +40,11 @@ export async function POST(request: Request) {
   const existing = await prismaRoot.waitlistEntry.findUnique({ where: { email: data.email } });
   const entry =
     existing ??
-    (await prismaRoot.waitlistEntry.create({ data: { ...data, audience: data.audience ?? null } }));
+    (await prismaRoot.waitlistEntry.create({ data: { ...data, audience: data.audience ?? null, language: lang } }));
   const position = await prismaRoot.waitlistEntry.count({ where: { createdAt: { lte: entry.createdAt } } });
   if (!existing) {
     const origin = await platformOrigin();
-    const mail = waitlistJoinedEmail({ origin, position, shareUrl: `${origin}/?utm_source=referido` });
+    const mail = waitlistJoinedEmail({ lang, origin, position, shareUrl: `${origin}/?utm_source=referido` });
     await sendEmail({ to: entry.email, ...mail }).catch(() => {});
   }
   return NextResponse.json({ ok: true, position, already: Boolean(existing) });

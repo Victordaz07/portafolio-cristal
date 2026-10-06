@@ -23,11 +23,11 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] Menú lateral y layout del panel (avisos del plan)
 - [x] Entrar, crear cuenta, recuperar y restablecer contraseña
 - [x] Mensajes de error de todas las rutas de API (diccionario + `validationMessage`)
-- [ ] Pantallas del panel (lista abajo)
-- [ ] Constantes en `lib/` con etiquetas (estados de tratos, planes, roles, soporte, ideas, redes, nichos…)
-- [ ] Respuestas de la IA en el idioma del panel (consejos, diseño, inteligencia)
-- [ ] Correos (plantillas en `lib/email-templates.ts`, `lib/account-emails.ts`, avisos de soporte, ideas y datos)
-- [ ] Página de venta `app/foliocrew` en inglés
+- [x] Pantallas del panel (lista abajo)
+- [x] Constantes en `lib/` con etiquetas (estados de tratos, planes, roles, soporte, ideas, redes, nichos…)
+- [x] Respuestas de la IA en el idioma del panel (consejos, diseño, inteligencia)
+- [x] Correos (plantillas en `lib/email-templates.ts`, `lib/account-emails.ts`, avisos de soporte, ideas y datos)
+- [x] Página de venta `app/foliocrew` en inglés
 - [ ] Prueba completa en inglés (capturas) y en español (que nada se rompió)
 
 ### Pantallas y componentes del panel
@@ -35,7 +35,7 @@ El sitio público ya era bilingüe; el panel, el registro, los mensajes del serv
 - [x] `app/admin/(dashboard)/apariencia/page.tsx`
 - [x] `app/admin/(dashboard)/ayuda/page.tsx`
 - [x] `app/admin/(dashboard)/bienvenida/Wizard.tsx`
-- [ ] `app/admin/(dashboard)/bienvenida/page.tsx`
+- [x] `app/admin/(dashboard)/bienvenida/page.tsx`
 - [x] `app/admin/(dashboard)/bitacora/LogManager.tsx`
 - [x] `app/admin/(dashboard)/bitacora/page.tsx`
 - [x] `app/admin/(dashboard)/calendario/CalendarView.tsx`

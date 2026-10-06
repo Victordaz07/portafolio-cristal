@@ -2,7 +2,7 @@ import { prisma, prismaRoot } from "@/lib/prisma";
 import { getSession } from "@/lib/tenant";
 import { engagementRate } from "@/lib/metrics";
 import { MIN_VIEWS, median, nicheOf } from "@/lib/platform-analytics";
-import { MIN_CREATORS, MIN_POSTS, insightForNiche } from "@/lib/insights";
+import { MIN_CREATORS, MIN_POSTS, insightForNiche, playbookIn } from "@/lib/insights";
 import Card from "./Card";
 import ShareInsightsButton from "./ShareInsightsButton";
 import { reportWord } from "@/lib/reports";
@@ -76,13 +76,15 @@ export default async function InsightsCard() {
   const diff = myEr != null && s.medianEr != null ? Math.round((myEr - s.medianEr) * 10) / 10 : null;
   const updated = insight.generatedAt.toLocaleDateString(dateLocale(lang), { day: "numeric", month: "long" });
   const w = (word: string) => reportWord(lang, word);
+  const pb = insight.playbook ? playbookIn(insight.playbook, lang) : null;
+  const groupLabel = lang === "en" ? (insight.isOwnNiche ? pickLabel(lang, niche) : "Whole platform") : insight.label;
 
   return (
     <Card>
       <div className="flex flex-wrap items-start justify-between gap-sp-3">
         <div>
           <p className={eyebrowClass}>
-            {t("Inteligencia Foliocrew", "Foliocrew Intelligence")} · {insight.label}
+            {t("Inteligencia Foliocrew", "Foliocrew Intelligence")} · {groupLabel}
           </p>
           <h2 className="mt-sp-2 font-fraunces text-xl font-semibold text-ink">{t("Lo que funciona en tu nicho", "What works in your niche")}</h2>
           <p className="mt-1 text-xs text-ink/55">
@@ -165,13 +167,13 @@ export default async function InsightsCard() {
         </div>
       </div>
 
-      {insight.playbook && (
+      {pb && (
         <div className="mt-sp-4 grid gap-sp-4 border-t border-line pt-sp-4 md:grid-cols-2">
-          <p className="text-sm text-ink/75 md:col-span-2">{insight.playbook.summary}</p>
-          <PlaybookList title={t("Qué funciona", "What works")} items={insight.playbook.whatWorks} />
-          <PlaybookList title={t("Qué evitar", "What to avoid")} items={insight.playbook.whatDoesnt} />
-          <PlaybookList title={t("Ganchos que enganchan", "Hooks that hook")} items={insight.playbook.hooks} />
-          <PlaybookList title={t("Para tu próximo contenido", "For your next content")} items={insight.playbook.recommendations} />
+          <p className="text-sm text-ink/75 md:col-span-2">{pb.summary}</p>
+          <PlaybookList title={t("Qué funciona", "What works")} items={pb.whatWorks} />
+          <PlaybookList title={t("Qué evitar", "What to avoid")} items={pb.whatDoesnt} />
+          <PlaybookList title={t("Ganchos que enganchan", "Hooks that hook")} items={pb.hooks} />
+          <PlaybookList title={t("Para tu próximo contenido", "For your next content")} items={pb.recommendations} />
         </div>
       )}
     </Card>

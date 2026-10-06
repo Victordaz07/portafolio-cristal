@@ -9,6 +9,7 @@ import { sendEmail } from "@/lib/email";
 import { noticeEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
 import { getT } from "@/lib/admin-lang-server";
+import { mailLangFor } from "@/lib/email-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -41,16 +42,25 @@ export async function POST(request: Request) {
 
   try {
     const origin = await platformOrigin();
-    const mail = noticeEmail({
-      origin,
-      subject: `Pedido de datos: ${dataRequestKindLabel(kind)} (${creator?.name ?? user.email})`,
-      title: "Nuevo pedido de datos",
-      lines: [`${creator?.name ?? "Una cuenta"} (${user.email}) pidió: ${dataRequestKindLabel(kind)}.`],
-      quote: detail || undefined,
-      button: { label: "Abrir el centro de datos", url: `${origin}/admin/equipo/datos` },
-    });
     const recipients = await teamEmailsWith("data");
-    await Promise.all(recipients.map((to) => sendEmail({ to, ...mail, replyTo: user.email })));
+    await Promise.all(
+      recipients.map(async (to) => {
+        const lang = await mailLangFor(to);
+        const en = lang === "en";
+        const label = dataRequestKindLabel(kind, lang);
+        const who = creator?.name ?? (en ? "An account" : "Una cuenta");
+        const mail = noticeEmail({
+          lang,
+          origin,
+          subject: en ? `Data request: ${label} (${creator?.name ?? user.email})` : `Pedido de datos: ${label} (${creator?.name ?? user.email})`,
+          title: en ? "New data request" : "Nuevo pedido de datos",
+          lines: [en ? `${who} (${user.email}) asked for: ${label}.` : `${who} (${user.email}) pidió: ${label}.`],
+          quote: detail || undefined,
+          button: { label: en ? "Open the data center" : "Abrir el centro de datos", url: `${origin}/admin/equipo/datos` },
+        });
+        return sendEmail({ to, ...mail, replyTo: user.email });
+      })
+    );
   } catch (error) {
     console.error("No se pudo avisar al equipo del pedido de datos", error);
   }

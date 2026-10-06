@@ -73,7 +73,7 @@ export default function PublicPreview({ src }: { src: string }) {
           onClick={() => setReloadKey((k) => k + 1)}
           className="ml-auto text-xs font-semibold text-coral hover:underline"
         >
-          ↻ Recargar
+          {t("↻ Recargar", "↻ Reload")}
         </button>
       </div>
 

@@ -24,11 +24,11 @@ export async function POST(request: Request) {
 
   // Máximo 3 correos por hora a la misma dirección.
   if (!tooManyAttempts(`forgot-mail:${email}`, 3, 60 * 60 * 1000)) {
-    const user = await prismaRoot.adminUser.findUnique({ where: { email }, select: { id: true, name: true } });
+    const user = await prismaRoot.adminUser.findUnique({ where: { email }, select: { id: true, name: true, language: true } });
     if (user) {
       const origin = await platformOrigin();
       const token = await issueAuthToken(user.id, "reset");
-      const mail = passwordResetEmail({ origin, name: user.name, resetUrl: `${origin}/admin/restablecer?token=${token}` });
+      const mail = passwordResetEmail({ lang: user.language === "en" ? "en" : "es", origin, name: user.name, resetUrl: `${origin}/admin/restablecer?token=${token}` });
       await sendEmail({ to: email, ...mail });
     }
   }

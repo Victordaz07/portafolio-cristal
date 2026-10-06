@@ -1,5 +1,5 @@
 import { prismaRoot } from "@/lib/prisma-root";
-import { MIN_CREATORS, MIN_POSTS, type InsightStats, type Playbook } from "@/lib/insights";
+import { MIN_CREATORS, MIN_POSTS, playbookIn, type InsightStats, type Playbook } from "@/lib/insights";
 import { MIN_VIEWS, nicheOf } from "@/lib/platform-analytics";
 import { isAiConfigured } from "@/lib/ai";
 import { NETWORK_META } from "@/lib/content-plan";
@@ -99,7 +99,8 @@ export default async function IntelligenceSection() {
 
       {[...(global ? [global] : []), ...niches].map((i) => {
         const s = i.stats as unknown as InsightStats;
-        const pb = i.playbook as unknown as Playbook | null;
+        const raw = i.playbook as unknown as Playbook | null;
+        const pb = raw ? playbookIn(raw, lang) : null;
         return (
           <Card key={i.id}>
             <div className="flex flex-wrap items-baseline justify-between gap-sp-2">

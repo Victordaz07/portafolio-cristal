@@ -18,7 +18,7 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   if (signupMode() === "closed") {
     return NextResponse.json({ error: t("El registro todavía no está abierto", "Sign-up isn't open yet") }, { status: 403 });
   }
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: t("Ya hay una cuenta con ese correo", "There's already an account with that email"), field: "email" }, { status: 409 });
   }
 
-  const { user } = await createCreatorAccount({ name, slug, email, password });
+  const { user } = await createCreatorAccount({ name, slug, email, password, language: lang });
   await sendWelcomeEmail(user.id).catch((error) => console.error("No se pudo enviar la bienvenida", error));
   // Si se anotó en la lista de espera, queda marcada como cuenta creada.
   await prismaRoot.waitlistEntry

@@ -7,6 +7,7 @@ import { sendEmail } from "@/lib/email";
 import { noticeEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
 import { getT } from "@/lib/admin-lang-server";
+import { mailLangFor } from "@/lib/email-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -40,15 +41,23 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (idea.creatorId && status && status !== before.status && (status === "planned" || status === "done")) {
     try {
       const origin = await platformOrigin();
+      const lang = await mailLangFor(idea.authorEmail);
+      const en = lang === "en";
+      const done = status === "done";
       const mail = noticeEmail({
+        lang,
         origin,
         name: idea.authorName,
-        subject: status === "done" ? `¡Tu idea ya está en Foliocrew!` : `Tu idea está en nuestros planes`,
-        title: status === "done" ? "¡Tu idea ya está lista!" : "Tu idea está en nuestros planes",
-        lines: [`Tu sugerencia «${idea.title}» ahora está: ${ideaStatus(status).label}.`],
+        subject: en ? (done ? "Your idea is live in Foliocrew!" : "Your idea is in our plans") : done ? `¡Tu idea ya está en Foliocrew!` : `Tu idea está en nuestros planes`,
+        title: en ? (done ? "Your idea is ready!" : "Your idea is in our plans") : done ? "¡Tu idea ya está lista!" : "Tu idea está en nuestros planes",
+        lines: [
+          en
+            ? `Your suggestion “${idea.title}” is now: ${ideaStatus(status).labelEn}.`
+            : `Tu sugerencia «${idea.title}» ahora está: ${ideaStatus(status).label}.`,
+        ],
         quote: idea.teamReply ?? undefined,
-        button: { label: "Ver mis sugerencias", url: `${origin}/admin/ideas` },
-        note: "Gracias por ayudarnos a mejorar Foliocrew. 💜",
+        button: { label: en ? "See my suggestions" : "Ver mis sugerencias", url: `${origin}/admin/ideas` },
+        note: en ? "Thanks for helping us improve Foliocrew. 💜" : "Gracias por ayudarnos a mejorar Foliocrew. 💜",
       });
       await sendEmail({ to: idea.authorEmail, ...mail });
     } catch (error) {

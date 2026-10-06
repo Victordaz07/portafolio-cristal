@@ -242,7 +242,7 @@ export default async function AdminHomePage() {
                           {post.brand && <p className="truncate text-xs text-ink/60">{post.brand.name}</p>}
                         </div>
                         <span className="shrink-0 text-xs text-ink/50">
-                          {Number(when.dateKey.slice(8))}/{Number(when.dateKey.slice(5, 7))} · {formatTime(when.time)}
+                          {Number(when.dateKey.slice(8))}/{Number(when.dateKey.slice(5, 7))} · {formatTime(when.time, lang)}
                         </span>
                       </Link>
                     </li>

@@ -168,7 +168,7 @@ async function ResumenView() {
                       <Link href={`/admin/plataforma/${r.id}`} className="font-semibold hover:text-coral">
                         {r.name}
                       </Link>{" "}
-                      · {r.medianEr}% · {r.niche}
+                      · {r.medianEr}% · {lang === "en" ? r.nicheEn : r.niche}
                     </li>
                   ))}
                 </ol>

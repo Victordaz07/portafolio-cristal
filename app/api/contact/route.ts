@@ -34,12 +34,13 @@ export async function POST(request: Request) {
     const creatorId = await currentCreatorId();
     const [settings, owner] = await Promise.all([
       prisma.siteSettings.findFirst({ select: { contactEmail: true } }),
-      prismaRoot.adminUser.findFirst({ where: { creatorId, role: "owner" }, orderBy: { createdAt: "asc" }, select: { email: true, name: true } }),
+      prismaRoot.adminUser.findFirst({ where: { creatorId, role: "owner" }, orderBy: { createdAt: "asc" }, select: { email: true, name: true, language: true } }),
     ]);
     const to = settings?.contactEmail || owner?.email;
     if (to) {
       const origin = await platformOrigin();
       const mail = brandMessageEmail({
+        lang: owner?.language === "en" ? "en" : "es",
         origin,
         creatorName: owner?.name ?? null,
         fromName: data.name,

@@ -9,18 +9,19 @@ import {
   type ReminderKind,
 } from "./email-templates";
 import { platformOrigin } from "./site-url";
-import { PAYMENT_METHODS, billingState, extendPaidUntil, formatMoney, getPlan, type PaymentMethod } from "./billing";
+import { billingState, extendPaidUntil, formatMoney, getPlan, paymentMethodLabel } from "./billing";
+import { asMailLang, mailDate, mailLangFor } from "./email-lang";
 
 // Lado servidor del cobro manual: reportar, registrar, confirmar y rechazar pagos, y recordatorios.
 
-const fmtDate = (d: Date) => d.toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-const methodLabel = (m: string) => PAYMENT_METHODS[m as PaymentMethod] ?? m;
+const fmtDate = (d: Date, lang: "es" | "en" = "es") => mailDate(d, lang);
+const methodLabel = (m: string, lang: "es" | "en" = "es") => paymentMethodLabel(m, lang);
 
 async function ownerOf(creatorId: string) {
   return prismaRoot.adminUser.findFirst({
     where: { creatorId, role: "owner" },
     orderBy: { createdAt: "asc" },
-    select: { email: true, name: true },
+    select: { email: true, name: true, language: true },
   });
 }
 
@@ -33,19 +34,23 @@ export async function notifyPaymentReported(paymentId: string) {
   if (!payment) return;
   const owner = await ownerOf(payment.creatorId);
   const origin = await platformOrigin();
-  const mail = paymentReportedAdminEmail({
-    origin,
-    creatorName: payment.creator.name,
-    email: owner?.email ?? "—",
-    plan: getPlan(payment.plan).name,
-    months: payment.months,
-    amount: formatMoney(payment.amountCents, payment.currency),
-    method: methodLabel(payment.method),
-    reference: payment.reference,
-    note: payment.note,
-    accountUrl: `${origin}/admin/plataforma/${payment.creatorId}`,
-  });
-  for (const to of adminEmails()) await sendEmail({ to, ...mail, replyTo: owner?.email });
+  for (const to of adminEmails()) {
+    const lang = await mailLangFor(to);
+    const mail = paymentReportedAdminEmail({
+      lang,
+      origin,
+      creatorName: payment.creator.name,
+      email: owner?.email ?? "—",
+      plan: getPlan(payment.plan).name,
+      months: payment.months,
+      amount: formatMoney(payment.amountCents, payment.currency),
+      method: methodLabel(payment.method, lang),
+      reference: payment.reference,
+      note: payment.note,
+      accountUrl: `${origin}/admin/plataforma/${payment.creatorId}`,
+    });
+    await sendEmail({ to, ...mail, replyTo: owner?.email });
+  }
 }
 
 /** Confirma un pago: extiende "pagado hasta", fija el plan y avisa por correo. */
@@ -61,12 +66,14 @@ export async function confirmPayment(paymentId: string, actorEmail: string) {
   const owner = await ownerOf(payment.creatorId);
   if (owner) {
     const origin = await platformOrigin();
+    const lang = asMailLang(owner.language);
     const mail = paymentConfirmedEmail({
+      lang,
       origin,
       name: owner.name,
       plan: getPlan(payment.plan).name,
       amount: formatMoney(payment.amountCents, payment.currency),
-      paidUntil: fmtDate(paidUntil),
+      paidUntil: fmtDate(paidUntil, lang),
       planUrl: `${origin}/admin/plan`,
     });
     await sendEmail({ to: owner.email, ...mail });
@@ -82,7 +89,7 @@ export async function rejectPayment(paymentId: string, actorEmail: string) {
   const owner = await ownerOf(payment.creatorId);
   if (owner) {
     const origin = await platformOrigin();
-    const mail = paymentRejectedEmail({ origin, name: owner.name, amount: formatMoney(payment.amountCents, payment.currency), planUrl: `${origin}/admin/plan` });
+    const mail = paymentRejectedEmail({ lang: asMailLang(owner.language), origin, name: owner.name, amount: formatMoney(payment.amountCents, payment.currency), planUrl: `${origin}/admin/plan` });
     await sendEmail({ to: owner.email, ...mail, replyTo: adminEmails()[0] });
   }
   return true;
@@ -111,7 +118,8 @@ export async function sendBillingReminders(now = new Date()) {
     if (c.billingReminder === key) continue;
     const owner = await ownerOf(c.id);
     if (!owner) continue;
-    const mail = billingReminderEmail({ origin, name: owner.name, kind, date: fmtDate(until), days: Math.max(daysLeft, 0), planUrl: `${origin}/admin/plan` });
+    const lang = asMailLang(owner.language);
+    const mail = billingReminderEmail({ lang, origin, name: owner.name, kind, date: fmtDate(until, lang), days: Math.max(daysLeft, 0), planUrl: `${origin}/admin/plan` });
     const result = await sendEmail({ to: owner.email, ...mail });
     if (!result.sent) continue;
     await prismaRoot.creator.update({ where: { id: c.id }, data: { billingReminder: key } });

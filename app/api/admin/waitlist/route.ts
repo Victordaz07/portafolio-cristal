@@ -71,7 +71,7 @@ export async function PATCH(request: Request) {
   const entries = await prismaRoot.waitlistEntry.findMany({ where });
   let sent = 0;
   for (const entry of entries) {
-    const mail = waitlistInviteEmail({ origin, name: entry.name, registerUrl: `${origin}/admin/registro`, inviteCode });
+    const mail = waitlistInviteEmail({ lang: entry.language === "en" ? "en" : "es", origin, name: entry.name, registerUrl: `${origin}/admin/registro`, inviteCode });
     const result = await sendEmail({ to: entry.email, ...mail });
     if (!result.sent) continue;
     sent += 1;

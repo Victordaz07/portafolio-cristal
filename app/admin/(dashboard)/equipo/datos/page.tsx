@@ -139,7 +139,12 @@ export default async function TeamDataPage({ searchParams }: { searchParams: Pro
           <li>{t("De esa rama se copia solo lo que se perdió a la cuenta, y después se borra la rama.", "From that branch, copy only what was lost back to the account, then delete the branch.")}</li>
           <li>{t("Marca el pedido como resuelto con lo que se hizo: la cuenta recibe un correo.", "Mark the request resolved with what was done: the account gets an email.")}</li>
         </ol>
-        <p className="mt-sp-2 text-xs text-ink/60">Neon guarda el historial de los últimos días según el plan. Si pasó hace mucho, puede que ya no se pueda.</p>
+        <p className="mt-sp-2 text-xs text-ink/60">
+          {t(
+            "Neon guarda el historial de los últimos días según el plan. Si pasó hace mucho, puede que ya no se pueda.",
+            "Neon keeps history for the last few days depending on the plan. If it was long ago, it may no longer be possible."
+          )}
+        </p>
       </Card>
 
       <Card>

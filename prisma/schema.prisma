@@ -524,6 +524,8 @@ model WaitlistEntry {
   utmCampaign String?
   referrer    String?
   status      String    @default("waiting") // "waiting" | "invited"
+  /// Idioma de la página cuando se anotó ("es" | "en"): los correos le llegan en ese idioma
+  language    String    @default("es")
   invitedAt   DateTime?
   createdAt   DateTime  @default(now())
 

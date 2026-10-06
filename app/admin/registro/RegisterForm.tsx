@@ -16,7 +16,7 @@ function slugify(text: string) {
     .slice(0, 30);
 }
 
-export default function RegisterForm({ rootDomain }: { rootDomain: string }) {
+export default function RegisterForm({ rootDomain, refCode }: { rootDomain: string; refCode: string | null }) {
   const { t } = useT();
   const router = useRouter();
   const [values, setValues] = useState({ name: "", slug: "", email: "", password: "", inviteCode: "" });
@@ -39,7 +39,7 @@ export default function RegisterForm({ rootDomain }: { rootDomain: string }) {
     const response = await fetch("/api/admin/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ ...values, ...(refCode ? { ref: refCode } : {}) }),
     });
     if (response.ok) {
       router.push("/admin");
@@ -85,10 +85,12 @@ export default function RegisterForm({ rootDomain }: { rootDomain: string }) {
         <input type="password" required minLength={8} value={values.password} onChange={(e) => set("password", e.target.value)} autoComplete="new-password" className={inputClass} />
         <span className="text-xs text-ink/50">{t("Mínimo 8 caracteres.", "At least 8 characters.")}</span>
       </label>
-      <label className="flex flex-col gap-sp-1">
-        <span className="text-sm font-medium text-ink">{t("Código de invitación", "Invite code")}</span>
-        <input required value={values.inviteCode} onChange={(e) => set("inviteCode", e.target.value)} className={inputClass} />
-      </label>
+      {!refCode && (
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">{t("Código de invitación", "Invite code")}</span>
+          <input required value={values.inviteCode} onChange={(e) => set("inviteCode", e.target.value)} className={inputClass} />
+        </label>
+      )}
       {error && (
         <p role="alert" className="text-sm text-red-600">
           {error}

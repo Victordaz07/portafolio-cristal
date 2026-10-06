@@ -47,7 +47,7 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
           "Cuentas de redes sociales conectadas (Instagram, Facebook, TikTok, YouTube), solo si la persona usuaria decide conectarlas: identificador de la cuenta, nombre de usuario, foto de perfil, número de seguidores, publicaciones y sus métricas (vistas, likes, comentarios) y los tokens de acceso que entrega cada red.",
           "Acuerdos con marcas: cuando una marca acepta un acuerdo en línea, guardamos su nombre, correo, fecha, hora y dirección IP como constancia de que lo aceptó, y se la mostramos a la persona creadora y a la marca.",
           "Comunidad (solo dentro del panel): el perfil de comunidad que cada persona elige mostrar, sus publicaciones, respuestas, conexiones y mensajes privados. Los mensajes privados solo los ven las dos personas de la conversación; el equipo solo revisa un mensaje si alguien lo reporta.",
-          "Cookies técnicas: idioma elegido y sesión del panel. No usamos cookies de publicidad ni de rastreo.",
+          "Cookies técnicas: idioma elegido y sesión del panel. Si llegas por el enlace de una embajadora de Foliocrew, guardamos su código de invitación en una cookie durante 30 días, solo para dejarte crear tu cuenta y saber quién te invitó. No usamos cookies de publicidad ni de rastreo.",
         ],
       },
       {
@@ -219,7 +219,7 @@ const EN: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
           "Connected social media accounts (Instagram, Facebook, TikTok, YouTube), only if the creator chooses to connect them: account ID, username, profile picture, follower count, posts and their metrics (views, likes, comments) and the access tokens issued by each network.",
           "Agreements with brands: when a brand accepts an agreement online, we store its name, email, date, time and IP address as proof of acceptance, and show it to the creator and the brand.",
           "Community (only inside the dashboard): the community profile each person chooses to show, their posts, replies, connections and private messages. Private messages are only visible to the two people in the conversation; the team only reviews a message if someone reports it.",
-          "Essential cookies: chosen language and dashboard session. We do not use advertising or tracking cookies.",
+          "Essential cookies: chosen language and dashboard session. If you arrive through a Foliocrew ambassador's link, we store their invitation code in a cookie for 30 days, only so you can create your account and we know who invited you. We do not use advertising or tracking cookies.",
         ],
       },
       {

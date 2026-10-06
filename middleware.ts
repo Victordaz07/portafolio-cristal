@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth";
+import { AMBASSADOR, REF_COOKIE, normalizeReferralCode } from "@/lib/ambassadors";
 import {
   INTERNAL_HEADERS,
   RESERVED_SLUGS,
@@ -33,6 +34,23 @@ function panelHost(host: string) {
   const hostname = root.split(":")[0];
   const protocol = hostname === "localhost" || hostname.endsWith(".localhost") ? "http" : "https";
   return `${protocol}://${root}`;
+}
+
+/** Guarda el código de un enlace de embajadora (?ref=) 30 días; solo en la portada de Foliocrew y el registro. */
+function rememberReferral(request: NextRequest, response: NextResponse, pathname: string) {
+  const onLanding = pathname === "/" || pathname === "/foliocrew";
+  if (!onLanding && pathname !== "/admin/registro") return response;
+  if (onLanding && !isPlatformHost(request.headers.get("host") || "")) return response;
+  const code = normalizeReferralCode(request.nextUrl.searchParams.get("ref"));
+  if (!code) return response;
+  response.cookies.set(REF_COOKIE, code, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: AMBASSADOR.cookieDays * 86_400,
+  });
+  return response;
 }
 
 export async function middleware(request: NextRequest) {
@@ -90,10 +108,10 @@ export async function middleware(request: NextRequest) {
     pathname = "/foliocrew";
     const url = request.nextUrl.clone();
     url.pathname = pathname;
-    return NextResponse.rewrite(url, { request: { headers } });
+    return rememberReferral(request, NextResponse.rewrite(url, { request: { headers } }), "/");
   }
 
-  return NextResponse.next({ request: { headers } });
+  return rememberReferral(request, NextResponse.next({ request: { headers } }), pathname);
 }
 
 export const config = {

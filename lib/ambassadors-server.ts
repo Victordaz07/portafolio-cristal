@@ -1,7 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { prismaRoot } from "./prisma-root";
 import { logPlatformAction } from "./platform-admin";
-import { codeFromBytes } from "./ambassadors";
+import { cookies } from "next/headers";
+import { REF_COOKIE, codeFromBytes, normalizeReferralCode } from "./ambassadors";
 
 /** Un código nuevo que no usa nadie todavía (casi siempre sale a la primera: son ~10^11 combinaciones). */
 async function freshReferralCode() {
@@ -33,4 +34,24 @@ export async function setAmbassador(creatorId: string, on: boolean, actorEmail: 
       : { ambassador: false },
   });
   await logPlatformAction(actorEmail, on ? "ambassador-on" : "ambassador-off", creatorId);
+}
+
+/** La embajadora activa dueña de un código (o null si el código no existe, ya no es embajadora o la cuenta está pausada). */
+export async function ambassadorByCode(raw: string | null | undefined) {
+  const code = normalizeReferralCode(raw);
+  if (!code) return null;
+  const owner = await prismaRoot.creator.findFirst({ where: { referralCode: code, ambassador: true, status: "active" }, select: { id: true } });
+  return owner ? { code, referrerId: owner.id } : null;
+}
+
+/** El enlace con el que llega quien se está registrando: primero el de la dirección (?ref=), si no el de la cookie. */
+export async function incomingReferral(fromUrl?: string | null) {
+  const fromCookie = (await cookies()).get(REF_COOKIE)?.value;
+  return (await ambassadorByCode(fromUrl)) ?? (await ambassadorByCode(fromCookie));
+}
+
+/** Anota que una cuenta nueva llegó por el enlace de una embajadora (una cuenta solo puede ser referida una vez). */
+export async function recordReferral(referrerId: string, referredId: string) {
+  if (referrerId === referredId) return;
+  await prismaRoot.referral.create({ data: { referrerId, referredId } }).catch((error) => console.error("No se pudo anotar el referido", error));
 }

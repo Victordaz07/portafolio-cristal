@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
+import { cleanupBlobUrls } from "@/lib/blob-cleanup";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
@@ -62,6 +63,14 @@ export async function PUT(request: Request) {
   const hero = existing
     ? await prisma.hero.update({ where: { id: existing.id }, data })
     : await prisma.hero.create({ data });
+
+  // Limpia la foto anterior (desktop/mobile) si se reemplazó, para no acumular blobs huérfanos.
+  if (existing) {
+    await cleanupBlobUrls([
+      data.photoUrl !== existing.photoUrl ? existing.photoUrl : null,
+      data.photoUrlMobile !== existing.photoUrlMobile ? existing.photoUrlMobile : null,
+    ]);
+  }
 
   return NextResponse.json(hero);
 }

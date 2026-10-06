@@ -95,30 +95,70 @@ export async function aiQuota() {
   return { used, limit: aiMonthlyLimit(creator?.plan ?? "pro", creator?.comp ?? false, creator?.ambassador ?? false), creatorId };
 }
 
-/** Lanza AiQuotaError si la cuenta ya usó todas sus sugerencias del mes (o abusa en ráfaga). */
-export async function assertAiQuota() {
-  const [{ used, limit, creatorId }, { tooManyAttempts }] = await Promise.all([aiQuota(), import("@/lib/rate-limit")]);
-  if (used >= limit) throw new AiQuotaError(limit);
-  // Además, como freno de abuso: no más de 30 pedidos por hora.
-  if (tooManyAttempts(`ai:${creatorId}`, 30, 60 * 60_000)) {
-    throw new AiRateError();
+export type AiUsageKind = "caption" | "tips" | "design" | "pitch" | "test";
+
+/**
+ * Reserva un cupo de IA ANTES de llamar a Claude (gasto real) y devuelve el id de la fila de uso
+ * para completarla o liberarla después. Antes, el tope mensual se verificaba con un simple
+ * "contar y comparar" y recién se registraba el uso después de la respuesta: dos pedidos casi
+ * simultáneos (varias pestañas, doble clic) podían leer el mismo conteo y pasar los dos, superando
+ * el tope. Aquí el conteo y la reserva ocurren dentro de la misma transacción, con un advisory lock
+ * de Postgres por creadora (`pg_advisory_xact_lock`), así que una segunda reserva concurrente de la
+ * MISMA creadora espera a que la primera transacción termine y ya ve el conteo actualizado: el tope
+ * queda duro incluso con varias instancias de servidor a la vez (no depende de memoria de proceso).
+ *
+ * Si la llamada a Claude falla, usa `releaseAiUsage` para liberar el cupo (no se cobra por errores).
+ * Si tiene éxito, usa `commitAiUsage` para guardar los tokens reales.
+ */
+export async function reserveAiUsage(kind: AiUsageKind): Promise<string> {
+  const [{ prismaRoot }, { currentCreatorId }, { tooManyAttempts }] = await Promise.all([
+    import("@/lib/prisma-root"),
+    import("@/lib/tenant"),
+    import("@/lib/rate-limit"),
+  ]);
+  const creatorId = await currentCreatorId();
+  // Freno de abuso en ráfaga (además del tope mensual): no más de 30 pedidos por hora.
+  // Es en memoria de proceso (best-effort); el tope mensual de abajo es el límite duro real.
+  if (tooManyAttempts(`ai:${creatorId}`, 30, 60 * 60_000)) throw new AiRateError();
+
+  const monthStart = new Date();
+  monthStart.setUTCDate(1);
+  monthStart.setUTCHours(0, 0, 0, 0);
+
+  return prismaRoot.$transaction(async (tx) => {
+    // Serializa las reservas de ESTA creadora entre sí (no bloquea a otras creadoras).
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('ai_usage'), hashtext(${creatorId}))`;
+    const [creator, used] = await Promise.all([
+      tx.creator.findUnique({ where: { id: creatorId }, select: { plan: true, comp: true, ambassador: true } }),
+      tx.aiUsage.count({ where: { creatorId, createdAt: { gte: monthStart } } }),
+    ]);
+    const limit = aiMonthlyLimit(creator?.plan ?? "pro", creator?.comp ?? false, creator?.ambassador ?? false);
+    if (used >= limit) throw new AiQuotaError(limit);
+    const usage = await tx.aiUsage.create({ data: { creatorId, kind, inputTokens: 0, outputTokens: 0 } });
+    return usage.id;
+  });
+}
+
+/** Completa una reserva con los tokens reales, después de una llamada a Claude exitosa. */
+export async function commitAiUsage(usageId: string, usage?: { input_tokens?: number; output_tokens?: number }) {
+  try {
+    const { prismaRoot } = await import("@/lib/prisma-root");
+    await prismaRoot.aiUsage.update({
+      where: { id: usageId },
+      data: { inputTokens: usage?.input_tokens ?? 0, outputTokens: usage?.output_tokens ?? 0 },
+    });
+  } catch (error) {
+    console.error("No se pudo completar el uso de IA", error);
   }
 }
 
-/** Guarda una sugerencia de IA pedida por la cuenta actual (panel de dueño y límites por plan). */
-export async function recordAiUsage(kind: "caption" | "tips" | "design" | "pitch", usage?: { input_tokens?: number; output_tokens?: number }) {
+/** Libera una reserva sin usar (la llamada a Claude falló): no debe contar contra el tope mensual. */
+export async function releaseAiUsage(usageId: string) {
   try {
-    const [{ prismaRoot }, { currentCreatorId }] = await Promise.all([import("@/lib/prisma-root"), import("@/lib/tenant")]);
-    await prismaRoot.aiUsage.create({
-      data: {
-        creatorId: await currentCreatorId(),
-        kind,
-        inputTokens: usage?.input_tokens ?? 0,
-        outputTokens: usage?.output_tokens ?? 0,
-      },
-    });
+    const { prismaRoot } = await import("@/lib/prisma-root");
+    await prismaRoot.aiUsage.delete({ where: { id: usageId } });
   } catch (error) {
-    console.error("No se pudo registrar el uso de IA", error);
+    console.error("No se pudo liberar la reserva de uso de IA", error);
   }
 }
 

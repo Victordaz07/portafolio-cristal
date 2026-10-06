@@ -3,6 +3,7 @@ import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "@/lib/social/thumbnail";
+import { cleanupBlobUrls } from "@/lib/blob-cleanup";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
@@ -62,18 +63,36 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (data.statSecondaryEn === "") data.statSecondaryEn = null;
   if (data.brandId === "") data.brandId = null;
 
+  const existing = await prisma.contentCard.findUnique({
+    where: { id },
+    select: { platform: true, photoUrl: true, videoUrl: true, thumbnailUrl: true },
+  });
+
   // Red de seguridad: si llega un link de miniatura temporal de Meta (p. ej. pegado a mano), se resube a Blob antes de guardarlo.
   if (data.thumbnailUrl && isEphemeralCdnUrl(data.thumbnailUrl)) {
-    const platform = data.platform ?? (await prisma.contentCard.findUnique({ where: { id }, select: { platform: true } }))?.platform;
+    const platform = data.platform ?? existing?.platform;
     data.thumbnailUrl = await ensurePermanentThumbnail(data.thumbnailUrl, `content-cards/thumbnails/${platform ?? "instagram"}`);
   }
 
   const card = await prisma.contentCard.update({ where: { id }, data });
+
+  // Limpia el archivo reemplazado (foto/video/miniatura anteriores) para no acumular blobs huérfanos.
+  await cleanupBlobUrls([
+    data.photoUrl !== undefined && data.photoUrl !== existing?.photoUrl ? existing?.photoUrl : null,
+    data.videoUrl !== undefined && data.videoUrl !== existing?.videoUrl ? existing?.videoUrl : null,
+    data.thumbnailUrl !== undefined && data.thumbnailUrl !== existing?.thumbnailUrl ? existing?.thumbnailUrl : null,
+  ]);
+
   return NextResponse.json(card);
 }
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const existing = await prisma.contentCard.findUnique({
+    where: { id },
+    select: { photoUrl: true, videoUrl: true, thumbnailUrl: true },
+  });
   await prisma.contentCard.delete({ where: { id } });
+  await cleanupBlobUrls([existing?.photoUrl, existing?.videoUrl, existing?.thumbnailUrl]);
   return NextResponse.json({ ok: true });
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, AiRefusalError, assertAiQuota, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
+import { AI_MODEL, AiRefusalError, commitAiUsage, getAiClient, getCreatorContext, releaseAiUsage, reserveAiUsage } from "@/lib/ai";
 
 // Propuestas a marcas escritas con IA (C1). La persona las envía desde su propio correo: Foliocrew no manda nada a la marca.
 
@@ -66,17 +66,23 @@ ${language}`;
 }
 
 export async function suggestPitch(input: PitchInput) {
-  await assertAiQuota();
+  const usageId = await reserveAiUsage("pitch");
   const context = await getCreatorContext();
-  const response = await getAiClient().beta.messages.parse({
-    model: AI_MODEL,
-    max_tokens: 4000,
-    output_config: { effort: "low", format: betaZodOutputFormat(PitchSchema) },
-    ...SAFETY,
-    system: SYSTEM,
-    messages: [{ role: "user", content: promptFor(input, context) }],
-  });
-  await recordAiUsage("pitch", response.usage);
+  let response;
+  try {
+    response = await getAiClient().beta.messages.parse({
+      model: AI_MODEL,
+      max_tokens: 4000,
+      output_config: { effort: "low", format: betaZodOutputFormat(PitchSchema) },
+      ...SAFETY,
+      system: SYSTEM,
+      messages: [{ role: "user", content: promptFor(input, context) }],
+    });
+  } catch (error) {
+    await releaseAiUsage(usageId);
+    throw error;
+  }
+  await commitAiUsage(usageId, response.usage);
   if (response.stop_reason === "refusal") throw new AiRefusalError();
   const out = response.parsed_output;
   if (!out) throw new AiRefusalError();

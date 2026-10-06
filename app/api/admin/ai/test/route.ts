@@ -1,13 +1,25 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { AI_MODEL, aiErrorMessage, getAiClient, isAiConfigured } from "@/lib/ai";
+import { getSession } from "@/lib/tenant";
+import { tooManyAttempts } from "@/lib/rate-limit";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
 
-/** Prueba mínima de conexión con Claude: pide un caption corto de ejemplo. */
+/**
+ * Prueba mínima de conexión con Claude: pide un caption corto de ejemplo.
+ * Antes llamaba a la API real sin ningún freno (ni tope mensual ni límite de ráfaga): cualquier
+ * sesión podía golpearla por script sin parar. No cuenta contra el tope mensual de sugerencias
+ * (es un diagnóstico de conexión, no una función vendida), pero sí queda acotada a pocos intentos.
+ */
 export async function POST() {
   const { t, lang } = await getT();
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: t("Inicia sesión", "Please sign in") }, { status: 401 });
+  if (tooManyAttempts(`ai-test:${session.creatorId}`, 5, 60 * 60_000)) {
+    return NextResponse.json({ ok: false, error: t("Demasiadas pruebas seguidas. Espera un rato e inténtalo de nuevo.", "Too many tests in a row. Wait a bit and try again.") });
+  }
   if (!isAiConfigured()) {
     return NextResponse.json({ ok: false, error: t("Falta ANTHROPIC_API_KEY en las variables de entorno", "ANTHROPIC_API_KEY is missing from the environment variables") });
   }

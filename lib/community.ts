@@ -163,3 +163,27 @@ export function creatorTypesFrom(platforms: string[], creatorKind: string | null
   if (creatorKind === "ugc" || creatorKind === "ambos") found.add("ugc");
   return CREATOR_TYPES.map((t) => t.id).filter((id) => found.has(id));
 }
+
+/** Las reglas cortas que se aceptan al entrar (la página completa llega en el paso 6). */
+export const COMMUNITY_RULES = [
+  {
+    es: "Respeto siempre: aquí hay creadores de todos los tamaños, nichos y países.",
+    en: "Always be respectful: there are creators of every size, niche and country here.",
+  },
+  {
+    es: "Nada de spam ni ventas que nadie pidió.",
+    en: "No spam or unsolicited selling.",
+  },
+  {
+    es: "No compartas datos personales de otras personas (correos, teléfonos, direcciones).",
+    en: "Don't share other people's personal data (emails, phones, addresses).",
+  },
+  {
+    es: "Cero estafas: si algo huele raro, repórtalo.",
+    en: "Zero scams: if something smells off, report it.",
+  },
+  {
+    es: "El equipo de Foliocrew puede ocultar contenido o pausar cuentas que rompan estas reglas.",
+    en: "The Foliocrew team can hide content or pause accounts that break these rules.",
+  },
+] as const;

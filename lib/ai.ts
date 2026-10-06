@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { effectivePlanId } from "./ambassadors";
 
 // Modelo de Claude para las funciones de IA del panel (captions, sugerencias, diseño, playbooks).
 // Sonnet 5.5 cuesta la mitad que Opus 5.5 y sobra para textos cortos. Para cambiarlo sin tocar
@@ -73,8 +74,9 @@ export class AiRefusalError extends Error {
 // cambiar sin tocar código con AI_MONTHLY_LIMIT_FOLIO / _PRO / _CREW en Vercel.
 const DEFAULT_AI_LIMITS: Record<string, number> = { folio: 60, pro: 300, crew: 1000 };
 
-export function aiMonthlyLimit(plan: string, comp = false) {
-  const key = comp ? "crew" : plan in DEFAULT_AI_LIMITS ? plan : "pro";
+export function aiMonthlyLimit(plan: string, comp = false, ambassador = false) {
+  const effective = effectivePlanId(plan, ambassador);
+  const key = comp ? "crew" : effective in DEFAULT_AI_LIMITS ? effective : "pro";
   const fromEnv = Number(process.env[`AI_MONTHLY_LIMIT_${key.toUpperCase()}`]);
   return Number.isFinite(fromEnv) && fromEnv > 0 ? fromEnv : DEFAULT_AI_LIMITS[key];
 }
@@ -87,10 +89,10 @@ export async function aiQuota() {
   monthStart.setUTCDate(1);
   monthStart.setUTCHours(0, 0, 0, 0);
   const [creator, used] = await Promise.all([
-    prismaRoot.creator.findUnique({ where: { id: creatorId }, select: { plan: true, comp: true } }),
+    prismaRoot.creator.findUnique({ where: { id: creatorId }, select: { plan: true, comp: true, ambassador: true } }),
     prismaRoot.aiUsage.count({ where: { creatorId, createdAt: { gte: monthStart } } }),
   ]);
-  return { used, limit: aiMonthlyLimit(creator?.plan ?? "pro", creator?.comp ?? false), creatorId };
+  return { used, limit: aiMonthlyLimit(creator?.plan ?? "pro", creator?.comp ?? false, creator?.ambassador ?? false), creatorId };
 }
 
 /** Lanza AiQuotaError si la cuenta ya usó todas sus sugerencias del mes (o abusa en ráfaga). */

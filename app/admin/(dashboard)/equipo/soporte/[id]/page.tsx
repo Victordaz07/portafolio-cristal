@@ -25,7 +25,7 @@ export default async function TeamTicketPage({ params }: { params: Promise<{ id:
     where: { id },
     include: {
       messages: { orderBy: { createdAt: "asc" } },
-      creator: { select: { id: true, name: true, slug: true, status: true, plan: true, comp: true, trialEndsAt: true, paidUntil: true, createdAt: true } },
+      creator: { select: { id: true, name: true, slug: true, status: true, plan: true, comp: true, ambassador: true, trialEndsAt: true, paidUntil: true, createdAt: true } },
     },
   });
   if (!ticket) notFound();
@@ -65,7 +65,7 @@ export default async function TeamTicketPage({ params }: { params: Promise<{ id:
                 {t("Dirección", "Address")}: /s/{creator.slug}
               </li>
               <li>
-                {t("Plan", "Plan")}: {creator.comp ? t("Cortesía", "Complimentary") : getPlan(creator.plan).name} · {billingLabel(billing.state, lang)}
+                {t("Plan", "Plan")}: {creator.comp ? t("Cortesía", "Complimentary") : creator.ambassador ? t("Embajadora", "Ambassador") : getPlan(creator.plan).name} · {billingLabel(billing.state, lang)}
               </li>
               <li>
                 {t("Estado", "Status")}: {creator.status === "active" ? t("Activa", "Active") : t("Pausada", "Paused")}

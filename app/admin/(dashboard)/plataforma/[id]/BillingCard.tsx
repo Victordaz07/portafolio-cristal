@@ -30,6 +30,8 @@ export default function BillingCard({
   creatorId,
   plan,
   comp,
+  ambassador,
+  referralLink,
   stateLabel,
   until,
   plans,
@@ -38,6 +40,8 @@ export default function BillingCard({
   creatorId: string;
   plan: string;
   comp: boolean;
+  ambassador: boolean;
+  referralLink: string | null;
   stateLabel: string;
   until: string | null;
   plans: { id: string; name: string; price: number }[];
@@ -113,12 +117,29 @@ export default function BillingCard({
         <button type="button" disabled={busy} onClick={() => patch({ comp: !comp }, comp ? t("Ya no es de cortesía", "No longer complimentary") : t("Cuenta de cortesía", "Complimentary account"))} className={secondaryButtonClass}>
           {comp ? t("Quitar cortesía", "Remove complimentary") : t("Hacer cortesía (no paga)", "Make complimentary (no charge)")}
         </button>
-        {!comp && (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            if (!ambassador && !window.confirm(t("¿Dar el nivel Embajadora? Tendrá Folio Pro sin pagar y se le crea su enlace de referidos. Lo puedes quitar cuando quieras.", "Give the Ambassador tier? They get Folio Pro with nothing to pay and a referral link is created. You can remove it any time."))) return;
+            void patch({ ambassador: !ambassador }, ambassador ? t("Ya no es embajadora", "No longer an ambassador") : t("Ahora es embajadora", "Now an ambassador"));
+          }}
+          className={secondaryButtonClass}
+        >
+          {ambassador ? t("Quitar nivel Embajadora", "Remove Ambassador tier") : t("Hacer embajadora 💜", "Make ambassador 💜")}
+        </button>
+        {!comp && !ambassador && (
           <button type="button" disabled={busy} onClick={() => patch({ extendTrialDays: 7 }, t("Prueba extendida 7 días", "Trial extended 7 days"))} className={secondaryButtonClass}>
             {t("+7 días de prueba", "+7 trial days")}
           </button>
         )}
       </div>
+
+      {ambassador && referralLink && (
+        <p className="mt-sp-3 break-all rounded-[12px] bg-cream p-sp-3 text-xs text-ink/70">
+          {t("Enlace de referidos", "Referral link")}: <strong className="select-all text-ink">{referralLink}</strong>
+        </p>
+      )}
 
       {!comp && (
         <form onSubmit={register} className="mt-sp-4 grid gap-sp-3 rounded-[12px] bg-cream p-sp-3 sm:grid-cols-2">

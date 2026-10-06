@@ -33,7 +33,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     prisma.contactMessage.count({ where: { read: false } }),
     prismaRoot.creator.findUnique({
       where: { id: session.creatorId },
-      select: { name: true, plan: true, comp: true, trialEndsAt: true, paidUntil: true },
+      select: { name: true, plan: true, comp: true, ambassador: true, trialEndsAt: true, paidUntil: true },
     }),
     sessionCreatorSite(),
     isPlatformAdmin(),

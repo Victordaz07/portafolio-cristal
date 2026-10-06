@@ -22,6 +22,7 @@ export async function platformAccounts() {
         adminNote: true,
         plan: true,
         comp: true,
+        ambassador: true,
         trialEndsAt: true,
         paidUntil: true,
         createdAt: true,

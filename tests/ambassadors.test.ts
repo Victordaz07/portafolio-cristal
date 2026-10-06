@@ -1,0 +1,60 @@
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
+import { AMBASSADOR, codeFromBytes, effectivePlanId, normalizeReferralCode, referralLink, rewardDue } from "../lib/ambassadors";
+import { billingState } from "../lib/billing";
+import { aiMonthlyLimit } from "../lib/ai";
+
+describe("código de embajadora", () => {
+  it("siempre tiene 8 caracteres sin letras confusas", () => {
+    const code = codeFromBytes([0, 1, 2, 3, 250, 251, 252, 253]);
+    assert.equal(code.length, 8);
+    assert.doesNotMatch(code, /[01OIL]/);
+  });
+  it("se normaliza (mayúsculas, sin espacios ni guiones)", () => {
+    const code = codeFromBytes([5, 6, 7, 8, 9, 10, 11, 12]);
+    assert.equal(normalizeReferralCode(` ${code.slice(0, 4).toLowerCase()}-${code.slice(4)} `), code);
+  });
+  it("rechaza lo que no puede ser un código", () => {
+    assert.equal(normalizeReferralCode(null), null);
+    assert.equal(normalizeReferralCode("ABC"), null);
+    assert.equal(normalizeReferralCode("0OIL1111"), null);
+    assert.equal(normalizeReferralCode("ABCD'; --"), null);
+  });
+  it("arma el enlace", () => {
+    assert.equal(referralLink("https://foliocrew.pro/", "ABCD2345"), "https://foliocrew.pro/?ref=ABCD2345");
+  });
+});
+
+describe("plan de la embajadora", () => {
+  it("tiene como mínimo Folio Pro, pero no baja a Crew", () => {
+    assert.equal(effectivePlanId("folio", true), "pro");
+    assert.equal(effectivePlanId("pro", true), "pro");
+    assert.equal(effectivePlanId("crew", true), "crew");
+    assert.equal(effectivePlanId("folio", false), "folio");
+  });
+  it("sus límites de IA son los de Folio Pro", () => {
+    assert.equal(aiMonthlyLimit("folio", false, true), aiMonthlyLimit("pro"));
+    assert.ok(aiMonthlyLimit("folio") < aiMonthlyLimit("pro"));
+  });
+  it("el estado del plan es «Embajadora»: no vence", () => {
+    const expired = { plan: "folio", comp: false, trialEndsAt: new Date("2020-01-01"), paidUntil: new Date("2020-02-01") };
+    assert.equal(billingState(expired).state, "expired");
+    const now = billingState({ ...expired, ambassador: true });
+    assert.equal(now.state, "ambassador");
+    assert.equal(now.until, null);
+  });
+  it("la cuenta de cortesía sigue ganando sobre embajadora", () => {
+    assert.equal(billingState({ plan: "pro", comp: true, ambassador: true, trialEndsAt: null, paidUntil: null }).state, "comp");
+  });
+});
+
+describe("recompensa", () => {
+  const paid = new Date("2026-01-01T00:00:00Z");
+  it("no se da antes de la espera", () => {
+    assert.equal(rewardDue(paid, new Date(paid.getTime() + (AMBASSADOR.waitDays - 1) * 86_400_000)), false);
+    assert.equal(rewardDue(null), false);
+  });
+  it("se da cuando se cumple la espera", () => {
+    assert.equal(rewardDue(paid, new Date(paid.getTime() + AMBASSADOR.waitDays * 86_400_000)), true);
+  });
+});

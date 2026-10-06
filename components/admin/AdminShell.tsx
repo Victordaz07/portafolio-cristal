@@ -68,6 +68,14 @@ const navGroups = (t: T): NavGroup[] => [
     ],
   },
   {
+    id: "comunidad",
+    title: t("Comunidad", "Community"),
+    items: [
+      { href: "/admin/comunidad", label: t("Muro", "Wall"), exact: true },
+      { href: "/admin/comunidad/perfil", label: t("Mi perfil", "My profile") },
+    ],
+  },
+  {
     id: "ayuda",
     title: t("Ayuda", "Help"),
     items: [

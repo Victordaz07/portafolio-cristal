@@ -57,3 +57,14 @@ test("validaciones y etiquetas bilingües", () => {
   assert.equal(creatorTypeLabel("fotografia"), "Fotografía");
   assert.equal(creatorTypeLabel("x"), "x");
 });
+
+test("enlaces dentro del texto, sin incluir la puntuación final", async () => {
+  const { splitLinks, timeAgo } = await import("../lib/community");
+  const parts = splitLinks("Mira https://foliocrew.pro/precios. ¡Gracias!");
+  assert.deepEqual(parts, [{ text: "Mira " }, { text: "https://foliocrew.pro/precios", href: "https://foliocrew.pro/precios" }, { text: ". ¡Gracias!" }]);
+  assert.deepEqual(splitLinks("sin enlaces"), [{ text: "sin enlaces" }]);
+  assert.deepEqual(splitLinks("javascript:alert(1)"), [{ text: "javascript:alert(1)" }]);
+  const now = new Date("2026-10-06T12:00:00Z");
+  assert.equal(timeAgo(new Date(now.getTime() - 5 * 60_000), "es", now), "hace 5 min");
+  assert.equal(timeAgo(new Date(now.getTime() - 3 * 3_600_000), "en", now), "3h ago");
+});

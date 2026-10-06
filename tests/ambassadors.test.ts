@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { AMBASSADOR, codeFromBytes, effectivePlanId, normalizeReferralCode, referralLink, rewardDue } from "../lib/ambassadors";
+import { AMBASSADOR, codeFromBytes, effectivePlanId, normalizeReferralCode, referralLink, rewardDecision, rewardDue } from "../lib/ambassadors";
 import { billingState } from "../lib/billing";
 import { checkDisclosure } from "../lib/disclosure";
 import { kitTexts, programRules } from "../lib/ambassador-kit";
@@ -80,4 +80,28 @@ describe("kit de la embajadora", () => {
       assert.ok(text.includes(String(AMBASSADOR.waitDays)) && text.includes(String(AMBASSADOR.cookieDays)));
     });
   }
+});
+
+describe("decisión de la recompensa", () => {
+  const paidAt = new Date("2026-01-01T00:00:00Z");
+  const day = (n: number) => new Date(paidAt.getTime() + n * 86_400_000);
+  const ok = { paidAt, now: day(AMBASSADOR.waitDays), referredActive: true, referredPaying: true, referrerAmbassador: true, referrerActive: true };
+  it("premia cuando se cumple la espera y todo sigue en orden", () => {
+    assert.equal(rewardDecision(ok), "reward");
+  });
+  it("espera antes de los 30 días", () => {
+    assert.equal(rewardDecision({ ...ok, now: day(AMBASSADOR.waitDays - 1) }), "wait");
+    assert.equal(rewardDecision({ ...ok, paidAt: null }), "wait");
+  });
+  it("si la cuenta referida se pausó o ya no paga, no hay recompensa (churned)", () => {
+    assert.equal(rewardDecision({ ...ok, referredActive: false }), "churned");
+    assert.equal(rewardDecision({ ...ok, referredPaying: false }), "churned");
+  });
+  it("si quien invitó ya no es embajadora (o está pausada) queda pendiente (hold), no se pierde", () => {
+    assert.equal(rewardDecision({ ...ok, referrerAmbassador: false }), "hold");
+    assert.equal(rewardDecision({ ...ok, referrerActive: false }), "hold");
+  });
+  it("churned gana sobre hold: una cuenta que se fue nunca premia", () => {
+    assert.equal(rewardDecision({ ...ok, referredPaying: false, referrerAmbassador: false }), "churned");
+  });
 });

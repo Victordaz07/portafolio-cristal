@@ -11,6 +11,7 @@ import {
 import { platformOrigin } from "./site-url";
 import { billingState, extendPaidUntil, formatMoney, getPlan, paymentMethodLabel } from "./billing";
 import { asMailLang, mailDate, mailLangFor } from "./email-lang";
+import { markReferralPaid } from "./ambassadors-server";
 
 // Lado servidor del cobro manual: reportar, registrar, confirmar y rechazar pagos, y recordatorios.
 
@@ -62,6 +63,7 @@ export async function confirmPayment(paymentId: string, actorEmail: string) {
     prismaRoot.payment.update({ where: { id: paymentId }, data: { status: "confirmed", confirmedAt: new Date(), periodEnd: paidUntil } }),
     prismaRoot.creator.update({ where: { id: payment.creatorId }, data: { plan: payment.plan, paidUntil, billingReminder: null } }),
   ]);
+  await markReferralPaid(payment.creatorId, payment.amountCents);
   await logPlatformAction(actorEmail, "payment", payment.creatorId, `${formatMoney(payment.amountCents)} · ${methodLabel(payment.method)} · hasta ${fmtDate(paidUntil)}`);
   const owner = await ownerOf(payment.creatorId);
   if (owner) {

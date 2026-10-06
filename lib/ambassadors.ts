@@ -48,3 +48,28 @@ export function rewardDue(paidAt: Date | null, now = new Date()) {
   if (!paidAt) return false;
   return now.getTime() - paidAt.getTime() >= AMBASSADOR.waitDays * 86_400_000;
 }
+
+export type RewardDecision = "wait" | "reward" | "churned" | "hold";
+
+/**
+ * ¿Qué pasa hoy con un referido que ya hizo su primer pago confirmado?
+ *  - "wait": todavía no pasan los días de espera.
+ *  - "churned": la cuenta referida se pausó o ya no tiene un plan pagado → no hay recompensa.
+ *  - "hold": se cumplió todo, pero quien invitó ya no es embajadora (o su cuenta está pausada): se queda
+ *    pendiente por si vuelve el nivel.
+ *  - "reward": se da el mes gratis.
+ */
+export function rewardDecision(input: {
+  paidAt: Date | null;
+  now: Date;
+  referredActive: boolean;
+  /** La cuenta referida tiene hoy un plan pagado (no cortesía, ni embajadora, ni vencido). */
+  referredPaying: boolean;
+  referrerAmbassador: boolean;
+  referrerActive: boolean;
+}): RewardDecision {
+  if (!rewardDue(input.paidAt, input.now)) return "wait";
+  if (!input.referredActive || !input.referredPaying) return "churned";
+  if (!input.referrerAmbassador || !input.referrerActive) return "hold";
+  return "reward";
+}

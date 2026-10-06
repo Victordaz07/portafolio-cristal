@@ -194,7 +194,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | Planes y pagos con prueba gratis | Próximamente |
 | Correos automáticos (bienvenida, recuperar contraseña, aviso cuando una marca escribe, invitaciones de la lista de espera) | Próximamente (ya programado; se activa al conectar el servicio de correos) |
 | **Publicar automáticamente** en las redes desde el calendario | Futuro (requiere aprobación de cada red) |
-| **Programa de Embajadoras** (nivel por invitación, no se compra: plan gratis, enlace de referidos, insignia y meses gratis por referidos que pagan) | Próximamente |
+| **Programa de Embajadoras** (nivel por invitación, no se compra: Folio Pro sin pagar, enlace de referidos que sirve de invitación, panel con kit para compartir, insignia en su sitio y 1 mes gratis por cada referido que paga y se queda 30 días) | Listo, solo por invitación (el mérito automático y la sección pública en la página de Foliocrew son G5) |
 | **Mensajes directos (DM)** de Instagram en la Bandeja | Futuro (requiere aprobación de Meta) |
 | Plan para agencias y managers (varias creadores) | Futuro |
 

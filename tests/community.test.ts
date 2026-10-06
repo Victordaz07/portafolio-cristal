@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   canEditWithin,
+  connectionState,
   creatorTypeLabel,
   creatorTypesFrom,
   featuredScore,
@@ -67,4 +68,17 @@ test("enlaces dentro del texto, sin incluir la puntuación final", async () => {
   const now = new Date("2026-10-06T12:00:00Z");
   assert.equal(timeAgo(new Date(now.getTime() - 5 * 60_000), "es", now), "hace 5 min");
   assert.equal(timeAgo(new Date(now.getTime() - 3 * 3_600_000), "en", now), "3h ago");
+});
+
+test("estado de la conexión según quién mira", () => {
+  const pending = { requesterId: "a", addresseeId: "b", status: "pending" };
+  assert.equal(connectionState(null, "a"), "none");
+  assert.equal(connectionState(pending, "a"), "outgoing");
+  assert.equal(connectionState(pending, "b"), "incoming");
+  const declined = { ...pending, status: "declined" };
+  assert.equal(connectionState(declined, "a"), "outgoing");
+  assert.equal(connectionState(declined, "b"), "none");
+  const accepted = { ...pending, status: "accepted" };
+  assert.equal(connectionState(accepted, "a"), "connected");
+  assert.equal(connectionState(accepted, "b"), "connected");
 });

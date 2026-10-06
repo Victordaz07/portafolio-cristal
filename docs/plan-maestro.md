@@ -41,7 +41,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [ ] C6. Comenta una palabra → DM automático (necesita permiso de Meta)
 
 **D. Comunidad, etapa 2: conexiones y mensajes**
-- [ ] D1. Conexiones
+- [x] D1. Conexiones
 - [ ] D2. Mensajes directos
 - [ ] D3. Buscar colaboradores
 

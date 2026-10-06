@@ -27,10 +27,10 @@
 > - La pregunta de la semana se publica sola en el cron diario de Inteligencia (`/api/cron/insights`) si no hubo una en 6 días;
 >   el equipo también puede publicarla al momento desde Equipo → Comunidad. Sin `ANTHROPIC_API_KEY` usa preguntas de respaldo.
 
-**Etapa 2: Conexiones y mensajes** (planear en detalle cuando termine la etapa 1)
-- [ ] Conexiones (solicitar / aceptar / rechazar)
-- [ ] Mensajes directos 1 a 1 entre conexiones
-- [ ] Buscar colaboradores (nicho, red, ciudad, idioma)
+**Etapa 2: Conexiones y mensajes** (detalle en la sección 8)
+- [x] Paso 8: Conexiones (solicitar / aceptar / rechazar / quitar) + página Conexiones + avisos
+- [ ] Paso 9: Mensajes directos 1 a 1 entre conexiones (se actualiza cada 10 s)
+- [ ] Paso 10: Buscar colaboradores (tipo de creador, nicho, ciudad, idioma, abierto a colaborar)
 
 **Etapa 3: Lo que la hace única** (después)
 - [ ] Círculos (grupos por nicho, red o nivel)
@@ -389,11 +389,19 @@ Todas: `export const dynamic = "force-dynamic"`, validación con zod, errores en
 
 ---
 
-## 8. Etapa 2 (resumen, planear en detalle al llegar)
-- `CommunityConnection { requesterId, addresseeId, status: pending|accepted|declined, createdAt }` con único por par.
-- `Conversation` + `Message` (solo entre conexiones aceptadas). Empezar con actualización cada 10 s (sin websockets);
-  pasar a tiempo real (Pusher/Ably/Supabase Realtime) cuando haya volumen, pidiendo la llave al dueño **sin** que la muestre.
-- Búsqueda de colaboradores: filtros por `creatorTypes`, `niche`, `city`, `languages`, `openToCollab`.
+## 8. Etapa 2: Conexiones y mensajes
+
+| Tema | Decisión |
+|---|---|
+| Conexión | `CommunityConnection { requesterId, addresseeId, status: pending/accepted/declined, note }`. Única por par (en cualquier sentido: se valida en el código). |
+| Rechazar | Es **silencioso**: quien pidió sigue viendo "Solicitud enviada" (como LinkedIn). Puede cancelarla. |
+| Si los dos se piden | Si B ya me pidió y yo le pido a B, se acepta sola. |
+| Límites | 20 solicitudes por día. Hay que poder participar (correo confirmado, reglas aceptadas, sin pausa). |
+| Bloquear | Borra la conexión, la conversación deja de mostrarse y no se pueden volver a pedir. |
+| Mensajes | Solo entre conexiones **aceptadas**. `CommunityConversation` (par ordenado de cuentas, última lectura de cada lado) + `CommunityMessage` (máx. 2000 caracteres). 60 mensajes por hora. Actualización cada 10 s, sin websockets. |
+| Privacidad | Los mensajes son privados: el equipo **"entrando como" no los puede leer**. El equipo de Comunidad solo ve un mensaje si alguien lo reporta. |
+| Avisos | Correo al recibir solicitud, al ser aceptada y por mensajes nuevos (máx. 1 por conversación cada hora; respeta `emailNotify`). Contadores en el menú. |
+| Buscar | Directorio de perfiles con filtros: tipo de creador, nicho, ciudad (texto), idioma, "abierto a colaborar" y nombre. Sin cuentas bloqueadas ni sin reglas aceptadas. |
 
 ## 9. Etapa 3 (ideas)
 - Círculos con moderadores propios. Reseñas anónimas de marcas (¿paga a tiempo?, rango de pago) unidas a la Inteligencia Foliocrew.

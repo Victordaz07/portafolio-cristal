@@ -79,6 +79,7 @@ model Creator {
   deliverables        Deliverable[]
   invoices            Invoice[]
   billingProfile      BillingProfile?
+  contracts           Contract[]
 }
 
 model Hero {
@@ -196,6 +197,7 @@ model Brand {
   scheduledPosts ScheduledPost[]
   deliverables   Deliverable[]
   invoices       Invoice[]
+  contracts      Contract[]
 
   // Derechos de uso y exclusividad del trato (B2)
   /// Días que la marca puede usar el contenido en sus anuncios o redes
@@ -306,6 +308,47 @@ model Invoice {
   @@index([creatorId])
   @@index([brandId])
   @@index([status, dueAt])
+}
+
+/// Contrato simple con una marca (B4). La marca lo lee y lo acepta en /c/<publicToken> sin iniciar sesión.
+/// Una vez aceptado no se puede cambiar: bodyHash prueba qué texto se aceptó.
+model Contract {
+  id                String    @id @default(cuid())
+  creatorId         String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator           Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  brandId           String?
+  brand             Brand?    @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  /// 32 bytes aleatorios en base64url: el enlace que recibe la marca
+  publicToken       String    @unique
+  /// sponsored | ugc | ambassador | affiliate (lib/contracts.ts)
+  template          String
+  /// es | en
+  language          String    @default("es")
+  title             String
+  /// Los huecos que llenó el creador (lib/contracts.ts → ContractTerms)
+  terms             Json
+  /// { creator: { name, location, email }, brand: { company, name, email } }
+  parties           Json
+  /// Texto final generado a partir de terms y parties (## Título, párrafos y "- " para listas)
+  bodyText          String
+  /// draft | sent | accepted | declined
+  status            String    @default("draft")
+  sentAt            DateTime?
+  viewedAt          DateTime?
+  acceptedName      String?
+  acceptedEmail     String?
+  acceptedAt        DateTime?
+  acceptedIp        String?
+  acceptedUserAgent String?
+  /// SHA-256 del texto aceptado
+  bodyHash          String?
+  declinedAt        DateTime?
+  declineReason     String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([creatorId])
+  @@index([brandId])
 }
 
 model BrandEvent {

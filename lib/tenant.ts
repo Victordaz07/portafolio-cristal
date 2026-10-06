@@ -169,7 +169,7 @@ export async function currentCreatorId(): Promise<string> {
 /** La creadora de esta petición (nombre, slug y dominio). */
 export async function currentCreator() {
   const id = await currentCreatorId();
-  return prismaRoot.creator.findUniqueOrThrow({ where: { id }, select: { id: true, slug: true, name: true, customDomain: true } });
+  return prismaRoot.creator.findUniqueOrThrow({ where: { id }, select: { id: true, slug: true, name: true, customDomain: true, ambassador: true, ambassadorBadge: true, referralCode: true } });
 }
 
 /** "/s/<slug>" si la página se abrió por la dirección provisional; "" en subdominio o dominio propio. */

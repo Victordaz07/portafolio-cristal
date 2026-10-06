@@ -2,6 +2,8 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { AMBASSADOR, codeFromBytes, effectivePlanId, normalizeReferralCode, referralLink, rewardDue } from "../lib/ambassadors";
 import { billingState } from "../lib/billing";
+import { checkDisclosure } from "../lib/disclosure";
+import { kitTexts, programRules } from "../lib/ambassador-kit";
 import { aiMonthlyLimit } from "../lib/ai";
 
 describe("código de embajadora", () => {
@@ -57,4 +59,25 @@ describe("recompensa", () => {
   it("se da cuando se cumple la espera", () => {
     assert.equal(rewardDue(paid, new Date(paid.getTime() + AMBASSADOR.waitDays * 86_400_000)), true);
   });
+});
+
+describe("kit de la embajadora", () => {
+  const link = "https://foliocrew.pro/?ref=ABCD2345";
+  for (const lang of ["es", "en"] as const) {
+    it(`(${lang}) todos los textos dicen que es publicidad desde el inicio y llevan el enlace`, () => {
+      for (const item of kitTexts(link, lang)) {
+        if (item.id === "dm") continue; // el mensaje directo no es una publicación: avisa con palabras, al inicio
+        const check = checkDisclosure(item.text, ["instagram", "tiktok"]);
+        assert.equal(check.status, "ok", `${lang}/${item.id}: ${check.status}`);
+        assert.ok(item.text.includes(link));
+      }
+      const dm = kitTexts(link, lang).find((x) => x.id === "dm")!;
+      assert.ok(dm.text.includes(link));
+      assert.match(dm.text, lang === "es" ? /soy embajadora de Foliocrew/ : /I'm a Foliocrew ambassador/);
+    });
+    it(`(${lang}) las reglas mencionan los parámetros reales`, () => {
+      const text = programRules(lang).join(" ");
+      assert.ok(text.includes(String(AMBASSADOR.waitDays)) && text.includes(String(AMBASSADOR.cookieDays)));
+    });
+  }
 });

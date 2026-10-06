@@ -467,6 +467,15 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Embajadora de Foliocrew",
+    paragraphs: [
+      "Es un nivel por invitación (no se compra) para quien habla bien de Foliocrew y trae gente. Si tu cuenta es embajadora, ves \"Embajadora 💜\" en el menú de Ayuda y tienes Folio Pro sin pagar y sin vencimiento.",
+      "Ahí está tu enlace (y tu código), cuántas personas se registraron y cuántas pagan, y un kit con textos listos para copiar. Quien abre tu enlace puede crear su cuenta sin código de invitación. Nunca ves nombres ni correos de quien se registra.",
+      "Como ganas meses gratis por invitar, tienes que decir que eres embajadora y que es publicidad (#publicidad o #ad) al inicio del texto. Los textos del kit ya lo hacen.",
+      "En el pie de tu sitio público aparece la insignia \"Foliocrew Ambassador\" con tu enlace; la puedes ocultar desde el mismo panel.",
+    ],
+  },
+  {
     title: "Facturas",
     paragraphs: [
       "Primero completa tus datos para facturar (abajo en Facturas): el nombre que va en la factura, tu ciudad, cómo te pagan (PayPal, Zelle…), el plazo para pagar y el % de anticipo. Nunca pongas tu número de seguro social ni números de cuenta completos.",
@@ -646,6 +655,15 @@ const guiaEn: ManualBlock[] = [
       "Create it from Agreements → \"+ New agreement\" or from a deal in Brands (\"Create agreement\"). Pick the template (sponsored post, UGC not posted, monthly ambassador or affiliate), fill in the blanks and see the text on the right. If you come from a deal, it's filled in with its amount, deliverables and usage rights.",
       "It's saved as a draft. Tap \"Send to the brand\": they get an email with a link. The brand reads it, types their name and email and accepts it. Their name, email, date, time and IP address are recorded, and you both get a copy by email. The deal switches to \"Active\" on its own.",
       "If the brand asks for changes, we let you know with what they wrote: tap it to edit and resend. An accepted agreement can no longer be changed. It's a reference template: Foliocrew is not a law firm, and for large agreements a lawyer should review it.",
+    ],
+  },
+  {
+    title: "Foliocrew ambassador",
+    paragraphs: [
+      "It's an invite-only tier (it can't be bought) for people who speak well of Foliocrew and bring others in. If your account is an ambassador, you see \"Ambassador 💜\" in the Help menu and you have Folio Pro with nothing to pay and no expiry.",
+      "There you'll find your link (and your code), how many people signed up and how many pay, and a kit with texts ready to copy. Anyone who opens your link can create an account without an invite code. You never see the names or emails of who signs up.",
+      "Since you earn free months for inviting people, you have to say you're an ambassador and that it's an ad (#ad or #publicidad) at the start of the text. The kit texts already do.",
+      "A \"Foliocrew Ambassador\" badge with your link shows in your public site's footer; you can hide it from the same panel.",
     ],
   },
   {

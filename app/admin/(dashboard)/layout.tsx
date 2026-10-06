@@ -74,6 +74,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         communityNew={communityNew}
         connectionRequests={connectionRequests}
         unreadDms={unreadDms}
+        ambassador={Boolean(creator?.ambassador)}
       >
         {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
         {billingNotice && (

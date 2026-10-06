@@ -15,7 +15,7 @@ type NavGroup = { id: string; title: string; items: NavItem[] };
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
 // nuevas del diseño (Metas, Bitácora, Calendario, Reportes…) se suman a su
 // grupo a medida que se implementan.
-const navGroups = (t: T): NavGroup[] => [
+const navGroups = (t: T, ambassador = false): NavGroup[] => [
   {
     id: "crecimiento",
     title: t("Crecimiento", "Growth"),
@@ -87,6 +87,7 @@ const navGroups = (t: T): NavGroup[] => [
       { href: "/admin/ayuda", label: t("Manual de uso", "User guide") },
       { href: "/admin/soporte", label: t("Soporte", "Support"), badgeKey: "support" },
       { href: "/admin/ideas", label: t("Ideas y sugerencias", "Ideas & suggestions") },
+      ...(ambassador ? [{ href: "/admin/embajadora", label: t("Embajadora 💜", "Ambassador 💜") }] : []),
       { href: "/admin/plan", label: t("Mi plan", "My plan") },
       { href: "/admin/cuenta", label: t("Mi cuenta", "My account") },
     ],
@@ -146,6 +147,7 @@ export default function AdminShell({
   communityNew = 0,
   connectionRequests = 0,
   unreadDms = 0,
+  ambassador = false,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -163,11 +165,13 @@ export default function AdminShell({
   communityNew?: number;
   connectionRequests?: number;
   unreadDms?: number;
+  /** La cuenta es embajadora de Foliocrew: ve su panel en el menú. */
+  ambassador?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useT();
-  const NAV_GROUPS = navGroups(t);
+  const NAV_GROUPS = navGroups(t, ambassador);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(navGroups(t).map((g) => [g.id, true]))

@@ -10,6 +10,7 @@ export const brandCrmInclude = {
     orderBy: { createdAt: "desc" },
     select: { id: true, caption: true, platform: true, createdAt: true },
   },
+  deliverables: { orderBy: [{ order: "asc" }, { createdAt: "asc" }] },
 } satisfies Prisma.BrandInclude;
 
 export type BrandWithCrm = Prisma.BrandGetPayload<{ include: typeof brandCrmInclude }>;
@@ -39,19 +40,27 @@ export const brandFieldsSchema = z.object({
   nextActionDue: optionalDate,
   lastContactAt: optionalDate,
   notes: optionalText,
+  usageRightsDays: z.number().int().min(0).max(3650).nullable().optional(),
+  usageRightsStart: optionalDate,
+  exclusivityDays: z.number().int().min(0).max(3650).nullable().optional(),
+  exclusivityCategory: z.string().trim().max(120).nullable().optional(),
+  whitelisting: z.boolean().optional(),
 });
 
 export type BrandFieldsInput = z.infer<typeof brandFieldsSchema>;
 
 /** Convierte la entrada validada en datos de Prisma: "" → null y fechas "YYYY-MM-DD" → Date. */
 export function toBrandData(input: BrandFieldsInput) {
-  const { nextActionDue, lastContactAt, ...rest } = input;
+  const { nextActionDue, lastContactAt, usageRightsStart, ...rest } = input;
   const data: Prisma.BrandUncheckedUpdateInput = { ...rest };
-  for (const key of ["logoUrl", "websiteUrl", "contactEmail", "contactName", "packageDetail", "nextAction", "notes"] as const) {
+  for (const key of ["logoUrl", "websiteUrl", "contactEmail", "contactName", "packageDetail", "nextAction", "notes", "exclusivityCategory"] as const) {
     if (data[key] === "") data[key] = null;
   }
   if (nextActionDue !== undefined) data.nextActionDue = nextActionDue ? dateInputToDate(nextActionDue) : null;
   if (lastContactAt !== undefined) data.lastContactAt = lastContactAt ? dateInputToDate(lastContactAt) : null;
+  if (usageRightsStart !== undefined) data.usageRightsStart = usageRightsStart ? dateInputToDate(usageRightsStart) : null;
+  if (data.usageRightsDays === 0) data.usageRightsDays = null;
+  if (data.exclusivityDays === 0) data.exclusivityDays = null;
   return data;
 }
 

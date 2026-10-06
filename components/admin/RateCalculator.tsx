@@ -36,7 +36,7 @@ export default function RateCalculator({
   label,
   className,
 }: {
-  onUse?: (value: number, summary: string) => void;
+  onUse?: (value: number, summary: string, terms: { usageDays: number; exclusivityDays: number; whitelisting: boolean }) => void;
   label?: string;
   className?: string;
 }) {
@@ -304,7 +304,7 @@ export default function RateCalculator({
                 <button
                   type="button"
                   onClick={() => {
-                    onUse(result.fair, summary());
+                    onUse(result.fair, summary(), { usageDays, exclusivityDays, whitelisting });
                     setOpen(false);
                   }}
                   className={primaryButtonClass}

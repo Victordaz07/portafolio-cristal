@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { brandCrmInclude, brandFieldsSchema, toBrandData, autoEventNotes } from "@/lib/brand-crm";
 import { getT } from "@/lib/admin-lang-server";
+import { currentCreatorId } from "@/lib/tenant";
 
 export const dynamic = "force-dynamic";
 
@@ -23,13 +24,15 @@ export async function POST(request: Request) {
   const maxOrder = await prisma.brand.aggregate({ _max: { order: true } });
   // El orden de una marca nueva siempre va al final del carrusel.
   const input = { ...parsed.data, order: undefined };
+  const creatorId = await currentCreatorId();
   const notes = autoEventNotes({ dealStatus: null, paymentStatus: null }, input, lang);
   const brand = await prisma.brand.create({
     data: {
       ...(toBrandData(input) as { name: string }),
       active: input.active ?? true,
       order: (maxOrder._max.order ?? -1) + 1,
-      events: notes.length ? { create: notes.map((note) => ({ note })) } : undefined,
+      // En un create anidado, BrandEvent no pasa por lib/prisma.ts: hay que poner su creatorId.
+      events: notes.length ? { create: notes.map((note) => ({ note, creatorId })) } : undefined,
     },
     include: brandCrmInclude,
   });

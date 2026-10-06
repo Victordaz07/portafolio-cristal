@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { brandCrmInclude, brandFieldsSchema, toBrandData, autoEventNotes } from "@/lib/brand-crm";
 import { getT } from "@/lib/admin-lang-server";
+import { currentCreatorId } from "@/lib/tenant";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +23,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: t("Marca no encontrada", "Brand not found") }, { status: 404 });
   }
 
+  const creatorId = await currentCreatorId();
   const notes = autoEventNotes(before, parsed.data, lang);
   const brand = await prisma.brand.update({
     where: { id },
     data: {
       ...toBrandData(parsed.data),
-      events: notes.length ? { create: notes.map((note) => ({ note })) } : undefined,
+      // En un create anidado, BrandEvent no pasa por lib/prisma.ts: hay que poner su creatorId.
+      events: notes.length ? { create: notes.map((note) => ({ note, creatorId })) } : undefined,
     },
     include: brandCrmInclude,
   });

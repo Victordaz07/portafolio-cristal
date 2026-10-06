@@ -8,6 +8,7 @@ import { pickLabel } from "@/lib/admin-lang";
 import { LOGO_ASPECT_OPTIONS } from "@/lib/image-crop";
 import { useT } from "@/components/admin/AdminLang";
 import RateCalculator from "@/components/admin/RateCalculator";
+import { RIGHTS_DAY_OPTIONS } from "@/lib/deliverables";
 
 export interface BrandFormValues {
   name: string;
@@ -23,6 +24,11 @@ export interface BrandFormValues {
   nextAction: string;
   nextActionDue: string;
   lastContactAt: string;
+  usageRightsDays: string;
+  usageRightsStart: string;
+  exclusivityDays: string;
+  exclusivityCategory: string;
+  whitelisting: boolean;
 }
 
 export const emptyBrandForm: BrandFormValues = {
@@ -40,15 +46,25 @@ export const emptyBrandForm: BrandFormValues = {
   nextAction: "",
   nextActionDue: "",
   lastContactAt: "",
+  usageRightsDays: "",
+  usageRightsStart: "",
+  exclusivityDays: "",
+  exclusivityCategory: "",
+  whitelisting: false,
 };
 
 /** Valores del formulario → cuerpo JSON para la API. */
 export function toBrandPayload(values: BrandFormValues) {
   const dealValue = values.dealValue.trim() === "" ? null : Number(values.dealValue);
+  const days = (v: string) => (v ? Number(v) || null : null);
   return {
     ...values,
     dealStatus: values.dealStatus || null,
     dealValue: Number.isFinite(dealValue) ? dealValue : null,
+    usageRightsDays: days(values.usageRightsDays),
+    // Sin fecha de inicio, los derechos cuentan desde hoy.
+    usageRightsStart: values.usageRightsDays && !values.usageRightsStart ? new Date().toISOString().slice(0, 10) : values.usageRightsStart,
+    exclusivityDays: days(values.exclusivityDays),
   };
 }
 
@@ -155,8 +171,15 @@ export default function BrandForm({
               </Field>
               <RateCalculator
                 className="self-start text-xs font-semibold text-coral hover:underline"
-                onUse={(value, summary) =>
-                  setValues((current) => ({ ...current, dealValue: String(value), packageDetail: current.packageDetail.trim() ? current.packageDetail : summary }))
+                onUse={(value, summary, terms) =>
+                  setValues((current) => ({
+                    ...current,
+                    dealValue: String(value),
+                    packageDetail: current.packageDetail.trim() ? current.packageDetail : summary,
+                    usageRightsDays: terms.usageDays ? String(terms.usageDays) : current.usageRightsDays,
+                    exclusivityDays: terms.exclusivityDays ? String(terms.exclusivityDays) : current.exclusivityDays,
+                    whitelisting: terms.whitelisting || current.whitelisting,
+                  }))
                 }
               />
             </div>
@@ -212,6 +235,45 @@ export default function BrandForm({
                 );
               })}
             </div>
+          </div>
+          <div className="grid gap-sp-4 border-t border-line pt-sp-4 sm:grid-cols-2">
+            <Field label={t("Derechos de uso", "Usage rights")} hint={t("Cuánto tiempo la marca puede usar tu contenido en sus anuncios o redes.", "How long the brand can use your content in its ads or channels.")}>
+              <select value={values.usageRightsDays} onChange={(e) => set("usageRightsDays", e.target.value)} className={inputClass}>
+                <option value="">{t("No incluye", "Not included")}</option>
+                {RIGHTS_DAY_OPTIONS.map((d) => (
+                  <option key={d} value={d}>
+                    {d === 365 ? t("1 año", "1 year") : t(`${d} días`, `${d} days`)}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            {values.usageRightsDays && (
+              <Field label={t("Los derechos empiezan el", "Rights start on")} hint={t("Normalmente, el día que se publica o se entrega.", "Usually the day it's posted or delivered.")}>
+                <input type="date" value={values.usageRightsStart} onChange={(e) => set("usageRightsStart", e.target.value)} className={inputClass} />
+              </Field>
+            )}
+            <Field label={t("Exclusividad", "Exclusivity")}>
+              <select value={values.exclusivityDays} onChange={(e) => set("exclusivityDays", e.target.value)} className={inputClass}>
+                <option value="">{t("No incluye", "Not included")}</option>
+                {RIGHTS_DAY_OPTIONS.map((d) => (
+                  <option key={d} value={d}>
+                    {d === 365 ? t("1 año", "1 year") : t(`${d} días`, `${d} days`)}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            {values.exclusivityDays && (
+              <Field label={t("¿Con qué categoría?", "Which category?")} hint={t("Ej.: skincare, bebidas energéticas.", "E.g.: skincare, energy drinks.")}>
+                <input value={values.exclusivityCategory} onChange={(e) => set("exclusivityCategory", e.target.value)} className={inputClass} maxLength={120} />
+              </Field>
+            )}
+            <label className="flex items-start gap-sp-2 sm:col-span-2">
+              <input type="checkbox" checked={values.whitelisting} onChange={(e) => set("whitelisting", e.target.checked)} className="mt-1" />
+              <span className="text-sm text-ink">
+                {t("Spark Ads / whitelisting", "Spark Ads / whitelisting")}
+                <span className="block text-xs text-ink/50">{t("La marca pauta anuncios desde tu cuenta.", "The brand runs ads from your account.")}</span>
+              </span>
+            </label>
           </div>
         </fieldset>
       )}

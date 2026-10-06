@@ -27,7 +27,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 
 **B. Cerrar y cobrar**
 - [x] B1. Calculadora "¿Cuánto cobro?"
-- [ ] B2. Entregables y derechos de uso por trato
+- [x] B2. Entregables y derechos de uso por trato
 - [ ] B3. Facturas y recordatorios de cobro
 - [ ] B4. Contrato simple con aceptación en línea
 - [ ] B5. Aviso de #publicidad (FTC) al crear contenido patrocinado
@@ -130,6 +130,7 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
 - **Recordatorios:** en el cron diario (ver `vercel.json` y `app/api/cron/`), correo al creador 2 días antes de cada entrega y 7 días antes de que venzan los derechos.
   Revisa el límite de crons del plan de Vercel antes de agregar uno nuevo; si hace falta, súmalo al cron diario existente.
 - **Listo cuando:** se crean, ordenan y marcan entregables; el aviso de vencimiento llega en la prueba local (llama al cron a mano).
+- **Cómo quedó:** sin `format` ni `scheduledPostId` por ahora (el título ya dice el formato); se agregaron `remindedAt` en Deliverable y `usageReminderAt` en Brand para no repetir avisos. Los recordatorios corren en el cron diario de cobros (`/api/cron/billing`).
 
 ### B3. Facturas y recordatorios de cobro
 - **Por qué:** al 87% le han pagado tarde; atrasos de 60–120 días. El 41% dice que es su peor problema.

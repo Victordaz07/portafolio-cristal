@@ -470,6 +470,7 @@ const guiaEs: ManualBlock[] = [
       "Si algo rompe las reglas, toca \"Reportar\" (es anónimo). También puedes bloquear a alguien desde su perfil. Cada semana el equipo fija una pregunta para conversar.",
       "Para conectar con alguien, entra a su perfil y toca \"+ Conectar\" (puedes agregar una nota). Las solicitudes que te llegan están en Comunidad → Conexiones, donde las aceptas o rechazas. Rechazar es discreto: la otra persona no recibe aviso.",
       "Con tus conexiones puedes escribirte en Comunidad → Mensajes (o con \"💬 Mensaje\" en su perfil). Los mensajes nuevos aparecen solos cada pocos segundos y también te avisamos por correo. Son privados: nadie del equipo los lee, salvo que alguien reporte un mensaje.",
+      "¿Buscas con quién colaborar? En Comunidad → Buscar creadores filtra por red, nicho, ciudad o idioma, o marca \"Solo abiertos a colaborar\". Para aparecer ahí con ese sello, activa \"Abierto a colaborar\" en Mi perfil.",
     ],
   },
 ];
@@ -629,6 +630,7 @@ const guiaEn: ManualBlock[] = [
       "If something breaks the rules, tap \"Report\" (it's anonymous). You can also block someone from their profile. Every week the team pins a question to talk about.",
       "To connect with someone, open their profile and tap \"+ Connect\" (you can add a note). Requests you receive are in Community → Connections, where you accept or decline them. Declining is discreet: the other person isn't notified.",
       "You can message your connections in Community → Messages (or with \"💬 Message\" on their profile). New messages show up on their own every few seconds, and we also email you. They're private: nobody on the team reads them unless someone reports a message.",
+      "Looking for someone to collab with? In Community → Find creators, filter by platform, niche, city or language, or check \"Only open to collabs\". To show up there with that badge, turn on \"Open to collabs\" in My profile.",
     ],
   },
 ];

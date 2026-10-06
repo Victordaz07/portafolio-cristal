@@ -175,6 +175,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - Seguridad: reglas claras, **reportar** (anónimo), **bloquear**, y un equipo de Comunidad que modera. Avisos por correo cuando te responden.
 - Cada semana se fija una **pregunta de la semana** para conversar.
 - **Conexiones** entre creadores (pedir, aceptar o rechazar) y **mensajes privados** 1 a 1 entre conexiones. Los mensajes son privados: el equipo no los lee salvo que alguien reporte uno.
+- **Buscar colaboradores:** directorio de creadores con filtros por red, nicho, ciudad, idioma y "abierto a colaborar".
 
 **Ayuda**
 - **Manual de uso** bilingüe dentro del panel.
@@ -189,7 +190,6 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | **Publicar automáticamente** en las redes desde el calendario | Futuro (requiere aprobación de cada red) |
 | **Mensajes directos (DM)** de Instagram en la Bandeja | Futuro (requiere aprobación de Meta) |
 | Plan para agencias y managers (varias creadores) | Futuro |
-| **Buscador de colaboradores** (por tipo de creador, nicho, ciudad e idioma) en la Comunidad | Próximamente |
 
 ### 6. Problemas → cómo los resuelve Foliocrew
 

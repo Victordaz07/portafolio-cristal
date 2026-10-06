@@ -72,6 +72,7 @@ const navGroups = (t: T): NavGroup[] => [
     title: t("Comunidad", "Community"),
     items: [
       { href: "/admin/comunidad", label: t("Muro", "Wall"), exact: true, badgeKey: "community" },
+      { href: "/admin/comunidad/creadores", label: t("Buscar creadores", "Find creators") },
       { href: "/admin/comunidad/mensajes", label: t("Mensajes", "Messages"), badgeKey: "messages" },
       { href: "/admin/comunidad/conexiones", label: t("Conexiones", "Connections"), badgeKey: "connections" },
       { href: "/admin/comunidad/perfil", label: t("Mi perfil", "My profile") },

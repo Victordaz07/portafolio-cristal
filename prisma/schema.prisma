@@ -221,6 +221,16 @@ model Brand {
   /// Último aviso de "tus derechos de uso vencen pronto" (para no repetirlo)
   usageReminderAt     DateTime?
 
+  // Propuesta escrita con IA (C1): seguimiento a los 5 y 12 días si la marca no responde
+  /// Cuándo se envió la propuesta (null = no hay propuesta en curso)
+  pitchSentAt    DateTime?
+  /// Seguimientos ya enviados (0, 1 o 2)
+  pitchFollowUps Int       @default(0)
+  /// Cuándo respondió la marca (deja de contar como «sin respuesta»)
+  pitchRepliedAt DateTime?
+  /// Lo que se le ofreció (para escribir los seguimientos con el mismo hilo)
+  pitchOffer     String?
+
   @@index([creatorId])
 }
 
@@ -711,7 +721,7 @@ model AiUsage {
   id           String   @id @default(cuid())
   creatorId    String
   creator      Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  kind         String // "caption" | "tips" | "design"
+  kind         String // "caption" | "tips" | "design" | "pitch"
   inputTokens  Int      @default(0)
   outputTokens Int      @default(0)
   createdAt    DateTime @default(now())

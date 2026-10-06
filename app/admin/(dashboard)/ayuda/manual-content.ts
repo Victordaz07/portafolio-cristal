@@ -458,6 +458,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Propuestas a marcas",
+    paragraphs: [
+      "En Marcas toca \"✍️ Escribir propuesta\". Pon la marca, su web o Instagram, qué quieres ofrecerles, el tono y el idioma del correo. Claude escribe el asunto, el mensaje (con el enlace a tu media kit) y 1 o 2 ideas de contenido para esa marca. Cuenta como 1 sugerencia de IA.",
+      "Revísalo y edítalo. Toca \"Copiar\" o \"Abrir en mi correo\": Foliocrew nunca manda el correo por ti, lo envías tú desde tu correo para cuidar tu reputación. Cuando lo envíes, toca \"Guardar en mi CRM\": la marca queda como prospecto (oculta de tu sitio público) y el seguimiento cuenta desde hoy.",
+      "A los 5 y a los 12 días, si la marca no respondió, el Resumen te avisa (\"Tienes 1 propuesta sin respuesta · Toca seguimiento 1\"). Abre la marca y toca \"Escribir seguimiento\": Claude lo escribe con el mismo hilo. Cuando lo mandes, toca \"Ya envié el seguimiento\". Si responden, toca \"Respondieron\" y el trato pasa a Negociando.",
+    ],
+  },
+  {
     title: "Acuerdos",
     paragraphs: [
       "Un acuerdo (contrato simple) deja por escrito qué entregas, cuánto te pagan, el anticipo, los derechos de uso, la exclusividad, las revisiones y la cancelación, antes de empezar. Así bajan mucho los problemas de marcas que desaparecen después de publicar.",
@@ -646,6 +654,14 @@ const guiaEn: ManualBlock[] = [
       "Form: tap \"Reply\", pick a quick reply (for example, the one with your media kit link) or write your own, and tap \"Open in my email\". Your email app opens with everything ready to send, and the message is marked as replied.",
       "Instagram: your reply is posted right on the comment. You can also hide a comment (only you and its author can see it) or delete it.",
       "Direct messages (DMs) are coming later: they need Meta's review.",
+    ],
+  },
+  {
+    title: "Proposals to brands",
+    paragraphs: [
+      "In Brands, tap \"✍️ Write a proposal\". Enter the brand, its website or Instagram, what you want to offer, the tone and the email language. Claude writes the subject, the message (with your media kit link) and 1 or 2 content ideas for that brand. It counts as 1 AI suggestion.",
+      "Review and edit it. Tap \"Copy\" or \"Open in my email\": Foliocrew never sends the email for you, you send it from your own email to protect your reputation. Once you've sent it, tap \"Save in my CRM\": the brand is kept as a prospect (hidden from your public site) and the follow-up counts from today.",
+      "At 5 and 12 days, if the brand hasn't replied, the Dashboard reminds you (\"You have 1 proposal with no reply · Follow-up 1 due\"). Open the brand and tap \"Write follow-up\": Claude writes it keeping the same thread. When you've sent it, tap \"I sent the follow-up\". If they reply, tap \"They replied\" and the deal moves to Negotiating.",
     ],
   },
   {

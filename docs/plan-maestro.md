@@ -33,7 +33,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] B5. Aviso de #publicidad (FTC) al crear contenido patrocinado
 
 **C. Conseguir más tratos**
-- [ ] C1. Propuestas a marcas escritas con IA
+- [x] C1. Propuestas a marcas escritas con IA
 - [ ] C2. Página "Trabaja conmigo" (solicitar un paquete)
 - [ ] C3. Reporte de campaña para la marca
 - [ ] C4. Media kit verificado
@@ -223,6 +223,8 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
 - **Seguimientos:** plantillas de seguimiento a los 5 y 12 días (también con IA). El Resumen avisa "Tienes 3 propuestas sin respuesta".
 - **Detalles:** usa `lib/ai.ts` (`assertAiQuota`, `recordAiUsage` con un `kind` nuevo `"pitch"`) y `getCreatorContext()`. Al agregar el `kind`, actualiza el comentario del modelo `AiUsage`.
   Las propuestas se envían desde el correo del creador: Foliocrew no manda correos a marcas en nombre del creador sin que él lo haga, para evitar spam y proteger su reputación.
+
+- **Cómo quedó:** en Marcas, botón «✍️ Escribir propuesta» (modal `PitchWriter`): marca, su web o Instagram, contacto y correo opcionales, qué ofrecer, tono (cercano, profesional, directo) e **idioma del correo** (ES/EN, aparte del idioma del panel). `lib/ai-pitch.ts` pide a Claude asunto, cuerpo (90–130 palabras) y 1–2 ideas; el enlace al media kit sale de `creatorSiteUrl` + `/media-kit`; el prompt prohíbe inventar datos de la marca y avisa que la web no se visitó. Cuenta como 1 sugerencia (`AiUsage.kind = "pitch"`). Botones: Copiar, «Abrir en mi correo» (`mailto:`) y «Guardar en mi CRM» (crea el prospecto **oculto del sitio público**, con evento «Propuesta enviada: …» y próxima acción «Seguimiento 1» a 5 días; si se escribe desde una marca existente, la reutiliza). Campos nuevos en `Brand`: `pitchSentAt`, `pitchFollowUps`, `pitchRepliedAt`, `pitchOffer` (migración `20261007120000_propuestas`). `lib/pitch.ts` (pura, con pruebas) decide la fase: en espera → toca seguimiento 1 (día 5) → seguimiento 2 (día 12) → sin respuesta. En el detalle de la marca (`PitchSection`) aparecen «Escribir seguimiento N» (misma ventana, con la oferta recordada), «Ya envié el seguimiento» y «Respondieron» (el prospecto pasa a Negociando). El Resumen muestra «Tienes N propuestas sin respuesta» con «Toca seguimiento N». Foliocrew **nunca** envía el correo: lo manda la persona desde el suyo.
 
 ### C2. Página "Trabaja conmigo"
 - **Por qué:** el modelo de Passionfroot (la marca elige un paquete y lo solicita), pero sin comisión.

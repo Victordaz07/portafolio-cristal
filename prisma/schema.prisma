@@ -28,6 +28,15 @@ model Creator {
   plan                   String    @default("pro")
   /// Cuenta de cortesía (fundadoras/es, amistades): no paga ni vence
   comp                   Boolean   @default(false)
+  /// Embajadora de Foliocrew (nivel por invitación, docs/plan-embajadores.md): Folio Pro sin pagar y se puede quitar
+  ambassador             Boolean   @default(false)
+  /// "invited" | "earned"
+  ambassadorSource       String?
+  ambassadorSince        DateTime?
+  /// Código del enlace foliocrew.pro/?ref=<código> (se crea al volverse embajadora; no cambia aunque cambie el slug)
+  referralCode           String?   @unique
+  /// Mostrar la insignia "Foliocrew Ambassador" en su sitio público
+  ambassadorBadge        Boolean   @default(true)
   /// Fin de la prueba gratis (null = sin prueba)
   trialEndsAt            DateTime?
   /// Pagado hasta (pagos manuales por PayPal o transferencia)
@@ -69,6 +78,8 @@ model Creator {
   bioLinks            BioLink[]
   bioLinkGroups       BioLinkGroup[]
   payments            Payment[]
+  referralsAsReferrer Referral[]        @relation("referrer")
+  referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
   communityPosts      CommunityPost[]
   communityReplies    CommunityReply[]
@@ -1100,4 +1111,23 @@ model CommunityBlock {
 
   @@unique([blockerId, blockedId])
   @@index([blockedId])
+}
+
+/// Programa de embajadoras: quién trajo a quién. No es por creadora (cruza cuentas): se usa prismaRoot.
+model Referral {
+  id           String    @id @default(cuid())
+  referrerId   String
+  referrer     Creator   @relation("referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  /// Una cuenta solo puede ser referida una vez
+  referredId   String    @unique
+  referred     Creator   @relation("referred", fields: [referredId], references: [id], onDelete: Cascade)
+  /// signed_up | paid | rewarded | churned
+  status       String    @default("signed_up")
+  /// Primer pago confirmado
+  paidAt       DateTime?
+  rewardedAt   DateTime?
+  rewardMonths Int       @default(0)
+  createdAt    DateTime  @default(now())
+
+  @@index([referrerId, status])
 }

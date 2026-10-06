@@ -34,7 +34,7 @@ export default async function PlanPage() {
     session
       ? prismaRoot.creator.findUnique({
           where: { id: session.creatorId },
-          select: { slug: true, plan: true, comp: true, trialEndsAt: true, paidUntil: true },
+          select: { slug: true, plan: true, comp: true, ambassador: true, trialEndsAt: true, paidUntil: true },
         })
       : null,
     prisma.payment.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
@@ -51,6 +51,8 @@ export default async function PlanPage() {
   const headline =
     state === "comp"
       ? t("Tu cuenta es de cortesía: no tienes que pagar nada. 💜", "Your account is complimentary: you don't have to pay anything. 💜")
+      : state === "ambassador"
+        ? t("Eres embajadora de Foliocrew: tienes Folio Pro sin pagar y sin vencimiento. 💜", "You're a Foliocrew ambassador: you have Folio Pro with nothing to pay and no expiry. 💜")
       : state === "active"
         ? t(`Tu plan ${plan.name} está pagado hasta el ${fmt(until!)}.`, `Your ${plan.name} plan is paid until ${fmt(until!)}.`)
         : state === "trial"
@@ -78,7 +80,7 @@ export default async function PlanPage() {
           >
             {billingLabel(state, lang)}
           </span>
-          <span className="font-semibold text-ink">{state === "comp" ? t("Cortesía", "Complimentary") : plan.name}</span>
+          <span className="font-semibold text-ink">{state === "comp" ? t("Cortesía", "Complimentary") : state === "ambassador" ? t("Embajadora · Folio Pro", "Ambassador · Folio Pro") : plan.name}</span>
         </div>
         <p className="mt-sp-2 text-ink">{headline}</p>
         {pending && (
@@ -107,7 +109,7 @@ export default async function PlanPage() {
         </Card>
       )}
 
-      {state !== "comp" && (
+      {state !== "comp" && state !== "ambassador" && (
         <>
           <div className="grid gap-sp-4 md:grid-cols-2">
             {PAYABLE_PLANS.map((p) => (

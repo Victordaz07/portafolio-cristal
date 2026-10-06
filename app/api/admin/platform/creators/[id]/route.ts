@@ -5,6 +5,7 @@ import { logPlatformAction, platformAdminUser } from "@/lib/platform-admin";
 import { forgetHost, forgetSessionVersion } from "@/lib/tenant";
 import { PLANS } from "@/lib/plans";
 import { changeAccountEmail } from "@/lib/account-email-change";
+import { setAmbassador } from "@/lib/ambassadors-server";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,8 @@ const schema = z.object({
   adminNote: z.string().max(2000).optional(),
   /** Cuenta de cortesía: no paga ni vence. */
   comp: z.boolean().optional(),
+  /** Embajadora de Foliocrew (nivel por invitación, se puede quitar). */
+  ambassador: z.boolean().optional(),
   plan: z.enum(PLANS.map((p) => p.id) as [string, ...string[]]).optional(),
   /** Alarga (o da) la prueba gratis N días desde hoy o desde su fin actual. */
   extendTrialDays: z.number().int().min(1).max(90).optional(),
@@ -29,7 +32,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
-  const { status, adminNote, comp, plan, extendTrialDays, ownerEmail } = parsed.data;
+  const { status, adminNote, comp, ambassador, plan, extendTrialDays, ownerEmail } = parsed.data;
 
   const creator = await prismaRoot.creator.findUnique({
     where: { id },
@@ -77,6 +80,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         : {}),
     },
   });
+  if (ambassador !== undefined) await setAmbassador(id, ambassador, admin.email);
   if (comp !== undefined) await logPlatformAction(admin.email, comp ? "comp-on" : "comp-off", id);
   if (plan) await logPlatformAction(admin.email, "plan", id, plan);
   if (extendTrialDays) await logPlatformAction(admin.email, "trial", id, `+${extendTrialDays} días`);

@@ -101,7 +101,7 @@ export async function rejectPayment(paymentId: string, actorEmail: string) {
  */
 export async function sendBillingReminders(now = new Date()) {
   const creators = await prismaRoot.creator.findMany({
-    where: { comp: false, status: "active" },
+    where: { comp: false, ambassador: false, status: "active" },
     select: { id: true, plan: true, comp: true, trialEndsAt: true, paidUntil: true, billingReminder: true },
   });
   const origin = await platformOrigin();

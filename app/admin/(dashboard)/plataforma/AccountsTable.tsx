@@ -156,7 +156,7 @@ export default function AccountsTable({ rows }: { rows: AccountRow[] }) {
                   <span
                     className={`block ${r.billingState === "expired" || r.billingState === "none" ? "text-red-600" : "text-ink/55"}`}
                   >
-                    {r.billingState === "comp" ? t("no vence", "never expires") : `${r.billing}${r.billingUntil ? ` · ${date(r.billingUntil, lang)}` : ""}`}
+                    {r.billingState === "comp" || r.billingState === "ambassador" ? t("no vence", "never expires") : `${r.billing}${r.billingUntil ? ` · ${date(r.billingUntil, lang)}` : ""}`}
                   </span>
                 </td>
                 <td className="py-sp-2 pr-sp-3 text-xs text-ink/70">

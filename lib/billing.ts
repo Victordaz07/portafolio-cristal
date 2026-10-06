@@ -49,14 +49,17 @@ export function formatMoney(cents: number, currency = "USD") {
 export interface BillingFields {
   plan: string;
   comp: boolean;
+  /** Embajadora de Foliocrew: Folio Pro sin pagar y sin vencer (docs/plan-embajadores.md). */
+  ambassador?: boolean;
   trialEndsAt: Date | null;
   paidUntil: Date | null;
 }
 
-export type BillingState = "comp" | "active" | "trial" | "expired" | "none";
+export type BillingState = "comp" | "ambassador" | "active" | "trial" | "expired" | "none";
 
 export const BILLING_LABEL: Record<BillingState, string> = {
   comp: "Cortesía",
+  ambassador: "Embajadora",
   active: "Pagado",
   trial: "Prueba gratis",
   expired: "Vencido",
@@ -65,6 +68,7 @@ export const BILLING_LABEL: Record<BillingState, string> = {
 
 export const BILLING_LABEL_EN: Record<BillingState, string> = {
   comp: "Complimentary",
+  ambassador: "Ambassador",
   active: "Paid",
   trial: "Free trial",
   expired: "Expired",
@@ -77,6 +81,7 @@ export const billingLabel = (state: BillingState, lang: "es" | "en" = "es") => (
 /** Estado del plan hoy y hasta cuándo dura. */
 export function billingState(c: BillingFields, now = new Date()) {
   if (c.comp) return { state: "comp" as BillingState, until: null, daysLeft: null };
+  if (c.ambassador) return { state: "ambassador" as BillingState, until: null, daysLeft: null };
   if (c.paidUntil && c.paidUntil > now) return { state: "active" as BillingState, until: c.paidUntil, daysLeft: daysBetween(now, c.paidUntil) };
   if (c.trialEndsAt && c.trialEndsAt > now) return { state: "trial" as BillingState, until: c.trialEndsAt, daysLeft: daysBetween(now, c.trialEndsAt) };
   const ended = c.paidUntil ?? c.trialEndsAt;

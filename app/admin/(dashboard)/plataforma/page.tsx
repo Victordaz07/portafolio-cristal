@@ -402,7 +402,7 @@ async function CuentasView({ adminCreatorId }: { adminCreatorId: string }) {
       aiThisMonth: a.aiThisMonth,
       status: a.status,
       hasNote: Boolean(a.adminNote),
-      plan: a.comp ? t("Cortesía", "Complimentary") : getPlan(a.plan).name,
+      plan: a.comp ? t("Cortesía", "Complimentary") : a.ambassador ? t("Embajadora", "Ambassador") : getPlan(a.plan).name,
       billing: billingLabel(billingState(a).state, lang),
       billingState: billingState(a).state,
       billingUntil: billingState(a).until?.toISOString() ?? null,

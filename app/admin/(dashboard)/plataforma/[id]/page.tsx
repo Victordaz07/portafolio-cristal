@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prismaRoot } from "@/lib/prisma-root";
 import { platformAdminUser } from "@/lib/platform-admin";
-import { creatorSiteUrl } from "@/lib/site-url";
+import { creatorSiteUrl, platformOrigin } from "@/lib/site-url";
+import { referralLink } from "@/lib/ambassadors";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountActions from "./AccountActions";
@@ -27,6 +28,8 @@ const ACTION_LABEL: Record<string, string> = {
   "payment-rejected": "Marcó un pago como no encontrado",
   "comp-on": "Hizo la cuenta de cortesía",
   "comp-off": "Quitó la cortesía",
+  "ambassador-on": "Dio el nivel Embajadora",
+  "ambassador-off": "Quitó el nivel Embajadora",
   plan: "Cambió el plan",
   trial: "Extendió la prueba gratis",
   email: "Cambió el correo de acceso",
@@ -41,6 +44,8 @@ const ACTION_LABEL_EN: Record<string, string> = {
   "payment-rejected": "Marked a payment as not found",
   "comp-on": "Made the account complimentary",
   "comp-off": "Removed complimentary",
+  "ambassador-on": "Gave the Ambassador tier",
+  "ambassador-off": "Removed the Ambassador tier",
   plan: "Changed the plan",
   trial: "Extended the free trial",
   email: "Changed the sign-in email",
@@ -74,6 +79,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
     creatorPerformance(id),
   ]);
   const billing = billingState(creator);
+  const origin = await platformOrigin();
   const byMonth = new Map<string, { count: number; tokens: number }>();
   for (const u of usage) {
     const key = u.createdAt.toISOString().slice(0, 7);
@@ -123,6 +129,8 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
         creatorId={creator.id}
         plan={creator.plan}
         comp={creator.comp}
+        ambassador={creator.ambassador}
+        referralLink={creator.ambassador && creator.referralCode ? referralLink(origin, creator.referralCode) : null}
         stateLabel={billingLabel(billing.state, lang)}
         until={billing.until?.toISOString() ?? null}
         plans={PLANS.map((p) => ({ id: p.id, name: p.name, price: p.price }))}

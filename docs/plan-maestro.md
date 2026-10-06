@@ -55,7 +55,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [ ] E7. Círculos, mentorías y sesiones en vivo
 
 **G. Programa de Embajadoras** (por invitación; detalle en `docs/plan-embajadores.md`)
-- [ ] G1. Datos y permisos: interruptor "Embajadora" en la ficha de cuenta (Folio Pro gratis mientras sea embajadora)
+- [x] G1. Datos y permisos: interruptor "Embajadora" en la ficha de cuenta (Folio Pro gratis mientras sea embajadora)
 - [ ] G2. Enlace `?ref=` que funciona como invitación al registro
 - [ ] G3. Panel de la embajadora, kit para compartir e insignia en su sitio
 - [ ] G4. Referido que paga → recompensa de meses gratis (cron diario)

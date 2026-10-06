@@ -10,7 +10,7 @@ import { tooManyAttempts } from "@/lib/rate-limit";
 export const dynamic = "force-dynamic";
 
 const schema = z.object({
-  targetType: z.enum(["post", "reply", "profile"]),
+  targetType: z.enum(["post", "reply", "profile", "message"]),
   targetId: z.string().min(1).max(40),
   reason: z.string().refine(isReportReason),
   detail: z.string().trim().max(1000).default(""),
@@ -31,6 +31,13 @@ export async function POST(request: Request) {
   const target = await findTarget(targetType, targetId);
   if (!target) return NextResponse.json({ error: t("Ya no está disponible", "No longer available") }, { status: 404 });
   if (target.creatorId === session.creatorId) return NextResponse.json({ error: t("No puedes reportar lo tuyo", "You can't report your own content") }, { status: 400 });
+  if (targetType === "message") {
+    // Un mensaje privado solo lo puede reportar quien lo recibió.
+    const inConversation = await prismaRoot.communityMessage.count({
+      where: { id: targetId, conversation: { OR: [{ aId: session.creatorId }, { bId: session.creatorId }] } },
+    });
+    if (!inConversation) return NextResponse.json({ error: t("Ya no está disponible", "No longer available") }, { status: 404 });
+  }
 
   const already = await prismaRoot.communityReport.findUnique({
     where: { reporterId_targetType_targetId: { reporterId: session.creatorId, targetType, targetId } },

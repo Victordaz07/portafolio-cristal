@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { prismaRoot } from "@/lib/prisma-root";
 import { hasRole, teamUser } from "@/lib/team";
 import { getT } from "@/lib/admin-lang-server";
-import { findTarget } from "@/lib/community-moderation";
+import { findTarget, type TargetType } from "@/lib/community-moderation";
 import { reportReasonLabel, timeAgo } from "@/lib/community";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
@@ -17,6 +17,7 @@ const TYPE_LABEL: Record<string, [string, string]> = {
   post: ["Publicación", "Post"],
   reply: ["Respuesta", "Reply"],
   profile: ["Perfil", "Profile"],
+  message: ["Mensaje privado", "Private message"],
 };
 
 /** Departamento de Comunidad: reportes abiertos agrupados por contenido, con sus acciones. */
@@ -41,7 +42,7 @@ export default async function CommunityModerationPage() {
   const items = await Promise.all(
     Array.from(groups.values()).map(async (reports) => {
       const first = reports[0];
-      const target = await findTarget(first.targetType as "post" | "reply" | "profile", first.targetId);
+      const target = await findTarget(first.targetType as TargetType, first.targetId);
       const author = target
         ? await prismaRoot.creator.findUnique({ where: { id: target.creatorId }, select: { slug: true, communityProfile: { select: { displayName: true, mutedUntil: true } } } })
         : null;
@@ -88,6 +89,14 @@ export default async function CommunityModerationPage() {
             {target ? (
               <>
                 <p className="whitespace-pre-line rounded-[12px] bg-cream p-sp-3 text-sm text-ink">{target.summary}</p>
+                {target.type === "message" && (
+                  <p className="text-xs text-ink/50">
+                    {t(
+                      "🔒 Los mensajes son privados: solo ves este porque la otra persona lo reportó.",
+                      "🔒 Messages are private: you only see this one because the other person reported it."
+                    )}
+                  </p>
+                )}
                 <p className="text-xs text-ink/60">
                   {t("De", "By")}{" "}
                   {author && (

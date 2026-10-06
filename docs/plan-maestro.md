@@ -42,7 +42,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 
 **D. Comunidad, etapa 2: conexiones y mensajes**
 - [x] D1. Conexiones
-- [ ] D2. Mensajes directos
+- [x] D2. Mensajes directos
 - [ ] D3. Buscar colaboradores
 
 **E. Lo que nadie más tiene**

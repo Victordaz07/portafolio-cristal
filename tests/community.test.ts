@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import {
   canEditWithin,
   connectionState,
+  isUnread,
+  pairOf,
   creatorTypeLabel,
   creatorTypesFrom,
   featuredScore,
@@ -81,4 +83,16 @@ test("estado de la conexión según quién mira", () => {
   const accepted = { ...pending, status: "accepted" };
   assert.equal(connectionState(accepted, "a"), "connected");
   assert.equal(connectionState(accepted, "b"), "connected");
+});
+
+test("mensajes: par ordenado y no leídos", () => {
+  assert.deepEqual(pairOf("b", "a"), { aId: "a", bId: "b" });
+  assert.deepEqual(pairOf("a", "b"), { aId: "a", bId: "b" });
+  const t1 = new Date("2026-10-06T10:00:00Z");
+  const t2 = new Date("2026-10-06T11:00:00Z");
+  const c = { aId: "a", aReadAt: t1, bReadAt: null, lastMessageAt: t2, lastSenderId: "b" };
+  assert.equal(isUnread(c, "a"), true);
+  assert.equal(isUnread(c, "b"), false, "lo que envié no cuenta como no leído");
+  assert.equal(isUnread({ ...c, aReadAt: t2 }, "a"), false);
+  assert.equal(isUnread({ ...c, lastSenderId: null }, "a"), false);
 });

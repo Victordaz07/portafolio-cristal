@@ -4,7 +4,7 @@ import { prismaRoot } from "@/lib/prisma-root";
 import { requireRole } from "@/lib/team";
 import { logPlatformAction } from "@/lib/platform-admin";
 import { getT } from "@/lib/admin-lang-server";
-import { findTarget, notifyAuthor, setHidden } from "@/lib/community-moderation";
+import { findTarget, notifyAuthor, setHidden, type TargetType } from "@/lib/community-moderation";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +27,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const report = await prismaRoot.communityReport.findUnique({ where: { id } });
   if (!report) return NextResponse.json({ error: t("No encontré ese reporte", "Couldn't find that report") }, { status: 404 });
-  const target = await findTarget(report.targetType as "post" | "reply" | "profile", report.targetId);
+  const target = await findTarget(report.targetType as TargetType, report.targetId);
   if (!target) {
     await prismaRoot.communityReport.updateMany({
       where: { targetType: report.targetType, targetId: report.targetId, status: "open" },
@@ -51,9 +51,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
   // Si lo había ocultado el sistema (5 reportes) y el reporte no procede, vuelve a verse.
   if (action === "dismiss" && target.hidden && target.type !== "profile") {
-    const by = target.type === "post"
-      ? (await prismaRoot.communityPost.findUnique({ where: { id: target.id }, select: { hiddenBy: true } }))?.hiddenBy
-      : (await prismaRoot.communityReply.findUnique({ where: { id: target.id }, select: { hiddenBy: true } }))?.hiddenBy;
+    const by =
+      target.type === "post"
+        ? (await prismaRoot.communityPost.findUnique({ where: { id: target.id }, select: { hiddenBy: true } }))?.hiddenBy
+        : target.type === "message"
+          ? (await prismaRoot.communityMessage.findUnique({ where: { id: target.id }, select: { hiddenBy: true } }))?.hiddenBy
+          : (await prismaRoot.communityReply.findUnique({ where: { id: target.id }, select: { hiddenBy: true } }))?.hiddenBy;
     if (by === "auto") await setHidden(target, false, user.email);
   }
 

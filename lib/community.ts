@@ -111,6 +111,10 @@ export const LIMITS = {
   /** Solicitudes de conexión por día y largo de la nota que las acompaña. */
   connectionsPerDay: 20,
   connectionNote: 300,
+  /** Mensajes directos: largo máximo, cuántos por hora y cada cuánto se buscan nuevos. */
+  message: 2000,
+  messagesPerHour: 60,
+  messagePollMs: 10_000,
   /** Minutos para editar después de publicar. */
   editMinutes: 30,
   /** Reportes abiertos que avisan al equipo / ocultan solo el contenido. */
@@ -236,4 +240,20 @@ export function connectionState(row: ConnectionRow | null | undefined, me: strin
   if (row.status === "accepted") return "connected";
   if (row.requesterId === me) return "outgoing";
   return row.status === "pending" ? "incoming" : "none";
+}
+
+// ─── Mensajes ───
+
+/** Par ordenado de cuentas: una sola conversación por par, la empiece quien la empiece. */
+export function pairOf(x: string, y: string): { aId: string; bId: string } {
+  return x < y ? { aId: x, bId: y } : { aId: y, bId: x };
+}
+
+export type ConversationRead = { aId: string; aReadAt: Date | null; bReadAt: Date | null; lastMessageAt: Date; lastSenderId: string | null };
+
+/** ¿Hay algo sin leer para `me`? (el último mensaje es de la otra persona y llegó después de mi última lectura). */
+export function isUnread(c: ConversationRead, me: string) {
+  if (!c.lastSenderId || c.lastSenderId === me) return false;
+  const readAt = c.aId === me ? c.aReadAt : c.bReadAt;
+  return !readAt || c.lastMessageAt > readAt;
 }

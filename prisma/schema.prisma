@@ -72,8 +72,10 @@ model Creator {
   communityProfile    CommunityProfile?
   communityPosts      CommunityPost[]
   communityReplies    CommunityReply[]
-  connectionsSent     CommunityConnection[] @relation("ConnectionRequester")
-  connectionsReceived CommunityConnection[] @relation("ConnectionAddressee")
+  connectionsSent     CommunityConnection[]   @relation("ConnectionRequester")
+  connectionsReceived CommunityConnection[]   @relation("ConnectionAddressee")
+  conversationsA      CommunityConversation[] @relation("ConversationA")
+  conversationsB      CommunityConversation[] @relation("ConversationB")
 }
 
 model Hero {
@@ -895,6 +897,41 @@ model CommunityConnection {
   @@unique([requesterId, addresseeId])
   @@index([addresseeId, status])
   @@index([requesterId, status])
+}
+
+/// Conversación privada entre dos conexiones. aId < bId (par ordenado) para que haya una sola por par.
+model CommunityConversation {
+  id            String             @id @default(cuid())
+  aId           String
+  a             Creator            @relation("ConversationA", fields: [aId], references: [id], onDelete: Cascade)
+  bId           String
+  b             Creator            @relation("ConversationB", fields: [bId], references: [id], onDelete: Cascade)
+  lastMessageAt DateTime           @default(now())
+  lastSenderId  String?
+  /// Hasta cuándo leyó cada lado (para los no leídos)
+  aReadAt       DateTime?
+  bReadAt       DateTime?
+  createdAt     DateTime           @default(now())
+  messages      CommunityMessage[]
+
+  @@unique([aId, bId])
+  @@index([aId, lastMessageAt])
+  @@index([bId, lastMessageAt])
+}
+
+model CommunityMessage {
+  id             String                @id @default(cuid())
+  conversationId String
+  conversation   CommunityConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  /// creatorId de quien envía
+  senderId       String
+  body           String
+  /// Oculto por el equipo de Comunidad tras un reporte
+  hiddenAt       DateTime?
+  hiddenBy       String?
+  createdAt      DateTime              @default(now())
+
+  @@index([conversationId, createdAt])
 }
 
 model CommunityBlock {

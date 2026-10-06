@@ -94,7 +94,14 @@ export default async function CreatorCommunityProfilePage({ params }: { params: 
         ) : (
           !session.actorId && (
             <div className="flex flex-col items-start gap-sp-3 self-start sm:items-end">
-              <ConnectButton handle={creator.slug} name={profile.displayName} state={state} connectionId={connection?.id ?? null} />
+              <div className="flex flex-wrap items-center gap-sp-2">
+                {state === "connected" && (
+                  <Link href={`/admin/comunidad/mensajes/${creator.slug}`} className="rounded-full bg-ink px-sp-4 py-sp-2 text-sm font-semibold text-cream hover:bg-coral">
+                    {t("💬 Mensaje", "💬 Message")}
+                  </Link>
+                )}
+                <ConnectButton handle={creator.slug} name={profile.displayName} state={state} connectionId={connection?.id ?? null} />
+              </div>
               {state === "incoming" && connection?.note && (
                 <p className="max-w-xs rounded-[12px] bg-cream px-sp-3 py-sp-2 text-sm italic text-ink/70">“{connection.note}”</p>
               )}

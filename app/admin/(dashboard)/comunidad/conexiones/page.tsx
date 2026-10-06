@@ -91,7 +91,13 @@ export default async function ConnectionsPage() {
         ) : (
           <ul className="flex flex-col">
             {connected.map((r) => (
-              <Row key={r.id} author={r.profile} headline={r.profile.headline} lang={lang} />
+              <Row key={r.id} author={r.profile} headline={r.profile.headline} lang={lang}>
+                {canAct && (
+                  <Link href={`/admin/comunidad/mensajes/${r.profile.creator.slug}`} className="mt-sp-2 inline-block text-xs font-semibold text-coral hover:underline">
+                    {t("💬 Enviar mensaje", "💬 Send message")}
+                  </Link>
+                )}
+              </Row>
             ))}
           </ul>
         )}

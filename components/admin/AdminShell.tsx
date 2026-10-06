@@ -9,7 +9,7 @@ import type { T } from "@/lib/admin-lang";
 import { useT } from "./AdminLang";
 import LangSwitch from "./LangSwitch";
 
-type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports" | "community" | "connections"; exact?: boolean };
+type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports" | "community" | "connections" | "messages"; exact?: boolean };
 type NavGroup = { id: string; title: string; items: NavItem[] };
 
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
@@ -72,6 +72,7 @@ const navGroups = (t: T): NavGroup[] => [
     title: t("Comunidad", "Community"),
     items: [
       { href: "/admin/comunidad", label: t("Muro", "Wall"), exact: true, badgeKey: "community" },
+      { href: "/admin/comunidad/mensajes", label: t("Mensajes", "Messages"), badgeKey: "messages" },
       { href: "/admin/comunidad/conexiones", label: t("Conexiones", "Connections"), badgeKey: "connections" },
       { href: "/admin/comunidad/perfil", label: t("Mi perfil", "My profile") },
     ],
@@ -141,6 +142,7 @@ export default function AdminShell({
   openReports = 0,
   communityNew = 0,
   connectionRequests = 0,
+  unreadDms = 0,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -157,6 +159,7 @@ export default function AdminShell({
   openReports?: number;
   communityNew?: number;
   connectionRequests?: number;
+  unreadDms?: number;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -194,7 +197,7 @@ export default function AdminShell({
     router.refresh();
   }
 
-  const badges = { unread: unreadMessages, support: supportUnread, tickets: openTickets, reports: openReports, community: communityNew, connections: connectionRequests };
+  const badges = { unread: unreadMessages, support: supportUnread, tickets: openTickets, reports: openReports, community: communityNew, connections: connectionRequests, messages: unreadDms };
   const homeActive = isActive(pathname, "/admin");
 
   return (

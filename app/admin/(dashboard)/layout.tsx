@@ -17,6 +17,7 @@ import { getT } from "@/lib/admin-lang-server";
 import { plural } from "@/lib/admin-lang";
 import { newRepliesCount } from "@/lib/community-moderation";
 import { pendingIncomingCount } from "@/lib/community-connections";
+import { unreadConversationsCount } from "@/lib/community-messages";
 
 // El panel lee siempre el estado más reciente de la base de datos: nunca debe
 // servirse una versión prerenderizada en build.
@@ -40,7 +41,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     teamUser(),
     prisma.supportTicket.count({ where: { unreadByCustomer: true } }).catch(() => 0),
   ]);
-  const [openTickets, openReports, communityNew, connectionRequests] = await Promise.all([
+  const [openTickets, openReports, communityNew, connectionRequests, unreadDms] = await Promise.all([
     hasRole(team, "support") ? prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0,
     // Contenidos distintos con reportes abiertos (no el número de reportes).
     hasRole(team, "community")
@@ -48,6 +49,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
       : 0,
     session && !session.actorId ? newRepliesCount(session.creatorId).catch(() => 0) : 0,
     session && !session.actorId ? pendingIncomingCount(session.creatorId).catch(() => 0) : 0,
+    session && !session.actorId ? unreadConversationsCount(session.creatorId).catch(() => 0) : 0,
   ]);
   const { t, lang } = await getT();
   const days = (n: number) => plural(lang, n, ["día", "días"], ["day", "days"]);
@@ -71,6 +73,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         openReports={openReports}
         communityNew={communityNew}
         connectionRequests={connectionRequests}
+        unreadDms={unreadDms}
       >
         {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
         {billingNotice && (

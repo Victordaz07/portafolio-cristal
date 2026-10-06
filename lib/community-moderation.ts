@@ -9,7 +9,7 @@ import { LIMITS, reportReasonLabel } from "./community";
 // Moderación de la comunidad: qué se reporta, cuándo avisar al equipo, ocultar solo y avisar a la persona.
 // Los correos nunca rompen la acción: si fallan, solo se registra el error.
 
-export type TargetType = "post" | "reply" | "profile";
+export type TargetType = "post" | "reply" | "profile" | "message";
 
 export interface ReportTarget {
   type: TargetType;
@@ -33,6 +33,10 @@ export async function findTarget(type: TargetType, id: string): Promise<ReportTa
     const r = await prismaRoot.communityReply.findUnique({ where: { id }, select: { creatorId: true, body: true, postId: true, hiddenAt: true, deletedAt: true } });
     return r && !r.deletedAt ? { type, id, creatorId: r.creatorId, summary: r.body.slice(0, 140), postId: r.postId, hidden: Boolean(r.hiddenAt) } : null;
   }
+  if (type === "message") {
+    const m = await prismaRoot.communityMessage.findUnique({ where: { id }, select: { senderId: true, body: true, hiddenAt: true } });
+    return m ? { type, id, creatorId: m.senderId, summary: m.body.slice(0, 500), postId: null, hidden: Boolean(m.hiddenAt) } : null;
+  }
   const pr = await prismaRoot.communityProfile.findUnique({ where: { id }, select: { creatorId: true, displayName: true } });
   return pr ? { type, id, creatorId: pr.creatorId, summary: pr.displayName, postId: null, hidden: false } : null;
 }
@@ -41,6 +45,8 @@ export async function findTarget(type: TargetType, id: string): Promise<ReportTa
 export async function setHidden(target: ReportTarget, hidden: boolean, by: string) {
   if (target.type === "post") {
     await prismaRoot.communityPost.update({ where: { id: target.id }, data: hidden ? { hiddenAt: new Date(), hiddenBy: by, pinned: false } : { hiddenAt: null, hiddenBy: null } });
+  } else if (target.type === "message") {
+    await prismaRoot.communityMessage.update({ where: { id: target.id }, data: hidden ? { hiddenAt: new Date(), hiddenBy: by } : { hiddenAt: null, hiddenBy: null } });
   } else if (target.type === "reply") {
     if (hidden === target.hidden) return;
     await prismaRoot.$transaction([

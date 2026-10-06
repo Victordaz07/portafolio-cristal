@@ -8,7 +8,7 @@ import { pickLabel } from "@/lib/admin-lang";
 import { REPORT_REASONS } from "@/lib/community";
 
 /** "Reportar": elige un motivo y, si quieres, cuenta qué pasó. El equipo de Comunidad lo revisa. */
-export default function ReportButton({ targetType, targetId, className = "" }: { targetType: "post" | "reply" | "profile"; targetId: string; className?: string }) {
+export default function ReportButton({ targetType, targetId, className = "" }: { targetType: "post" | "reply" | "profile" | "message"; targetId: string; className?: string }) {
   const { t, lang } = useT();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);

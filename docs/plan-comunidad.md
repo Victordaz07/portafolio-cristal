@@ -29,8 +29,11 @@
 
 **Etapa 2: Conexiones y mensajes** (detalle en la sección 8)
 - [x] Paso 8: Conexiones (solicitar / aceptar / rechazar / quitar) + página Conexiones + avisos
-- [ ] Paso 9: Mensajes directos 1 a 1 entre conexiones (se actualiza cada 10 s)
-- [ ] Paso 10: Buscar colaboradores (tipo de creador, nicho, ciudad, idioma, abierto a colaborar)
+- [x] Paso 9: Mensajes directos 1 a 1 entre conexiones (se actualiza cada 10 s)
+- [x] Paso 10: Buscar colaboradores (tipo de creador, nicho, ciudad, idioma, abierto a colaborar)
+
+> **Etapa 2 terminada.** Los mensajes se actualizan cada 10 s; si hay mucho volumen, pasar a tiempo real
+> (Pusher/Ably/Supabase Realtime) pidiendo la llave al dueño **sin** que la muestre en el chat.
 
 **Etapa 3: Lo que la hace única** (después)
 - [ ] Círculos (grupos por nicho, red o nivel)

@@ -124,3 +124,62 @@ export async function notifyAuthor(creatorId: string, kind: "hidden" | "muted", 
     console.error("No se pudo avisar a la persona de la moderación", error);
   }
 }
+
+/**
+ * Aviso a quien publicó: alguien respondió su publicación, o eligió su respuesta como la mejor.
+ * Respeta su preferencia (emailNotify) y manda máximo 1 correo por publicación cada hora.
+ */
+export async function notifyCommunity(kind: "reply" | "best", p: { toCreatorId: string; postId: string; postTitle: string; fromName: string; excerpt: string }) {
+  try {
+    const { tooManyAttempts } = await import("./rate-limit");
+    if (tooManyAttempts(`community-mail:${kind}:${p.postId}:${p.toCreatorId}`, 1, 60 * 60_000)) return;
+    const [profile, owner] = await Promise.all([
+      prismaRoot.communityProfile.findUnique({ where: { creatorId: p.toCreatorId }, select: { emailNotify: true } }),
+      prismaRoot.adminUser.findFirst({ where: { creatorId: p.toCreatorId, role: "owner" }, orderBy: { createdAt: "asc" }, select: { email: true, name: true } }),
+    ]);
+    if (!profile?.emailNotify || !owner) return;
+    const origin = await platformOrigin();
+    const lang = await mailLangFor(owner.email);
+    const en = lang === "en";
+    const mail = noticeEmail({
+      lang,
+      origin,
+      name: owner.name,
+      subject:
+        kind === "reply"
+          ? en ? `New reply: ${p.postTitle}` : `Nueva respuesta: ${p.postTitle}`
+          : en ? "Your reply was chosen as the best answer 🎉" : "Eligieron tu respuesta como la mejor 🎉",
+      title: kind === "reply" ? (en ? "Someone replied to you" : "Te respondieron") : en ? "Best answer!" : "¡Mejor respuesta!",
+      lines: [
+        kind === "reply"
+          ? en
+            ? `${p.fromName} replied to your post “${p.postTitle}” in the community.`
+            : `${p.fromName} respondió tu publicación «${p.postTitle}» en la comunidad.`
+          : en
+            ? `${p.fromName} chose your reply as the best answer in “${p.postTitle}”. You earned 10 points.`
+            : `${p.fromName} eligió tu respuesta como la mejor en «${p.postTitle}». Ganaste 10 puntos.`,
+      ],
+      quote: p.excerpt.slice(0, 400),
+      button: { label: en ? "Open in the community" : "Ver en la comunidad", url: `${origin}/admin/comunidad/${p.postId}` },
+      note: en ? "You can turn off these emails in Community → My profile." : "Puedes desactivar estos correos en Comunidad → Mi perfil.",
+    });
+    await sendEmail({ to: owner.email, ...mail });
+  } catch (error) {
+    console.error("No se pudo avisar de la actividad en la comunidad", error);
+  }
+}
+
+/** Respuestas nuevas (de otras personas) en mis publicaciones desde mi última visita al muro. */
+export async function newRepliesCount(creatorId: string) {
+  const profile = await prismaRoot.communityProfile.findUnique({ where: { creatorId }, select: { lastSeenAt: true, acceptedRulesAt: true } });
+  if (!profile?.acceptedRulesAt) return 0;
+  return prismaRoot.communityReply.count({
+    where: {
+      createdAt: { gt: profile.lastSeenAt ?? profile.acceptedRulesAt },
+      creatorId: { not: creatorId },
+      hiddenAt: null,
+      deletedAt: null,
+      post: { creatorId, deletedAt: null, hiddenAt: null },
+    },
+  });
+}

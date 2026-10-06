@@ -15,6 +15,7 @@ import Link from "next/link";
 import { billingState } from "@/lib/billing";
 import { getT } from "@/lib/admin-lang-server";
 import { plural } from "@/lib/admin-lang";
+import { newRepliesCount } from "@/lib/community-moderation";
 
 // El panel lee siempre el estado más reciente de la base de datos: nunca debe
 // servirse una versión prerenderizada en build.
@@ -38,12 +39,13 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     teamUser(),
     prisma.supportTicket.count({ where: { unreadByCustomer: true } }).catch(() => 0),
   ]);
-  const [openTickets, openReports] = await Promise.all([
+  const [openTickets, openReports, communityNew] = await Promise.all([
     hasRole(team, "support") ? prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0,
     // Contenidos distintos con reportes abiertos (no el número de reportes).
     hasRole(team, "community")
       ? prismaRoot.communityReport.groupBy({ by: ["targetType", "targetId"], where: { status: "open" } }).then((g) => g.length)
       : 0,
+    session && !session.actorId ? newRepliesCount(session.creatorId).catch(() => 0) : 0,
   ]);
   const { t, lang } = await getT();
   const days = (n: number) => plural(lang, n, ["día", "días"], ["day", "days"]);
@@ -65,6 +67,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         supportUnread={supportUnread}
         openTickets={openTickets}
         openReports={openReports}
+        communityNew={communityNew}
       >
         {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
         {billingNotice && (

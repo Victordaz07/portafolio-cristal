@@ -7,21 +7,15 @@ import { ensureProfile } from "@/lib/community-server";
 import { isCreatorType } from "@/lib/community";
 import { NICHES } from "@/lib/onboarding";
 import { tooManyAttempts } from "@/lib/rate-limit";
+import { safeImageUrl } from "@/lib/community-schemas";
 
 export const dynamic = "force-dynamic";
-
-/** Enlace https o una ruta del propio sitio ("/images/…"), nunca "javascript:" ni otro esquema. */
-const imageUrl = z
-  .string()
-  .trim()
-  .max(1000)
-  .refine((v) => v === "" || /^https:\/\/[^\s]+$/i.test(v) || /^\/(?!\/)[^\s]*$/.test(v));
 
 const schema = z.object({
   displayName: z.string().trim().min(2).max(60),
   headline: z.string().trim().max(120).default(""),
   bio: z.string().trim().max(600).default(""),
-  avatarUrl: imageUrl.default(""),
+  avatarUrl: safeImageUrl.default(""),
   city: z.string().trim().max(80).default(""),
   showCity: z.boolean().default(true),
   showSite: z.boolean().default(true),

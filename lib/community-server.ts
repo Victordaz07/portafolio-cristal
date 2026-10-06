@@ -1,6 +1,6 @@
 import { prismaRoot } from "./prisma-root";
 import { nicheOf } from "./platform-analytics";
-import { creatorTypesFrom } from "./community";
+import { creatorTypesFrom, featuredScore } from "./community";
 import type { T } from "./admin-lang";
 
 // Comunidad: lo que necesita el servidor. Los modelos de la comunidad son ENTRE cuentas, así que
@@ -88,3 +88,65 @@ export async function profileByHandle(handle: string) {
   if (!profile?.acceptedRulesAt) return null;
   return { creator, profile };
 }
+
+// ─── Muro ───
+
+export const postAuthorSelect = {
+  id: true,
+  displayName: true,
+  avatarUrl: true,
+  reputation: true,
+  creator: { select: { slug: true } },
+} as const;
+
+export type FeedFilters = { tab: "recientes" | "destacadas"; kind?: string; topic?: string; type?: string; take: number };
+
+/** Publicaciones del muro: sin ocultas, borradas ni de cuentas bloqueadas (en ambos sentidos). */
+export async function feedPosts(viewerId: string, f: FeedFilters) {
+  const blocked = await blockedIds(viewerId);
+  const where = {
+    hiddenAt: null,
+    deletedAt: null,
+    pinned: false,
+    creator: { status: "active" },
+    ...(blocked.length ? { creatorId: { notIn: blocked } } : {}),
+    ...(f.kind ? { kind: f.kind } : {}),
+    ...(f.topic ? { topic: f.topic } : {}),
+    ...(f.type ? { OR: [{ creatorTypes: { has: f.type } }, { profile: { creatorTypes: { has: f.type } } }] } : {}),
+  };
+  const select = {
+    id: true,
+    kind: true,
+    topic: true,
+    title: true,
+    body: true,
+    imageUrl: true,
+    creatorTypes: true,
+    helpfulCount: true,
+    replyCount: true,
+    bestReplyId: true,
+    pinned: true,
+    fromTeam: true,
+    createdAt: true,
+    lastActivityAt: true,
+    creatorId: true,
+    profile: { select: postAuthorSelect },
+  } as const;
+
+  const [pinned, rows] = await Promise.all([
+    prismaRoot.communityPost.findMany({ where: { pinned: true, hiddenAt: null, deletedAt: null }, orderBy: { createdAt: "desc" }, take: 2, select }),
+    f.tab === "destacadas"
+      ? // Destacadas: se ordena por puntaje entre las de los últimos 30 días.
+        prismaRoot.communityPost.findMany({
+          where: { ...where, createdAt: { gte: new Date(Date.now() - 30 * 86_400_000) } },
+          orderBy: { createdAt: "desc" },
+          take: 300,
+          select,
+        })
+      : prismaRoot.communityPost.findMany({ where, orderBy: { createdAt: "desc" }, take: f.take + 1, select }),
+  ]);
+  const sorted = f.tab === "destacadas" ? [...rows].sort((a, b) => featuredScore(b) - featuredScore(a)) : rows;
+  return { pinned, posts: sorted.slice(0, f.take), hasMore: sorted.length > f.take };
+}
+
+export type FeedPost = Awaited<ReturnType<typeof feedPosts>>["posts"][number];

@@ -19,7 +19,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 **A. Comunidad, etapa 1: muro** (detalle en `docs/plan-comunidad.md`)
 - [x] A1. Modelos, migración y rol de equipo `community`
 - [x] A2. Perfil de comunidad
-- [ ] A3. Muro: publicar, listar, filtrar
+- [x] A3. Muro: publicar, listar, filtrar
 - [ ] A4. Respuestas, "me sirvió", mejor respuesta y reputación
 - [ ] A5. Reportar, bloquear y Departamento de Comunidad
 - [ ] A6. Avisos por correo, contador en el menú y reglas

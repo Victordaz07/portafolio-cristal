@@ -187,3 +187,34 @@ export const COMMUNITY_RULES = [
     en: "The Foliocrew team can hide content or pause accounts that break these rules.",
   },
 ] as const;
+
+/** "hace 5 min", "hace 3 h", "hace 2 d" / "5m ago"… (para el muro). */
+export function timeAgo(date: Date, lang: AdminLang = "es", now = new Date()) {
+  const minutes = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 60_000));
+  const en = lang === "en";
+  if (minutes < 1) return en ? "just now" : "ahora";
+  if (minutes < 60) return en ? `${minutes}m ago` : `hace ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return en ? `${hours}h ago` : `hace ${hours} h`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return en ? `${days}d ago` : `hace ${days} d`;
+  return date.toLocaleDateString(en ? "en-US" : "es", { day: "numeric", month: "short", year: "numeric" });
+}
+
+/** Parte un texto en trozos de texto y enlaces (para mostrar enlaces sin permitir HTML). */
+export function splitLinks(text: string): { text: string; href?: string }[] {
+  const parts: { text: string; href?: string }[] = [];
+  const re = /https?:\/\/[^\s<>"')\]]+/gi;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) {
+    const start = m.index;
+    if (start > last) parts.push({ text: text.slice(last, start) });
+    const url = m[0].replace(/[.,;:!?]+$/, "");
+    parts.push({ text: url, href: url });
+    last = start + url.length;
+    re.lastIndex = last;
+  }
+  if (last < text.length) parts.push({ text: text.slice(last) });
+  return parts;
+}

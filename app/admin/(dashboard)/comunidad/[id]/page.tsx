@@ -6,9 +6,13 @@ import { getT } from "@/lib/admin-lang-server";
 import { blockedIds, postAuthorSelect } from "@/lib/community-server";
 import { canEditWithin, creatorTypeLabel, postKindLabel, timeAgo, topicLabel, type PostKind } from "@/lib/community";
 import Card from "@/components/admin/Card";
+import { plural } from "@/lib/admin-lang";
 import AuthorBadge from "@/components/community/AuthorBadge";
 import LinkifiedText from "@/components/community/LinkifiedText";
 import PostOwnerActions from "./PostOwnerActions";
+import ReplyForm from "./ReplyForm";
+import ReplyActions from "./ReplyActions";
+import HelpfulButton from "@/components/community/HelpfulButton";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +21,7 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
   const session = await getSession();
   if (!session) return null;
   const { id } = await params;
-  const [post, blocked] = await Promise.all([
+  const [post, blocked, me] = await Promise.all([
     prismaRoot.communityPost.findUnique({
       where: { id },
       include: {
@@ -31,12 +35,29 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
       },
     }),
     blockedIds(session.creatorId),
+    prismaRoot.communityProfile.findUnique({ where: { creatorId: session.creatorId }, select: { acceptedRulesAt: true } }),
   ]);
   if (!post || post.deletedAt || post.hiddenAt || post.creator.status !== "active" || blocked.includes(post.creatorId)) notFound();
   const isMine = post.creatorId === session.creatorId && !session.actorId;
   const replies = post.replies.filter((r) => !blocked.includes(r.creatorId));
   // La mejor respuesta va primero.
   replies.sort((a, b) => (a.id === post.bestReplyId ? -1 : b.id === post.bestReplyId ? 1 : 0));
+  const reacted = new Set(
+    (
+      await prismaRoot.communityReaction.findMany({
+        where: {
+          creatorId: session.creatorId,
+          OR: [
+            { targetType: "post", targetId: post.id },
+            { targetType: "reply", targetId: { in: replies.map((r) => r.id) } },
+          ],
+        },
+        select: { targetType: true, targetId: true },
+      })
+    ).map((x) => `${x.targetType}:${x.targetId}`)
+  );
+  const readOnly = Boolean(session.actorId) || !me?.acceptedRulesAt;
+  const iAsked = isMine && post.kind === "pregunta";
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-sp-4">
@@ -69,7 +90,13 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
           </p>
         )}
         <div className="flex flex-wrap items-center gap-x-sp-4 gap-y-2 border-t border-line pt-sp-3 text-xs text-ink/55">
-          <span>💡 {post.helpfulCount} {t("me sirvió", "helpful")}</span>
+          <HelpfulButton
+            targetType="post"
+            targetId={post.id}
+            count={post.helpfulCount}
+            active={reacted.has(`post:${post.id}`)}
+            disabled={readOnly || post.creatorId === session.creatorId}
+          />
           <span>
             💬 {post.replyCount} {post.replyCount === 1 ? t("respuesta", "reply") : t("respuestas", "replies")}
           </span>
@@ -91,7 +118,7 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
       </Card>
 
       <p className="mt-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">
-        {replies.length ? t(`${replies.length} respuestas`, `${replies.length} replies`) : t("Respuestas", "Replies")}
+        {replies.length ? `${replies.length} ${plural(lang, replies.length, ["respuesta", "respuestas"], ["reply", "replies"])}` : t("Respuestas", "Replies")}
       </p>
       {replies.length === 0 ? (
         <Card className="text-sm text-ink/60">{t("Todavía nadie respondió.", "No replies yet.")}</Card>
@@ -105,9 +132,44 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
               )}
             </div>
             <LinkifiedText text={r.body} className="text-sm text-ink/85" />
-            <span className="text-xs text-ink/50">💡 {r.helpfulCount}</span>
+            <div className="flex flex-wrap items-center gap-sp-2">
+              <HelpfulButton
+                targetType="reply"
+                targetId={r.id}
+                count={r.helpfulCount}
+                active={reacted.has(`reply:${r.id}`)}
+                disabled={readOnly || r.creatorId === session.creatorId}
+              />
+              <ReplyActions
+                postId={post.id}
+                replyId={r.id}
+                body={r.body}
+                mine={r.creatorId === session.creatorId && !session.actorId}
+                canEdit={canEditWithin(r.createdAt)}
+                canPickBest={iAsked && r.creatorId !== session.creatorId}
+                isBest={r.id === post.bestReplyId}
+              />
+            </div>
           </Card>
         ))
+      )}
+
+      {readOnly ? (
+        <Card className="text-sm text-ink/65">
+          {session.actorId
+            ? t("Estás viendo como equipo: puedes leer, pero no responder en nombre de la cuenta.", "You're viewing as the team: you can read, but not reply on behalf of the account.")
+            : t("Para responder, entra a la comunidad desde Mi perfil y acepta las reglas.", "To reply, join the community from My profile and accept the rules.")}
+        </Card>
+      ) : (
+        <Card>
+          <p className="mb-sp-2 text-sm font-semibold text-ink">{t("Tu respuesta", "Your reply")}</p>
+          <ReplyForm postId={post.id} />
+          {iAsked && (
+            <p className="mt-sp-2 text-xs text-ink/50">
+              {t("Cuando una respuesta te ayude, márcala como “Mejor respuesta”: le suma 10 puntos a quien la escribió.", "When a reply helps you, mark it as “Best answer”: it gives the author 10 points.")}
+            </p>
+          )}
+        </Card>
       )}
     </div>
   );

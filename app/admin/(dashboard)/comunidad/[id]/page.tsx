@@ -74,8 +74,8 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
             <span className="rounded-full bg-cream px-sp-2 py-0.5 font-mono uppercase text-ink/70">#{topicLabel(post.topic, lang)}</span>
           </div>
         </div>
-        <h1 className="font-fraunces text-3xl font-semibold leading-tight text-ink">{post.title}</h1>
-        <LinkifiedText text={post.body} className="text-[15px] leading-relaxed text-ink/85" />
+        <h1 className="font-fraunces text-3xl font-semibold leading-tight text-ink">{lang === "en" && post.titleEn ? post.titleEn : post.title}</h1>
+        <LinkifiedText text={lang === "en" && post.bodyEn ? post.bodyEn : post.body} className="text-[15px] leading-relaxed text-ink/85" />
         {post.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={post.imageUrl} alt="" className="max-h-[520px] w-full rounded-[14px] object-contain" />

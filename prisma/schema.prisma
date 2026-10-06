@@ -795,6 +795,9 @@ model CommunityPost {
   topic          String           @default("otro")
   title          String
   body           String
+  /// Versión en inglés (la usan las publicaciones del equipo, como la pregunta de la semana)
+  titleEn        String?
+  bodyEn         String?
   imageUrl       String?
   /// A qué tipo de creador va dirigido (para filtrar)
   creatorTypes   String[]         @default([])

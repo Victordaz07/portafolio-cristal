@@ -9,6 +9,8 @@ export interface PostCardData {
   topic: string;
   title: string;
   body: string;
+  titleEn?: string | null;
+  bodyEn?: string | null;
   imageUrl: string | null;
   helpfulCount: number;
   replyCount: number;
@@ -29,7 +31,9 @@ const KIND_STYLE: Record<string, string> = {
 
 /** Una publicación en el muro (resumen con enlace a la publicación completa). */
 export default function PostCard({ post, lang, t }: { post: PostCardData; lang: AdminLang; t: T }) {
-  const excerpt = post.body.length > 260 ? `${post.body.slice(0, 260).trimEnd()}…` : post.body;
+  const title = lang === "en" && post.titleEn ? post.titleEn : post.title;
+  const body = lang === "en" && post.bodyEn ? post.bodyEn : post.body;
+  const excerpt = body.length > 260 ? `${body.slice(0, 260).trimEnd()}…` : body;
   return (
     <article className={`rounded-[18px] border bg-white p-sp-4 sm:p-sp-5 ${post.pinned ? "border-coral ring-2 ring-coral/15" : "border-line"}`}>
       <div className="flex flex-wrap items-start justify-between gap-sp-2">
@@ -41,7 +45,7 @@ export default function PostCard({ post, lang, t }: { post: PostCardData; lang: 
         </div>
       </div>
       <Link href={`/admin/comunidad/${post.id}`} className="mt-sp-3 block">
-        <h2 className="font-fraunces text-xl font-semibold leading-snug text-ink hover:text-coral">{post.title}</h2>
+        <h2 className="font-fraunces text-xl font-semibold leading-snug text-ink hover:text-coral">{title}</h2>
         <p className="mt-1 whitespace-pre-line break-words text-sm text-ink/70">{excerpt}</p>
         {post.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element

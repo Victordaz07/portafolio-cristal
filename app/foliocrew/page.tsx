@@ -61,6 +61,7 @@ const TOOLS_EN = [
   { icon: "💬", title: "One inbox", text: "Brand messages and Instagram comments in one place, with quick replies." },
   { icon: "🌐", title: "Your own domain", text: "Use yourname.foliocrew.pro or connect your own domain, like yourname.com." },
   { icon: "🔗", title: "Connected accounts", text: "Instagram, TikTok, Facebook and YouTube with official sign-in. Real metrics, not screenshots." },
+  { icon: "🫶", title: "Creator community", text: "A private wall to ask, share tips and wins, and find collabs with creators of every kind." },
 ];
 
 const TOOLS = [
@@ -72,6 +73,7 @@ const TOOLS = [
   { icon: "💬", title: "Bandeja única", text: "Los mensajes de marcas y los comentarios de Instagram en un solo lugar, con respuestas rápidas." },
   { icon: "🌐", title: "Tu propio dominio", text: "Usa tunombre.foliocrew.pro o conecta tu dominio, como tunombre.com." },
   { icon: "🔗", title: "Redes conectadas", text: "Instagram, TikTok, Facebook y YouTube con inicio de sesión oficial. Métricas reales, no capturas." },
+  { icon: "🫶", title: "Comunidad de creadores", text: "Un muro privado para preguntar, compartir consejos y logros, y encontrar colaboraciones con creadores de todo tipo." },
 ];
 
 const FAQ_EN = [
@@ -269,7 +271,7 @@ export default async function FoliocrewHome({
           <h2 className="mt-sp-3 max-w-3xl font-fraunces text-4xl font-semibold leading-tight sm:text-5xl">
             {t("Muestra tu trabajo.", "Show your work.")} <em className="text-[#7F207B]">{t("Maneja tu negocio.", "Run your business.")}</em>
           </h2>
-          <div className="mt-sp-6 grid gap-sp-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-sp-6 grid gap-sp-4 sm:grid-cols-2 lg:grid-cols-3">
             {tools.map((tool) => (
               <div key={tool.title} className="rounded-[22px] bg-[#FBF7F5] p-sp-5">
                 <span className="text-2xl" aria-hidden>

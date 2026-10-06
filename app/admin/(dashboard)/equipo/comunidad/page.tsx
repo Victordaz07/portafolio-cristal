@@ -9,6 +9,7 @@ import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import { plural } from "@/lib/admin-lang";
 import ModerationActions from "./ModerationActions";
+import WeeklyQuestionButton from "./WeeklyQuestionButton";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,7 @@ export default async function CommunityModerationPage() {
           "Reportes de la comunidad. Ocultar avisa a la persona por correo; con 5 reportes el contenido se oculta solo hasta que lo revises. Todo queda en el historial del Centro de mando.",
           "Community reports. Hiding notifies the person by email; with 5 reports the content hides itself until you review it. Everything is logged in the Command center history."
         )}
+        action={<WeeklyQuestionButton />}
       />
 
       <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-coral">

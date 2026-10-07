@@ -26,7 +26,9 @@ export default function ResetPasswordForm({ token }: { token: string }) {
       body: JSON.stringify({ token, password }),
     });
     if (response.ok) {
-      router.push("/admin?contrasena=nueva");
+      const body = (await response.json().catch(() => ({}))) as { twoFactor?: boolean };
+      // Con verificación en dos pasos no se entra directo: falta el código de la app.
+      router.push(body.twoFactor ? "/admin/login?contrasena=nueva" : "/admin?contrasena=nueva");
       router.refresh();
       return;
     }

@@ -38,10 +38,15 @@ export async function POST(request: Request) {
       sessionVersion: { increment: 1 },
       // Abrió el enlace que llegó a su correo: el correo queda confirmado.
       emailVerifiedAt: new Date(),
-      lastLoginAt: new Date(),
+      // Quien quedó bloqueada por intentos fallidos puede volver a entrar al restablecer.
+      failedLogins: 0,
+      lockedUntil: null,
     },
   });
   forgetSessionVersion(user.id);
   await sendPasswordChangedEmail(user.id).catch(() => {});
+  // Con verificación en dos pasos, el correo no alcanza para entrar: hay que pasar por el login y dar el código.
+  if (user.totpEnabledAt) return NextResponse.json({ ok: true, twoFactor: true });
+  await prismaRoot.adminUser.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
   return withSession(NextResponse.json({ ok: true }), user);
 }

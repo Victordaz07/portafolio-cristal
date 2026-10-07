@@ -504,6 +504,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Tienda",
+    paragraphs: [
+      "En Negocio → Tienda puedes vender productos digitales (plantillas, presets, guías), asesorías por llamada y recomendar productos de afiliado, sin comisión de Foliocrew. Tu tienda pública está en tusitio/tienda y aparece como \"Mi tienda\" en tu Link en bio cuando tienes productos activos.",
+      "Foliocrew no cobra ni procesa pagos: en cada producto pegas el enlace de pago de tu propio servicio (PayPal, Stripe, Gumroad, Calendly con pago…) que debe empezar con https://. Para un producto digital, usa un enlace que entregue el archivo solo después del pago.",
+      "Los enlaces de afiliado se muestran con el aviso \"puedo ganar una comisión\" y no necesitan precio. Ves cuántos clics tiene cada producto, y puedes ocultarlo o editarlo cuando quieras. Tú eres responsable del cobro, la entrega, los reembolsos y los impuestos de tus ventas.",
+    ],
+  },
+  {
     title: "Avisos en el celular",
     paragraphs: [
       "Puedes instalar Foliocrew como una app en tu celular o computadora y recibir avisos cortos aunque no tengas el panel abierto: cuando te pagan, vence una entrega, te comentan en Instagram o te responden en la comunidad.",
@@ -767,6 +775,14 @@ const guiaEn: ManualBlock[] = [
       "In Business → Brand reviews you see what other creators say about working with a brand: whether it pays on time, how many days it takes and what the deal is like. Everything is anonymous and a brand only shows up once it has reviews from at least 3 different creators.",
       "To review, you need a verified email and an account that's a few days old, and the brand must be in Brands with an active or completed deal. You say whether they paid you, how many days it took and how the deal went (1 to 5). The comment is optional: stick to facts, no insults or accusations, and no emails, phone numbers or links. The team reviews it before it's shown.",
       "You can fix or delete your review any time. If you're a brand and want to reply or correct something, there's a “Write to us” link on its card.",
+    ],
+  },
+  {
+    title: "Shop",
+    paragraphs: [
+      "In Business → Shop you can sell digital products (templates, presets, guides) and consulting calls, and recommend affiliate products, with no Foliocrew commission. Your public shop is at yoursite/tienda and shows up as \"My shop\" in your Link in bio when you have active products.",
+      "Foliocrew doesn't charge or process payments: on each product you paste the payment link from your own service (PayPal, Stripe, Gumroad, Calendly with payments…), which must start with https://. For a digital product, use a link that delivers the file only after payment.",
+      "Affiliate links are shown with the \"I may earn a commission\" notice and don't need a price. You see how many clicks each product has, and you can hide or edit it any time. You are responsible for collecting payment, delivery, refunds and taxes on your sales.",
     ],
   },
   {

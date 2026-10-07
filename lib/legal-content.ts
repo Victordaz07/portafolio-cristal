@@ -140,6 +140,7 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
         paragraphs: [
           "El contenido que subes (fotos, videos, textos) sigue siendo tuyo. Nos das permiso para guardarlo y mostrarlo en tu portafolio con el único fin de prestar el servicio.",
           "Eres responsable de tener los derechos sobre lo que publicas, incluidos logos y menciones de marcas.",
+          "Tienda: si vendes productos, asesorías o recomiendas enlaces de afiliado desde tu tienda, la venta es entre tú y tu cliente. Foliocrew no cobra comisión, no procesa esos pagos ni guarda tus archivos digitales; eres responsable del cobro, de la entrega, de los reembolsos, de los impuestos y de avisar cuando un enlace es de afiliado.",
         ],
       },
       {
@@ -319,6 +320,7 @@ const EN: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
         paragraphs: [
           "Content you upload (photos, videos, texts) remains yours. You grant us permission to store and display it in your portfolio solely to provide the service.",
           "You are responsible for holding the rights to what you publish, including brand logos and mentions.",
+          "Shop: if you sell products or consulting calls, or recommend affiliate links from your shop, the sale is between you and your customer. Foliocrew charges no commission, doesn't process those payments and doesn't store your digital files; you are responsible for collecting payment, delivery, refunds, taxes and disclosing when a link is an affiliate link.",
         ],
       },
       {

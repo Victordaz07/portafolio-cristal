@@ -13,5 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: `${base}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${base}/media-kit`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/tienda`, changeFrequency: "weekly", priority: 0.6 },
   ];
 }

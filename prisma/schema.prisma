@@ -88,6 +88,7 @@ model Creator {
   restPeriods         RestPeriod[]
   wellbeing           WellbeingSettings?
   pushSubscriptions   PushSubscription[]
+  products            Product[]
   referralsAsReferrer Referral[]        @relation("referrer")
   referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
@@ -1376,6 +1377,33 @@ model PushSubscription {
   userAgent  String    @default("")
   createdAt  DateTime  @default(now())
   lastSentAt DateTime?
+
+  @@index([creatorId])
+}
+
+/// Tienda sin comisión (E6): productos digitales, asesorías y enlaces de afiliado. Foliocrew NO procesa pagos:
+/// cada producto lleva el enlace de pago de la propia creadora (PayPal, Stripe, Gumroad…).
+model Product {
+  id            String   @id @default(cuid())
+  creatorId     String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator       Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// digital | call | affiliate
+  kind          String
+  title         String
+  titleEn       String?
+  description   String   @default("")
+  descriptionEn String?
+  /// En centavos (opcional en los enlaces de afiliado)
+  priceCents    Int?
+  currency      String   @default("USD")
+  imageUrl      String?
+  /// Enlace de pago o de la oferta (https)
+  buyUrl        String
+  active        Boolean  @default(true)
+  clicks        Int      @default(0)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([creatorId])
 }

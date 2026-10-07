@@ -45,6 +45,7 @@ const COPY = {
     popular: "Más clics",
     brandKit: "Trabaja conmigo",
     mediaKit: "Media kit con mis números",
+    shop: "Mi tienda",
     writeMe: "Escríbeme para colaborar",
     whatsapp: "Hablemos por WhatsApp",
     email: "Mándame un correo",
@@ -61,6 +62,7 @@ const COPY = {
     popular: "Most clicked",
     brandKit: "Work with me",
     mediaKit: "Media kit with my numbers",
+    shop: "My shop",
     writeMe: "Write me to collaborate",
     whatsapp: "Chat on WhatsApp",
     email: "Send me an email",
@@ -98,7 +100,7 @@ export default async function LinksPage({ searchParams }: { searchParams: Promis
   const copy = COPY[locale];
   const prefix = await sitePathPrefix();
 
-  const [hero, settings, allGroups] = await Promise.all([prisma.hero.findFirst(), prisma.siteSettings.findFirst(), readLinkGroups()]);
+  const [hero, settings, allGroups, shopCount] = await Promise.all([prisma.hero.findFirst(), prisma.siteSettings.findFirst(), readLinkGroups(), prisma.product.count({ where: { active: true } })]);
   const visibleGroups = allGroups.filter((g) => editing || !g.hidden);
   const links = allGroups.flatMap((g) => g.links);
   const showRecent = visibleGroups.some((g) => g.kind === "recent");
@@ -144,6 +146,7 @@ export default async function LinksPage({ searchParams }: { searchParams: Promis
   const email = settings?.collabsEmail || settings?.contactEmail;
   const brandKitItems: LinkItem[] = [
     { key: "media-kit", variant: "row", title: copy.mediaKit, href: `${prefix}/media-kit`, external: false, icon: <SparkleIcon className="h-4 w-4" /> },
+    ...(shopCount > 0 ? [{ key: "shop", variant: "row" as const, title: copy.shop, href: `${prefix}/tienda`, external: false, icon: <SparkleIcon className="h-4 w-4" /> }] : []),
     { key: "contacto", variant: "row", title: copy.writeMe, href: `${prefix}/#contacto`, external: false, icon: <SendIcon className="h-4 w-4" /> },
     ...(settings?.whatsapp
       ? [{ key: "wa", variant: "row" as const, title: copy.whatsapp, href: `https://wa.me/${settings.whatsapp.replace(/[^\d]/g, "")}`, icon: <WhatsAppIcon className="h-4 w-4" /> }]

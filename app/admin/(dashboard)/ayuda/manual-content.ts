@@ -496,6 +496,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Mis ingresos",
+    paragraphs: [
+      "En Negocio → Mis ingresos ves cuánto ganaste y gastaste en el año, mes a mes, por fuente (marcas, afiliados, plataformas, productos) y por tipo de gasto. Las facturas que marcas como pagadas (en dólares) suman solas; lo demás lo anotas a mano con \"Anotar un ingreso\" y \"Anotar un gasto\" (puedes subir la foto del recibo).",
+      "Arriba ves cuánto conviene apartar para impuestos: el porcentaje que elijas (25 % al inicio) de tu ganancia, que es ingresos menos gastos. También te recuerda la próxima fecha de pago trimestral de impuestos estimados en EE. UU. (15 de enero, abril, junio y septiembre).",
+      "\"Descargar CSV para el contador\" baja una hoja con todos los ingresos y gastos del año. Es una ayuda para organizarte, no asesoría fiscal. No subas recibos con datos bancarios ni números de identificación.",
+    ],
+  },
+  {
     title: "Facturas",
     paragraphs: [
       "Primero completa tus datos para facturar (abajo en Facturas): el nombre que va en la factura, tu ciudad, cómo te pagan (PayPal, Zelle…), el plazo para pagar y el % de anticipo. Nunca pongas tu número de seguro social ni números de cuenta completos.",
@@ -704,6 +712,14 @@ const guiaEn: ManualBlock[] = [
       "When you mark a deal as \"Completed\" in Brands, Foliocrew automatically puts together a draft campaign report with that brand's posts (the Feed posts linked to it and the deliverables already published with their link), their results and how they compare with your usual average. You can also create one by hand from the brand (\"Create campaign report\") and see them all in Business → Brand reports. In the report you can tick \"Show as a success story in my media kit\": once it has been sent, it appears in your public media kit with the metrics you left visible.",
       "You review it before sending: change the title and language (Spanish or English), write a message for the brand, leave out the posts you don't want and untick the metrics you don't want to show (views, likes, comparison, top comments…). Whatever you untick doesn't appear anywhere on the page. On the right you see a live preview, and \"↻ Update numbers\" re-reads your current numbers without losing what you left out.",
       "Tap \"Send to the brand\": they get an email with a link to a public page (no sign-in, and it doesn't show up on Google). We let you know when they open it. The page ends with a \"Shall we do it again?\" button that links to your packages, and the brand can save it as a PDF.",
+    ],
+  },
+  {
+    title: "My income",
+    paragraphs: [
+      "In Business → My income you see how much you earned and spent this year, month by month, by source (brands, affiliates, platforms, products) and by type of expense. Invoices you mark as paid (in dollars) count automatically; everything else you add by hand with \"Record income\" and \"Record an expense\" (you can upload a photo of the receipt).",
+      "At the top you see how much to set aside for taxes: the percentage you choose (25% to start) of your profit, which is income minus expenses. It also reminds you of the next US quarterly estimated tax date (January, April, June and September 15).",
+      "\"Download CSV for your accountant\" gives you a sheet with all of the year's income and expenses. It's a tool to help you get organized, not tax advice. Don't upload receipts with bank details or ID numbers.",
     ],
   },
   {

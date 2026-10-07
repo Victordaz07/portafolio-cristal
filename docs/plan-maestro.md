@@ -37,7 +37,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] C2. Página "Trabaja conmigo" (solicitar un paquete)
 - [x] C3. Reporte de campaña para la marca
 - [x] C4. Media kit verificado
-- [ ] C5. Ingresos e impuestos
+- [x] C5. Ingresos e impuestos
 - [ ] C6. Comenta una palabra → DM automático (necesita permiso de Meta)
 
 **D. Comunidad, etapa 2: conexiones y mensajes**
@@ -263,6 +263,8 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
   - un archivo CSV para el contador.
 - **Aviso fijo:** "No es asesoría fiscal."
 - **Datos:** `IncomeEntry` y `Expense` (en TENANT_MODELS). Sin datos sensibles: nada de SSN/ITIN ni cuentas.
+
+- **Cómo quedó:** migración `20261007200000_ingresos_e_impuestos` (`IncomeEntry`, `Expense`, y `BillingProfile.taxPercent` por defecto 25). `lib/income.ts` (pura, con pruebas): `summarizeYear`, `taxReserve` (% de la **ganancia** = ingresos − gastos, nunca negativo, tope 60 %), `nextQuarterlyDate` (15 de enero, abril, junio y septiembre; si cae en fin de semana, el lunes), `toCsv` (con protección contra fórmulas de Excel y BOM para acentos) y `parseAmount` (acepta «$1,200.00», «12,5»…). `lib/income-server.ts` junta las facturas **pagadas en USD** (fecha = día en que se pagaron, fuente «Marcas», no se duplican) con lo anotado a mano; las pagadas en otra moneda no se suman y se avisa cuántas son. Página `/admin/ingresos` («Mis ingresos», en Negocio): año, 4 totales, mes a mes, por fuente, gastos por tipo, % de impuestos editable, recordatorio trimestral, formularios y listas, y descarga CSV (`/api/admin/income/export`). Recibos: foto con el mismo cargador de imágenes (enlace https no listado, avisa de no subir datos bancarios ni de identificación). Aviso fijo «No es asesoría fiscal». Entra en la copia de datos (`finances`).
 
 ### C6. Comenta una palabra → DM automático
 - **Por qué:** convierte 2–5 veces más que el enlace en bio (lo que hace ManyChat).

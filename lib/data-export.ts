@@ -16,7 +16,7 @@ export async function exportCreatorData(creatorId: string, { forTeam = false } =
   const [
     users, hero, siteSettings, stats, contentCards, brands, brandEvents, reviews, services, testimonials,
     packages, faqItems, contactMessages, socialAccounts, goals, actionItems, logEntries, scheduledPosts,
-    followerSnapshots, payments, bioLinks, bioLinkGroups, supportTickets, ideas, dataRequests,
+    followerSnapshots, payments, bioLinks, bioLinkGroups, supportTickets, ideas, dataRequests, incomeEntries, expenses,
   ] = await Promise.all([
     prismaRoot.adminUser.findMany({ where, select: { id: true, name: true, email: true, role: true, emailVerifiedAt: true, lastLoginAt: true, createdAt: true } }),
     prismaRoot.hero.findUnique({ where }),
@@ -46,6 +46,8 @@ export async function exportCreatorData(creatorId: string, { forTeam = false } =
     }),
     prismaRoot.idea.findMany({ where, omit: forTeam ? undefined : { internalNote: true } }),
     prismaRoot.dataRequest.findMany({ where }),
+    prismaRoot.incomeEntry.findMany({ where }),
+    prismaRoot.expense.findMany({ where }),
   ]);
 
   return {
@@ -60,6 +62,7 @@ export async function exportCreatorData(creatorId: string, { forTeam = false } =
     socialAccounts,
     growth: { goals, actionItems, logEntries, followerSnapshots },
     payments,
+    finances: { incomeEntries, expenses },
     support: { supportTickets, ideas, dataRequests },
   };
 }

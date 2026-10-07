@@ -106,7 +106,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | **Testimonios** | Citas de marcas | Prueba social |
 | **FAQ** | Preguntas frecuentes | Ahorra mensajes |
 | **Contacto** | Formulario para marcas (nombre, marca, correo, tipo de colaboración, mensaje) y tus redes | Las marcas te escriben directo |
-| **Media kit público** | Página aparte (`/media-kit`), bilingüe, lista para mandar en un correo | Ya no tienes que actualizar un PDF | Con sello «Datos verificados por Foliocrew» en los números que vienen de tus redes conectadas, y casos de éxito sacados de tus reportes de campaña
+| **Media kit público** | Página aparte (`/media-kit`), bilingüe, lista para mandar en un correo | Ya no tienes que actualizar un PDF | Con sello «Datos verificados por Foliocrew» en los números que vienen de tus redes conectadas, y casos de éxito sacados de tus reportes de campaña 
 | **Idiomas** | Español e inglés con un botón | Puedes trabajar con marcas de EE. UU. y de LatAm |
 | **Tu color** | 6 colores de acento: lila, rosa, terracota, salvia, azul y dorado | El sitio se siente tuyo |
 
@@ -157,6 +157,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Propuestas a marcas con IA:** en Marcas, "Escribir propuesta": Claude escribe el correo (asunto, mensaje con el enlace al media kit y 1–2 ideas de contenido) en español o inglés y con el tono que elijas. Se copia o se abre en el correo de la persona (Foliocrew nunca lo envía); "Guardar en mi CRM" crea el prospecto con seguimiento a los 5 y 12 días (también escritos con IA) y el Resumen avisa "Tienes N propuestas sin respuesta".
 - **Acuerdos (contrato simple):** eliges una plantilla (publicación patrocinada, UGC sin publicar, embajador mensual o afiliado), llenas los huecos (entregables, pago y anticipo, derechos de uso, exclusividad, revisiones, cancelación) y ves cómo queda el texto, en español o inglés. Lo envías con un enlace; la marca lo lee y lo acepta en línea escribiendo su nombre y correo, y queda la constancia con fecha, hora y dirección IP. Los dos reciben una copia y el trato pasa a "activo". Es una plantilla de referencia, no asesoría legal.
 - **Facturas:** creas facturas para tus marcas (completas, de anticipo o de saldo, en español o inglés) y las envías con un enlace. La marca la ve, la descarga en PDF y puede avisar "Ya pagamos". Te avisamos cuando la abre; si se atrasa, le recordamos con amabilidad el día que vence y a los 7 y 14 días. Ves cuánto tienes por cobrar, lo vencido y lo cobrado en el mes.
+- **Mis ingresos:** ves lo que ganaste y gastaste en el año (las facturas pagadas suman solas; lo demás lo anotas, con foto del recibo), cuánto apartar para impuestos (el % que elijas de tu ganancia), el recordatorio de pagos trimestrales de EE. UU. y un CSV para tu contador. No es asesoría fiscal.
 - **Bandeja:** en un solo lugar llegan los mensajes del formulario de tu sitio y los **comentarios de Instagram** (si conectaste tu cuenta).
   - Cada mensaje marca si está pendiente o respondido, y etiqueta como "Cliente" a las marcas de tu CRM.
   - Te avisa si un mensaje lleva más de 24 h sin respuesta.

@@ -79,6 +79,8 @@ model Creator {
   bioLinkGroups       BioLinkGroup[]
   payments            Payment[]
   campaignReports     CampaignReport[]
+  incomeEntries       IncomeEntry[]
+  expenses            Expense[]
   referralsAsReferrer Referral[]        @relation("referrer")
   referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
@@ -283,6 +285,8 @@ model BillingProfile {
   nextNumber     Int      @default(1)
   /// Nota por defecto al pie de la factura
   defaultNotes   String   @default("")
+  /// % de lo que ganas (ingresos − gastos) que conviene apartar para impuestos (C5)
+  taxPercent     Int      @default(25)
   updatedAt      DateTime @updatedAt
 }
 
@@ -1179,4 +1183,39 @@ model CampaignReport {
 
   @@index([creatorId])
   @@index([brandId])
+}
+
+/// Ingreso anotado a mano (C5). Las facturas pagadas (Invoice) también cuentan, pero se leen de ahí y no se duplican aquí.
+model IncomeEntry {
+  id          String   @id @default(cuid())
+  creatorId   String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// "YYYY-MM-DD"
+  date        String
+  /// En centavos de dólar
+  amountCents Int
+  /// affiliate | platform | product | brand | other
+  source      String
+  description String   @default("")
+  createdAt   DateTime @default(now())
+
+  @@index([creatorId, date])
+}
+
+/// Gasto del negocio (C5), con foto del recibo opcional.
+model Expense {
+  id          String   @id @default(cuid())
+  creatorId   String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// "YYYY-MM-DD"
+  date        String
+  /// En centavos de dólar
+  amountCents Int
+  /// equipment | software | travel | production | ads | fees | other
+  category    String
+  description String   @default("")
+  receiptUrl  String?
+  createdAt   DateTime @default(now())
+
+  @@index([creatorId, date])
 }

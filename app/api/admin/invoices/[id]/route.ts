@@ -6,6 +6,9 @@ import { dateInputToDate } from "@/lib/crm";
 import { itemsTotal } from "@/lib/invoices";
 import { invoiceActionSchema, invoiceFieldsSchema } from "@/lib/invoice-schemas";
 import { syncBrandPayment } from "@/lib/invoices-server";
+import { formatCents, parseParty } from "@/lib/invoices";
+import { paymentNotice } from "@/lib/push";
+import { sendPush } from "@/lib/push-server";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +43,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       await prisma.brandEvent.create({ data: { brandId: invoice.brandId, note } });
     }
     await syncBrandPayment(invoice.brandId);
+    // Aviso en el celular (E5) solo cuando pasa a «pagada» por primera vez.
+    if (action.data.action === "markPaid" && invoice.status !== "paid") {
+      const brand = parseParty(invoice.billTo).company || parseParty(invoice.billTo).name || undefined;
+      await sendPush(invoice.creatorId, "payment", (l) => paymentNotice("paid", { number: invoice.number, brand, amount: formatCents(invoice.subtotal, invoice.currency, l) }, l), { key: `paid:${invoice.id}` });
+    }
     return NextResponse.json(updated);
   }
 

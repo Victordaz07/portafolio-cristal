@@ -7,6 +7,8 @@ import { mailLangFor } from "./email-lang";
 import { platformOrigin } from "./site-url";
 import { formatCents, invoiceNumber, itemsTotal, parseParty, type InvoiceItem } from "./invoices";
 import { dateInputToDate } from "./crm";
+import { paymentNotice } from "@/lib/push";
+import { sendPush } from "@/lib/push-server";
 
 // Facturas (B3): lo que necesita el servidor. Dentro del panel se usa `prisma` (solo la cuenta
 // de la sesión); la página pública y el cron usan `prismaRoot` y buscan por el token o el id.
@@ -151,6 +153,11 @@ export async function notifyCreatorAboutInvoice(kind: "viewed" | "overdue" | "cl
       button: { label: en ? "Open the invoice" : "Abrir la factura", url: `${origin}/admin/facturas/${invoice.id}` },
     });
     await sendEmail({ to: owner.email, ...mail });
+    // Aviso en el celular (E5): solo cuando la marca dice que ya pagó.
+    if (kind === "claimed") {
+      const company = parseParty(invoice.billTo).company || parseParty(invoice.billTo).name || undefined;
+      await sendPush(invoice.creatorId, "payment", (l) => paymentNotice("claimed", { number: invoice.number, brand: company }, l), { key: `claimed:${invoice.id}` });
+    }
   } catch (error) {
     console.error("No se pudo avisar de la factura", error);
   }

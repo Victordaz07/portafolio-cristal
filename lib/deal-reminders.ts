@@ -3,6 +3,7 @@ import { sendEmail } from "./email";
 import { noticeEmail } from "./email-templates";
 import { mailLangFor } from "./email-lang";
 import { platformOrigin } from "./site-url";
+import { sendPush } from "./push-server";
 import { daysFromNow, isDeliverableDone, shouldRemindDeliverable, shouldRemindRights, usageRightsEnd } from "./deliverables";
 
 // Recordatorios de tratos (B2): entregas que vencen en 2 días y derechos de uso que vencen en 7.
@@ -69,6 +70,13 @@ export async function sendDealReminders(now: Date = new Date()) {
           button: { label: en ? "Open Brands" : "Abrir Marcas", url: `${origin}/admin/marcas` },
         });
         await sendEmail({ to: owner.email, ...mail });
+        // Aviso en el celular (E5): un solo aviso por cuenta con lo más urgente.
+        await sendPush(creatorId, "deliverable", (l) => ({
+          title: l === "en" ? "Heads-up on your deals" : "Ojo con tus tratos",
+          body: `${(l === "en" ? items[0].en : items[0].es).replace(/^\S+\s/, "")}${items.length > 1 ? (l === "en" ? ` and ${items.length - 1} more` : ` y ${items.length - 1} más`) : ""}`,
+          url: "/admin/marcas",
+          tag: "deals",
+        }));
         sent++;
       } catch (error) {
         console.error("No se pudo enviar el recordatorio de tratos", error);

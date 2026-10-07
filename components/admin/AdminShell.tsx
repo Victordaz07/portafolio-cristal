@@ -96,6 +96,7 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
       { href: "/admin/ideas", label: t("Ideas y sugerencias", "Ideas & suggestions") },
       ...(ambassador ? [{ href: "/admin/embajadora", label: t("Embajadora 💜", "Ambassador 💜") }] : []),
       { href: "/admin/plan", label: t("Mi plan", "My plan") },
+      { href: "/admin/notificaciones", label: t("Avisos en el celular", "Phone notices") },
       { href: "/admin/cuenta", label: t("Mi cuenta", "My account") },
     ],
   },

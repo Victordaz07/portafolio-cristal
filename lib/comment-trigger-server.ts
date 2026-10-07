@@ -1,7 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { prismaRoot } from "@/lib/prisma-root";
-import { runAsCreator } from "@/lib/tenant";
+import { currentCreatorId, runAsCreator } from "@/lib/tenant";
+import { sendPush } from "@/lib/push-server";
 import { getFreshTokens } from "@/lib/social/accounts";
 import { fetchJson } from "@/lib/social/http";
 import { DAILY_DM_CAP, DM_SCOPE, dmEnabled, fillMessage, isOwnComment, matchesKeyword, withinReplyWindow, type CommentEvent } from "@/lib/comment-trigger";
@@ -27,6 +28,19 @@ export async function handleCommentEvents(events: CommentEvent[]) {
 
 async function processEvent(event: CommentEvent, account: { externalId: string; scopedId: string | null; scopes: string[] }) {
   if (isOwnComment(event, [account.externalId, account.scopedId])) return;
+  // Aviso en el celular (E5) de cualquier comentario nuevo de otra persona (haya regla o no).
+  const creatorId = await currentCreatorId();
+  await sendPush(
+    creatorId,
+    "comment",
+    (l) => ({
+      title: l === "en" ? "New comment on Instagram" : "Nuevo comentario en Instagram",
+      body: `${event.fromUsername ? `@${event.fromUsername}: ` : ""}${event.text}`,
+      url: "/admin/mensajes",
+      tag: `comment-${event.mediaId}`,
+    }),
+    { key: event.commentId }
+  );
   if (!withinReplyWindow(event.time)) return;
   const triggers = await prisma.commentTrigger.findMany({ where: { mediaId: event.mediaId, active: true }, orderBy: { createdAt: "asc" } });
   const trigger = triggers.find((t) => matchesKeyword(event.text, t.keyword));

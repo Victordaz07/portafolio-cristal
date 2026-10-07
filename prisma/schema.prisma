@@ -87,6 +87,7 @@ model Creator {
   contentBank         ContentBankItem[]
   restPeriods         RestPeriod[]
   wellbeing           WellbeingSettings?
+  pushSubscriptions   PushSubscription[]
   referralsAsReferrer Referral[]        @relation("referrer")
   referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
@@ -1357,4 +1358,24 @@ model WellbeingSettings {
   creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   loadLimit Int      @default(6)
   updatedAt DateTime @updatedAt
+}
+
+/// Un dispositivo que aceptó avisos en el celular (E5, Web Push). El endpoint es de la red de notificaciones
+/// del navegador (Google, Mozilla, Apple…); las llaves p256dh/auth cifran cada aviso para ese dispositivo.
+model PushSubscription {
+  id         String    @id @default(cuid())
+  creatorId  String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator    Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// Persona (AdminUser) a la que pertenece el dispositivo
+  userId     String
+  endpoint   String    @unique
+  p256dh     String
+  auth       String
+  /// payment | comment | deliverable | community
+  topics     String[]  @default([])
+  userAgent  String    @default("")
+  createdAt  DateTime  @default(now())
+  lastSentAt DateTime?
+
+  @@index([creatorId])
 }

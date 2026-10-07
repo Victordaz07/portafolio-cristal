@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, AiRefusalError, assertAiQuota, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
+import { AI_MODEL, AiRefusalError, commitAiUsage, getAiClient, getCreatorContext, releaseAiUsage, reserveAiUsage } from "@/lib/ai";
 import { cleanSource, shapeResult, type RecycleResult, type RecycleTone } from "@/lib/recycle";
 
 // Reciclaje de contenido con IA (E4): de un texto largo (transcripción, guion o una publicación que funcionó)
@@ -48,7 +48,7 @@ const TONE_NOTE: Record<RecycleTone, string> = {
 };
 
 export async function suggestRecycle(input: RecycleInput): Promise<RecycleResult> {
-  await assertAiQuota();
+  const usageId = await reserveAiUsage("recycle");
   const context = await getCreatorContext();
   const language = input.lang === "en" ? "Write everything in natural US English, even if the original text is in Spanish." : "Escribe todo en español neutro latino (mantén el idioma original del texto si ya es español).";
   const prompt = `${context}
@@ -60,15 +60,21 @@ ${cleanSource(input.source)}
 ${input.goal ? `Objetivo de la persona: ${input.goal}\n` : ""}${TONE_NOTE[input.tone]}
 Crea las versiones para cada red a partir de las ideas de este texto.
 ${language}`;
-  const response = await getAiClient().beta.messages.parse({
-    model: AI_MODEL,
-    max_tokens: 6000,
-    output_config: { effort: "low", format: betaZodOutputFormat(Schema) },
-    ...SAFETY,
-    system: SYSTEM,
-    messages: [{ role: "user", content: prompt }],
-  });
-  await recordAiUsage("recycle", response.usage);
+  let response;
+  try {
+    response = await getAiClient().beta.messages.parse({
+      model: AI_MODEL,
+      max_tokens: 6000,
+      output_config: { effort: "low", format: betaZodOutputFormat(Schema) },
+      ...SAFETY,
+      system: SYSTEM,
+      messages: [{ role: "user", content: prompt }],
+    });
+  } catch (error) {
+    await releaseAiUsage(usageId);
+    throw error;
+  }
+  await commitAiUsage(usageId, response.usage);
   if (response.stop_reason === "refusal") throw new AiRefusalError();
   const out = response.parsed_output;
   if (!out) throw new AiRefusalError();

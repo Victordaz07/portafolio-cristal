@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { brandCrmInclude, brandFieldsSchema, toBrandData, autoEventNotes } from "@/lib/brand-crm";
+import { cleanupBlobUrls } from "@/lib/blob-cleanup";
 import { getT } from "@/lib/admin-lang-server";
 import { currentCreatorId } from "@/lib/tenant";
 import { createReportDraft } from "@/lib/campaign-report-server";
@@ -18,7 +19,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const before = await prisma.brand.findUnique({
     where: { id },
-    select: { dealStatus: true, paymentStatus: true },
+    select: { dealStatus: true, paymentStatus: true, logoUrl: true },
   });
   if (!before) {
     return NextResponse.json({ error: t("Marca no encontrada", "Brand not found") }, { status: 404 });
@@ -35,6 +36,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     },
     include: brandCrmInclude,
   });
+
+  // Limpia el logo anterior si se reemplazó, para no acumular blobs huérfanos.
+  if (parsed.data.logoUrl !== undefined && parsed.data.logoUrl !== before.logoUrl) {
+    await cleanupBlobUrls([before.logoUrl]);
+  }
+
   // Al completar un trato se arma solo el borrador del reporte de campaña (C3); la creadora lo revisa antes de enviarlo.
   if (parsed.data.dealStatus === "completed" && before.dealStatus !== "completed") {
     try {

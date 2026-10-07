@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, AiRefusalError, assertAiQuota, getAiClient, getCreatorContext, recordAiUsage } from "@/lib/ai";
+import { AI_MODEL, AiRefusalError, commitAiUsage, getAiClient, getCreatorContext, releaseAiUsage, reserveAiUsage } from "@/lib/ai";
 import { CONTENT_TYPE_LABEL, NETWORK_META, type ContentType, type PlanNetwork } from "@/lib/content-plan";
 
 const SYSTEM = `Eres asistente de una persona creadora de contenido que trabaja con marcas (el contexto dice si publica en sus redes, hace UGC o ambas cosas).
@@ -28,29 +28,35 @@ export async function suggestCaptions(input: {
   draft?: string;
   lang?: "es" | "en";
 }) {
-  await assertAiQuota();
+  const usageId = await reserveAiUsage("caption");
   const context = await getCreatorContext();
   const networks = input.networks.map((n) => NETWORK_META[n].label).join(", ") || "Instagram";
-  const response = await getAiClient().beta.messages.parse({
-    model: AI_MODEL,
-    max_tokens: 4000,
-    output_config: { effort: "low", format: betaZodOutputFormat(CaptionsSchema) },
-    ...SAFETY,
-    system: SYSTEM,
-    messages: [
-      {
-        role: "user",
-        content: `${context}
+  let response;
+  try {
+    response = await getAiClient().beta.messages.parse({
+      model: AI_MODEL,
+      max_tokens: 4000,
+      output_config: { effort: "low", format: betaZodOutputFormat(CaptionsSchema) },
+      ...SAFETY,
+      system: SYSTEM,
+      messages: [
+        {
+          role: "user",
+          content: `${context}
 
 Escribe 3 opciones de caption para: ${CONTENT_TYPE_LABEL[input.contentType]} en ${networks}.
 Tema: ${input.topic || "contenido de su nicho"}.
 ${input.brandName ? `Es una colaboración pagada con la marca ${input.brandName}: menciónala de forma natural y empieza el caption con ${(input.lang ?? "es") === "en" ? "#ad" : "#publicidad"} (el aviso va AL INICIO de la primera línea, antes del gancho, para que se vea sin tocar «ver más»).` : ""}
 ${input.draft ? `Borrador actual (mejóralo, no lo repitas): ${input.draft}` : ""}
 Cada opción: gancho en la primera línea, máximo 3 líneas cortas y 3 a 5 hashtags relevantes al final.${languageNote(input.lang ?? "es")}`,
-      },
-    ],
-  });
-  await recordAiUsage("caption", response.usage);
+        },
+      ],
+    });
+  } catch (error) {
+    await releaseAiUsage(usageId);
+    throw error;
+  }
+  await commitAiUsage(usageId, response.usage);
   if (response.stop_reason === "refusal") throw new AiRefusalError();
   return response.parsed_output?.captions.slice(0, 3) ?? [];
 }
@@ -65,28 +71,34 @@ const TipsSchema = z.object({
 });
 
 export async function suggestNetworkTips(input: { caption: string; contentType: ContentType; networks: PlanNetwork[]; lang?: "es" | "en" }) {
-  await assertAiQuota();
+  const usageId = await reserveAiUsage("tips");
   const labels = input.networks.map((n) => NETWORK_META[n].label);
-  const response = await getAiClient().beta.messages.parse({
-    model: AI_MODEL,
-    max_tokens: 4000,
-    output_config: { effort: "low", format: betaZodOutputFormat(TipsSchema) },
-    ...SAFETY,
-    system: SYSTEM,
-    messages: [
-      {
-        role: "user",
-        content: `Una persona creadora de contenido va a publicar este ${CONTENT_TYPE_LABEL[input.contentType]} en: ${labels.join(", ")}.
+  let response;
+  try {
+    response = await getAiClient().beta.messages.parse({
+      model: AI_MODEL,
+      max_tokens: 4000,
+      output_config: { effort: "low", format: betaZodOutputFormat(TipsSchema) },
+      ...SAFETY,
+      system: SYSTEM,
+      messages: [
+        {
+          role: "user",
+          content: `Una persona creadora de contenido va a publicar este ${CONTENT_TYPE_LABEL[input.contentType]} en: ${labels.join(", ")}.
 Caption:
 """
 ${input.caption}
 """
 Para cada red da 2 o 3 consejos breves (una línea cada uno) sobre cómo ejecutarlo ahí: duración o formato,
 gancho de los primeros segundos, ajuste del texto o hashtags, y mejor hora si aplica. Sin introducciones.${languageNote(input.lang ?? "es")}`,
-      },
-    ],
-  });
-  await recordAiUsage("tips", response.usage);
+        },
+      ],
+    });
+  } catch (error) {
+    await releaseAiUsage(usageId);
+    throw error;
+  }
+  await commitAiUsage(usageId, response.usage);
   if (response.stop_reason === "refusal") throw new AiRefusalError();
   const byLabel = new Map(response.parsed_output?.networks.map((n) => [n.network.toLowerCase(), n.tips]) ?? []);
   return input.networks.map((network) => ({

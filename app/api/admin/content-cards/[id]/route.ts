@@ -3,6 +3,8 @@ import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "@/lib/social/thumbnail";
+import { cleanupBlobUrls } from "@/lib/blob-cleanup";
+import { assertMediaQuota, StorageQuotaError, storageQuotaErrorMessage } from "@/lib/storage-quota";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +43,7 @@ const contentCardUpdateSchema = z
   );
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const parsed = contentCardUpdateSchema.safeParse(body);
@@ -62,18 +64,53 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (data.statSecondaryEn === "") data.statSecondaryEn = null;
   if (data.brandId === "") data.brandId = null;
 
+  const existing = await prisma.contentCard.findUnique({
+    where: { id },
+    select: { platform: true, photoUrl: true, videoUrl: true, thumbnailUrl: true },
+  });
+
+  // Cuota de almacenamiento: solo cuenta si la tarjeta pasa de "sin media propia" a "con media
+  // propia" (ej. era solo un post enlazado y ahora se le sube un archivo). Reemplazar un archivo
+  // que ya tenía no suma una pieza nueva.
+  const hadOwnMedia = Boolean(existing?.photoUrl || existing?.videoUrl);
+  const finalPhoto = data.photoUrl !== undefined ? data.photoUrl : existing?.photoUrl;
+  const finalVideo = data.videoUrl !== undefined ? data.videoUrl : existing?.videoUrl;
+  if (!hadOwnMedia && (finalPhoto || finalVideo)) {
+    try {
+      await assertMediaQuota();
+    } catch (error) {
+      if (error instanceof StorageQuotaError) {
+        return NextResponse.json({ error: storageQuotaErrorMessage(error, lang) }, { status: 429 });
+      }
+      throw error;
+    }
+  }
+
   // Red de seguridad: si llega un link de miniatura temporal de Meta (p. ej. pegado a mano), se resube a Blob antes de guardarlo.
   if (data.thumbnailUrl && isEphemeralCdnUrl(data.thumbnailUrl)) {
-    const platform = data.platform ?? (await prisma.contentCard.findUnique({ where: { id }, select: { platform: true } }))?.platform;
+    const platform = data.platform ?? existing?.platform;
     data.thumbnailUrl = await ensurePermanentThumbnail(data.thumbnailUrl, `content-cards/thumbnails/${platform ?? "instagram"}`);
   }
 
   const card = await prisma.contentCard.update({ where: { id }, data });
+
+  // Limpia el archivo reemplazado (foto/video/miniatura anteriores) para no acumular blobs huérfanos.
+  await cleanupBlobUrls([
+    data.photoUrl !== undefined && data.photoUrl !== existing?.photoUrl ? existing?.photoUrl : null,
+    data.videoUrl !== undefined && data.videoUrl !== existing?.videoUrl ? existing?.videoUrl : null,
+    data.thumbnailUrl !== undefined && data.thumbnailUrl !== existing?.thumbnailUrl ? existing?.thumbnailUrl : null,
+  ]);
+
   return NextResponse.json(card);
 }
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const existing = await prisma.contentCard.findUnique({
+    where: { id },
+    select: { photoUrl: true, videoUrl: true, thumbnailUrl: true },
+  });
   await prisma.contentCard.delete({ where: { id } });
+  await cleanupBlobUrls([existing?.photoUrl, existing?.videoUrl, existing?.thumbnailUrl]);
   return NextResponse.json({ ok: true });
 }

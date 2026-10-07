@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { AI_MODEL, AiRefusalError, assertAiQuota, getAiClient, recordAiUsage } from "./ai";
+import { AI_MODEL, AiRefusalError, commitAiUsage, getAiClient, releaseAiUsage, reserveAiUsage } from "./ai";
 import { ACCENTS } from "./theme";
 import { BACKGROUNDS, CORNERS, DESIGN_EN, FONTS, HEROES, STYLES, type BackgroundId, type CornerId, type FontId, type HeroId, type StyleId } from "./design";
 import { nicheOf } from "./platform-analytics";
@@ -46,20 +46,22 @@ export async function suggestDesign(input: {
   current?: Partial<DesignSuggestion>;
   lang?: "es" | "en";
 }): Promise<DesignSuggestion> {
-  await assertAiQuota();
-  const response = await getAiClient().beta.messages.parse({
-    model: AI_MODEL,
-    max_tokens: 3000,
-    output_config: { effort: "low", format: betaZodOutputFormat(SuggestionSchema) },
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
-    system: `Eres directora de arte de Foliocrew, una plataforma de portafolios para creadores de contenido (incluidos creadores UGC).
+  const usageId = await reserveAiUsage("design");
+  let response;
+  try {
+    response = await getAiClient().beta.messages.parse({
+      model: AI_MODEL,
+      max_tokens: 3000,
+      output_config: { effort: "low", format: betaZodOutputFormat(SuggestionSchema) },
+      betas: ["server-side-fallback-2026-07-01"],
+      fallbacks: "default",
+      system: `Eres directora de arte de Foliocrew, una plataforma de portafolios para creadores de contenido (incluidos creadores UGC).
 Eliges una combinación de diseño coherente para el sitio de una persona creadora: que transmita su nicho y su personalidad
 y que las marcas la vean profesional. ${input.lang === "en" ? "Write the \"reason\" in natural US English." : "Respondes en español neutro."}`,
-    messages: [
-      {
-        role: "user",
-        content: `Opciones disponibles:
+      messages: [
+        {
+          role: "user",
+          content: `Opciones disponibles:
 ${catalog()}
 
 Persona creadora: ${input.name || "sin nombre"}. Nicho: ${input.niche || "contenido general"}.
@@ -67,10 +69,14 @@ Bio: ${input.bio.slice(0, 600) || "(sin bio)"}
 ${input.current ? `Ya vio esta propuesta y quiere otra distinta: ${JSON.stringify(input.current)}` : ""}
 
 Elige una combinación (estilo, tipografía, acento, portada, bordes y fondo) y explica por qué en 2 frases.`,
-      },
-    ],
-  });
-  await recordAiUsage("design", response.usage);
+        },
+      ],
+    });
+  } catch (error) {
+    await releaseAiUsage(usageId);
+    throw error;
+  }
+  await commitAiUsage(usageId, response.usage);
   if (response.stop_reason === "refusal" || !response.parsed_output) throw new AiRefusalError();
   return response.parsed_output as DesignSuggestion;
 }

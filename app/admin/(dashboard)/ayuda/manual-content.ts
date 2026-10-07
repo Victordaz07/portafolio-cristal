@@ -504,6 +504,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Bienestar",
+    paragraphs: [
+      "En Contenido → Bienestar ves cuántas entregas tienes en las próximas 4 semanas y te avisamos si en 7 días seguidos pasan de tu límite (tú lo eliges; empieza en 6). La alerta también sale en el Resumen.",
+      "Modo descanso: eliges desde qué día hasta qué día vas a descansar y tocas \"Ver qué se movería\". Si estás de acuerdo, \"Activar descanso\" mueve tus publicaciones programadas de esas fechas (y, si quieres, las fechas de entrega) hacia adelante tantos días como dura el descanso. Se puede deshacer; lo que ya cambiaste a mano no se toca.",
+      "Después puedes avisar a cada marca con entregas en ese periodo: te mostramos un texto que puedes editar y solo se envía cuando tú lo envías. Banco de contenido: guarda ideas o piezas listas para las semanas flojas y prográmalas en el calendario con un clic.",
+    ],
+  },
+  {
     title: "Publicación automática",
     paragraphs: [
       "Cuando Instagram y Facebook aprueben el permiso de publicar, en Crear publicación aparece la casilla \"Publicar sola a la hora programada\". Funciona con Instagram y Facebook (TikTok y YouTube se publican a mano) y necesita una foto o un video del tipo correcto: foto para un post, video para un Reel.",
@@ -744,6 +752,14 @@ const guiaEn: ManualBlock[] = [
       "In Business → Brand reviews you see what other creators say about working with a brand: whether it pays on time, how many days it takes and what the deal is like. Everything is anonymous and a brand only shows up once it has reviews from at least 3 different creators.",
       "To review, you need a verified email and an account that's a few days old, and the brand must be in Brands with an active or completed deal. You say whether they paid you, how many days it took and how the deal went (1 to 5). The comment is optional: stick to facts, no insults or accusations, and no emails, phone numbers or links. The team reviews it before it's shown.",
       "You can fix or delete your review any time. If you're a brand and want to reply or correct something, there's a “Write to us” link on its card.",
+    ],
+  },
+  {
+    title: "Wellbeing",
+    paragraphs: [
+      "In Content → Wellbeing you see how many deliverables you have in the next 4 weeks and we warn you if more than your limit land within 7 days in a row (you choose it; it starts at 6). The alert also shows up in the Overview.",
+      "Rest mode: pick the first and last day of your break and tap \"See what would move\". If you agree, \"Turn on break\" moves your scheduled posts from those dates (and, if you want, the delivery dates) forward as many days as the break lasts. It can be undone; anything you've already changed by hand isn't touched.",
+      "Afterwards you can let each brand with deliveries in that period know: we show you a text you can edit and it's only sent when you send it. Content bank: keep ideas or ready-made pieces for slow weeks and schedule them in your calendar with one click.",
     ],
   },
   {

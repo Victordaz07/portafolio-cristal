@@ -48,7 +48,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 **E. Lo que nadie más tiene**
 - [x] E1. Reseñas anónimas de marcas entre creadores
 - [x] E2. Publicación automática desde el calendario (Instagram y Facebook; apagada hasta que Meta apruebe los permisos)
-- [ ] E3. Bienestar: banco de contenido y modo descanso
+- [x] E3. Bienestar: banco de contenido y modo descanso
 - [ ] E4. Reciclaje de contenido con IA
 - [ ] E5. App instalable (PWA) con notificaciones
 - [ ] E6. Tienda sin comisión (productos digitales y afiliados)
@@ -306,6 +306,7 @@ Ver `docs/plan-comunidad.md`, sección 8. En resumen:
   - "modo descanso", que mueve el calendario y avisa a las marcas con entregas cercanas;
   - una alerta si la carga sube mucho (por ejemplo, más de N entregas en 7 días).
   Dato: el 52% de los creadores sufre agotamiento.
+  - **Cómo quedó:** migración `20261007280000_bienestar` (`ContentBankItem`, `RestPeriod`, `WellbeingSettings`; los tres en `TENANT_MODELS`). `lib/wellbeing.ts` (pura, con pruebas): `workload` (mayor número de entregas en cualquier ventana de 7 días y por semana; límite por defecto 6, editable de 1 a 30), `validateRest` (empieza hoy o después, 1 a 60 días), `planRest` (mueve **solo** publicaciones *programadas* dentro del periodo y, si se pide, entregas pendientes con fecha dentro del periodo —nunca las aprobadas ni publicadas—, hacia adelante tantos días como dura el descanso, conservando la hora), `groupByBrand` y `restNoticeDraft`. Página `/admin/bienestar` (grupo Contenido): barras de carga de las próximas 4 semanas, límite, modo descanso con **vista previa** antes de activar, historial con **Deshacer** (solo restaura lo que sigue en la fecha a la que lo movimos; lo que la persona ya cambió a mano se respeta) y banco de contenido (guardar ideas, **Programar** en el calendario en un clic, borrar). Alerta «Tu carga de trabajo está alta» también en el Resumen. **Aviso a las marcas:** nunca sale solo: la persona revisa y edita el texto de cada marca con entregas en el periodo y lo envía (una vez por marca; solo si la marca tiene correo de contacto; responde al correo de la persona). El equipo (entrando como otra cuenta) no activa descansos ni envía avisos. Entra en la copia de datos.
 - **E4. Reciclaje con IA:** de un video largo o una publicación que funcionó salen versiones para cada red, ganchos y textos.
   Empieza solo con texto (transcripción pegada o subtítulos de YouTube). El video automático va después.
 - **E5. App instalable (PWA):** `manifest`, íconos y notificaciones web (Web Push) para "te pagaron", "nuevo comentario", "vence un entregable" y "te respondieron en la comunidad".

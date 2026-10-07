@@ -21,6 +21,8 @@ import { pickLabel, type T } from "@/lib/admin-lang";
 import { getT } from "@/lib/admin-lang-server";
 import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
 import { isUnanswered, pitchState } from "@/lib/pitch";
+import { workload } from "@/lib/wellbeing";
+import { getLoadLimit, pendingDeliverableDates } from "@/lib/wellbeing-server";
 
 // Iniciales y color por red, igual que en el diseño del panel v2.
 const PLATFORM_META: Record<string, { initials: string; className: string }> = {
@@ -120,6 +122,9 @@ export default async function AdminHomePage() {
       select: { id: true, name: true, dealStatus: true, pitchSentAt: true, pitchFollowUps: true, pitchRepliedAt: true },
     }),
   ]);
+  // Carga de trabajo (E3): ¿hay una semana con demasiadas entregas?
+  const [loadLimit, loadDates] = await Promise.all([getLoadLimit(), pendingDeliverableDates()]);
+  const load = workload(loadDates, todayKey(), 4, loadLimit);
   const unansweredPitches = pitchBrands
     .filter((b) => isUnanswered(b))
     .map((b) => ({ ...b, state: pitchState(b) }))
@@ -232,6 +237,21 @@ export default async function AdminHomePage() {
               </ul>
             )}
           </Card>
+
+          {load.over && (
+            <Card className="border-coral/40">
+              <SectionTitle>{t("Tu carga de trabajo está alta", "Your workload is high")}</SectionTitle>
+              <p className="text-sm text-ink/70">
+                {t(
+                  `Tienes ${load.peak} entregas en 7 días a partir del ${load.peakStart} (tu límite es ${loadLimit}). Si lo necesitas, mueve fechas o toma un descanso.`,
+                  `You have ${load.peak} deliverables within 7 days starting ${load.peakStart} (your limit is ${loadLimit}). If you need to, move dates or take a break.`
+                )}
+              </p>
+              <Link href="/admin/bienestar" className="mt-sp-2 inline-block text-sm font-semibold text-coral hover:underline">
+                {t("Abrir Bienestar", "Open Wellbeing")}
+              </Link>
+            </Card>
+          )}
 
           {unansweredPitches.length > 0 && (
             <Card>

@@ -23,7 +23,9 @@ const instagram: SocialProvider = {
   label: "Instagram",
   envKeys: ["INSTAGRAM_APP_ID", "INSTAGRAM_APP_SECRET"],
   // Solo lo que la app usa hoy: Meta rechaza en la revisión los permisos que no se usan.
-  scopes: ["instagram_business_basic", "instagram_business_manage_comments"],
+  // El permiso de mensajes (C6, «comenta una palabra → DM») solo se pide cuando el dueño confirma que Meta ya lo aprobó
+  // (INSTAGRAM_DM_ENABLED=1): pedirlo antes haría fallar la conexión de las cuentas que no son testers.
+  scopes: ["instagram_business_basic", "instagram_business_manage_comments", ...(process.env.INSTAGRAM_DM_ENABLED === "1" ? ["instagram_business_manage_messages"] : [])],
   consoleUrl: "https://developers.facebook.com/apps/",
   can: [
     "Leer tu perfil, seguidores y publicaciones con sus likes y comentarios",

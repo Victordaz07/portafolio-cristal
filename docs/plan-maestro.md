@@ -38,7 +38,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] C3. Reporte de campaña para la marca
 - [x] C4. Media kit verificado
 - [x] C5. Ingresos e impuestos
-- [ ] C6. Comenta una palabra → DM automático (necesita permiso de Meta)
+- [x] C6. Comenta una palabra → DM automático (listo en código; se activa cuando Meta apruebe el permiso)
 
 **D. Comunidad, etapa 2: conexiones y mensajes**
 - [x] D1. Conexiones
@@ -273,6 +273,9 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
 - **Qué hace:** el creador elige una publicación y una palabra ("LINK") y escribe el mensaje. Cuando alguien comenta esa palabra, el webhook de Meta
   avisa a Foliocrew, que responde por DM (respuesta privada) una sola vez por persona. Debe cumplir las reglas de Meta: solo responde a quien comentó.
 - **Datos:** `CommentTrigger` y `CommentTriggerHit` (para no repetir). Reutiliza el token de Instagram (`lib/social/accounts.ts`).
+
+- **Cómo quedó:** migración `20261007220000_comentario_a_dm`. Webhook público `/api/social/instagram/webhook`: `GET` responde el desafío de Meta si `hub.verify_token` coincide con `INSTAGRAM_WEBHOOK_VERIFY_TOKEN`; `POST` **exige la firma** `X-Hub-Signature-256` (HMAC-SHA256 con `INSTAGRAM_APP_SECRET`, `lib/comment-trigger-signature.ts`) y sin ella no hace nada. `lib/comment-trigger.ts` (pura, con pruebas) lee los avisos, compara la palabra completa sin importar mayúsculas ni acentos («link» no activa con «linkedin»), ignora a la propia cuenta, respeta la ventana de 7 días de Meta y valida reglas (máx. 20 por cuenta, palabra ≥ 2 caracteres, mensaje ≤ 900). `lib/comment-trigger-server.ts`: busca la cuenta por el id que manda Meta, entra como esa creadora (`runAsCreator`), toma la primera regla que coincide, registra a la persona (único por regla y por comentario → **un solo DM por persona**) y manda la **respuesta privada** (`recipient.comment_id`, solo le llega a quien comentó). Tope de 200 DMs por día y cuenta. Panel `/admin/comentario-dm` («Comentario → DM», en Negocio): elegir publicación (las 12 recientes), palabra, mensaje con `{nombre}`, pausar, borrar y contadores (enviados, sin enviar, con error).
+- **Apagado por defecto (importante):** el permiso `instagram_business_manage_messages` **no se pide** al conectar mientras `INSTAGRAM_DM_ENABLED` no sea `1`, porque pedir un permiso que Meta aún no aprobó haría fallar la conexión de cualquier cuenta que no sea tester. Con la variable vacía las reglas se guardan y los comentarios se registran como «sin enviar», pero no sale ningún mensaje. **Para activarlo** (solo cuando el dueño confirme que Meta aprobó el permiso): 1) en Vercel poner `INSTAGRAM_DM_ENABLED=1`, `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` (un texto cualquiera) y `INSTAGRAM_APP_SECRET`; 2) en el panel de Meta registrar el webhook de Instagram con la URL `https://foliocrew.pro/api/social/instagram/webhook`, el mismo token de verificación y suscribir el campo `comments`; 3) cada creadora vuelve a conectar Instagram para autorizar mensajes. **No se envió ninguna revisión a Meta.**
 
 ---
 

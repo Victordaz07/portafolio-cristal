@@ -20,6 +20,7 @@ Es suficiente mientras solo tú abras los previews. Cuando entre más gente al e
 3. Comenta desde esas cuentas en un post de @foliocrew y revisa la **Bandeja** (ahora muestra un aviso si Meta está ocultando comentarios por el modo desarrollo).
 4. Graba el video demo (conectar Instagram → Feed → Bandeja) y envía la revisión de la app **cuando tú lo confirmes**.
 5. Antes del lanzamiento abierto: verificación del negocio en Meta Business.
+6. **Comentario → DM (C6):** el código ya está, pero apagado. Cuando Meta apruebe el permiso `instagram_business_manage_messages` (va en la misma revisión de la app; no se envía sin tu confirmación): en Vercel agrega `INSTAGRAM_DM_ENABLED=1` y `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` (un texto que inventes; sin mostrarlo), registra en Meta el webhook de Instagram `https://foliocrew.pro/api/social/instagram/webhook` con ese mismo texto y suscribe el campo `comments`; luego reconecta Instagram para autorizar mensajes.
 
 ## 3. TikTok
 Cuando TikTok apruebe la app (está "In review"): en Vercel cambia `TIKTOK_CLIENT_KEY` y `TIKTOK_CLIENT_SECRET` de las llaves **Sandbox** a las de **Production** y vuelve a desplegar.

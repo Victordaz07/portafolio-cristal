@@ -496,6 +496,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Comentario → DM",
+    paragraphs: [
+      "En Negocio → Comentario → DM eliges una publicación de Instagram, una palabra (por ejemplo LINK) y un mensaje. Cuando alguien comenta esa palabra, Foliocrew le manda tu mensaje por DM, una sola vez por persona. Puedes usar {nombre} para poner su usuario.",
+      "Solo le escribe a quien comentó, dentro de los 7 días siguientes, y como máximo 200 mensajes automáticos por día. Escribe mensajes que la persona espera (el enlace o la guía que pidió).",
+      "Esta función se activa cuando Instagram apruebe el permiso de mensajes de Foliocrew. Mientras tanto puedes dejar tus reglas listas; la página te dice si ya está activa.",
+    ],
+  },
+  {
     title: "Mis ingresos",
     paragraphs: [
       "En Negocio → Mis ingresos ves cuánto ganaste y gastaste en el año, mes a mes, por fuente (marcas, afiliados, plataformas, productos) y por tipo de gasto. Las facturas que marcas como pagadas (en dólares) suman solas; lo demás lo anotas a mano con \"Anotar un ingreso\" y \"Anotar un gasto\" (puedes subir la foto del recibo).",
@@ -712,6 +720,14 @@ const guiaEn: ManualBlock[] = [
       "When you mark a deal as \"Completed\" in Brands, Foliocrew automatically puts together a draft campaign report with that brand's posts (the Feed posts linked to it and the deliverables already published with their link), their results and how they compare with your usual average. You can also create one by hand from the brand (\"Create campaign report\") and see them all in Business → Brand reports. In the report you can tick \"Show as a success story in my media kit\": once it has been sent, it appears in your public media kit with the metrics you left visible.",
       "You review it before sending: change the title and language (Spanish or English), write a message for the brand, leave out the posts you don't want and untick the metrics you don't want to show (views, likes, comparison, top comments…). Whatever you untick doesn't appear anywhere on the page. On the right you see a live preview, and \"↻ Update numbers\" re-reads your current numbers without losing what you left out.",
       "Tap \"Send to the brand\": they get an email with a link to a public page (no sign-in, and it doesn't show up on Google). We let you know when they open it. The page ends with a \"Shall we do it again?\" button that links to your packages, and the brand can save it as a PDF.",
+    ],
+  },
+  {
+    title: "Comment → DM",
+    paragraphs: [
+      "In Business → Comment → DM you pick an Instagram post, a word (for example LINK) and a message. When someone comments that word, Foliocrew sends them your message by DM, once per person. You can use {name} to insert their username.",
+      "It only writes to the person who commented, within the next 7 days, and at most 200 automatic messages per day. Write messages the person expects (the link or guide they asked for).",
+      "This feature turns on when Instagram approves Foliocrew's messaging permission. Until then you can get your rules ready; the page tells you whether it's active yet.",
     ],
   },
   {

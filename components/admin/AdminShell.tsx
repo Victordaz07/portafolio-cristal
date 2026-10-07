@@ -16,7 +16,7 @@ export type NavGroup = { id: string; title: string; items: NavItem[] };
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
 // nuevas del diseño (Metas, Bitácora, Calendario, Reportes…) se suman a su
 // grupo a medida que se implementan.
-const navGroups = (t: T, ambassador = false): NavGroup[] => [
+const navGroups = (t: T, ambassador = false, merit = false): NavGroup[] => [
   {
     id: "crecimiento",
     title: t("Crecimiento", "Growth"),
@@ -97,7 +97,7 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
       { href: "/admin/ayuda", label: t("Manual de uso", "User guide") },
       { href: "/admin/soporte", label: t("Soporte", "Support"), badgeKey: "support" },
       { href: "/admin/ideas", label: t("Ideas y sugerencias", "Ideas & suggestions") },
-      ...(ambassador ? [{ href: "/admin/embajadora", label: t("Embajadora 💜", "Ambassador 💜") }] : []),
+      ...(ambassador ? [{ href: "/admin/embajadora", label: t("Embajadora 💜", "Ambassador 💜") }] : merit ? [{ href: "/admin/embajadora", label: t("Invita y gana", "Invite and earn") }] : []),
       { href: "/admin/plan", label: t("Mi plan", "My plan") },
       { href: "/admin/notificaciones", label: t("Avisos en el celular", "Phone notices") },
       { href: "/admin/cuenta", label: t("Mi cuenta", "My account") },
@@ -164,6 +164,7 @@ export default function AdminShell({
   connectionRequests = 0,
   unreadDms = 0,
   ambassador = false,
+  ambassadorMerit = false,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -183,11 +184,13 @@ export default function AdminShell({
   unreadDms?: number;
   /** La cuenta es embajadora de Foliocrew: ve su panel en el menú. */
   ambassador?: boolean;
+  /** Mérito automático prendido y la cuenta aún no es embajadora: ve «Invita y gana». */
+  ambassadorMerit?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useT();
-  const NAV_GROUPS = navGroups(t, ambassador);
+  const NAV_GROUPS = navGroups(t, ambassador, ambassadorMerit);
   const extraGroup = foliocrewGroup(platformAdmin, team, t);
   const allGroups = [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])];
   const [mobileOpen, setMobileOpen] = useState(false);

@@ -13,6 +13,8 @@ export default function AmbassadorPanel({
   link,
   code,
   badge,
+  listed,
+  early,
   stats,
   kit,
   rules,
@@ -20,6 +22,8 @@ export default function AmbassadorPanel({
   link: string;
   code: string;
   badge: boolean;
+  listed: boolean;
+  early: { id: string; label: string; description: string }[];
   stats: { registered: number; paying: number; months: number };
   kit: KitText[];
   rules: string[];
@@ -48,6 +52,15 @@ export default function AmbassadorPanel({
     setBusy(false);
     if (!response.ok) return showToast("error", t("No se pudo cambiar", "Couldn't change it"));
     showToast("success", badge ? t("Insignia oculta", "Badge hidden") : t("Insignia visible", "Badge visible"));
+    router.refresh();
+  }
+
+  async function toggleListed() {
+    setBusy(true);
+    const response = await fetch("/api/admin/ambassador", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ listed: !listed }) });
+    setBusy(false);
+    if (!response.ok) return showToast("error", t("No se pudo cambiar", "Couldn't change it"));
+    showToast("success", listed ? t("Ya no apareces en la página de Foliocrew", "You no longer appear on the Foliocrew page") : t("Apareces en la página de Foliocrew", "You appear on the Foliocrew page"));
     router.refresh();
   }
 
@@ -122,6 +135,32 @@ export default function AmbassadorPanel({
         </p>
         <button type="button" disabled={busy} onClick={toggleBadge} className={`${secondaryButtonClass} mt-sp-3`}>
           {badge ? t("Ocultar insignia", "Hide badge") : t("Mostrar insignia", "Show badge")}
+        </button>
+      </Card>
+
+      <Card>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Acceso anticipado", "Early access")}</p>
+        {early.length === 0 ? (
+          <p className="text-sm text-ink/70">{t("Cuando haya funciones nuevas para probar antes que el resto, las verás aquí. Por ahora no hay ninguna en prueba.", "When there are new features to try before everyone else, you'll see them here. Right now there are none in testing.")}</p>
+        ) : (
+          <ul className="flex flex-col gap-sp-2 text-sm text-ink/80">
+            {early.map((f) => (
+              <li key={f.id}><strong>{f.label}</strong> — {f.description}</li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      <Card>
+        <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("En la página de Foliocrew", "On the Foliocrew page")}</p>
+        <p className="text-sm text-ink/80">
+          {t(
+            "Si quieres, puedes aparecer en la sección «Embajadoras» de la página de Foliocrew, con tu nombre, tu foto, tu nicho y un enlace a tu sitio (nada más). Está apagado hasta que lo prendas, y puedes quitarte cuando quieras.",
+            "If you want, you can appear in the “Ambassadors” section of the Foliocrew page, with your name, photo, niche and a link to your site (nothing else). It's off until you turn it on, and you can remove yourself any time."
+          )}
+        </p>
+        <button type="button" disabled={busy} onClick={toggleListed} className={`${secondaryButtonClass} mt-sp-3`}>
+          {listed ? t("Quitarme de la página", "Remove me from the page") : t("Aparecer en la página", "Appear on the page")}
         </button>
       </Card>
 

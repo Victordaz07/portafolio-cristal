@@ -59,7 +59,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] G2. Enlace `?ref=` que funciona como invitación al registro
 - [x] G3. Panel de la embajadora, kit para compartir e insignia en su sitio
 - [x] G4. Referido que paga → recompensa de meses gratis (cron diario)
-- [ ] G5. Mérito automático y sección "Embajadoras" en la página de Foliocrew
+- [x] G5. Mérito automático y sección "Embajadoras" en la página de Foliocrew (el mérito queda apagado hasta que lo prendas)
 
 **F. Pendientes del dueño (no son código)**: ver la sección F.
 

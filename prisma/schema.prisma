@@ -37,6 +37,8 @@ model Creator {
   referralCode           String?   @unique
   /// Mostrar la insignia "Foliocrew Ambassador" en su sitio público
   ambassadorBadge        Boolean   @default(true)
+  /// Aparece en la sección «Embajadoras» de la página de Foliocrew (solo si ella lo elige)
+  ambassadorPublic       Boolean   @default(false)
   /// Fin de la prueba gratis (null = sin prueba)
   trialEndsAt            DateTime?
   /// Pagado hasta (pagos manuales por PayPal o transferencia)

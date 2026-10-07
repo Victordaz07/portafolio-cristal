@@ -105,3 +105,37 @@ describe("decisión de la recompensa", () => {
     assert.equal(rewardDecision({ ...ok, referredPaying: false, referrerAmbassador: false }), "churned");
   });
 });
+
+import { meritProgress, shouldPromote } from "../lib/ambassadors";
+import { earlyFeaturesFor, hasEarlyAccess, type EarlyFeature } from "../lib/early-access";
+
+describe("mérito automático (G5)", () => {
+  it("calcula el avance hacia los 5 referidos", () => {
+    assert.deepEqual(meritProgress(0), { count: 0, needed: 5, left: 5, reached: false, percent: 0 });
+    assert.deepEqual(meritProgress(3), { count: 3, needed: 5, left: 2, reached: false, percent: 60 });
+    assert.deepEqual(meritProgress(5), { count: 5, needed: 5, left: 0, reached: true, percent: 100 });
+    assert.equal(meritProgress(9).percent, 100);
+    assert.equal(meritProgress(-2).count, 0);
+  });
+  it("sube de nivel solo si está prendido, aún no es embajadora, está activa y llegó a 5", () => {
+    const base = { enabled: true, ambassador: false, active: true, paidReferrals: 5 };
+    assert.equal(shouldPromote(base), true);
+    assert.equal(shouldPromote({ ...base, paidReferrals: 4 }), false);
+    assert.equal(shouldPromote({ ...base, enabled: false }), false);
+    assert.equal(shouldPromote({ ...base, ambassador: true }), false);
+    assert.equal(shouldPromote({ ...base, active: false }), false);
+  });
+});
+
+describe("acceso anticipado (G5)", () => {
+  const features: EarlyFeature[] = [{ id: "nueva", label: "Nueva", labelEn: "New", description: "", descriptionEn: "" }];
+  it("lo anticipado es solo para embajadoras; lo demás, para todas", () => {
+    assert.equal(hasEarlyAccess("nueva", { ambassador: true }, features), true);
+    assert.equal(hasEarlyAccess("nueva", { ambassador: false }, features), false);
+    assert.equal(hasEarlyAccess("otra", { ambassador: false }, features), true);
+  });
+  it("lista lo que puede probar antes", () => {
+    assert.equal(earlyFeaturesFor({ ambassador: true }, features).length, 1);
+    assert.equal(earlyFeaturesFor({ ambassador: false }, features).length, 0);
+  });
+});

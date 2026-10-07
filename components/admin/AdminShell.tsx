@@ -68,6 +68,7 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
       { href: "/admin/mensajes", label: t("Bandeja", "Inbox"), badgeKey: "unread" },
       { href: "/admin/contratos", label: t("Acuerdos", "Agreements") },
       { href: "/admin/facturas", label: t("Facturas", "Invoices") },
+      { href: "/admin/tienda", label: t("Tienda", "Shop") },
       { href: "/admin/ingresos", label: t("Mis ingresos", "My income") },
       { href: "/admin/comentario-dm", label: t("Comentario → DM", "Comment → DM") },
       { href: "/admin/resenas-marcas", label: t("Reseñas de marcas", "Brand reviews") },

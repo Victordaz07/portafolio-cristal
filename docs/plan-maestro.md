@@ -51,7 +51,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] E3. Bienestar: banco de contenido y modo descanso
 - [x] E4. Reciclaje de contenido con IA
 - [x] E5. App instalable (PWA) con notificaciones
-- [ ] E6. Tienda sin comisión (productos digitales y afiliados)
+- [x] E6. Tienda sin comisión (productos digitales y afiliados)
 - [ ] E7. Círculos, mentorías y sesiones en vivo
 
 **G. Programa de Embajadoras** (por invitación; detalle en `docs/plan-embajadores.md`)
@@ -315,6 +315,7 @@ Ver `docs/plan-comunidad.md`, sección 8. En resumen:
   - **Apagado hasta que pongas las llaves:** sin `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY` en Vercel no se muestra nada activable y la API responde 400 (la app sigue instalable). Pasos en `docs/pendientes.md`.
 - **E6. Tienda sin comisión:** productos digitales (plantillas, presets, guías), asesorías por llamada y enlaces de afiliado en el Link en bio.
   Cobro con el enlace de pago del creador (principio 3). Es el terreno de Stan y Linktree; competir con "0% de comisión".
+  - **Cómo quedó:** migración `20261007320000_tienda` (`Product`, en `TENANT_MODELS`). **Foliocrew no toca el dinero**: cada producto lleva el enlace de pago de la propia creadora (PayPal, Stripe, Gumroad, Calendly con pago…) y tampoco guarda archivos; para lo digital se recomienda un enlace que entregue el archivo solo tras el pago. `lib/shop.ts` (pura, con pruebas): tres tipos (`digital`, `call`, `affiliate`), `isSafeBuyUrl` (**solo https**, sin credenciales; nada de `javascript:` ni `data:`), `validateProduct` (precio obligatorio salvo en afiliados), `formatPrice`, `relFor` (los afiliados llevan `rel="sponsored"`) y `needsAffiliateNotice`. Panel `/admin/tienda` (Negocio): crear, editar, mostrar/ocultar y borrar (hasta 50), con imagen y clics. Página pública `/tienda` (bilingüe, también bajo `/s/<slug>/tienda`): tarjetas con precio y botón «Comprar» / «Reservar» / «Ver oferta»; **el aviso de afiliados («puedo ganar una comisión») se muestra siempre que haya un afiliado activo** (reglas de publicidad); aparece como «Mi tienda» en el Link en bio cuando hay productos activos y en el sitemap. Clics con `POST /api/shop/click` (1 por IP y producto por minuto; ignora productos ocultos y de otras cuentas). Términos de uso: la venta es entre la creadora y su cliente. Entra en la copia de datos. **Pendiente a propósito:** entregar archivos dentro de Foliocrew y verificar pagos (requeriría procesar pagos, contra el principio 3), cupones y reseñas de productos.
 - **E7. Círculos, mentorías y sesiones en vivo:** grupos con moderadores, sesiones con creadores grandes y beneficio para el plan Crew.
 
 ---

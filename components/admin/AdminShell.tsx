@@ -9,6 +9,7 @@ import type { T } from "@/lib/admin-lang";
 import { useT } from "./AdminLang";
 import LangSwitch from "./LangSwitch";
 import CommandPalette from "./CommandPalette";
+import { hasFeature, navFlagFor } from "@/lib/feature-flags";
 
 type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports" | "community" | "connections" | "messages"; exact?: boolean };
 export type NavGroup = { id: string; title: string; items: NavItem[] };
@@ -192,7 +193,16 @@ export default function AdminShell({
   const { t } = useT();
   const NAV_GROUPS = navGroups(t, ambassador, ambassadorMerit);
   const extraGroup = foliocrewGroup(platformAdmin, team, t);
-  const allGroups = [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])];
+  // Lanzamiento gradual (lib/feature-flags.ts): oculta del menú las secciones que esta cuenta
+  // todavía no puede ver (las páginas en sí también están protegidas, por si alguien llega con
+  // un enlace directo o un marcador viejo).
+  const canSeeHref = (href: string) => {
+    const flag = navFlagFor(href);
+    return !flag || hasFeature(flag, { ambassador, platformAdmin });
+  };
+  const allGroups = [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])]
+    .map((group) => ({ ...group, items: group.items.filter((item) => canSeeHref(item.href)) }))
+    .filter((group) => group.items.length > 0);
   const [mobileOpen, setMobileOpen] = useState(false);
   // Lista ordenada por apertura (el último en abrirse queda al final); como mucho MAX_OPEN_GROUPS
   // a la vez. De entrada solo se abre el grupo de la página en la que estás, no los 7-8 de golpe.

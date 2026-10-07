@@ -36,7 +36,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] C1. Propuestas a marcas escritas con IA
 - [x] C2. Página "Trabaja conmigo" (solicitar un paquete)
 - [x] C3. Reporte de campaña para la marca
-- [ ] C4. Media kit verificado
+- [x] C4. Media kit verificado
 - [ ] C5. Ingresos e impuestos
 - [ ] C6. Comenta una palabra → DM automático (necesita permiso de Meta)
 
@@ -252,6 +252,8 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
   y casos de éxito con resultados (sacados de C3).
 - **Regla:** si el creador edita un número a mano, ese número pierde el sello.
 - **Por qué:** quien tiene un media kit profesional recibe 3.5 veces más propuestas, y las marcas piden números honestos.
+
+- **Cómo quedó:** `lib/verified.ts` (pura, con pruebas en `tests/verified.test.ts`). El sello «Datos verificados por Foliocrew · actualizado hace N días» sale en: los seguidores de cada red (si el último `FollowerSnapshot` es `source="auto"`), el total (solo si **todas** las redes son automáticas) y el engagement promedio (solo si **todas** las publicaciones que entran en el promedio tienen `metricsSyncedAt`). Pasados 30 días sin actualizarse (`SEAL_MAX_DAYS`) el número sigue visible pero sin sello. Editar a mano views/likes/comments/shares/saves de una publicación (`PATCH /api/admin/content-cards/[id]/metrics`) borra su `metricsSyncedAt`; los seguidores escritos a mano ya se guardaban como `manual`; las cifras de «Cifras» (`Stat`) son manuales y nunca llevan sello. **Casos de éxito:** `CampaignReport.inMediaKit` (migración `20261007180000_media_kit_verificado`); solo salen los reportes ya enviados y marcados, hasta 3, y con `publicReport()` (respetan las métricas ocultas). **Pendiente a propósito:** la demografía (edad, género, país) no se incluye todavía porque exige pedir permisos nuevos de insights a cada red; se hará cuando se revise qué permisos aprueba Meta.
 
 ### C5. Ingresos e impuestos
 - **Qué ve el usuario:** página "Mis ingresos" con:

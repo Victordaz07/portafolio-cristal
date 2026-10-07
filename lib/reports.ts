@@ -31,8 +31,8 @@ export function shiftMonth(month: string, delta: number) {
 }
 
 /** Último valor conocido de cada red en o antes de `day`. */
-function latestPerPlatform(snapshots: { platform: string; date: string; followers: number }[], day: string) {
-  const latest = new Map<string, { date: string; followers: number }>();
+function latestPerPlatform<T extends { platform: string; date: string; followers: number }>(snapshots: T[], day: string) {
+  const latest = new Map<string, T>();
   for (const s of snapshots) {
     if (s.date > day) continue;
     const current = latest.get(s.platform);
@@ -43,7 +43,7 @@ function latestPerPlatform(snapshots: { platform: string; date: string; follower
 
 /** Seguidores totales (suma de redes) al cierre de cada uno de los `months` meses que terminan en `endMonth`. */
 export async function followerGrowth(months = 6, endMonth?: string) {
-  const snapshots = await prisma.followerSnapshot.findMany({ select: { platform: true, date: true, followers: true } });
+  const snapshots = await prisma.followerSnapshot.findMany({ select: { platform: true, date: true, followers: true, source: true } });
   const today = todayKey();
   const current = endMonth && endMonth < today.slice(0, 7) ? endMonth : today.slice(0, 7);
   const series = [];
@@ -56,7 +56,7 @@ export async function followerGrowth(months = 6, endMonth?: string) {
   }
   const now = latestPerPlatform(snapshots, today);
   const before = latestPerPlatform(snapshots, addDays(today, -30));
-  const byPlatform = Array.from(now.entries()).map(([platform, s]) => ({ platform, followers: s.followers, date: s.date }));
+  const byPlatform = Array.from(now.entries()).map(([platform, s]) => ({ platform, followers: s.followers, date: s.date, source: s.source }));
   const totalNow = byPlatform.reduce((sum, p) => sum + p.followers, 0);
   // Crecimiento de 30 días solo con las redes que ya tenían dato hace 30 días.
   const comparable = byPlatform.filter((p) => before.has(p.platform));

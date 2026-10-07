@@ -1168,6 +1168,8 @@ model CampaignReport {
   data        Json
   /// Métricas ocultas: views, likes, comments, shares, saves, engagement, comparison, topComments
   hidden      String[]  @default([])
+  /// Sale como «caso de éxito» en el media kit público (solo se usa si ya se envió)
+  inMediaKit  Boolean   @default(false)
   /// draft | sent
   status      String    @default("draft")
   sentAt      DateTime?

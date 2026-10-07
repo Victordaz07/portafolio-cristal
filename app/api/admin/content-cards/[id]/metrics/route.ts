@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getT } from "@/lib/admin-lang-server";
+import { editsMetrics } from "@/lib/verified";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { postedAt, ...rest } = data;
   const card = await prisma.contentCard.update({
     where: { id },
-    data: { ...rest, ...(postedAt !== undefined && { postedAt: postedAt ? new Date(postedAt) : null }) },
+    // Un número escrito a mano ya no es «verificado»: se borra la marca de sincronización (C4).
+    data: { ...rest, ...(editsMetrics(rest) && { metricsSyncedAt: null }), ...(postedAt !== undefined && { postedAt: postedAt ? new Date(postedAt) : null }) },
   });
   return NextResponse.json(card);
 }

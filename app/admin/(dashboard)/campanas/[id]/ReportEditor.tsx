@@ -16,6 +16,7 @@ interface EditorReport {
   intro: string;
   language: "es" | "en";
   hidden: string[];
+  inMediaKit: boolean;
   status: "draft" | "sent";
   sentAt: string | null;
   viewedAt: string | null;
@@ -31,6 +32,7 @@ export default function ReportEditor({ report, brand, creatorName, link, readOnl
   const [intro, setIntro] = useState(report.intro);
   const [language, setLanguage] = useState<"es" | "en">(report.language);
   const [hidden, setHidden] = useState<string[]>(report.hidden);
+  const [inMediaKit, setInMediaKit] = useState(report.inMediaKit);
   const [data, setData] = useState<ReportData>(report.data);
   const [status, setStatus] = useState(report.status);
   const [email, setEmail] = useState(brand.contactEmail);
@@ -63,7 +65,7 @@ export default function ReportEditor({ report, brand, creatorName, link, readOnl
     return result as { data: ReportData };
   }
 
-  const saveBody = () => ({ title, intro, language, hidden, include: includeMap() });
+  const saveBody = () => ({ title, intro, language, hidden, inMediaKit, include: includeMap() });
 
   async function save() {
     if (await patch(saveBody(), "save")) {
@@ -156,6 +158,13 @@ export default function ReportEditor({ report, brand, creatorName, link, readOnl
               </li>
             ))}
           </ul>
+          <label className="mt-sp-3 flex items-start gap-sp-2 border-t border-line pt-sp-3 text-sm text-ink">
+            <input type="checkbox" className="mt-1" checked={inMediaKit} onChange={(e) => setInMediaKit(e.target.checked)} disabled={readOnly} />
+            <span>
+              {t("Mostrar como caso de éxito en mi media kit", "Show as a success story in my media kit")}
+              <span className="block text-xs text-ink/60">{t("Solo aparece cuando el reporte ya se envió, y con las mismas métricas que dejaste visibles arriba.", "It only appears once the report has been sent, with the same metrics you left visible above.")}</span>
+            </span>
+          </label>
         </Card>
 
         <Card>

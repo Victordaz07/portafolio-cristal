@@ -25,7 +25,7 @@ const instagram: SocialProvider = {
   // Solo lo que la app usa hoy: Meta rechaza en la revisión los permisos que no se usan.
   // El permiso de mensajes (C6, «comenta una palabra → DM») solo se pide cuando el dueño confirma que Meta ya lo aprobó
   // (INSTAGRAM_DM_ENABLED=1): pedirlo antes haría fallar la conexión de las cuentas que no son testers.
-  scopes: ["instagram_business_basic", "instagram_business_manage_comments", ...(process.env.INSTAGRAM_DM_ENABLED === "1" ? ["instagram_business_manage_messages"] : [])],
+  scopes: ["instagram_business_basic", "instagram_business_manage_comments", ...(process.env.INSTAGRAM_DM_ENABLED === "1" ? ["instagram_business_manage_messages"] : []), ...(process.env.PUBLISH_INSTAGRAM_ENABLED === "1" ? ["instagram_business_content_publish"] : [])],
   consoleUrl: "https://developers.facebook.com/apps/",
   can: [
     "Leer tu perfil, seguidores y publicaciones con sus likes y comentarios",
@@ -149,7 +149,9 @@ const facebook: SocialProvider = {
   id: "facebook",
   label: "Facebook",
   envKeys: ["FACEBOOK_APP_ID", "FACEBOOK_APP_SECRET"],
-  scopes: ["pages_show_list", "pages_read_engagement"],
+  // pages_manage_posts (E2, publicar en la página) solo se pide cuando el dueño activa PUBLISH_FACEBOOK_ENABLED=1,
+  // porque pedir un permiso que Meta aún no aprobó haría fallar la conexión de cuentas que no son testers.
+  scopes: ["pages_show_list", "pages_read_engagement", ...(process.env.PUBLISH_FACEBOOK_ENABLED === "1" ? ["pages_manage_posts"] : [])],
   consoleUrl: "https://developers.facebook.com/apps/",
   can: ["Listar tus páginas de Facebook y sus seguidores", "Leer las publicaciones recientes de tu página"],
   later: [

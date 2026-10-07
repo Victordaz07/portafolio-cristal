@@ -684,6 +684,12 @@ model ScheduledPost {
   scheduledFor DateTime
   status       String    @default("scheduled") // "draft" | "scheduled" | "published"
   publishedAt  DateTime?
+  /// Publicar sola a la hora programada (E2; solo redes con publicación automática y cuando están activas)
+  autoPublish  Boolean   @default(false)
+  /// Resultado por red: { instagram: { status: "ok" | "error" | "pending", id?, url?, error?, creationId?, at } }
+  publishResults Json?
+  publishAttempts Int    @default(0)
+  publishAttemptedAt DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

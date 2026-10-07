@@ -504,6 +504,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Publicación automática",
+    paragraphs: [
+      "Cuando Instagram y Facebook aprueben el permiso de publicar, en Crear publicación aparece la casilla \"Publicar sola a la hora programada\". Funciona con Instagram y Facebook (TikTok y YouTube se publican a mano) y necesita una foto o un video del tipo correcto: foto para un post, video para un Reel.",
+      "Si la pieza es para una marca, no sale sola hasta que el texto tenga el aviso de publicidad (#publicidad). En el Calendario ves qué piezas se publican solas, el resultado por red y, si algo falla, el motivo. También puedes tocar \"Publicar ahora\".",
+      "Si no sale después de 3 intentos, apagamos la publicación automática de esa pieza y te avisamos por correo para que la corrijas o la publiques a mano.",
+    ],
+  },
+  {
     title: "Comentario → DM",
     paragraphs: [
       "En Negocio → Comentario → DM eliges una publicación de Instagram, una palabra (por ejemplo LINK) y un mensaje. Cuando alguien comenta esa palabra, Foliocrew le manda tu mensaje por DM, una sola vez por persona. Puedes usar {nombre} para poner su usuario.",
@@ -736,6 +744,14 @@ const guiaEn: ManualBlock[] = [
       "In Business → Brand reviews you see what other creators say about working with a brand: whether it pays on time, how many days it takes and what the deal is like. Everything is anonymous and a brand only shows up once it has reviews from at least 3 different creators.",
       "To review, you need a verified email and an account that's a few days old, and the brand must be in Brands with an active or completed deal. You say whether they paid you, how many days it took and how the deal went (1 to 5). The comment is optional: stick to facts, no insults or accusations, and no emails, phone numbers or links. The team reviews it before it's shown.",
       "You can fix or delete your review any time. If you're a brand and want to reply or correct something, there's a “Write to us” link on its card.",
+    ],
+  },
+  {
+    title: "Automatic publishing",
+    paragraphs: [
+      "Once Instagram and Facebook approve the publishing permission, the \"Publish automatically at the scheduled time\" checkbox appears in Create post. It works with Instagram and Facebook (TikTok and YouTube are published by hand) and needs a photo or video of the right type: a photo for a post, a video for a Reel.",
+      "If the piece is for a brand, it won't go out on its own until the text has the ad disclosure (#ad). In the Calendar you see which pieces publish automatically, the result per network and, if something fails, the reason. You can also tap \"Publish now\".",
+      "If it doesn't go out after 3 tries, we turn off automatic publishing for that piece and email you so you can fix it or publish it by hand.",
     ],
   },
   {

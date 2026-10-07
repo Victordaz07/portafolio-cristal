@@ -124,7 +124,7 @@ const glosarioEs: GlossaryTerm[] = [
   { term: "Marcas", def: "El carrusel de logos de marcas con las que has colaborado." },
   { term: "Reseñas destacadas", def: "Reseñas de producto (con foto, categoría, título y calificación en estrellas)." },
   { term: "Cómo trabajo", def: "Los servicios que ofreces, cada uno con un ícono." },
-  { term: "Paquetes", def: "Los paquetes de colaboración (nombre + lista de qué incluye), sin precios." },
+  { term: "Paquetes", def: "Los paquetes de colaboración (nombre + lista de qué incluye), con precio \"desde\" y solicitudes opcionales." },
   { term: "Testimonios", def: "Citas de marcas hablando bien de trabajar contigo." },
   { term: "FAQ", def: "Preguntas frecuentes en formato acordeón." },
   { term: "Contacto", def: "Tu email, WhatsApp, redes sociales y los textos del pie de página del sitio." },
@@ -152,7 +152,7 @@ const glosarioEn: GlossaryTerm[] = [
   { term: "Brands", def: "The carousel of logos from brands you've collaborated with." },
   { term: "Featured reviews", def: "Product reviews (with photo, category, title and a star rating)." },
   { term: "How I work", def: "The services you offer, each with an icon." },
-  { term: "Packages", def: "The collaboration packages (name + list of what's included), no prices." },
+  { term: "Packages", def: "The collaboration packages (name + list of what's included), with an optional \"from\" price and requests." },
   { term: "Testimonials", def: "Quotes from brands speaking well of working with you." },
   { term: "FAQ", def: "Frequently asked questions in an accordion format." },
   { term: "Contact", def: "Your email, WhatsApp, socials and the site footer texts." },
@@ -433,7 +433,11 @@ const guiaEs: ManualBlock[] = [
   },
   {
     title: "Paquetes",
-    paragraphs: ["Los paquetes de colaboración: emoji, nombre y una lista de qué incluye (un ítem por línea), sin precios."],
+    paragraphs: [
+      "Los paquetes de colaboración: emoji, nombre y una lista de qué incluye (un ítem por línea).",
+      "Cada paquete puede tener un precio \"desde\" (en dólares) y la opción \"Permitir solicitudes\". Con las solicitudes activadas, tu sitio público muestra el precio y un botón \"Solicitar este paquete\": la marca llena su nombre, su correo, fechas, presupuesto aproximado y qué necesita.",
+      "Cuando llega una solicitud te avisamos por correo, aparece en tu Bandeja y la marca queda guardada en Marcas como \"Negociando\" (oculta de tu sitio público), con una próxima acción \"Responder la solicitud del paquete\" en 2 días. Desde ahí le mandas el acuerdo y la factura de anticipo. Los paquetes que ya tenías empiezan con las solicitudes apagadas: enciéndelas cuando quieras.",
+    ],
   },
   {
     title: "Testimonios",
@@ -632,7 +636,11 @@ const guiaEn: ManualBlock[] = [
   },
   {
     title: "Packages",
-    paragraphs: ["The collaboration packages: emoji, name and a list of what's included (one item per line), no prices."],
+    paragraphs: [
+      "The collaboration packages: emoji, name and a list of what's included (one item per line).",
+      "Each package can have a \"from\" price (in dollars) and the \"Allow requests\" option. With requests on, your public site shows the price and a \"Request this package\" button: the brand fills in their name, email, dates, approximate budget and what they need.",
+      "When a request comes in we email you, it shows up in your Inbox and the brand is saved in Brands as \"Negotiating\" (hidden from your public site), with a next step \"Reply to the package request\" in 2 days. From there you send them the agreement and the deposit invoice. Packages you already had start with requests off: turn them on whenever you want.",
+    ],
   },
   {
     title: "Testimonials",

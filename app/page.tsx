@@ -33,6 +33,8 @@ import ContactInfoCard, { type ContactInfoRow } from "@/components/ContactInfoCa
 import ReviewCard from "@/components/ReviewCard";
 import ServiceCard from "@/components/ServiceCard";
 import PackageCard from "@/components/PackageCard";
+import PackageRequest from "@/components/PackageRequest";
+import { formatPriceFrom } from "@/lib/package-request";
 import TestimonialCard from "@/components/TestimonialCard";
 import type { ContentCardProps } from "@/components/ContentCard";
 import { getLocale } from "@/lib/locale";
@@ -396,6 +398,19 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                     emoji={pkg.emoji}
                     name={pick(locale, pkg.name, pkg.nameEn)}
                     items={pickArray(locale, pkg.items, pkg.itemsEn)}
+                    price={formatPriceFrom(pkg.priceFrom, pkg.currency, locale)}
+                    action={
+                      pkg.requestable ? (
+                        <PackageRequest
+                          locale={locale}
+                          packageId={pkg.id}
+                          packageName={pick(locale, pkg.name, pkg.nameEn)}
+                          price={formatPriceFrom(pkg.priceFrom, pkg.currency, locale)}
+                          currency={pkg.currency}
+                          endpoint={`${sitePrefix}/api/package-request`}
+                        />
+                      ) : null
+                    }
                   />
                 ))}
               </div>

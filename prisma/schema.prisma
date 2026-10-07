@@ -78,6 +78,7 @@ model Creator {
   bioLinks            BioLink[]
   bioLinkGroups       BioLinkGroup[]
   payments            Payment[]
+  campaignReports     CampaignReport[]
   referralsAsReferrer Referral[]        @relation("referrer")
   referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
@@ -209,6 +210,7 @@ model Brand {
   deliverables   Deliverable[]
   invoices       Invoice[]
   contracts      Contract[]
+  campaignReports CampaignReport[]
 
   // Derechos de uso y exclusividad del trato (B2)
   /// Días que la marca puede usar el contenido en sus anuncios o redes
@@ -1145,4 +1147,34 @@ model Referral {
   createdAt    DateTime  @default(now())
 
   @@index([referrerId, status])
+}
+
+/// Reporte de campaña para la marca (C3): una página pública con las publicaciones del trato y sus resultados.
+/// `data` es una foto de los números al armarlo (la creadora la revisa y puede actualizarla); `hidden` son las métricas que no quiere mostrar.
+model CampaignReport {
+  id          String    @id @default(cuid())
+  creatorId   String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  brandId     String
+  brand       Brand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  /// 32 bytes aleatorios en base64url: el enlace que recibe la marca (/r/<token>)
+  publicToken String    @unique
+  /// es | en
+  language    String    @default("es")
+  title       String
+  /// Mensaje de la creadora para la marca (opcional)
+  intro       String?
+  /// Publicaciones y base de comparación (lib/campaign-report.ts → ReportData)
+  data        Json
+  /// Métricas ocultas: views, likes, comments, shares, saves, engagement, comparison, topComments
+  hidden      String[]  @default([])
+  /// draft | sent
+  status      String    @default("draft")
+  sentAt      DateTime?
+  viewedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([creatorId])
+  @@index([brandId])
 }

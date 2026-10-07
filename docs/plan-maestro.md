@@ -35,7 +35,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 **C. Conseguir más tratos**
 - [x] C1. Propuestas a marcas escritas con IA
 - [x] C2. Página "Trabaja conmigo" (solicitar un paquete)
-- [ ] C3. Reporte de campaña para la marca
+- [x] C3. Reporte de campaña para la marca
 - [ ] C4. Media kit verificado
 - [ ] C5. Ingresos e impuestos
 - [ ] C6. Comenta una palabra → DM automático (necesita permiso de Meta)
@@ -243,6 +243,8 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
   - comentarios destacados y un "¿Repetimos?" que lleva a "Trabaja conmigo".
 - **Por qué:** las marcas que repiten pagan más, y casi nadie les manda resultados.
 - El creador revisa el reporte antes de enviarlo y puede ocultar métricas que no quiera mostrar.
+
+- **Cómo quedó:** modelo `CampaignReport` (migración `20261007160000_reportes_de_campana`, en `TENANT_MODELS` y `BRAND_REF_MODELS`): `publicToken` (32 bytes base64url), `language`, `title`, `intro`, `data` (una **foto** de los números al armarlo: publicaciones, base de comparación y fecha), `hidden` (métricas ocultas), `status` (`draft`/`sent`), `sentAt`, `viewedAt`. Al pasar un trato a «Completado» (`PATCH /api/admin/brands/[id]`) se arma solo el **borrador** (`createReportDraft`) y queda el evento «Reporte de campaña listo para revisar»; también se crea a mano desde la marca. Las publicaciones salen de las `ContentCard` vinculadas a la marca y de los `Deliverable` publicados/aprobados con enlace (si el enlace coincide con una publicación se unen y se usa el nombre del entregable); la base de comparación es la **mediana** de vistas y de interacción del resto de publicaciones de la creadora, y solo se muestra con 3 o más (`MIN_BASELINE_POSTS`). `lib/campaign-report.ts` (pura, con pruebas) tiene `publicReport()`: es la **única** función que decide qué ve la marca; una métrica oculta ni siquiera está en el objeto que llega a la página. Editor en `/admin/campanas/[id]` (título, idioma, mensaje, métricas visibles, publicaciones incluidas, «↻ Actualizar números» que conserva lo dejado fuera, vista previa en vivo con el mismo componente que la página pública, enviar o copiar el enlace); lista en `/admin/campanas` («Reportes a marcas» en el grupo Negocio). Página pública `/r/[token]` (noindex, `no-referrer`, límite por IP, un borrador solo lo ve su creadora); la primera vez que la abre otra persona queda `viewedAt` y se avisa por correo. «¿Repetimos?» lleva a `<sitio>/#paquetes` (C2). Se puede guardar como PDF con el botón de imprimir. El correo usa `noticeEmail`. Los comentarios destacados salen con su autor tal como están en el Feed y se pueden ocultar.
 
 ### C4. Media kit verificado
 - **Qué es:** el sello "Datos verificados por Foliocrew · actualizado hace 2 días" junto a las métricas que vienen de una red conectada (no escritas a mano).

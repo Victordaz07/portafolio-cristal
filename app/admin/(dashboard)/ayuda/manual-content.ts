@@ -504,6 +504,13 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Reciclar con IA",
+    paragraphs: [
+      "En Contenido → Reciclar con IA pegas la transcripción o el guion de un video largo (o eliges una publicación tuya que funcionó) y te preparamos 5 ganchos, un texto para Instagram, TikTok, YouTube y Facebook, y un carrusel. Eliges el tono y el idioma.",
+      "Cada versión se puede copiar o guardar en tu banco de contenido (Contenido → Bienestar) para programarla después. Revisa todo antes de publicar: la IA reformula tus ideas pero puede equivocarse, y si es para una marca tienes que añadir el aviso de publicidad. Cuenta como 1 sugerencia de IA de tu plan.",
+    ],
+  },
+  {
     title: "Bienestar",
     paragraphs: [
       "En Contenido → Bienestar ves cuántas entregas tienes en las próximas 4 semanas y te avisamos si en 7 días seguidos pasan de tu límite (tú lo eliges; empieza en 6). La alerta también sale en el Resumen.",
@@ -752,6 +759,13 @@ const guiaEn: ManualBlock[] = [
       "In Business → Brand reviews you see what other creators say about working with a brand: whether it pays on time, how many days it takes and what the deal is like. Everything is anonymous and a brand only shows up once it has reviews from at least 3 different creators.",
       "To review, you need a verified email and an account that's a few days old, and the brand must be in Brands with an active or completed deal. You say whether they paid you, how many days it took and how the deal went (1 to 5). The comment is optional: stick to facts, no insults or accusations, and no emails, phone numbers or links. The team reviews it before it's shown.",
       "You can fix or delete your review any time. If you're a brand and want to reply or correct something, there's a “Write to us” link on its card.",
+    ],
+  },
+  {
+    title: "Recycle with AI",
+    paragraphs: [
+      "In Content → Recycle with AI you paste the transcript or script of a long video (or pick one of your posts that worked) and we prepare 5 hooks, a caption for Instagram, TikTok, YouTube and Facebook, and a carousel. You choose the tone and language.",
+      "Each version can be copied or saved to your content bank (Content → Wellbeing) to schedule later. Review everything before publishing: the AI rephrases your ideas but can make mistakes, and if it's for a brand you have to add the ad disclosure. It counts as 1 AI suggestion from your plan.",
     ],
   },
   {

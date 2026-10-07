@@ -484,6 +484,7 @@ const guiaEs: ManualBlock[] = [
       "Es un nivel por invitación (no se compra) para quien habla bien de Foliocrew y trae gente. Si tu cuenta es embajadora, ves \"Embajadora 💜\" en el menú de Ayuda y tienes Folio Pro sin pagar y sin vencimiento.",
       "Ahí está tu enlace (y tu código), cuántas personas se registraron y cuántas pagan, y un kit con textos listos para copiar. Quien abre tu enlace puede crear su cuenta sin código de invitación. Nunca ves nombres ni correos de quien se registra. Por cada persona que se registra con tu enlace, paga su primer mes y sigue con su cuenta activa 30 días después, ganas 1 mes gratis (te llega un correo y se suma a tu plan).",
       "Como ganas meses gratis por invitar, tienes que decir que eres embajadora y que es publicidad (#publicidad o #ad) al inicio del texto. Los textos del kit ya lo hacen.",
+      "Si quieres, puedes aparecer en la sección \"Embajadoras\" de la página de Foliocrew (con tu nombre, foto, nicho y el enlace a tu sitio) activándolo en tu panel; está apagado hasta que lo prendas. También verás ahí las funciones nuevas que puedes probar antes que el resto, cuando las haya.",
       "En el pie de tu sitio público aparece la insignia \"Foliocrew Ambassador\" con tu enlace; la puedes ocultar desde el mismo panel.",
     ],
   },
@@ -767,6 +768,7 @@ const guiaEn: ManualBlock[] = [
       "There you'll find your link (and your code), how many people signed up and how many pay, and a kit with texts ready to copy. Anyone who opens your link can create an account without an invite code. You never see the names or emails of who signs up. For each person who signs up with your link, pays their first month and still has an active account 30 days later, you earn 1 free month (you get an email and it's added to your plan).",
       "Since you earn free months for inviting people, you have to say you're an ambassador and that it's an ad (#ad or #publicidad) at the start of the text. The kit texts already do.",
       "A \"Foliocrew Ambassador\" badge with your link shows in your public site's footer; you can hide it from the same panel.",
+      "If you want, you can appear in the \"Ambassadors\" section of the Foliocrew page (with your name, photo, niche and a link to your site) by turning it on in your panel; it's off until you turn it on. You'll also see there the new features you can try before everyone else, when there are any.",
     ],
   },
   {

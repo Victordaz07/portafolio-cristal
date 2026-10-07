@@ -6,7 +6,7 @@ import { sendWelcomeEmail } from "@/lib/account-emails";
 import { clientIp, tooManyAttempts } from "@/lib/rate-limit";
 import { getT } from "@/lib/admin-lang-server";
 import { validationMessage } from "@/lib/admin-lang";
-import { incomingReferral, recordReferral } from "@/lib/ambassadors-server";
+import { incomingMeritReferral, incomingReferral, recordReferral } from "@/lib/ambassadors-server";
 import { REF_COOKIE } from "@/lib/ambassadors";
 
 export const dynamic = "force-dynamic";
@@ -49,13 +49,16 @@ export async function POST(request: Request) {
   }
 
   const { user } = await createCreatorAccount({ name, slug, email, password, language: lang });
+  // Enlace de una embajadora: invitación + referido. Enlace de una cuenta con mérito (G5): solo referido (no abre el registro).
+  const merit = referral ? null : await incomingMeritReferral(ref);
   if (referral) await recordReferral(referral.referrerId, user.creatorId);
+  else if (merit) await recordReferral(merit.referrerId, user.creatorId);
   await sendWelcomeEmail(user.id).catch((error) => console.error("No se pudo enviar la bienvenida", error));
   // Si se anotó en la lista de espera, queda marcada como cuenta creada.
   await prismaRoot.waitlistEntry
     .updateMany({ where: { email: email.toLowerCase() }, data: { status: "joined" } })
     .catch(() => {});
   const response = await withSession(NextResponse.json({ ok: true }, { status: 201 }), user);
-  if (referral) response.cookies.delete(REF_COOKIE);
+  if (referral || merit) response.cookies.delete(REF_COOKIE);
   return response;
 }

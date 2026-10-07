@@ -2,12 +2,13 @@ import { randomBytes } from "node:crypto";
 import { prismaRoot } from "./prisma-root";
 import { logPlatformAction } from "./platform-admin";
 import { cookies } from "next/headers";
-import { AMBASSADOR, REF_COOKIE, codeFromBytes, normalizeReferralCode, rewardDecision } from "./ambassadors";
+import { AMBASSADOR, REF_COOKIE, codeFromBytes, meritEnabled, meritProgress, normalizeReferralCode, rewardDecision, shouldPromote } from "./ambassadors";
 import { billingState, extendPaidUntil } from "./billing";
 import { sendEmail } from "./email";
 import { ambassadorRewardEmail } from "./email-templates";
 import { asMailLang } from "./email-lang";
-import { platformOrigin } from "./site-url";
+import { creatorSiteUrl, platformOrigin } from "./site-url";
+import { noticeEmail } from "./email-templates";
 
 /** Un código nuevo que no usa nadie todavía (casi siempre sale a la primera: son ~10^11 combinaciones). */
 async function freshReferralCode() {
@@ -47,6 +48,28 @@ export async function ambassadorByCode(raw: string | null | undefined) {
   if (!code) return null;
   const owner = await prismaRoot.creator.findFirst({ where: { referralCode: code, ambassador: true, status: "active" }, select: { id: true } });
   return owner ? { code, referrerId: owner.id } : null;
+}
+
+/**
+ * Enlace de una cuenta que todavía NO es embajadora (mérito, G5): solo cuenta como atribución, nunca como invitación
+ * al registro. Devuelve null si el mérito no está prendido, el código no existe o ya es de una embajadora.
+ */
+export async function incomingMeritReferral(fromUrl?: string | null) {
+  if (!meritEnabled()) return null;
+  const code = normalizeReferralCode(fromUrl) ?? normalizeReferralCode((await cookies()).get(REF_COOKIE)?.value);
+  if (!code) return null;
+  const owner = await prismaRoot.creator.findFirst({ where: { referralCode: code, ambassador: false, status: "active" }, select: { id: true } });
+  return owner ? { code, referrerId: owner.id } : null;
+}
+
+/** El código de una cuenta (lo crea la primera vez que lo necesita; solo para el mérito). */
+export async function ensureReferralCode(creatorId: string) {
+  const creator = await prismaRoot.creator.findUnique({ where: { id: creatorId }, select: { referralCode: true } });
+  if (!creator) return null;
+  if (creator.referralCode) return creator.referralCode;
+  const code = await freshReferralCode();
+  const result = await prismaRoot.creator.updateMany({ where: { id: creatorId, referralCode: null }, data: { referralCode: code } });
+  return result.count ? code : (await prismaRoot.creator.findUnique({ where: { id: creatorId }, select: { referralCode: true } }))?.referralCode ?? null;
 }
 
 /** El enlace con el que llega quien se está registrando: primero el de la dirección (?ref=), si no el de la cookie. */
@@ -91,7 +114,10 @@ export async function markReferralPaid(creatorId: string, amountCents: number, n
     if (amountCents <= 0) return;
     const referred = await prismaRoot.creator.findUnique({ where: { id: creatorId }, select: { comp: true, ambassador: true } });
     if (!referred || referred.comp || referred.ambassador) return;
-    await prismaRoot.referral.updateMany({ where: { referredId: creatorId, status: "signed_up" }, data: { status: "paid", paidAt: now } });
+    const updated = await prismaRoot.referral.findFirst({ where: { referredId: creatorId, status: "signed_up" }, select: { id: true, referrerId: true } });
+    if (!updated) return;
+    const result = await prismaRoot.referral.updateMany({ where: { id: updated.id, status: "signed_up" }, data: { status: "paid", paidAt: now } });
+    if (result.count) await promoteByMerit(updated.referrerId, now);
   } catch (error) {
     console.error("No se pudo marcar el referido como pagado", error);
   }
@@ -158,4 +184,86 @@ async function notifyAmbassadorReward(referrerId: string) {
   const origin = await platformOrigin();
   const mail = ambassadorRewardEmail({ lang: asMailLang(owner.language), origin, name: owner.name, months: AMBASSADOR.rewardMonths, panelUrl: `${origin}/admin/embajadora` });
   await sendEmail({ to: owner.email, ...mail });
+}
+
+/**
+ * Mérito automático (G5): cuando una cuenta que aún no es embajadora llega a AMBASSADOR.meritThreshold referidos que
+ * ya pagaron, sube sola al nivel (fuente «merit»). Solo si el dueño prendió AMBASSADOR_MERIT_ENABLED=1. Nunca lanza.
+ * Las recompensas que estaban en espera ("hold") las entrega el cron diario normal al ser ya embajadora.
+ */
+export async function promoteByMerit(referrerId: string, now = new Date()) {
+  try {
+    if (!meritEnabled()) return false;
+    const creator = await prismaRoot.creator.findUnique({ where: { id: referrerId }, select: { ambassador: true, status: true, ambassadorSince: true, referralCode: true } });
+    if (!creator) return false;
+    const paidReferrals = await prismaRoot.referral.count({ where: { referrerId, status: { in: ["paid", "rewarded"] } } });
+    if (!shouldPromote({ enabled: true, ambassador: creator.ambassador, active: creator.status === "active", paidReferrals })) return false;
+    const result = await prismaRoot.creator.updateMany({
+      where: { id: referrerId, ambassador: false },
+      data: { ambassador: true, ambassadorSource: "merit", ambassadorSince: creator.ambassadorSince ?? now, referralCode: creator.referralCode ?? (await freshReferralCode()) },
+    });
+    if (!result.count) return false;
+    await logPlatformAction("sistema", "ambassador-merit", referrerId, `${paidReferrals} referidos que pagaron`);
+    await notifyMerit(referrerId).catch((error) => console.error("No se pudo avisar del mérito", error));
+    return true;
+  } catch (error) {
+    console.error("No se pudo evaluar el mérito de embajadora", error);
+    return false;
+  }
+}
+
+async function notifyMerit(creatorId: string) {
+  const owner = await prismaRoot.adminUser.findFirst({ where: { creatorId, role: "owner" }, orderBy: { createdAt: "asc" }, select: { email: true, name: true, language: true } });
+  if (!owner) return;
+  const lang = asMailLang(owner.language);
+  const en = lang === "en";
+  const origin = await platformOrigin();
+  const mail = noticeEmail({
+    lang,
+    origin,
+    name: owner.name,
+    subject: en ? "You're now a Foliocrew ambassador 💜" : "¡Ya eres embajadora de Foliocrew! 💜",
+    title: en ? "You earned the Ambassador tier" : "Te ganaste el nivel Embajadora",
+    lines: en
+      ? [`${AMBASSADOR.meritThreshold} people you invited are now paying members. Thank you for spreading the word!`, "From now on you have Folio Pro with nothing to pay, a badge for your site, and you earn free months for every person you invite who pays."]
+      : [`${AMBASSADOR.meritThreshold} personas que invitaste ya pagan su plan. ¡Gracias por correr la voz!`, "Desde hoy tienes Folio Pro sin pagar, una insignia para tu sitio y ganas meses gratis por cada persona que invites y pague."],
+    button: { label: en ? "Open my ambassador panel" : "Abrir mi panel de embajadora", url: `${origin}/admin/embajadora` },
+  });
+  await sendEmail({ to: owner.email, ...mail });
+}
+
+/** Progreso de una cuenta hacia el nivel (referidos que ya pagaron). */
+export async function meritFor(creatorId: string) {
+  const paid = await prismaRoot.referral.count({ where: { referrerId: creatorId, status: { in: ["paid", "rewarded"] } } });
+  return meritProgress(paid);
+}
+
+export interface PublicAmbassador {
+  slug: string;
+  name: string;
+  photoUrl: string | null;
+  niche: string | null;
+  siteUrl: string;
+}
+
+/**
+ * Las embajadoras que eligieron aparecer en la página de Foliocrew: solo nombre, foto, nicho y enlace a su sitio
+ * (lo mismo que ya es público). Cuenta activa, con sitio publicado y con la opción prendida.
+ */
+export async function publicAmbassadors(limit = 12): Promise<PublicAmbassador[]> {
+  const rows = await prismaRoot.creator.findMany({
+    where: { ambassador: true, ambassadorPublic: true, status: "active", hero: { isNot: null } },
+    orderBy: { ambassadorSince: "asc" },
+    take: limit,
+    select: { slug: true, name: true, customDomain: true, customDomainVerifiedAt: true, hero: { select: { name: true, photoUrl: true, niche: true } } },
+  });
+  return Promise.all(
+    rows.map(async (r) => ({
+      slug: r.slug,
+      name: r.hero?.name?.trim() || r.name,
+      photoUrl: r.hero?.photoUrl ?? null,
+      niche: r.hero?.niche ?? null,
+      siteUrl: await creatorSiteUrl({ slug: r.slug, customDomain: r.customDomain, customDomainVerifiedAt: r.customDomainVerifiedAt }),
+    }))
+  );
 }

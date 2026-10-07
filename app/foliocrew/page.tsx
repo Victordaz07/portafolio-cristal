@@ -8,7 +8,7 @@ import { getT } from "@/lib/admin-lang-server";
 import type { AdminLang } from "@/lib/admin-lang";
 import { AdminLangProvider } from "@/components/admin/AdminLang";
 import LangSwitch from "@/components/admin/LangSwitch";
-import { incomingReferral } from "@/lib/ambassadors-server";
+import { incomingReferral, publicAmbassadors } from "@/lib/ambassadors-server";
 
 const outfit = localFont({ src: "../fonts/outfit-normal-300-700.woff2", weight: "300 700", style: "normal", variable: "--font-outfit", display: "swap" });
 
@@ -153,7 +153,7 @@ export default async function FoliocrewHome({
   searchParams: Promise<{ utm_source?: string; utm_medium?: string; utm_campaign?: string; ref?: string }>;
 }) {
   const sp = await searchParams;
-  const referral = await incomingReferral(sp.ref);
+  const [referral, ambassadors] = await Promise.all([incomingReferral(sp.ref), publicAmbassadors()]);
   const utm: Utm = { utmSource: sp.utm_source, utmMedium: sp.utm_medium, utmCampaign: sp.utm_campaign };
   const prices = showPrices();
   const { t, lang } = await getT();
@@ -378,6 +378,33 @@ export default async function FoliocrewHome({
           </div>
         </div>
       </section>
+
+      {/* Embajadoras: solo quienes eligieron aparecer (nombre, foto, nicho y enlace a su sitio) */}
+      {ambassadors.length > 0 && (
+        <section id="embajadoras" className="scroll-mt-20 bg-white">
+          <div className="mx-auto max-w-6xl px-sp-5 py-sp-6 md:py-20">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-[#7F207B]">{t("Embajadoras 💜", "Ambassadors 💜")}</p>
+            <h2 className="mt-sp-3 font-fraunces text-4xl font-semibold">{t("Creadoras que ya usan Foliocrew", "Creators already using Foliocrew")}</h2>
+            <p className="mt-sp-2 max-w-2xl text-[#251023]/70">{t("Ellas hablan de Foliocrew porque lo usan todos los días. Mira sus sitios.", "They talk about Foliocrew because they use it every day. Check out their sites.")}</p>
+            <ul className="mt-sp-5 grid gap-sp-4 sm:grid-cols-2 lg:grid-cols-4">
+              {ambassadors.map((a) => (
+                <li key={a.slug}>
+                  <a href={a.siteUrl} target="_blank" rel="noopener" className="flex h-full flex-col items-center gap-sp-2 rounded-[20px] border border-[#251023]/10 p-sp-4 text-center transition hover:border-[#A866BE]">
+                    {a.photoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img loading="lazy" decoding="async" src={a.photoUrl} alt="" className="h-20 w-20 rounded-full object-cover" />
+                    ) : (
+                      <span aria-hidden className="flex h-20 w-20 items-center justify-center rounded-full bg-[#7F207B]/10 font-fraunces text-3xl text-[#7F207B]">{a.name.charAt(0)}</span>
+                    )}
+                    <span className="font-fraunces text-lg font-semibold">{a.name}</span>
+                    {a.niche && <span className="text-xs text-[#251023]/60">{a.niche}</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {/* Preguntas */}
       <section id="preguntas" className="mx-auto max-w-3xl scroll-mt-20 px-sp-5 py-sp-6 md:py-20">

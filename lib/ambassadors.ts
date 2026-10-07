@@ -73,3 +73,19 @@ export function rewardDecision(input: {
   if (!input.referrerAmbassador || !input.referrerActive) return "hold";
   return "reward";
 }
+
+// ─── Mérito automático (G5) ───
+
+/** El mérito automático se prende cuando el dueño lo decide (hoy es solo por invitación). */
+export const meritEnabled = () => process.env.AMBASSADOR_MERIT_ENABLED === "1";
+
+/** Avance hacia el nivel Embajadora: `count` referidos que ya pagaron de los `needed`. */
+export function meritProgress(count: number, needed: number = AMBASSADOR.meritThreshold) {
+  const safe = Math.max(0, Math.floor(count));
+  return { count: safe, needed, left: Math.max(0, needed - safe), reached: safe >= needed, percent: Math.min(100, Math.round((safe / needed) * 100)) };
+}
+
+/** ¿Esta cuenta debe subir de nivel ahora? Solo si el mérito está prendido, aún no es embajadora y su cuenta está activa. */
+export function shouldPromote(input: { enabled: boolean; ambassador: boolean; active: boolean; paidReferrals: number }) {
+  return input.enabled && !input.ambassador && input.active && meritProgress(input.paidReferrals).reached;
+}

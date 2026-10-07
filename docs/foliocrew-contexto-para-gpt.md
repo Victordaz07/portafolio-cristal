@@ -165,6 +165,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Reciclar con IA:** pegas la transcripción de un video largo (o eliges una publicación que funcionó) y salen ganchos, textos para cada red y un carrusel, que puedes copiar o guardar en tu banco de contenido.
 - **Avisos en el celular:** instalas Foliocrew como app y te llegan avisos cortos cuando te pagan, vence una entrega, te comentan en Instagram o te responden en la comunidad.
 - **Tienda:** vendes productos digitales y asesorías, y recomiendas afiliados, en tu página /tienda y en tu Link en bio, sin comisión de Foliocrew: tus clientes pagan en tu propio enlace de pago.
+- **Círculos y sesiones en vivo:** grupos pequeños de la comunidad por nicho, red o nivel (con moderadoras) y charlas o mentorías en grupo con cupo; el enlace de la videollamada solo lo recibe quien reserva. Algunos son exclusivos del plan Crew.
 - **Bandeja:** en un solo lugar llegan los mensajes del formulario de tu sitio y los **comentarios de Instagram** (si conectaste tu cuenta).
   - Cada mensaje marca si está pendiente o respondido, y etiqueta como "Cliente" a las marcas de tu CRM.
   - Te avisa si un mensaje lleva más de 24 h sin respuesta.

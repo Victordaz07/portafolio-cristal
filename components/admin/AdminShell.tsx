@@ -83,6 +83,8 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
     items: [
       { href: "/admin/comunidad", label: t("Muro", "Wall"), exact: true, badgeKey: "community" },
       { href: "/admin/comunidad/creadores", label: t("Buscar creadores", "Find creators") },
+      { href: "/admin/comunidad/circulos", label: t("Círculos", "Circles") },
+      { href: "/admin/comunidad/sesiones", label: t("Sesiones en vivo", "Live sessions") },
       { href: "/admin/comunidad/mensajes", label: t("Mensajes", "Messages"), badgeKey: "messages" },
       { href: "/admin/comunidad/conexiones", label: t("Conexiones", "Connections"), badgeKey: "connections" },
       { href: "/admin/comunidad/perfil", label: t("Mi perfil", "My profile") },
@@ -113,6 +115,7 @@ function departmentItems(team: { owner: boolean; roles: string[] } | null, t: T)
   if (has("data")) items.push({ href: "/admin/equipo/datos", label: t("Recuperación de datos", "Data recovery") });
   if (has("community")) items.push({ href: "/admin/equipo/comunidad", label: t("Comunidad", "Community"), badgeKey: "reports" });
   if (has("community")) items.push({ href: "/admin/equipo/resenas-marcas", label: t("Reseñas de marcas", "Brand reviews") });
+  if (has("community")) items.push({ href: "/admin/equipo/circulos", label: t("Círculos y sesiones", "Circles & sessions") });
   if (team.owner) items.push({ href: "/admin/equipo/personas", label: t("Personas del equipo", "Team members") });
   return items;
 }

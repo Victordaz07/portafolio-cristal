@@ -16,7 +16,7 @@ export async function exportCreatorData(creatorId: string, { forTeam = false } =
   const [
     users, hero, siteSettings, stats, contentCards, brands, brandEvents, reviews, services, testimonials,
     packages, faqItems, contactMessages, socialAccounts, goals, actionItems, logEntries, scheduledPosts,
-    followerSnapshots, payments, bioLinks, bioLinkGroups, supportTickets, ideas, dataRequests, incomeEntries, expenses, commentTriggers, brandReviews, contentBank, restPeriods, products,
+    followerSnapshots, payments, bioLinks, bioLinkGroups, supportTickets, ideas, dataRequests, incomeEntries, expenses, commentTriggers, brandReviews, contentBank, restPeriods, products, circleMemberships, circleMessages, sessionRsvps,
   ] = await Promise.all([
     prismaRoot.adminUser.findMany({ where, select: { id: true, name: true, email: true, role: true, emailVerifiedAt: true, lastLoginAt: true, createdAt: true } }),
     prismaRoot.hero.findUnique({ where }),
@@ -53,6 +53,9 @@ export async function exportCreatorData(creatorId: string, { forTeam = false } =
     prismaRoot.contentBankItem.findMany({ where }),
     prismaRoot.restPeriod.findMany({ where }),
     prismaRoot.product.findMany({ where }),
+    prismaRoot.circleMember.findMany({ where, include: { circle: { select: { slug: true, name: true } } } }),
+    prismaRoot.circleMessage.findMany({ where, select: { id: true, circleId: true, body: true, hiddenAt: true, createdAt: true } }),
+    prismaRoot.sessionRsvp.findMany({ where, include: { session: { select: { title: true, startsAt: true } } } }),
   ]);
 
   return {
@@ -72,6 +75,7 @@ export async function exportCreatorData(creatorId: string, { forTeam = false } =
     brandReviews,
     wellbeing: { contentBank, restPeriods },
     shop: { products },
+    circles: { circleMemberships, circleMessages, sessionRsvps },
     support: { supportTickets, ideas, dataRequests },
   };
 }

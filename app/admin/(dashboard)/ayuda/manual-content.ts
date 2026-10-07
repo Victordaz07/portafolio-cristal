@@ -488,6 +488,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Reportes a marcas",
+    paragraphs: [
+      "Cuando marcas un trato como \"Completado\" en Marcas, Foliocrew arma solo un borrador del reporte de campaña con las publicaciones de esa marca (las del Feed vinculadas a ella y los entregables ya publicados con su enlace), sus resultados y cómo se comparan con tu promedio habitual. También puedes crearlo a mano desde la marca (\"Crear reporte de campaña\") y verlos todos en Negocio → Reportes a marcas.",
+      "Antes de enviarlo lo revisas: cambia el título y el idioma (español o inglés), escribe un mensaje para la marca, deja fuera las publicaciones que no quieras y desmarca las métricas que no quieras mostrar (vistas, me gusta, comparación, comentarios destacados…). Lo que desmarques no aparece en ninguna parte de la página. A la derecha ves una vista previa en vivo y \"↻ Actualizar números\" vuelve a leer tus números actuales sin perder lo que dejaste fuera.",
+      "Toca \"Enviar a la marca\": le llega un correo con un enlace a una página pública (sin iniciar sesión, que no aparece en Google). Te avisamos cuando la abre. La página termina con un botón \"¿Repetimos?\" que lleva a tus paquetes, y la marca puede guardarla como PDF.",
+    ],
+  },
+  {
     title: "Facturas",
     paragraphs: [
       "Primero completa tus datos para facturar (abajo en Facturas): el nombre que va en la factura, tu ciudad, cómo te pagan (PayPal, Zelle…), el plazo para pagar y el % de anticipo. Nunca pongas tu número de seguro social ni números de cuenta completos.",
@@ -688,6 +696,14 @@ const guiaEn: ManualBlock[] = [
       "There you'll find your link (and your code), how many people signed up and how many pay, and a kit with texts ready to copy. Anyone who opens your link can create an account without an invite code. You never see the names or emails of who signs up. For each person who signs up with your link, pays their first month and still has an active account 30 days later, you earn 1 free month (you get an email and it's added to your plan).",
       "Since you earn free months for inviting people, you have to say you're an ambassador and that it's an ad (#ad or #publicidad) at the start of the text. The kit texts already do.",
       "A \"Foliocrew Ambassador\" badge with your link shows in your public site's footer; you can hide it from the same panel.",
+    ],
+  },
+  {
+    title: "Brand reports",
+    paragraphs: [
+      "When you mark a deal as \"Completed\" in Brands, Foliocrew automatically puts together a draft campaign report with that brand's posts (the Feed posts linked to it and the deliverables already published with their link), their results and how they compare with your usual average. You can also create one by hand from the brand (\"Create campaign report\") and see them all in Business → Brand reports.",
+      "You review it before sending: change the title and language (Spanish or English), write a message for the brand, leave out the posts you don't want and untick the metrics you don't want to show (views, likes, comparison, top comments…). Whatever you untick doesn't appear anywhere on the page. On the right you see a live preview, and \"↻ Update numbers\" re-reads your current numbers without losing what you left out.",
+      "Tap \"Send to the brand\": they get an email with a link to a public page (no sign-in, and it doesn't show up on Google). We let you know when they open it. The page ends with a \"Shall we do it again?\" button that links to your packages, and the brand can save it as a PDF.",
     ],
   },
   {

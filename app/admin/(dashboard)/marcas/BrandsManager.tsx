@@ -28,6 +28,7 @@ import BrandForm, { emptyBrandForm, toBrandPayload, type BrandFormValues } from 
 import DeliverablesSection from "./DeliverablesSection";
 import PitchWriter from "./PitchWriter";
 import PitchSection from "./PitchSection";
+import ReportSection from "./ReportSection";
 import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
 import { INVOICE_STATUS_META, displayStatus, formatCents } from "@/lib/invoices";
 import { CONTRACT_STATUS_META, type ContractStatus } from "@/lib/contracts";
@@ -598,6 +599,8 @@ function BrandDetail({
       )}
 
       <PitchSection brand={brand} onRequest={onRequest} onSaved={onPitchSaved} />
+
+      {hasDeal && <ReportSection brandId={brand.id} reports={brand.campaignReports} completed={brand.dealStatus === "completed"} />}
 
       {hasDeal && <DeliverablesSection brandId={brand.id} deliverables={brand.deliverables} onRequest={onRequest} />}
 

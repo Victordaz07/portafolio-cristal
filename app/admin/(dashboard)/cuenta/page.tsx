@@ -5,6 +5,8 @@ import { sessionCreatorSite } from "@/lib/site-url";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountForm from "./AccountForm";
+import TwoFactorCard from "./TwoFactorCard";
+import { twoFactorAvailable } from "@/lib/two-factor";
 import CreatorKindPicker from "./CreatorKindPicker";
 import { creatorKind } from "@/lib/creator-kind";
 import { emailConfigured } from "@/lib/email";
@@ -27,7 +29,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   const session = await getSession();
   const [user, creator] = session
     ? await Promise.all([
-        prisma.adminUser.findUnique({ where: { id: session.userId }, select: { name: true, email: true, emailVerifiedAt: true } }),
+        prisma.adminUser.findUnique({ where: { id: session.userId }, select: { name: true, email: true, emailVerifiedAt: true, totpEnabledAt: true, totpRecoveryCodes: true } }),
         prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { name: true, slug: true, customDomain: true, shareInsights: true, shareInsightsAt: true, creatorKind: true } }),
       ])
     : [null, null];
@@ -171,6 +173,12 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
           </ul>
         )}
       </Card>
+      <TwoFactorCard
+        enabledAt={user?.totpEnabledAt ? user.totpEnabledAt.toLocaleDateString(dateLocale(lang), { day: "numeric", month: "long", year: "numeric" }) : null}
+        recoveryLeft={user?.totpRecoveryCodes.length ?? 0}
+        available={twoFactorAvailable()}
+        impersonating={Boolean(session?.actorId)}
+      />
       <AccountForm
         initialName={user?.name ?? creator?.name ?? ""}
         email={user?.email ?? ""}

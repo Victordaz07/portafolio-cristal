@@ -5,6 +5,7 @@ import { mailLangFor } from "./email-lang";
 import { platformOrigin } from "./site-url";
 import { teamEmailsWith } from "./team";
 import { LIMITS, reportReasonLabel } from "./community";
+import { sendPush } from "./push-server";
 
 // Moderación de la comunidad: qué se reporta, cuándo avisar al equipo, ocultar solo y avisar a la persona.
 // Los correos nunca rompen la acción: si fallan, solo se registra el error.
@@ -136,6 +137,23 @@ export async function notifyAuthor(creatorId: string, kind: "hidden" | "muted", 
  * Respeta su preferencia (emailNotify) y manda máximo 1 correo por publicación cada hora.
  */
 export async function notifyCommunity(kind: "reply" | "best", p: { toCreatorId: string; postId: string; postTitle: string; fromName: string; excerpt: string }) {
+  // Aviso en el celular (E5): se manda aunque la persona haya apagado los correos (tiene sus propios temas).
+  try {
+    await sendPush(
+      p.toCreatorId,
+      "community",
+      (l) => ({
+        title: kind === "reply" ? (l === "en" ? "Someone replied to you" : "Te respondieron") : l === "en" ? "Best answer! 🎉" : "¡Mejor respuesta! 🎉",
+        body: kind === "reply" ? (l === "en" ? `${p.fromName} replied: “${p.postTitle}”` : `${p.fromName} respondió: «${p.postTitle}»`) : l === "en" ? `${p.fromName} chose your reply in “${p.postTitle}”` : `${p.fromName} eligió tu respuesta en «${p.postTitle}»`,
+        url: `/admin/comunidad/${p.postId}`,
+        tag: `community-${p.postId}`,
+      }),
+      { key: `${kind}:${p.postId}` }
+    );
+  } catch (error) {
+    console.error("No se pudo mandar el aviso en el celular", error);
+  }
+
   try {
     const { tooManyAttempts } = await import("./rate-limit");
     if (tooManyAttempts(`community-mail:${kind}:${p.postId}:${p.toCreatorId}`, 1, 60 * 60_000)) return;

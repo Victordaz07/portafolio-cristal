@@ -5,6 +5,8 @@ import { appendFile } from "node:fs/promises";
 // - EMAIL_FROM: remitente, p. ej. "Foliocrew <hola@foliocrew.pro>" (el dominio tiene que estar
 //   verificado en Resend). Sin él se usa onboarding@resend.dev, que solo entrega a tu propio correo.
 // - EMAIL_REPLY_TO: adónde llegan las respuestas (opcional).
+// - LEGAL_POSTAL_ADDRESS: dirección postal que sale al pie de cada correo (la exige CAN-SPAM en los
+//   correos comerciales; ver lib/email-templates.ts).
 // - EMAIL_OUTBOX_FILE (solo desarrollo): si no hay RESEND_API_KEY, guarda cada correo en ese archivo
 //   (una línea JSON por correo) para poder revisarlos en las pruebas.
 
@@ -14,6 +16,8 @@ export interface EmailMessage {
   html: string;
   text: string;
   replyTo?: string;
+  /** Cabeceras extra, p. ej. List-Unsubscribe en los correos de la lista de espera. */
+  headers?: Record<string, string>;
 }
 
 export type EmailResult = { sent: true; id: string } | { sent: false; reason: "not_configured" | "error"; error?: string };
@@ -50,6 +54,7 @@ export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
         html: message.html,
         text: message.text,
         reply_to: message.replyTo || process.env.EMAIL_REPLY_TO || undefined,
+        headers: message.headers,
       }),
     });
     const body = (await response.json().catch(() => ({}))) as { id?: string; message?: string };

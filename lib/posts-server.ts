@@ -15,6 +15,8 @@ export const postUpdateSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   time: z.string().regex(/^\d{2}:\d{2}$/),
   status: z.enum(["draft", "scheduled", "published"]),
+  /** Publicar sola a la hora programada (solo si todas las redes elegidas lo permiten). */
+  autoPublish: z.boolean().optional(),
 });
 
 /** Para crear: mismos campos, con valores por defecto. */
@@ -27,11 +29,12 @@ export type PostInput = z.infer<typeof postSchema>;
 
 /** Entrada validada → datos de Prisma (fecha/hora local → instante UTC). */
 export function toPostData(input: Partial<PostInput>) {
-  const { date, time, mediaUrl, status, ...rest } = input;
+  const { date, time, mediaUrl, status, autoPublish, ...rest } = input;
   return {
     ...rest,
     ...(mediaUrl !== undefined && { mediaUrl: mediaUrl || null }),
     ...(date && time && { scheduledFor: zonedToUtc(date, time, appTimeZone()) }),
     ...(status !== undefined && { status, publishedAt: status === "published" ? new Date() : null }),
+    ...(autoPublish !== undefined && { autoPublish }),
   };
 }

@@ -4,6 +4,7 @@ import { brandCrmInclude, brandFieldsSchema, toBrandData, autoEventNotes } from 
 import { cleanupBlobUrls } from "@/lib/blob-cleanup";
 import { getT } from "@/lib/admin-lang-server";
 import { currentCreatorId } from "@/lib/tenant";
+import { createReportDraft } from "@/lib/campaign-report-server";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     await cleanupBlobUrls([before.logoUrl]);
   }
 
+  // Al completar un trato se arma solo el borrador del reporte de campaña (C3); la creadora lo revisa antes de enviarlo.
+  if (parsed.data.dealStatus === "completed" && before.dealStatus !== "completed") {
+    try {
+      const draft = await createReportDraft(id, lang);
+      if (draft?.created) {
+        await prisma.brandEvent.create({ data: { brandId: id, note: lang === "en" ? "Campaign report ready to review" : "Reporte de campaña listo para revisar" } });
+        return NextResponse.json(await prisma.brand.findUnique({ where: { id }, include: brandCrmInclude }));
+      }
+    } catch (error) {
+      console.error("No se pudo armar el reporte de campaña", error);
+    }
+  }
   return NextResponse.json(brand);
 }
 

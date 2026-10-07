@@ -124,7 +124,7 @@ const glosarioEs: GlossaryTerm[] = [
   { term: "Marcas", def: "El carrusel de logos de marcas con las que has colaborado." },
   { term: "Reseñas destacadas", def: "Reseñas de producto (con foto, categoría, título y calificación en estrellas)." },
   { term: "Cómo trabajo", def: "Los servicios que ofreces, cada uno con un ícono." },
-  { term: "Paquetes", def: "Los paquetes de colaboración (nombre + lista de qué incluye), sin precios." },
+  { term: "Paquetes", def: "Los paquetes de colaboración (nombre + lista de qué incluye), con precio \"desde\" y solicitudes opcionales." },
   { term: "Testimonios", def: "Citas de marcas hablando bien de trabajar contigo." },
   { term: "FAQ", def: "Preguntas frecuentes en formato acordeón." },
   { term: "Contacto", def: "Tu email, WhatsApp, redes sociales y los textos del pie de página del sitio." },
@@ -152,7 +152,7 @@ const glosarioEn: GlossaryTerm[] = [
   { term: "Brands", def: "The carousel of logos from brands you've collaborated with." },
   { term: "Featured reviews", def: "Product reviews (with photo, category, title and a star rating)." },
   { term: "How I work", def: "The services you offer, each with an icon." },
-  { term: "Packages", def: "The collaboration packages (name + list of what's included), no prices." },
+  { term: "Packages", def: "The collaboration packages (name + list of what's included), with an optional \"from\" price and requests." },
   { term: "Testimonials", def: "Quotes from brands speaking well of working with you." },
   { term: "FAQ", def: "Frequently asked questions in an accordion format." },
   { term: "Contact", def: "Your email, WhatsApp, socials and the site footer texts." },
@@ -433,7 +433,11 @@ const guiaEs: ManualBlock[] = [
   },
   {
     title: "Paquetes",
-    paragraphs: ["Los paquetes de colaboración: emoji, nombre y una lista de qué incluye (un ítem por línea), sin precios."],
+    paragraphs: [
+      "Los paquetes de colaboración: emoji, nombre y una lista de qué incluye (un ítem por línea).",
+      "Cada paquete puede tener un precio \"desde\" (en dólares) y la opción \"Permitir solicitudes\". Con las solicitudes activadas, tu sitio público muestra el precio y un botón \"Solicitar este paquete\": la marca llena su nombre, su correo, fechas, presupuesto aproximado y qué necesita.",
+      "Cuando llega una solicitud te avisamos por correo, aparece en tu Bandeja y la marca queda guardada en Marcas como \"Negociando\" (oculta de tu sitio público), con una próxima acción \"Responder la solicitud del paquete\" en 2 días. Desde ahí le mandas el acuerdo y la factura de anticipo. Los paquetes que ya tenías empiezan con las solicitudes apagadas: enciéndelas cuando quieras.",
+    ],
   },
   {
     title: "Testimonios",
@@ -480,7 +484,87 @@ const guiaEs: ManualBlock[] = [
       "Es un nivel por invitación (no se compra) para quien habla bien de Foliocrew y trae gente. Si tu cuenta es embajadora, ves \"Embajadora 💜\" en el menú de Ayuda y tienes Folio Pro sin pagar y sin vencimiento.",
       "Ahí está tu enlace (y tu código), cuántas personas se registraron y cuántas pagan, y un kit con textos listos para copiar. Quien abre tu enlace puede crear su cuenta sin código de invitación. Nunca ves nombres ni correos de quien se registra. Por cada persona que se registra con tu enlace, paga su primer mes y sigue con su cuenta activa 30 días después, ganas 1 mes gratis (te llega un correo y se suma a tu plan).",
       "Como ganas meses gratis por invitar, tienes que decir que eres embajadora y que es publicidad (#publicidad o #ad) al inicio del texto. Los textos del kit ya lo hacen.",
+      "Si quieres, puedes aparecer en la sección \"Embajadoras\" de la página de Foliocrew (con tu nombre, foto, nicho y el enlace a tu sitio) activándolo en tu panel; está apagado hasta que lo prendas. También verás ahí las funciones nuevas que puedes probar antes que el resto, cuando las haya.",
       "En el pie de tu sitio público aparece la insignia \"Foliocrew Ambassador\" con tu enlace; la puedes ocultar desde el mismo panel.",
+    ],
+  },
+  {
+    title: "Reportes a marcas",
+    paragraphs: [
+      "Cuando marcas un trato como \"Completado\" en Marcas, Foliocrew arma solo un borrador del reporte de campaña con las publicaciones de esa marca (las del Feed vinculadas a ella y los entregables ya publicados con su enlace), sus resultados y cómo se comparan con tu promedio habitual. También puedes crearlo a mano desde la marca (\"Crear reporte de campaña\") y verlos todos en Negocio → Reportes a marcas. En el reporte puedes marcar \"Mostrar como caso de éxito en mi media kit\": cuando ya lo enviaste, aparece en tu media kit público con las métricas que dejaste visibles.",
+      "Antes de enviarlo lo revisas: cambia el título y el idioma (español o inglés), escribe un mensaje para la marca, deja fuera las publicaciones que no quieras y desmarca las métricas que no quieras mostrar (vistas, me gusta, comparación, comentarios destacados…). Lo que desmarques no aparece en ninguna parte de la página. A la derecha ves una vista previa en vivo y \"↻ Actualizar números\" vuelve a leer tus números actuales sin perder lo que dejaste fuera.",
+      "Toca \"Enviar a la marca\": le llega un correo con un enlace a una página pública (sin iniciar sesión, que no aparece en Google). Te avisamos cuando la abre. La página termina con un botón \"¿Repetimos?\" que lleva a tus paquetes, y la marca puede guardarla como PDF.",
+    ],
+  },
+  {
+    title: "Reseñas de marcas",
+    paragraphs: [
+      "En Negocio → Reseñas de marcas ves qué cuentan otras creadoras de trabajar con una marca: si paga a tiempo, cuántos días tarda y cómo es el trato. Todo es anónimo y una marca solo aparece cuando tiene reseñas de al menos 3 creadoras distintas.",
+      "Para reseñar, necesitas tener el correo verificado y una cuenta con unos días de antigüedad, y la marca tiene que estar en Marcas con un trato activo o completado. Escribes si te pagó, cuántos días tardó y cómo fue el trato (1 a 5). El comentario es opcional: cuenta solo hechos, sin insultos ni acusaciones y sin correos, teléfonos ni enlaces. El equipo lo revisa antes de mostrarlo.",
+      "Puedes corregir o borrar tu reseña cuando quieras. Si eres una marca y quieres responder o corregir algo, hay un enlace «Escríbenos» en su tarjeta.",
+    ],
+  },
+  {
+    title: "Círculos y sesiones en vivo",
+    paragraphs: [
+      "En Comunidad → Círculos encuentras grupos más pequeños por nicho, red social o nivel. Te unes a los que te sirvan (hasta 20) y conversas solo con sus miembros. Cada círculo tiene moderadoras que pueden ocultar mensajes; sigue las reglas de la comunidad. Algunos círculos son exclusivos del plan Crew.",
+      "En Comunidad → Sesiones en vivo ves las charlas y mentorías en grupo con creadoras con experiencia. Reserva tu lugar: solo quien reserva recibe el enlace de la videollamada y puede añadirla a su calendario. Si ya no puedes ir, cancela tu lugar para que otra persona lo use.",
+      "Necesitas el correo verificado y haber aceptado las reglas de la comunidad para participar.",
+    ],
+  },
+  {
+    title: "Tienda",
+    paragraphs: [
+      "En Negocio → Tienda puedes vender productos digitales (plantillas, presets, guías), asesorías por llamada y recomendar productos de afiliado, sin comisión de Foliocrew. Tu tienda pública está en tusitio/tienda y aparece como \"Mi tienda\" en tu Link en bio cuando tienes productos activos.",
+      "Foliocrew no cobra ni procesa pagos: en cada producto pegas el enlace de pago de tu propio servicio (PayPal, Stripe, Gumroad, Calendly con pago…) que debe empezar con https://. Para un producto digital, usa un enlace que entregue el archivo solo después del pago.",
+      "Los enlaces de afiliado se muestran con el aviso \"puedo ganar una comisión\" y no necesitan precio. Ves cuántos clics tiene cada producto, y puedes ocultarlo o editarlo cuando quieras. Tú eres responsable del cobro, la entrega, los reembolsos y los impuestos de tus ventas.",
+    ],
+  },
+  {
+    title: "Avisos en el celular",
+    paragraphs: [
+      "Puedes instalar Foliocrew como una app en tu celular o computadora y recibir avisos cortos aunque no tengas el panel abierto: cuando te pagan, vence una entrega, te comentan en Instagram o te responden en la comunidad.",
+      "Entra a Ayuda → Avisos en el celular y toca \"Activar avisos\" en cada dispositivo donde los quieras; eliges qué temas recibir y puedes mandar un aviso de prueba. En iPhone, primero añade Foliocrew a la pantalla de inicio (Compartir → Añadir a pantalla de inicio) y actívalos desde la app instalada.",
+      "Los avisos no incluyen datos sensibles y los puedes apagar cuando quieras. Si no ves el botón, es porque Foliocrew todavía no tiene los avisos activos.",
+    ],
+  },
+  {
+    title: "Reciclar con IA",
+    paragraphs: [
+      "En Contenido → Reciclar con IA pegas la transcripción o el guion de un video largo (o eliges una publicación tuya que funcionó) y te preparamos 5 ganchos, un texto para Instagram, TikTok, YouTube y Facebook, y un carrusel. Eliges el tono y el idioma.",
+      "Cada versión se puede copiar o guardar en tu banco de contenido (Contenido → Bienestar) para programarla después. Revisa todo antes de publicar: la IA reformula tus ideas pero puede equivocarse, y si es para una marca tienes que añadir el aviso de publicidad. Cuenta como 1 sugerencia de IA de tu plan.",
+    ],
+  },
+  {
+    title: "Bienestar",
+    paragraphs: [
+      "En Contenido → Bienestar ves cuántas entregas tienes en las próximas 4 semanas y te avisamos si en 7 días seguidos pasan de tu límite (tú lo eliges; empieza en 6). La alerta también sale en el Resumen.",
+      "Modo descanso: eliges desde qué día hasta qué día vas a descansar y tocas \"Ver qué se movería\". Si estás de acuerdo, \"Activar descanso\" mueve tus publicaciones programadas de esas fechas (y, si quieres, las fechas de entrega) hacia adelante tantos días como dura el descanso. Se puede deshacer; lo que ya cambiaste a mano no se toca.",
+      "Después puedes avisar a cada marca con entregas en ese periodo: te mostramos un texto que puedes editar y solo se envía cuando tú lo envías. Banco de contenido: guarda ideas o piezas listas para las semanas flojas y prográmalas en el calendario con un clic.",
+    ],
+  },
+  {
+    title: "Publicación automática",
+    paragraphs: [
+      "Cuando Instagram y Facebook aprueben el permiso de publicar, en Crear publicación aparece la casilla \"Publicar sola a la hora programada\". Funciona con Instagram y Facebook (TikTok y YouTube se publican a mano) y necesita una foto o un video del tipo correcto: foto para un post, video para un Reel.",
+      "Si la pieza es para una marca, no sale sola hasta que el texto tenga el aviso de publicidad (#publicidad). En el Calendario ves qué piezas se publican solas, el resultado por red y, si algo falla, el motivo. También puedes tocar \"Publicar ahora\".",
+      "Si no sale después de 3 intentos, apagamos la publicación automática de esa pieza y te avisamos por correo para que la corrijas o la publiques a mano.",
+    ],
+  },
+  {
+    title: "Comentario → DM",
+    paragraphs: [
+      "En Negocio → Comentario → DM eliges una publicación de Instagram, una palabra (por ejemplo LINK) y un mensaje. Cuando alguien comenta esa palabra, Foliocrew le manda tu mensaje por DM, una sola vez por persona. Puedes usar {nombre} para poner su usuario.",
+      "Solo le escribe a quien comentó, dentro de los 7 días siguientes, y como máximo 200 mensajes automáticos por día. Escribe mensajes que la persona espera (el enlace o la guía que pidió).",
+      "Esta función se activa cuando Instagram apruebe el permiso de mensajes de Foliocrew. Mientras tanto puedes dejar tus reglas listas; la página te dice si ya está activa.",
+    ],
+  },
+  {
+    title: "Mis ingresos",
+    paragraphs: [
+      "En Negocio → Mis ingresos ves cuánto ganaste y gastaste en el año, mes a mes, por fuente (marcas, afiliados, plataformas, productos) y por tipo de gasto. Las facturas que marcas como pagadas (en dólares) suman solas; lo demás lo anotas a mano con \"Anotar un ingreso\" y \"Anotar un gasto\" (puedes subir la foto del recibo).",
+      "Arriba ves cuánto conviene apartar para impuestos: el porcentaje que elijas (25 % al inicio) de tu ganancia, que es ingresos menos gastos. También te recuerda la próxima fecha de pago trimestral de impuestos estimados en EE. UU. (15 de enero, abril, junio y septiembre).",
+      "\"Descargar CSV para el contador\" baja una hoja con todos los ingresos y gastos del año. Es una ayuda para organizarte, no asesoría fiscal. No subas recibos con datos bancarios ni números de identificación.",
     ],
   },
   {
@@ -632,7 +716,11 @@ const guiaEn: ManualBlock[] = [
   },
   {
     title: "Packages",
-    paragraphs: ["The collaboration packages: emoji, name and a list of what's included (one item per line), no prices."],
+    paragraphs: [
+      "The collaboration packages: emoji, name and a list of what's included (one item per line).",
+      "Each package can have a \"from\" price (in dollars) and the \"Allow requests\" option. With requests on, your public site shows the price and a \"Request this package\" button: the brand fills in their name, email, dates, approximate budget and what they need.",
+      "When a request comes in we email you, it shows up in your Inbox and the brand is saved in Brands as \"Negotiating\" (hidden from your public site), with a next step \"Reply to the package request\" in 2 days. From there you send them the agreement and the deposit invoice. Packages you already had start with requests off: turn them on whenever you want.",
+    ],
   },
   {
     title: "Testimonials",
@@ -680,6 +768,86 @@ const guiaEn: ManualBlock[] = [
       "There you'll find your link (and your code), how many people signed up and how many pay, and a kit with texts ready to copy. Anyone who opens your link can create an account without an invite code. You never see the names or emails of who signs up. For each person who signs up with your link, pays their first month and still has an active account 30 days later, you earn 1 free month (you get an email and it's added to your plan).",
       "Since you earn free months for inviting people, you have to say you're an ambassador and that it's an ad (#ad or #publicidad) at the start of the text. The kit texts already do.",
       "A \"Foliocrew Ambassador\" badge with your link shows in your public site's footer; you can hide it from the same panel.",
+      "If you want, you can appear in the \"Ambassadors\" section of the Foliocrew page (with your name, photo, niche and a link to your site) by turning it on in your panel; it's off until you turn it on. You'll also see there the new features you can try before everyone else, when there are any.",
+    ],
+  },
+  {
+    title: "Brand reports",
+    paragraphs: [
+      "When you mark a deal as \"Completed\" in Brands, Foliocrew automatically puts together a draft campaign report with that brand's posts (the Feed posts linked to it and the deliverables already published with their link), their results and how they compare with your usual average. You can also create one by hand from the brand (\"Create campaign report\") and see them all in Business → Brand reports. In the report you can tick \"Show as a success story in my media kit\": once it has been sent, it appears in your public media kit with the metrics you left visible.",
+      "You review it before sending: change the title and language (Spanish or English), write a message for the brand, leave out the posts you don't want and untick the metrics you don't want to show (views, likes, comparison, top comments…). Whatever you untick doesn't appear anywhere on the page. On the right you see a live preview, and \"↻ Update numbers\" re-reads your current numbers without losing what you left out.",
+      "Tap \"Send to the brand\": they get an email with a link to a public page (no sign-in, and it doesn't show up on Google). We let you know when they open it. The page ends with a \"Shall we do it again?\" button that links to your packages, and the brand can save it as a PDF.",
+    ],
+  },
+  {
+    title: "Brand reviews",
+    paragraphs: [
+      "In Business → Brand reviews you see what other creators say about working with a brand: whether it pays on time, how many days it takes and what the deal is like. Everything is anonymous and a brand only shows up once it has reviews from at least 3 different creators.",
+      "To review, you need a verified email and an account that's a few days old, and the brand must be in Brands with an active or completed deal. You say whether they paid you, how many days it took and how the deal went (1 to 5). The comment is optional: stick to facts, no insults or accusations, and no emails, phone numbers or links. The team reviews it before it's shown.",
+      "You can fix or delete your review any time. If you're a brand and want to reply or correct something, there's a “Write to us” link on its card.",
+    ],
+  },
+  {
+    title: "Circles and live sessions",
+    paragraphs: [
+      "In Community → Circles you'll find smaller groups by niche, social network or level. You join the ones that help you (up to 20) and chat only with their members. Each circle has moderators who can hide messages; follow the community rules. Some circles are exclusive to the Crew plan.",
+      "In Community → Live sessions you see group talks and mentoring with experienced creators. Book your spot: only people who book get the call link and can add it to their calendar. If you can't make it, cancel your spot so someone else can use it.",
+      "You need a verified email and to have accepted the community rules to take part.",
+    ],
+  },
+  {
+    title: "Shop",
+    paragraphs: [
+      "In Business → Shop you can sell digital products (templates, presets, guides) and consulting calls, and recommend affiliate products, with no Foliocrew commission. Your public shop is at yoursite/tienda and shows up as \"My shop\" in your Link in bio when you have active products.",
+      "Foliocrew doesn't charge or process payments: on each product you paste the payment link from your own service (PayPal, Stripe, Gumroad, Calendly with payments…), which must start with https://. For a digital product, use a link that delivers the file only after payment.",
+      "Affiliate links are shown with the \"I may earn a commission\" notice and don't need a price. You see how many clicks each product has, and you can hide or edit it any time. You are responsible for collecting payment, delivery, refunds and taxes on your sales.",
+    ],
+  },
+  {
+    title: "Phone notices",
+    paragraphs: [
+      "You can install Foliocrew as an app on your phone or computer and get short notices even when the dashboard isn't open: when you get paid, a deliverable is due, someone comments on Instagram or replies in the community.",
+      "Go to Help → Phone notices and tap \"Turn on notices\" on each device where you want them; you choose which topics to get and can send a test notice. On iPhone, first add Foliocrew to your Home Screen (Share → Add to Home Screen) and turn them on from the installed app.",
+      "Notices don't include sensitive data and you can turn them off any time. If you don't see the button, Foliocrew doesn't have notices active yet.",
+    ],
+  },
+  {
+    title: "Recycle with AI",
+    paragraphs: [
+      "In Content → Recycle with AI you paste the transcript or script of a long video (or pick one of your posts that worked) and we prepare 5 hooks, a caption for Instagram, TikTok, YouTube and Facebook, and a carousel. You choose the tone and language.",
+      "Each version can be copied or saved to your content bank (Content → Wellbeing) to schedule later. Review everything before publishing: the AI rephrases your ideas but can make mistakes, and if it's for a brand you have to add the ad disclosure. It counts as 1 AI suggestion from your plan.",
+    ],
+  },
+  {
+    title: "Wellbeing",
+    paragraphs: [
+      "In Content → Wellbeing you see how many deliverables you have in the next 4 weeks and we warn you if more than your limit land within 7 days in a row (you choose it; it starts at 6). The alert also shows up in the Overview.",
+      "Rest mode: pick the first and last day of your break and tap \"See what would move\". If you agree, \"Turn on break\" moves your scheduled posts from those dates (and, if you want, the delivery dates) forward as many days as the break lasts. It can be undone; anything you've already changed by hand isn't touched.",
+      "Afterwards you can let each brand with deliveries in that period know: we show you a text you can edit and it's only sent when you send it. Content bank: keep ideas or ready-made pieces for slow weeks and schedule them in your calendar with one click.",
+    ],
+  },
+  {
+    title: "Automatic publishing",
+    paragraphs: [
+      "Once Instagram and Facebook approve the publishing permission, the \"Publish automatically at the scheduled time\" checkbox appears in Create post. It works with Instagram and Facebook (TikTok and YouTube are published by hand) and needs a photo or video of the right type: a photo for a post, a video for a Reel.",
+      "If the piece is for a brand, it won't go out on its own until the text has the ad disclosure (#ad). In the Calendar you see which pieces publish automatically, the result per network and, if something fails, the reason. You can also tap \"Publish now\".",
+      "If it doesn't go out after 3 tries, we turn off automatic publishing for that piece and email you so you can fix it or publish it by hand.",
+    ],
+  },
+  {
+    title: "Comment → DM",
+    paragraphs: [
+      "In Business → Comment → DM you pick an Instagram post, a word (for example LINK) and a message. When someone comments that word, Foliocrew sends them your message by DM, once per person. You can use {name} to insert their username.",
+      "It only writes to the person who commented, within the next 7 days, and at most 200 automatic messages per day. Write messages the person expects (the link or guide they asked for).",
+      "This feature turns on when Instagram approves Foliocrew's messaging permission. Until then you can get your rules ready; the page tells you whether it's active yet.",
+    ],
+  },
+  {
+    title: "My income",
+    paragraphs: [
+      "In Business → My income you see how much you earned and spent this year, month by month, by source (brands, affiliates, platforms, products) and by type of expense. Invoices you mark as paid (in dollars) count automatically; everything else you add by hand with \"Record income\" and \"Record an expense\" (you can upload a photo of the receipt).",
+      "At the top you see how much to set aside for taxes: the percentage you choose (25% to start) of your profit, which is income minus expenses. It also reminds you of the next US quarterly estimated tax date (January, April, June and September 15).",
+      "\"Download CSV for your accountant\" gives you a sheet with all of the year's income and expenses. It's a tool to help you get organized, not tax advice. Don't upload receipts with bank details or ID numbers.",
     ],
   },
   {

@@ -20,6 +20,10 @@ Es suficiente mientras solo tú abras los previews. Cuando entre más gente al e
 3. Comenta desde esas cuentas en un post de @foliocrew y revisa la **Bandeja** (ahora muestra un aviso si Meta está ocultando comentarios por el modo desarrollo).
 4. Graba el video demo (conectar Instagram → Feed → Bandeja) y envía la revisión de la app **cuando tú lo confirmes**.
 5. Antes del lanzamiento abierto: verificación del negocio en Meta Business.
+9. **Mérito automático de embajadoras (G5):** apagado a propósito mientras haya pocas usuarias. Cuando quieras prenderlo: en Vercel agrega `AMBASSADOR_MERIT_ENABLED=1`; desde ese momento toda cuenta ve «Invita y gana» y sube sola al nivel con 5 referidos que paguen. La sección pública «Embajadoras» de la página de Foliocrew ya funciona: aparece cuando una embajadora elige mostrarse.
+8. **Avisos en el celular (E5):** el código ya está, apagado hasta que pongas las llaves. En tu computadora ejecuta `npx web-push generate-vapid-keys` (te da una llave pública y una privada; **no las pegues en el chat**). En Vercel agrega `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` y, si quieres, `VAPID_SUBJECT` (por ejemplo `mailto:soporte@foliocrew.pro`) y vuelve a desplegar. Luego cada persona entra a «Avisos en el celular» y toca «Activar avisos».
+7. **Publicación automática (E2):** el código ya está, apagado. Cuando Meta apruebe `instagram_business_content_publish` y `pages_manage_posts` (misma revisión de la app; no se envía sin tu confirmación): en Vercel agrega `PUBLISH_INSTAGRAM_ENABLED=1` y/o `PUBLISH_FACEBOOK_ENABLED=1` y cada creadora reconecta la red. Para que salga **a la hora exacta** (la tarea diaria solo es red de seguridad), programa en un servicio gratuito (por ejemplo cron-job.org o GitHub Actions) una llamada cada 5–10 minutos a `https://foliocrew.pro/api/cron/publish` con la cabecera `Authorization: Bearer <tu CRON_SECRET>` (sin mostrar la clave aquí).
+6. **Comentario → DM (C6):** el código ya está, pero apagado. Cuando Meta apruebe el permiso `instagram_business_manage_messages` (va en la misma revisión de la app; no se envía sin tu confirmación): en Vercel agrega `INSTAGRAM_DM_ENABLED=1` y `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` (un texto que inventes; sin mostrarlo), registra en Meta el webhook de Instagram `https://foliocrew.pro/api/social/instagram/webhook` con ese mismo texto y suscribe el campo `comments`; luego reconecta Instagram para autorizar mensajes.
 
 ## 3. TikTok
 Cuando TikTok apruebe la app (está "In review"): en Vercel cambia `TIKTOK_CLIENT_KEY` y `TIKTOK_CLIENT_SECRET` de las llaves **Sandbox** a las de **Production** y vuelve a desplegar.
@@ -37,3 +41,19 @@ Modelo: por defecto `claude-sonnet-5-5` (la mitad de precio que Opus). Para camb
 ## Ya confirmado
 - `CRON_SECRET` y `TOKEN_ENCRYPTION_KEY` existen en Vercel.
 - La CI de GitHub (`.github/workflows/ci.yml`) corre lint, tipos, tests y build en cada PR.
+
+## Cumplimiento legal (auditoría del 7 de octubre)
+El código ya quedó listo; esto es lo que solo tú puedes hacer:
+1. **Dirección postal:** en Vercel agrega `LEGAL_POSTAL_ADDRESS` (una línea; sirve un PO Box, para no publicar la de tu casa) y vuelve a desplegar. Sale al pie de los correos y en `/terminos`.
+2. **Agente de derechos de autor (DMCA):** regístralo en https://dmca.copyright.gov (cuesta unos 6 dólares y se renueva cada 3 años) con el mismo correo de `LEGAL_CONTACT_EMAIL` y la misma dirección postal. Sin ese registro, la sección 9 de los términos no te da la protección de "puerto seguro".
+3. **Correo legal:** confirma que `LEGAL_CONTACT_EMAIL` está en Vercel y que alguien lee ese buzón (ahí llegan los avisos de derechos de autor y de privacidad).
+4. **Revisión de un abogado:** los textos de `/privacidad` y `/terminos` son una base razonable, no asesoría legal.
+5. **Cuando conectes Stripe con renovación automática:** antes de cobrar hay que mostrar precio, frecuencia y cómo cancelar junto al botón de pago, pedir consentimiento expreso y dejar cancelar en línea tan fácil como fue suscribirse. Hoy no aplica porque los pagos son manuales y no se renuevan solos.
+
+## Seguridad (7 de octubre)
+Guía completa y plan de respuesta a incidentes: `docs/seguridad.md`.
+1. **Activa tu verificación en dos pasos** en Mi cuenta y guarda los códigos de recuperación en tu gestor de contraseñas. Pídesela también a quien tenga rol en el equipo.
+2. **Dos pasos en las cuentas de fuera:** GitHub, Vercel, Neon, Resend, el registrador del dominio, las consolas de Meta/TikTok/Google, PayPal y tu correo de administración.
+3. **Neon:** confirma que la restauración a un punto en el tiempo está activa.
+4. **GitHub:** protege la rama `main`.
+

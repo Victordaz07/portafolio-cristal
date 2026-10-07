@@ -106,7 +106,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | **Testimonios** | Citas de marcas | Prueba social |
 | **FAQ** | Preguntas frecuentes | Ahorra mensajes |
 | **Contacto** | Formulario para marcas (nombre, marca, correo, tipo de colaboración, mensaje) y tus redes | Las marcas te escriben directo |
-| **Media kit público** | Página aparte (`/media-kit`), bilingüe, lista para mandar en un correo | Ya no tienes que actualizar un PDF |
+| **Media kit público** | Página aparte (`/media-kit`), bilingüe, lista para mandar en un correo | Ya no tienes que actualizar un PDF | Con sello «Datos verificados por Foliocrew» en los números que vienen de tus redes conectadas, y casos de éxito sacados de tus reportes de campaña 
 | **Idiomas** | Español e inglés con un botón | Puedes trabajar con marcas de EE. UU. y de LatAm |
 | **Tu color** | 6 colores de acento: lila, rosa, terracota, salvia, azul y dorado | El sitio se siente tuyo |
 
@@ -152,9 +152,21 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Reseñas destacadas** y **Testimonios**.
 
 **Negocio**
+- **Reportes a marcas (campaña):** al completar un trato se arma un borrador con las publicaciones de esa marca, sus resultados y la comparación con el promedio de la creadora. Ella lo revisa (oculta métricas o publicaciones, escribe un mensaje, elige español o inglés), lo envía por correo y la marca lo abre en una página pública con enlace privado, que se puede guardar como PDF y termina con "¿Repetimos?" hacia sus paquetes. Se le avisa cuando la marca lo abre.
+- **Solicitar un paquete ("Trabaja conmigo"):** cada paquete puede tener precio "desde" y solicitudes activadas. En el sitio público la marca ve el precio y un botón "Solicitar este paquete" (nombre, correo, fechas, presupuesto aproximado y brief). Llega a la Bandeja y por correo, y la marca se guarda en el CRM como "Negociando" (oculta del sitio) con la próxima acción "Responder la solicitud del paquete". Sin comisión.
 - **Propuestas a marcas con IA:** en Marcas, "Escribir propuesta": Claude escribe el correo (asunto, mensaje con el enlace al media kit y 1–2 ideas de contenido) en español o inglés y con el tono que elijas. Se copia o se abre en el correo de la persona (Foliocrew nunca lo envía); "Guardar en mi CRM" crea el prospecto con seguimiento a los 5 y 12 días (también escritos con IA) y el Resumen avisa "Tienes N propuestas sin respuesta".
 - **Acuerdos (contrato simple):** eliges una plantilla (publicación patrocinada, UGC sin publicar, embajador mensual o afiliado), llenas los huecos (entregables, pago y anticipo, derechos de uso, exclusividad, revisiones, cancelación) y ves cómo queda el texto, en español o inglés. Lo envías con un enlace; la marca lo lee y lo acepta en línea escribiendo su nombre y correo, y queda la constancia con fecha, hora y dirección IP. Los dos reciben una copia y el trato pasa a "activo". Es una plantilla de referencia, no asesoría legal.
 - **Facturas:** creas facturas para tus marcas (completas, de anticipo o de saldo, en español o inglés) y las envías con un enlace. La marca la ve, la descarga en PDF y puede avisar "Ya pagamos". Te avisamos cuando la abre; si se atrasa, le recordamos con amabilidad el día que vence y a los 7 y 14 días. Ves cuánto tienes por cobrar, lo vencido y lo cobrado en el mes.
+- **Mis ingresos:** ves lo que ganaste y gastaste en el año (las facturas pagadas suman solas; lo demás lo anotas, con foto del recibo), cuánto apartar para impuestos (el % que elijas de tu ganancia), el recordatorio de pagos trimestrales de EE. UU. y un CSV para tu contador. No es asesoría fiscal.
+- **Comentario → DM:** eliges una publicación y una palabra (por ejemplo LINK); cuando alguien la comenta, le llega tu mensaje por DM, una sola vez por persona. Se activa cuando Instagram apruebe el permiso de mensajes.
+- **Reseñas de marcas:** otras creadoras cuentan, de forma anónima, si una marca paga a tiempo, cuánto tarda y cómo es el trato. Una marca solo aparece con reseñas de al menos 3 personas distintas, y los comentarios los revisa Comunidad antes de mostrarse.
+- **Publicación automática:** tus piezas de Instagram y Facebook salen solas a la hora programada (cuando las redes aprueben el permiso), con aviso por correo si algo falla. Una pieza de marca no sale sin el aviso de publicidad.
+- **Bienestar:** te avisa si tienes demasiadas entregas en una semana, te deja tomar un descanso (mueve tus publicaciones programadas y, si quieres, las entregas, y puedes avisar a las marcas con un texto que tú revisas) y guarda ideas en un banco de contenido para las semanas flojas.
+- **Reciclar con IA:** pegas la transcripción de un video largo (o eliges una publicación que funcionó) y salen ganchos, textos para cada red y un carrusel, que puedes copiar o guardar en tu banco de contenido.
+- **Avisos en el celular:** instalas Foliocrew como app y te llegan avisos cortos cuando te pagan, vence una entrega, te comentan en Instagram o te responden en la comunidad.
+- **Tienda:** vendes productos digitales y asesorías, y recomiendas afiliados, en tu página /tienda y en tu Link en bio, sin comisión de Foliocrew: tus clientes pagan en tu propio enlace de pago.
+- **Círculos y sesiones en vivo:** grupos pequeños de la comunidad por nicho, red o nivel (con moderadoras) y charlas o mentorías en grupo con cupo; el enlace de la videollamada solo lo recibe quien reserva. Algunos son exclusivos del plan Crew.
+- **Embajadoras:** quienes lo eligen aparecen en la página de Foliocrew; cuando el dueño lo prenda, quien traiga a 5 personas que paguen sube sola al nivel Embajadora (Folio Pro gratis y meses gratis por cada referida que pague).
 - **Bandeja:** en un solo lugar llegan los mensajes del formulario de tu sitio y los **comentarios de Instagram** (si conectaste tu cuenta).
   - Cada mensaje marca si está pendiente o respondido, y etiqueta como "Cliente" a las marcas de tu CRM.
   - Te avisa si un mensaje lleva más de 24 h sin respuesta.

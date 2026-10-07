@@ -67,6 +67,7 @@ export default function CalendarView({
   const { showToast } = useToast();
   const [selectedDay, setSelectedDay] = useState<string | null>(month === today.slice(0, 7) ? today : null);
   const [deleting, setDeleting] = useState<PostView | null>(null);
+  const [publishing, setPublishing] = useState<string | null>(null);
 
   const [year, monthIndex] = month.split("-").map(Number);
   const firstDay = `${month}-01`;
@@ -88,6 +89,18 @@ export default function CalendarView({
     });
     if (!response.ok) return showToast("error", t("No se pudo actualizar", "Couldn't update"));
     showToast("success", t("¡Marcada como publicada!", "Marked as published!"));
+    router.refresh();
+  }
+
+  async function publishNow(post: PostView) {
+    setPublishing(post.id);
+    const response = await fetch(`/api/admin/posts/${post.id}/publish`, { method: "POST" });
+    const data = (await response.json().catch(() => ({}))) as { error?: string; overall?: string };
+    setPublishing(null);
+    if (!response.ok) return showToast("error", data.error ?? t("No se pudo publicar", "Couldn't publish"));
+    if (data.overall === "published") showToast("success", t("¡Publicada!", "Published!"));
+    else if (data.overall === "pending") showToast("success", t("El video se está procesando; se publicará en unos minutos", "The video is processing; it will be published in a few minutes"));
+    else showToast("error", t("No se pudo publicar en todas las redes; revisa el detalle", "Couldn't publish on every network; check the details"));
     router.refresh();
   }
 
@@ -117,6 +130,29 @@ export default function CalendarView({
               .filter(Boolean)
               .join(" · ")}
           </p>
+          {post.autoPublish && !published && (
+            <p className="text-[11px] font-semibold text-moss">{t("⚡ Se publica sola a esta hora", "⚡ Publishes automatically at this time")}</p>
+          )}
+          {post.publish.filter((p) => p.status !== "ok" || !published).map((p) => (
+            <p key={p.network} className={`text-[11px] ${p.status === "error" ? "text-coral" : "text-ink/55"}`}>
+              {p.network === "instagram" ? "Instagram" : "Facebook"}:{" "}
+              {p.status === "ok" ? (
+                <>
+                  {t("publicada", "published")}
+                  {p.url && (
+                    <>
+                      {" · "}
+                      <a href={p.url} target="_blank" rel="noreferrer noopener" className="underline">{t("ver", "view")}</a>
+                    </>
+                  )}
+                </>
+              ) : p.status === "pending" ? (
+                t("procesando el video…", "processing the video…")
+              ) : (
+                `${t("no salió", "didn't go out")}: ${p.error ?? ""}`
+              )}
+            </p>
+          ))}
           {post.disclosureIssue && (
             <Link href={`/admin/crear?id=${post.id}`} className="text-[11px] font-semibold text-coral hover:underline">
               {t("⚠ Falta el aviso de publicidad", "⚠ Ad disclosure missing")}
@@ -128,6 +164,11 @@ export default function CalendarView({
           {formatTime(post.time, lang)}
         </span>
         <span className="flex shrink-0 gap-sp-3">
+          {!published && post.canPublishNow && (
+            <button type="button" onClick={() => publishNow(post)} disabled={publishing === post.id} className="text-xs font-semibold text-moss hover:underline disabled:opacity-50">
+              {publishing === post.id ? t("Publicando…", "Publishing…") : t("Publicar ahora", "Publish now")}
+            </button>
+          )}
           {!published && (
             <button type="button" onClick={() => markPublished(post)} className="text-xs font-semibold text-cobalt hover:underline">
               {t("Marcar publicada", "Mark published")}

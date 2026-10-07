@@ -7,6 +7,7 @@ import { PLANS } from "@/lib/plans";
 import { changeAccountEmail } from "@/lib/account-email-change";
 import { setAmbassador } from "@/lib/ambassadors-server";
 import { getT } from "@/lib/admin-lang-server";
+import { clearTwoFactor, sendSecurityNotice } from "@/lib/two-factor";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,8 @@ const schema = z.object({
   extendTrialDays: z.number().int().min(1).max(90).optional(),
   /** Soporte: corrige el correo con el que entra la dueña de la cuenta (p. ej. se registró con uno ajeno). */
   ownerEmail: z.string().trim().email().max(200).optional(),
+  /** Soporte: quita la verificación en dos pasos (perdió el teléfono y los códigos de recuperación). */
+  resetTwoFactor: z.literal(true).optional(),
 });
 
 /** Pausar o reactivar una cuenta, o guardar la nota interna de soporte. */
@@ -32,7 +35,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
-  const { status, adminNote, comp, ambassador, plan, extendTrialDays, ownerEmail } = parsed.data;
+  const { status, adminNote, comp, ambassador, plan, extendTrialDays, ownerEmail, resetTwoFactor } = parsed.data;
 
   const creator = await prismaRoot.creator.findUnique({
     where: { id },
@@ -42,7 +45,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       customDomain: true,
       status: true,
       trialEndsAt: true,
-      users: { select: { id: true, role: true }, orderBy: { createdAt: "asc" } },
+      users: { select: { id: true, role: true, totpEnabledAt: true }, orderBy: { createdAt: "asc" } },
     },
   });
   if (!creator) return NextResponse.json({ error: t("La cuenta no existe", "The account doesn't exist") }, { status: 404 });
@@ -58,6 +61,20 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     await logPlatformAction(admin.email, "email", id, `${result.previous} → ${result.user.email}`);
     return NextResponse.json({ ok: true, email: result.user.email });
+  }
+  if (resetTwoFactor) {
+    // La tuya se desactiva desde Mi cuenta (con tu contraseña y un código).
+    if (creator.id === admin.creatorId) {
+      return NextResponse.json({ error: t("La tuya se desactiva desde Mi cuenta", "Turn yours off from My account") }, { status: 400 });
+    }
+    const protectedUsers = creator.users.filter((u) => u.totpEnabledAt);
+    for (const u of protectedUsers) {
+      await clearTwoFactor(u.id);
+      await sendSecurityNotice(u.id, "reset-by-support");
+    }
+    forgetSessionVersion(...protectedUsers.map((u) => u.id));
+    await logPlatformAction(admin.email, "2fa-reset", id);
+    return NextResponse.json({ ok: true, reset: protectedUsers.length });
   }
   if (status === "paused" && creator.id === admin.creatorId) {
     return NextResponse.json({ error: t("No puedes pausar tu propia cuenta", "You can't pause your own account") }, { status: 400 });

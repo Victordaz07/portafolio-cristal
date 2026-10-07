@@ -4,6 +4,7 @@ import { prismaRoot } from "@/lib/prisma-root";
 import { sendEmail } from "@/lib/email";
 import { waitlistJoinedEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
+import { unsubscribeHeaders, waitlistUnsubscribeUrl } from "@/lib/waitlist-unsubscribe";
 import { clientIp, tooManyAttempts } from "@/lib/rate-limit";
 import { getT } from "@/lib/admin-lang-server";
 
@@ -41,11 +42,16 @@ export async function POST(request: Request) {
   const entry =
     existing ??
     (await prismaRoot.waitlistEntry.create({ data: { ...data, audience: data.audience ?? null, language: lang } }));
+  // Si se había dado de baja y vuelve a anotarse, vuelve a aceptar los correos.
+  if (existing?.unsubscribedAt) {
+    await prismaRoot.waitlistEntry.update({ where: { id: existing.id }, data: { unsubscribedAt: null } });
+  }
   const position = await prismaRoot.waitlistEntry.count({ where: { createdAt: { lte: entry.createdAt } } });
   if (!existing) {
     const origin = await platformOrigin();
-    const mail = waitlistJoinedEmail({ lang, origin, position, shareUrl: `${origin}/?utm_source=referido` });
-    await sendEmail({ to: entry.email, ...mail }).catch(() => {});
+    const unsubscribeUrl = waitlistUnsubscribeUrl(origin, entry.id);
+    const mail = waitlistJoinedEmail({ lang, origin, position, shareUrl: `${origin}/?utm_source=referido`, unsubscribeUrl });
+    await sendEmail({ to: entry.email, ...mail, headers: unsubscribeHeaders(unsubscribeUrl) }).catch(() => {});
   }
   return NextResponse.json({ ok: true, position, already: Boolean(existing) });
 }

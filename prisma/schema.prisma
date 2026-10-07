@@ -37,6 +37,8 @@ model Creator {
   referralCode           String?   @unique
   /// Mostrar la insignia "Foliocrew Ambassador" en su sitio público
   ambassadorBadge        Boolean   @default(true)
+  /// Aparece en la sección «Embajadoras» de la página de Foliocrew (solo si ella lo elige)
+  ambassadorPublic       Boolean   @default(false)
   /// Fin de la prueba gratis (null = sin prueba)
   trialEndsAt            DateTime?
   /// Pagado hasta (pagos manuales por PayPal o transferencia)
@@ -78,6 +80,20 @@ model Creator {
   bioLinks            BioLink[]
   bioLinkGroups       BioLinkGroup[]
   payments            Payment[]
+  campaignReports     CampaignReport[]
+  incomeEntries       IncomeEntry[]
+  expenses            Expense[]
+  commentTriggers     CommentTrigger[]
+  commentTriggerHits  CommentTriggerHit[]
+  brandReviews        BrandReview[]
+  contentBank         ContentBankItem[]
+  restPeriods         RestPeriod[]
+  wellbeing           WellbeingSettings?
+  pushSubscriptions   PushSubscription[]
+  products            Product[]
+  circleMemberships   CircleMember[]
+  circleMessages      CircleMessage[]
+  sessionRsvps        SessionRsvp[]
   referralsAsReferrer Referral[]        @relation("referrer")
   referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
@@ -209,6 +225,7 @@ model Brand {
   deliverables   Deliverable[]
   invoices       Invoice[]
   contracts      Contract[]
+  campaignReports CampaignReport[]
 
   // Derechos de uso y exclusividad del trato (B2)
   /// Días que la marca puede usar el contenido en sus anuncios o redes
@@ -281,6 +298,8 @@ model BillingProfile {
   nextNumber     Int      @default(1)
   /// Nota por defecto al pie de la factura
   defaultNotes   String   @default("")
+  /// % de lo que ganas (ingresos − gastos) que conviene apartar para impuestos (C5)
+  taxPercent     Int      @default(25)
   updatedAt      DateTime @updatedAt
 }
 
@@ -443,6 +462,11 @@ model Package {
   items     String[]
   itemsEn   String[]
   order     Int      @default(0)
+  /// Precio «desde» en dólares, sin decimales (null = no se muestra precio)
+  priceFrom Int?
+  currency  String   @default("USD")
+  /// Las marcas pueden solicitar este paquete desde el sitio público (C2). Los paquetes que ya existían quedan apagados.
+  requestable Boolean @default(false)
 
   @@index([creatorId])
 }
@@ -492,6 +516,20 @@ model AdminUser {
   lastLoginAt     DateTime?
   /// Idioma del panel y de los correos: "es" | "en"
   language        String      @default("es")
+  /// Cuándo confirmó, al registrarse, que tiene 18 años o más y aceptó los términos y la privacidad
+  /// (null = cuenta anterior a esa casilla)
+  termsAcceptedAt DateTime?
+  /// Verificación en dos pasos: clave de la app de autenticación, cifrada (lib/token-crypto.ts).
+  /// Con clave pero sin totpEnabledAt = la está configurando y todavía no confirmó el primer código.
+  totpSecret        String?
+  totpEnabledAt     DateTime?
+  /// Último intervalo de 30 s usado: un código no vale dos veces
+  totpLastStep      Int?
+  /// Hashes (SHA-256) de los códigos de recuperación que quedan sin usar
+  totpRecoveryCodes String[]  @default([])
+  /// Intentos fallidos seguidos de entrar, y hasta cuándo queda bloqueada (lib/login-guard.ts)
+  failedLogins      Int       @default(0)
+  lockedUntil       DateTime?
   createdAt       DateTime    @default(now())
   tokens          AuthToken[]
 
@@ -670,6 +708,12 @@ model ScheduledPost {
   scheduledFor DateTime
   status       String    @default("scheduled") // "draft" | "scheduled" | "published"
   publishedAt  DateTime?
+  /// Publicar sola a la hora programada (E2; solo redes con publicación automática y cuando están activas)
+  autoPublish  Boolean   @default(false)
+  /// Resultado por red: { instagram: { status: "ok" | "error" | "pending", id?, url?, error?, creationId?, at } }
+  publishResults Json?
+  publishAttempts Int    @default(0)
+  publishAttemptedAt DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -711,6 +755,8 @@ model WaitlistEntry {
   /// Idioma de la página cuando se anotó ("es" | "en"): los correos le llegan en ese idioma
   language    String    @default("es")
   invitedAt   DateTime?
+  /// Cuándo pidió no recibir más correos (enlace de baja); null = sigue en la lista
+  unsubscribedAt DateTime?
   createdAt   DateTime  @default(now())
 
   @@index([createdAt])
@@ -1140,4 +1186,332 @@ model Referral {
   createdAt    DateTime  @default(now())
 
   @@index([referrerId, status])
+}
+
+/// Reporte de campaña para la marca (C3): una página pública con las publicaciones del trato y sus resultados.
+/// `data` es una foto de los números al armarlo (la creadora la revisa y puede actualizarla); `hidden` son las métricas que no quiere mostrar.
+model CampaignReport {
+  id          String    @id @default(cuid())
+  creatorId   String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  brandId     String
+  brand       Brand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  /// 32 bytes aleatorios en base64url: el enlace que recibe la marca (/r/<token>)
+  publicToken String    @unique
+  /// es | en
+  language    String    @default("es")
+  title       String
+  /// Mensaje de la creadora para la marca (opcional)
+  intro       String?
+  /// Publicaciones y base de comparación (lib/campaign-report.ts → ReportData)
+  data        Json
+  /// Métricas ocultas: views, likes, comments, shares, saves, engagement, comparison, topComments
+  hidden      String[]  @default([])
+  /// Sale como «caso de éxito» en el media kit público (solo se usa si ya se envió)
+  inMediaKit  Boolean   @default(false)
+  /// draft | sent
+  status      String    @default("draft")
+  sentAt      DateTime?
+  viewedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([creatorId])
+  @@index([brandId])
+}
+
+/// Ingreso anotado a mano (C5). Las facturas pagadas (Invoice) también cuentan, pero se leen de ahí y no se duplican aquí.
+model IncomeEntry {
+  id          String   @id @default(cuid())
+  creatorId   String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// "YYYY-MM-DD"
+  date        String
+  /// En centavos de dólar
+  amountCents Int
+  /// affiliate | platform | product | brand | other
+  source      String
+  description String   @default("")
+  createdAt   DateTime @default(now())
+
+  @@index([creatorId, date])
+}
+
+/// Gasto del negocio (C5), con foto del recibo opcional.
+model Expense {
+  id          String   @id @default(cuid())
+  creatorId   String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// "YYYY-MM-DD"
+  date        String
+  /// En centavos de dólar
+  amountCents Int
+  /// equipment | software | travel | production | ads | fees | other
+  category    String
+  description String   @default("")
+  receiptUrl  String?
+  createdAt   DateTime @default(now())
+
+  @@index([creatorId, date])
+}
+
+/// «Comenta una palabra → te mando un DM» (C6). Una regla por publicación y palabra.
+model CommentTrigger {
+  id         String              @id @default(cuid())
+  creatorId  String              @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator    Creator             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// Id de la publicación de Instagram
+  mediaId    String
+  /// Texto corto de la publicación, solo para reconocerla en el panel
+  mediaLabel String              @default("")
+  /// Palabra clave en minúsculas y sin acentos
+  keyword    String
+  /// Mensaje que se manda por DM (máx. 900 caracteres)
+  message    String
+  active     Boolean             @default(true)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  hits       CommentTriggerHit[]
+
+  @@unique([creatorId, mediaId, keyword])
+  @@index([mediaId, active])
+}
+
+/// Cada persona que activó una regla (para no mandarle el mismo DM dos veces).
+model CommentTriggerHit {
+  id          String         @id @default(cuid())
+  creatorId   String         @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  triggerId   String
+  trigger     CommentTrigger @relation(fields: [triggerId], references: [id], onDelete: Cascade)
+  /// Id de la persona que comentó (en Instagram)
+  commenterId String
+  /// Id del comentario: Meta solo deja una respuesta privada por comentario
+  commentId   String         @unique
+  /// sent | failed | skipped (la regla se activó pero el permiso de mensajes aún no está activo)
+  status      String
+  error       String?
+  createdAt   DateTime       @default(now())
+
+  @@unique([triggerId, commenterId])
+  @@index([creatorId, createdAt])
+}
+
+/// Reseña anónima de una marca (E1). Es de toda la plataforma (no es por cuenta): quien la escribió (`reviewerId`)
+/// solo se guarda para que no haya dos reseñas de la misma persona y para moderar; nunca se muestra.
+model BrandReview {
+  id            String   @id @default(cuid())
+  /// Nombre de la marca en minúsculas, sin acentos ni signos (lib/brand-reviews.ts → normalizeBrandKey)
+  brandKey      String
+  brandName     String
+  reviewerId    String
+  reviewer      Creator  @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
+  /// on_time | late | unpaid
+  payment       String
+  /// Días que tardó en llegar el pago (si se pagó)
+  payDays       Int?
+  /// Cómo fue el trato, de 1 a 5
+  rating        Int
+  comment       String   @default("")
+  /// none | pending | approved | hidden (el comentario lo aprueba el equipo de Comunidad antes de verse)
+  commentStatus String   @default("none")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([brandKey, reviewerId])
+  @@index([brandKey])
+  @@index([commentStatus])
+}
+
+/// Derecho de respuesta de la marca (E1): la agrega el equipo de Comunidad cuando la marca lo pide.
+model BrandReviewReply {
+  id        String   @id @default(cuid())
+  brandKey  String   @unique
+  brandName String
+  text      String
+  /// Persona del equipo que la agregó
+  addedById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Banco de contenido (E3): ideas y piezas listas para las semanas flojas.
+model ContentBankItem {
+  id          String    @id @default(cuid())
+  creatorId   String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  title       String
+  caption     String    @default("")
+  contentType String    @default("reel")
+  networks    String[]  @default([])
+  mediaUrl    String?
+  mediaType   String?
+  /// Última vez que se programó desde el banco
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([creatorId])
+}
+
+/// Modo descanso (E3): un periodo sin publicar. Guarda lo que se movió para poder deshacerlo.
+model RestPeriod {
+  id         String    @id @default(cuid())
+  creatorId  String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator    Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// "YYYY-MM-DD" (inclusive)
+  startDate  String
+  endDate    String
+  note       String    @default("")
+  /// [{ type: "post" | "deliverable", id, from: ISO, to: ISO }]
+  moved      Json
+  /// Marcas con entregas dentro del descanso: [{ brandId, brandName, email, titles: [] }]
+  brands     Json
+  undoneAt   DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([creatorId, startDate])
+}
+
+/// Ajustes de bienestar (E3): cuántas entregas en 7 días son demasiadas para esta persona.
+model WellbeingSettings {
+  id        String   @id @default(cuid())
+  creatorId String   @unique @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  loadLimit Int      @default(6)
+  updatedAt DateTime @updatedAt
+}
+
+/// Un dispositivo que aceptó avisos en el celular (E5, Web Push). El endpoint es de la red de notificaciones
+/// del navegador (Google, Mozilla, Apple…); las llaves p256dh/auth cifran cada aviso para ese dispositivo.
+model PushSubscription {
+  id         String    @id @default(cuid())
+  creatorId  String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator    Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// Persona (AdminUser) a la que pertenece el dispositivo
+  userId     String
+  endpoint   String    @unique
+  p256dh     String
+  auth       String
+  /// payment | comment | deliverable | community
+  topics     String[]  @default([])
+  userAgent  String    @default("")
+  createdAt  DateTime  @default(now())
+  lastSentAt DateTime?
+
+  @@index([creatorId])
+}
+
+/// Tienda sin comisión (E6): productos digitales, asesorías y enlaces de afiliado. Foliocrew NO procesa pagos:
+/// cada producto lleva el enlace de pago de la propia creadora (PayPal, Stripe, Gumroad…).
+model Product {
+  id            String   @id @default(cuid())
+  creatorId     String   @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator       Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// digital | call | affiliate
+  kind          String
+  title         String
+  titleEn       String?
+  description   String   @default("")
+  descriptionEn String?
+  /// En centavos (opcional en los enlaces de afiliado)
+  priceCents    Int?
+  currency      String   @default("USD")
+  imageUrl      String?
+  /// Enlace de pago o de la oferta (https)
+  buyUrl        String
+  active        Boolean  @default(true)
+  clicks        Int      @default(0)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([creatorId])
+}
+
+/// Círculo (E7): un grupo de la Comunidad por nicho, red o nivel. Los crea el equipo de Comunidad; las personas se unen.
+model Circle {
+  id            String          @id @default(cuid())
+  slug          String          @unique
+  name          String
+  nameEn        String?
+  description   String          @default("")
+  descriptionEn String?
+  /// niche | network | level | general
+  kind          String          @default("general")
+  /// Solo para cuentas con el plan Crew
+  crewOnly      Boolean         @default(false)
+  archivedAt    DateTime?
+  createdAt     DateTime        @default(now())
+  members       CircleMember[]
+  messages      CircleMessage[]
+  sessions      LiveSession[]
+}
+
+model CircleMember {
+  id        String    @id @default(cuid())
+  circleId  String
+  circle    Circle    @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  creatorId String
+  creator   Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// member | moderator (las moderadoras las nombra el equipo y pueden ocultar mensajes del círculo)
+  role      String    @default("member")
+  joinedAt  DateTime  @default(now())
+
+  @@unique([circleId, creatorId])
+  @@index([creatorId])
+}
+
+/// Mensaje dentro de un círculo (conversación simple, sin respuestas ni reacciones).
+model CircleMessage {
+  id        String    @id @default(cuid())
+  circleId  String
+  circle    Circle    @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  creatorId String
+  creator   Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  body      String
+  hiddenAt  DateTime?
+  hiddenBy  String?
+  createdAt DateTime  @default(now())
+
+  @@index([circleId, createdAt])
+}
+
+/// Sesión en vivo o mentoría grupal (E7), con enlace de videollamada que solo ve quien reservó lugar.
+model LiveSession {
+  id            String        @id @default(cuid())
+  /// live | mentoring
+  kind          String        @default("live")
+  title         String
+  titleEn       String?
+  description   String        @default("")
+  descriptionEn String?
+  hostName      String
+  startsAt      DateTime
+  durationMin   Int           @default(60)
+  /// Enlace de la videollamada (https). Se muestra solo a quien reservó.
+  joinUrl       String
+  crewOnly      Boolean       @default(false)
+  /// Lugares disponibles (null = sin límite)
+  capacity      Int?
+  circleId      String?
+  circle        Circle?       @relation(fields: [circleId], references: [id], onDelete: SetNull)
+  canceledAt    DateTime?
+  createdBy     String
+  createdAt     DateTime      @default(now())
+  rsvps         SessionRsvp[]
+
+  @@index([startsAt])
+}
+
+model SessionRsvp {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  creatorId String
+  creator   Creator     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@unique([sessionId, creatorId])
+  @@index([creatorId])
 }

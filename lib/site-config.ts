@@ -11,8 +11,10 @@ export const siteConfig = {
   legalOwner: process.env.LEGAL_OWNER_NAME || creatorInfo.name,
   /** Correo para consultas de privacidad y solicitudes de borrado de datos. */
   legalEmail: process.env.LEGAL_CONTACT_EMAIL || creatorInfo.email,
+  /** Dirección postal del responsable: sale al pie de los correos y en los avisos de derechos de autor. */
+  legalPostalAddress: (process.env.LEGAL_POSTAL_ADDRESS || "").replace(/\s*\n\s*/g, ", ").trim(),
   /** Fecha de la última actualización de las páginas legales. */
-  legalUpdatedAt: "2026-10-03",
+  legalUpdatedAt: "2026-10-07",
 };
 
 export function getPublicAppUrl() {

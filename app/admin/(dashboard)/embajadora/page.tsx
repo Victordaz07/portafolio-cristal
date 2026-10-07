@@ -6,9 +6,12 @@ import Card from "@/components/admin/Card";
 import { getT } from "@/lib/admin-lang-server";
 import { platformOrigin } from "@/lib/site-url";
 import { referralLink } from "@/lib/ambassadors";
-import { referralStats } from "@/lib/ambassadors-server";
+import { ensureReferralCode, meritFor, referralStats } from "@/lib/ambassadors-server";
+import { meritEnabled } from "@/lib/ambassadors";
+import { earlyFeaturesFor } from "@/lib/early-access";
 import { kitTexts, programRules } from "@/lib/ambassador-kit";
 import AmbassadorPanel from "./AmbassadorPanel";
+import MeritPanel from "./MeritPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -16,8 +19,25 @@ export default async function AmbassadorPage() {
   const { t, lang } = await getT();
   const session = await getSession();
   const creator = session
-    ? await prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { ambassador: true, referralCode: true, ambassadorBadge: true, ambassadorSince: true } })
+    ? await prismaRoot.creator.findUnique({ where: { id: session.creatorId }, select: { ambassador: true, referralCode: true, ambassadorBadge: true, ambassadorPublic: true, ambassadorSince: true } })
     : null;
+
+  // Mérito automático (G5): quien aún no es embajadora ve su enlace y cuánto le falta (si el dueño lo prendió).
+  if (session && creator && !creator.ambassador && meritEnabled()) {
+    const [code, progress, origin] = await Promise.all([ensureReferralCode(session.creatorId), meritFor(session.creatorId), platformOrigin()]);
+    if (code) {
+      return (
+        <div className="flex flex-col gap-sp-5">
+          <PageHeader
+            eyebrow={t("Ayuda", "Help")}
+            title={t("Invita y gana", "Invite and earn")}
+            description={t("Si cinco personas que invites se quedan pagando su plan, subes sola al nivel Embajadora de Foliocrew.", "If five people you invite stay on a paid plan, you move up to the Foliocrew Ambassador tier on your own.")}
+          />
+          <MeritPanel link={referralLink(origin, code)} progress={progress} />
+        </div>
+      );
+    }
+  }
 
   if (!creator?.ambassador || !creator.referralCode) {
     return (
@@ -55,6 +75,8 @@ export default async function AmbassadorPage() {
         link={link}
         code={creator.referralCode}
         badge={creator.ambassadorBadge}
+        listed={creator.ambassadorPublic}
+        early={earlyFeaturesFor({ ambassador: true }).map((f) => ({ id: f.id, label: lang === "en" ? f.labelEn : f.label, description: lang === "en" ? f.descriptionEn : f.description }))}
         stats={{ registered: stats.registered, paying: stats.paying, months: stats.monthsEarned }}
         kit={kitTexts(link, lang)}
         rules={programRules(lang)}

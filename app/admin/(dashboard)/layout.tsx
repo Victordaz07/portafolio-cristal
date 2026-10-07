@@ -18,6 +18,7 @@ import { plural } from "@/lib/admin-lang";
 import { newRepliesCount } from "@/lib/community-moderation";
 import { pendingIncomingCount } from "@/lib/community-connections";
 import { unreadConversationsCount } from "@/lib/community-messages";
+import { meritEnabled } from "@/lib/ambassadors";
 
 // El panel lee siempre el estado más reciente de la base de datos: nunca debe
 // servirse una versión prerenderizada en build.
@@ -75,6 +76,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         connectionRequests={connectionRequests}
         unreadDms={unreadDms}
         ambassador={Boolean(creator?.ambassador)}
+        ambassadorMerit={meritEnabled() && !creator?.ambassador}
       >
         {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
         {billingNotice && (

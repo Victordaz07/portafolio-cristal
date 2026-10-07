@@ -83,6 +83,12 @@ export default async function AdminConnectPage({
       optional: true,
     },
     {
+      key: "LEGAL_POSTAL_ADDRESS",
+      ok: !!process.env.LEGAL_POSTAL_ADDRESS,
+      help: t("Dirección postal de quien opera la plataforma (sirve un apartado postal). Sale al pie de los correos y en la sección de derechos de autor de los términos.", "Postal address of whoever operates the platform (a PO box works). Shown in the email footer and in the copyright section of the terms."),
+      optional: true,
+    },
+    {
       key: "APP_URL",
       ok: !!process.env.APP_URL,
       help: t(`URL fija del sitio (ej: https://tu-dominio.com). Si falta se usa ${getAppUrl(requestUrl)}, que en los previews de Vercel cambia y las redes rechazarán.`, `Fixed site URL (e.g. https://your-domain.com). If missing, ${getAppUrl(requestUrl)} is used, which changes on Vercel previews and the networks will reject it.`),

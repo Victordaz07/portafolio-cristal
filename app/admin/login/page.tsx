@@ -6,8 +6,8 @@ import { getT } from "@/lib/admin-lang-server";
 
 export const metadata: Metadata = { title: "Foliocrew", robots: { index: false } };
 
-export default async function AdminLoginPage({ searchParams }: { searchParams: Promise<{ correo?: string }> }) {
-  const { correo } = await searchParams;
+export default async function AdminLoginPage({ searchParams }: { searchParams: Promise<{ correo?: string; contrasena?: string }> }) {
+  const { correo, contrasena } = await searchParams;
   const { t, lang } = await getT();
   return (
     <main className="min-h-screen flex items-center justify-center bg-cream px-sp-4">
@@ -32,6 +32,11 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
         {correo === "vencido" && (
           <p role="alert" className="mb-sp-4 rounded-sm bg-cream p-sp-3 text-sm text-ink">
             {t("Ese enlace venció o ya se usó. Entra y pide uno nuevo desde tu panel.", "That link expired or was already used. Sign in and request a new one from your dashboard.")}
+          </p>
+        )}
+        {contrasena === "nueva" && (
+          <p role="status" className="mb-sp-4 rounded-sm bg-cream p-sp-3 text-sm text-ink">
+            {t("✅ Contraseña guardada. Entra con ella y con el código de tu app.", "✅ Password saved. Sign in with it and the code from your app.")}
           </p>
         )}
         <AdminLoginForm locale={lang} />

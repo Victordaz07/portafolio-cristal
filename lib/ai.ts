@@ -95,7 +95,7 @@ export async function aiQuota() {
   return { used, limit: aiMonthlyLimit(creator?.plan ?? "pro", creator?.comp ?? false, creator?.ambassador ?? false), creatorId };
 }
 
-export type AiUsageKind = "caption" | "tips" | "design" | "pitch" | "test";
+export type AiUsageKind = "caption" | "tips" | "design" | "pitch" | "test" | "recycle";
 
 /**
  * Reserva un cupo de IA ANTES de llamar a Claude (gasto real) y devuelve el id de la fila de uso

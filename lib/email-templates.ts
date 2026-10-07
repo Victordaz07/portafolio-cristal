@@ -22,10 +22,26 @@ interface Layout {
   /** Nota pequeña bajo el botón. */
   note?: string;
   lang?: MailLang;
+  /** Enlace para darse de baja: va en los correos que no son de una cuenta (lista de espera). */
+  unsubscribeUrl?: string;
 }
 
-function layout({ origin, preheader, title, body, button, note, lang = "es" }: Layout) {
+/** Dirección postal del remitente (LEGAL_POSTAL_ADDRESS), en una línea. Sale al pie de todos los correos. */
+export function postalAddress() {
+  return (process.env.LEGAL_POSTAL_ADDRESS || "").replace(/\s*\n\s*/g, ", ").trim();
+}
+
+const unsubscribeLabel = (lang: MailLang) => (lang === "en" ? "Unsubscribe from these emails" : "Darme de baja de estos correos");
+
+function layout({ origin, preheader, title, body, button, note, lang = "es", unsubscribeUrl }: Layout) {
   const en = lang === "en";
+  const address = postalAddress();
+  const legal = [
+    address ? escapeHtml(address) : "",
+    unsubscribeUrl ? `<a href="${escapeHtml(unsubscribeUrl)}" style="color:${PLUM};">${unsubscribeLabel(lang)}</a>` : "",
+  ]
+    .filter(Boolean)
+    .join("<br>");
   const paragraphs = body
     .map((p) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:${INK};">${p}</p>`)
     .join("");
@@ -48,7 +64,7 @@ function layout({ origin, preheader, title, body, button, note, lang = "es" }: L
       ${paragraphs}${cta}${small}
     </td></tr>
     <tr><td style="padding:20px 8px 0;font-size:12px;line-height:1.5;color:#7a6676;text-align:center;">
-      Foliocrew · ${en ? "Your talent deserves its own space" : "Tu talento merece su espacio"} · <a href="${origin}" style="color:${PLUM};">${escapeHtml(origin.replace(/^https?:\/\//, ""))}</a>
+      Foliocrew · ${en ? "Your talent deserves its own space" : "Tu talento merece su espacio"} · <a href="${origin}" style="color:${PLUM};">${escapeHtml(origin.replace(/^https?:\/\//, ""))}</a>${legal ? `<br>${legal}` : ""}
     </td></tr>
   </table>
 </td></tr></table>
@@ -56,7 +72,8 @@ function layout({ origin, preheader, title, body, button, note, lang = "es" }: L
 }
 
 function text(lines: (string | false | undefined)[]) {
-  return lines.filter((l) => l !== false && l !== undefined).join("\n\n") + "\n\n— Foliocrew";
+  const address = postalAddress();
+  return lines.filter((l) => l !== false && l !== undefined).join("\n\n") + "\n\n— Foliocrew" + (address ? `\n${address}` : "");
 }
 
 const first = (name: string | null | undefined) => (name || "").trim().split(/\s+/)[0] || "";
@@ -222,7 +239,7 @@ export function brandMessageEmail(p: {
 
 // ─── Lista de espera ───
 
-export function waitlistJoinedEmail(p: { origin: string; position: number; shareUrl: string; lang?: MailLang }) {
+export function waitlistJoinedEmail(p: { origin: string; position: number; shareUrl: string; unsubscribeUrl: string; lang?: MailLang }) {
   if (p.lang === "en") return waitlistJoinedEmailEn(p);
   const subject = "Ya estás en la lista de Foliocrew 💜";
   return {
@@ -237,16 +254,18 @@ export function waitlistJoinedEmail(p: { origin: string; position: number; share
         `¿Conoces a alguien que cree contenido? Pásale este enlace: <a href="${escapeHtml(p.shareUrl)}" style="color:${PLUM};">${escapeHtml(p.shareUrl)}</a>`,
       ],
       note: "Te escribiremos a este correo cuando tengas tu invitación.",
+      unsubscribeUrl: p.unsubscribeUrl,
     }),
     text: text([
       `¡Ya estás en la lista de Foliocrew! Tienes el puesto #${p.position}.`,
       "Quienes se anotan primero entran antes y con precio especial de lanzamiento. Te escribiremos cuando tengas tu invitación.",
       `Invita a alguien que cree contenido: ${p.shareUrl}`,
+      `${unsubscribeLabel("es")}: ${p.unsubscribeUrl}`,
     ]),
   };
 }
 
-export function waitlistInviteEmail(p: { origin: string; name: string | null; registerUrl: string; inviteCode: string; lang?: MailLang }) {
+export function waitlistInviteEmail(p: { origin: string; name: string | null; registerUrl: string; inviteCode: string; unsubscribeUrl: string; lang?: MailLang }) {
   if (p.lang === "en") return waitlistInviteEmailEn(p);
   const subject = "Tu invitación a Foliocrew está aquí ✨";
   return {
@@ -262,12 +281,14 @@ export function waitlistInviteEmail(p: { origin: string; name: string | null; re
       ],
       button: { label: "Crear mi cuenta", url: p.registerUrl },
       note: "Por favor no compartas el código en público.",
+      unsubscribeUrl: p.unsubscribeUrl,
     }),
     text: text([
       hello(p.name),
       "Ya puedes crear tu cuenta de Foliocrew.",
       `Tu código de invitación: ${p.inviteCode}`,
       `Crea tu cuenta aquí: ${p.registerUrl}`,
+      `${unsubscribeLabel("es")}: ${p.unsubscribeUrl}`,
     ]),
   };
 }
@@ -574,7 +595,7 @@ function brandMessageEmailEn(p: {
   };
 }
 
-function waitlistJoinedEmailEn(p: { origin: string; position: number; shareUrl: string }) {
+function waitlistJoinedEmailEn(p: { origin: string; position: number; shareUrl: string; unsubscribeUrl: string }) {
   return {
     subject: "You're on the Foliocrew list 💜",
     html: layout({
@@ -588,16 +609,18 @@ function waitlistJoinedEmailEn(p: { origin: string; position: number; shareUrl: 
         `Know someone who creates content? Send them this link: <a href="${escapeHtml(p.shareUrl)}" style="color:${PLUM};">${escapeHtml(p.shareUrl)}</a>`,
       ],
       note: "We'll email you here when your invitation is ready.",
+      unsubscribeUrl: p.unsubscribeUrl,
     }),
     text: textEn([
       `You're on the Foliocrew list! You're #${p.position}.`,
       "The first to sign up get in sooner and at a special launch price. We'll email you when your invitation is ready.",
       `Invite someone who creates content: ${p.shareUrl}`,
+      `${unsubscribeLabel("en")}: ${p.unsubscribeUrl}`,
     ]),
   };
 }
 
-function waitlistInviteEmailEn(p: { origin: string; name: string | null; registerUrl: string; inviteCode: string }) {
+function waitlistInviteEmailEn(p: { origin: string; name: string | null; registerUrl: string; inviteCode: string; unsubscribeUrl: string }) {
   return {
     subject: "Your Foliocrew invitation is here ✨",
     html: layout({
@@ -612,8 +635,9 @@ function waitlistInviteEmailEn(p: { origin: string; name: string | null; registe
       ],
       button: { label: "Create my account", url: p.registerUrl },
       note: "Please don't share the code publicly.",
+      unsubscribeUrl: p.unsubscribeUrl,
     }),
-    text: textEn([hi(p.name), "You can now create your Foliocrew account.", `Your invite code: ${p.inviteCode}`, `Create your account here: ${p.registerUrl}`]),
+    text: textEn([hi(p.name), "You can now create your Foliocrew account.", `Your invite code: ${p.inviteCode}`, `Create your account here: ${p.registerUrl}`, `${unsubscribeLabel("en")}: ${p.unsubscribeUrl}`]),
   };
 }
 

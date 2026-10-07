@@ -16,7 +16,7 @@ export type NavGroup = { id: string; title: string; items: NavItem[] };
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
 // nuevas del diseño (Metas, Bitácora, Calendario, Reportes…) se suman a su
 // grupo a medida que se implementan.
-const navGroups = (t: T, ambassador = false): NavGroup[] => [
+const navGroups = (t: T, ambassador = false, merit = false): NavGroup[] => [
   {
     id: "crecimiento",
     title: t("Crecimiento", "Growth"),
@@ -32,6 +32,8 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
       { href: "/admin/feed", label: t("Feed / Publicaciones", "Feed / Posts") },
       { href: "/admin/calendario", label: t("Calendario", "Calendar") },
       { href: "/admin/crear", label: t("Crear", "Create") },
+      { href: "/admin/reciclar", label: t("Reciclar con IA", "Recycle with AI") },
+      { href: "/admin/bienestar", label: t("Bienestar", "Wellbeing") },
     ],
   },
   {
@@ -66,6 +68,11 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
       { href: "/admin/mensajes", label: t("Bandeja", "Inbox"), badgeKey: "unread" },
       { href: "/admin/contratos", label: t("Acuerdos", "Agreements") },
       { href: "/admin/facturas", label: t("Facturas", "Invoices") },
+      { href: "/admin/tienda", label: t("Tienda", "Shop") },
+      { href: "/admin/ingresos", label: t("Mis ingresos", "My income") },
+      { href: "/admin/comentario-dm", label: t("Comentario → DM", "Comment → DM") },
+      { href: "/admin/resenas-marcas", label: t("Reseñas de marcas", "Brand reviews") },
+      { href: "/admin/campanas", label: t("Reportes a marcas", "Brand reports") },
       { href: "/admin/reportes", label: t("Reportes", "Reports") },
       { href: "/admin/conectar", label: t("Conectar cuentas", "Connect accounts") },
     ],
@@ -76,6 +83,8 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
     items: [
       { href: "/admin/comunidad", label: t("Muro", "Wall"), exact: true, badgeKey: "community" },
       { href: "/admin/comunidad/creadores", label: t("Buscar creadores", "Find creators") },
+      { href: "/admin/comunidad/circulos", label: t("Círculos", "Circles") },
+      { href: "/admin/comunidad/sesiones", label: t("Sesiones en vivo", "Live sessions") },
       { href: "/admin/comunidad/mensajes", label: t("Mensajes", "Messages"), badgeKey: "messages" },
       { href: "/admin/comunidad/conexiones", label: t("Conexiones", "Connections"), badgeKey: "connections" },
       { href: "/admin/comunidad/perfil", label: t("Mi perfil", "My profile") },
@@ -88,8 +97,9 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
       { href: "/admin/ayuda", label: t("Manual de uso", "User guide") },
       { href: "/admin/soporte", label: t("Soporte", "Support"), badgeKey: "support" },
       { href: "/admin/ideas", label: t("Ideas y sugerencias", "Ideas & suggestions") },
-      ...(ambassador ? [{ href: "/admin/embajadora", label: t("Embajadora 💜", "Ambassador 💜") }] : []),
+      ...(ambassador ? [{ href: "/admin/embajadora", label: t("Embajadora 💜", "Ambassador 💜") }] : merit ? [{ href: "/admin/embajadora", label: t("Invita y gana", "Invite and earn") }] : []),
       { href: "/admin/plan", label: t("Mi plan", "My plan") },
+      { href: "/admin/notificaciones", label: t("Avisos en el celular", "Phone notices") },
       { href: "/admin/cuenta", label: t("Mi cuenta", "My account") },
     ],
   },
@@ -104,6 +114,8 @@ function departmentItems(team: { owner: boolean; roles: string[] } | null, t: T)
   if (has("growth")) items.push({ href: "/admin/equipo/ideas", label: t("Centro de sugerencias", "Suggestions center") });
   if (has("data")) items.push({ href: "/admin/equipo/datos", label: t("Recuperación de datos", "Data recovery") });
   if (has("community")) items.push({ href: "/admin/equipo/comunidad", label: t("Comunidad", "Community"), badgeKey: "reports" });
+  if (has("community")) items.push({ href: "/admin/equipo/resenas-marcas", label: t("Reseñas de marcas", "Brand reviews") });
+  if (has("community")) items.push({ href: "/admin/equipo/circulos", label: t("Círculos y sesiones", "Circles & sessions") });
   if (team.owner) items.push({ href: "/admin/equipo/personas", label: t("Personas del equipo", "Team members") });
   return items;
 }
@@ -152,6 +164,7 @@ export default function AdminShell({
   connectionRequests = 0,
   unreadDms = 0,
   ambassador = false,
+  ambassadorMerit = false,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -171,11 +184,13 @@ export default function AdminShell({
   unreadDms?: number;
   /** La cuenta es embajadora de Foliocrew: ve su panel en el menú. */
   ambassador?: boolean;
+  /** Mérito automático prendido y la cuenta aún no es embajadora: ve «Invita y gana». */
+  ambassadorMerit?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useT();
-  const NAV_GROUPS = navGroups(t, ambassador);
+  const NAV_GROUPS = navGroups(t, ambassador, ambassadorMerit);
   const extraGroup = foliocrewGroup(platformAdmin, team, t);
   const allGroups = [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])];
   const [mobileOpen, setMobileOpen] = useState(false);

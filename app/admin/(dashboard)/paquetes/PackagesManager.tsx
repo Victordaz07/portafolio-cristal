@@ -12,7 +12,7 @@ import { useT } from "@/components/admin/AdminLang";
 
 const API_BASE = "/api/admin/packages";
 
-const EMPTY = { emoji: "✨", name: "", nameEn: "", itemsText: "", itemsTextEn: "" };
+const EMPTY = { emoji: "✨", name: "", nameEn: "", itemsText: "", itemsTextEn: "", priceFrom: "", requestable: true };
 
 function toItems(text: string) {
   return text
@@ -47,6 +47,8 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
         nameEn: form.nameEn,
         items,
         itemsEn: toItems(form.itemsTextEn),
+        priceFrom: form.priceFrom.trim() ? Math.round(Number(form.priceFrom)) : null,
+        requestable: form.requestable,
       }),
     });
     setSaving(false);
@@ -72,6 +74,21 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
     }
     setPackages((current) => current.filter((item) => item.id !== pkg.id));
     showToast("success", t("Paquete eliminado", "Package deleted"));
+  }
+
+  async function handleSettings(pkg: Package, data: { priceFrom: number | null; requestable: boolean }) {
+    const response = await fetch(`${API_BASE}/${pkg.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      showToast("error", t("No se pudo guardar", "Couldn't save"));
+      return;
+    }
+    const updated: Package = await response.json();
+    setPackages((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+    showToast("success", t("Paquete actualizado", "Package updated"));
   }
 
   async function handleMove(index: number, direction: "up" | "down") {
@@ -107,6 +124,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
                   ))}
                 </ul>
               )}
+              <PackageSettings pkg={pkg} onSave={(data) => handleSettings(pkg, data)} />
             </div>
             <button
               type="button"
@@ -148,6 +166,14 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
           rows={5}
           required
         />
+        <label className="flex flex-col gap-sp-1">
+          <span className="text-sm font-medium text-ink">{t("Precio «desde» en US$ (opcional)", "“From” price in US$ (optional)")}</span>
+          <input type="number" min={0} step={1} value={form.priceFrom} onChange={(e) => setForm((c) => ({ ...c, priceFrom: e.target.value }))} className={inputClass} />
+        </label>
+        <label className="flex items-center gap-sp-2 text-sm text-ink">
+          <input type="checkbox" checked={form.requestable} onChange={(e) => setForm((c) => ({ ...c, requestable: e.target.checked }))} />
+          {t("Permitir que las marcas lo soliciten desde mi sitio", "Let brands request it from my site")}
+        </label>
         <button type="submit" disabled={saving} className={`${primaryButtonClass} self-start`}>
           {saving ? t("Agregando...", "Adding...") : t("+ agregar paquete", "+ add package")}
         </button>
@@ -160,6 +186,50 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
           onConfirm={() => handleDelete(pendingDelete)}
           onCancel={() => setPendingDelete(null)}
         />
+      )}
+    </div>
+  );
+}
+
+/** Precio «desde» y solicitudes de un paquete ya creado (C2). */
+function PackageSettings({ pkg, onSave }: { pkg: Package; onSave: (data: { priceFrom: number | null; requestable: boolean }) => Promise<void> }) {
+  const { t } = useT();
+  const [price, setPrice] = useState(pkg.priceFrom ? String(pkg.priceFrom) : "");
+  const [requestable, setRequestable] = useState(pkg.requestable);
+  const [busy, setBusy] = useState(false);
+  const priceValue = price.trim() ? Math.round(Number(price)) : null;
+  const changed = priceValue !== (pkg.priceFrom ?? null) || requestable !== pkg.requestable;
+  return (
+    <div className="mt-sp-3 flex flex-wrap items-center gap-sp-3 rounded-[12px] bg-cream px-sp-3 py-sp-2 text-sm text-ink">
+      <label className="flex items-center gap-sp-2">
+        {t("Desde US$", "From US$")}
+        <input
+          type="number"
+          min={0}
+          step={1}
+          aria-label={t("Precio desde", "From price")}
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          className="w-24 rounded-sm border border-line px-sp-2 py-1 outline-none focus:border-coral"
+        />
+      </label>
+      <label className="flex items-center gap-sp-2">
+        <input type="checkbox" checked={requestable} onChange={(e) => setRequestable(e.target.checked)} />
+        {t("Permitir solicitudes", "Allow requests")}
+      </label>
+      {changed && (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            await onSave({ priceFrom: priceValue, requestable });
+            setBusy(false);
+          }}
+          className="rounded-full bg-ink px-sp-4 py-1 text-xs font-semibold text-cream hover:bg-coral"
+        >
+          {t("Guardar", "Save")}
+        </button>
       )}
     </div>
   );

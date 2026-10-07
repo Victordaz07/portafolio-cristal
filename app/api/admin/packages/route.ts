@@ -11,6 +11,10 @@ const packageSchema = z.object({
   nameEn: z.string().optional().or(z.literal("")),
   items: z.array(z.string().min(1)).min(1),
   itemsEn: z.array(z.string().min(1)).optional().default([]),
+  /** Precio «desde» en dólares, sin decimales (null = sin precio). */
+  priceFrom: z.number().int().min(0).max(1_000_000).nullable().optional(),
+  /** Las marcas pueden solicitarlo desde el sitio público. Un paquete nuevo nace con las solicitudes activadas. */
+  requestable: z.boolean().optional().default(true),
 });
 
 export async function GET() {

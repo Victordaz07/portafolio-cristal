@@ -3,12 +3,14 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getLocale } from "@/lib/locale";
 import { pick, type Locale } from "@/lib/i18n";
-import { engagementRate, formatCompact } from "@/lib/metrics";
+import { formatCompact } from "@/lib/metrics";
 import { getThumbnailUrl } from "@/lib/oembed";
 import type { Platform } from "@/lib/embeds";
 import { followerGrowth } from "@/lib/reports";
 import { sitePathPrefix } from "@/lib/tenant";
 import { safeHref } from "@/lib/validators";
+import { caseStudyHighlights, engagementSummary, followerSeal, MAX_CASE_STUDIES, totalFollowerSeal, type Seal } from "@/lib/verified";
+import { publicReport, type ReportData } from "@/lib/campaign-report";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,15 @@ const COPY = {
     contact: "¿Colaboramos?",
     contactBtn: "Escríbeme",
     portfolio: "Ver portafolio completo",
+    verified: "Datos verificados por Foliocrew",
+    verifiedHelp: "Vienen directo de la cuenta conectada, no están escritos a mano.",
+    today: "actualizado hoy",
+    daysAgo: (n: number) => `actualizado hace ${n} ${n === 1 ? "día" : "días"}`,
+    cases: "Casos de éxito",
+    caseViews: "vistas",
+    caseEngagement: "interacción",
+    caseRatio: "veces su promedio",
+    casePosts: "publicaciones",
     switchTo: "EN",
   },
   en: {
@@ -41,9 +52,18 @@ const COPY = {
     contact: "Let's work together",
     contactBtn: "Email me",
     portfolio: "See full portfolio",
+    verified: "Data verified by Foliocrew",
+    verifiedHelp: "Straight from the connected account, not typed by hand.",
+    today: "updated today",
+    daysAgo: (n: number) => `updated ${n} ${n === 1 ? "day" : "days"} ago`,
+    cases: "Success stories",
+    caseViews: "views",
+    caseEngagement: "engagement",
+    caseRatio: "× their average",
+    casePosts: "posts",
     switchTo: "ES",
   },
-} satisfies Record<Locale, Record<string, string>>;
+} satisfies Record<Locale, Record<string, string | ((n: number) => string)>>;
 
 const NETWORK_LABEL: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", facebook: "Facebook" };
 
@@ -57,9 +77,9 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
   const { lang } = await searchParams;
   const locale: Locale = lang === "en" || lang === "es" ? lang : await getLocale();
   const sitePrefix = await sitePathPrefix();
-  const copy = COPY[locale];
+  const copy = COPY[locale] as typeof COPY.es;
 
-  const [hero, stats, growth, cards, brands, settings, collabs] = await Promise.all([
+  const [hero, stats, growth, cards, brands, settings, collabs, reports] = await Promise.all([
     prisma.hero.findFirst(),
     prisma.stat.findMany({ orderBy: { order: "asc" } }),
     followerGrowth(1),
@@ -67,19 +87,37 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
     prisma.brand.findMany({ where: { active: true }, orderBy: { order: "asc" }, select: { id: true, name: true, logoUrl: true } }),
     prisma.siteSettings.findFirst({ select: { contactEmail: true, collabsEmail: true } }),
     prisma.brand.count({ where: { dealStatus: { in: ["active", "completed"] } } }),
+    prisma.campaignReport.findMany({
+      where: { inMediaKit: true, status: "sent" },
+      orderBy: { sentAt: "desc" },
+      take: MAX_CASE_STUDIES,
+      select: { id: true, title: true, data: true, hidden: true, brand: { select: { name: true } } },
+    }),
   ]);
 
-  const rates = cards.map((c) => engagementRate(c)).filter((r): r is number => r != null);
-  const avgEngagement = rates.length ? Math.round((rates.reduce((a, b) => a + b, 0) / rates.length) * 10) / 10 : null;
+  const engagement = engagementSummary(cards);
+  const avgEngagement = engagement.value;
+  const totalSeal = totalFollowerSeal(growth.byPlatform);
+  const caseStudies = reports.map((r) => {
+    const view = publicReport(r.data as unknown as ReportData, r.hidden);
+    return { id: r.id, brand: r.brand.name, title: r.title, highlights: caseStudyHighlights({ brand: r.brand.name, title: r.title, totals: view.totals, comparison: view.comparison }) };
+  });
+  const sealText = (seal: Seal) => (seal.days === 0 ? copy.today : copy.daysAgo(seal.days));
+  const SealBadge = ({ seal }: { seal: Seal | null }) =>
+    seal ? (
+      <span title={copy.verifiedHelp} className="mt-1 inline-flex items-center gap-1 rounded-full bg-lime/30 px-2 py-0.5 text-[10px] font-semibold text-ink">
+        ✓ {copy.verified} · {sealText(seal)}
+      </span>
+    ) : null;
   const top = cards.filter((c) => c.views).sort((a, b) => (b.views ?? 0) - (a.views ?? 0)).slice(0, 3);
   const thumbs = await Promise.all(
     top.map((c) => c.thumbnailUrl ?? c.photoUrl ?? (c.postUrl ? getThumbnailUrl(c.platform as Platform, c.postUrl) : null))
   );
   const email = settings?.collabsEmail || settings?.contactEmail;
   const headline = [
-    { label: copy.total, value: growth.totalNow == null ? null : formatCompact(growth.totalNow) },
-    { label: copy.engagement, value: avgEngagement == null ? null : `${avgEngagement}%` },
-    { label: copy.collabs, value: collabs ? String(collabs) : null },
+    { label: copy.total, value: growth.totalNow == null ? null : formatCompact(growth.totalNow), seal: totalSeal },
+    { label: copy.engagement, value: avgEngagement == null ? null : `${avgEngagement}%`, seal: engagement.seal },
+    { label: copy.collabs, value: collabs ? String(collabs) : null, seal: null as Seal | null },
   ].filter((k) => k.value);
 
   return (
@@ -110,6 +148,11 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
               <div key={k.label}>
                 <p className="font-fraunces text-3xl font-semibold text-lime">{k.value}</p>
                 <p className="text-[11px] text-cream/70">{k.label}</p>
+                {k.seal && (
+                  <span title={copy.verifiedHelp} className="mt-1 inline-block rounded-full bg-lime/20 px-2 py-0.5 text-[10px] font-semibold text-lime">
+                    ✓ {copy.verified} · {sealText(k.seal)}
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -125,12 +168,39 @@ export default async function MediaKitPage({ searchParams }: { searchParams: Pro
                   <p className="text-xs text-ink/60">
                     {NETWORK_LABEL[p.platform] ?? p.platform} · {copy.followers}
                   </p>
+                  <SealBadge seal={followerSeal(p)} />
                 </div>
               ))}
               {stats.map((s) => (
                 <div key={s.id} className="rounded-[16px] border border-line bg-white p-sp-4">
                   <p className="font-fraunces text-2xl font-semibold text-ink">{s.value}</p>
                   <p className="text-xs text-ink/60">{pick(locale, s.label, s.labelEn)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {caseStudies.length > 0 && (
+          <section>
+            <h2 className="mb-sp-3 font-bodoni text-2xl font-bold uppercase italic text-ink">{copy.cases}</h2>
+            <div className="grid gap-sp-3 sm:grid-cols-3">
+              {caseStudies.map((c) => (
+                <div key={c.id} className="rounded-[16px] border border-line bg-white p-sp-4">
+                  <p className="text-sm font-semibold text-ink">{c.brand}</p>
+                  <p className="text-xs text-ink/60">{c.title}</p>
+                  <ul className="mt-sp-2 flex flex-col gap-1">
+                    {c.highlights.map((h) => (
+                      <li key={h.key} className="text-sm text-ink">
+                        <span className="font-fraunces text-xl font-semibold text-coral">
+                          {h.key === "views" ? formatCompact(h.value) : h.key === "engagement" ? `${h.value}%` : h.key === "ratio" ? `${h.value}×` : h.value}
+                        </span>{" "}
+                        <span className="text-xs text-ink/60">
+                          {h.key === "views" ? copy.caseViews : h.key === "engagement" ? copy.caseEngagement : h.key === "ratio" ? copy.caseRatio : copy.casePosts}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               ))}
             </div>

@@ -12,11 +12,12 @@ const TENANT_MODELS = new Set<string>([
   "Hero", "Stat", "ContentCard", "Brand", "BrandEvent", "Review", "Service", "Testimonial", "Package",
   "FaqItem", "ContactMessage", "AdminUser", "SiteSettings", "SocialAccount", "Goal", "ActionItem",
   "LogEntry", "ScheduledPost", "FollowerSnapshot", "Payment", "BioLink", "BioLinkGroup", "InboxReply", "SupportTicket", "DataRequest",
-  "Deliverable", "Invoice", "BillingProfile", "Contract", "AiUsage",
+  "Deliverable", "Invoice", "BillingProfile", "Contract", "AiUsage", "CampaignReport", "IncomeEntry", "Expense",
+  "CommentTrigger", "CommentTriggerHit", "ContentBankItem", "RestPeriod", "WellbeingSettings", "PushSubscription", "Product",
 ]);
 
 /** Modelos que apuntan a una Brand: el brandId tiene que ser de la misma creadora. */
-const BRAND_REF_MODELS = new Set<string>(["ContentCard", "ScheduledPost", "BrandEvent", "Deliverable", "Invoice", "Contract"]);
+const BRAND_REF_MODELS = new Set<string>(["ContentCard", "ScheduledPost", "BrandEvent", "Deliverable", "Invoice", "Contract", "CampaignReport"]);
 
 const WHERE_OPS = new Set([
   "findUnique", "findUniqueOrThrow", "findFirst", "findFirstOrThrow", "findMany", "count", "aggregate",

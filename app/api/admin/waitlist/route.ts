@@ -5,6 +5,7 @@ import { isPlatformAdmin } from "@/lib/platform-admin";
 import { emailConfigured, sendEmail } from "@/lib/email";
 import { waitlistInviteEmail } from "@/lib/email-templates";
 import { platformOrigin } from "@/lib/site-url";
+import { unsubscribeHeaders, waitlistUnsubscribeUrl } from "@/lib/waitlist-unsubscribe";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
@@ -25,9 +26,9 @@ export async function GET() {
   const { t } = await getT();
   if (!(await isPlatformAdmin())) return NextResponse.json({ error: t("Solo para quien administra Foliocrew", "Foliocrew admins only") }, { status: 403 });
   const entries = await prismaRoot.waitlistEntry.findMany({ orderBy: { createdAt: "asc" } });
-  const header = ["posicion", "email", "instagram", "nicho", "seguidores", "utm_source", "utm_medium", "utm_campaign", "estado", "fecha"];
+  const header = ["posicion", "email", "instagram", "nicho", "seguidores", "utm_source", "utm_medium", "utm_campaign", "estado", "fecha", "baja"];
   const rows = entries.map((e, i) =>
-    [i + 1, e.email, e.instagram, e.niche, e.audience, e.utmSource, e.utmMedium, e.utmCampaign, STATUS_LABEL[e.status] ?? e.status, e.createdAt]
+    [i + 1, e.email, e.instagram, e.niche, e.audience, e.utmSource, e.utmMedium, e.utmCampaign, STATUS_LABEL[e.status] ?? e.status, e.createdAt, e.unsubscribedAt ?? ""]
       .map(csvCell)
       .join(",")
   );
@@ -68,14 +69,18 @@ export async function PATCH(request: Request) {
   if (!inviteCode) return NextResponse.json({ error: t("Falta SIGNUP_INVITE_CODE en Vercel", "SIGNUP_INVITE_CODE is missing in Vercel") }, { status: 400 });
   if (!emailConfigured()) return NextResponse.json({ error: t("Falta RESEND_API_KEY en Vercel", "RESEND_API_KEY is missing in Vercel") }, { status: 400 });
   const origin = await platformOrigin();
-  const entries = await prismaRoot.waitlistEntry.findMany({ where });
+  const all = await prismaRoot.waitlistEntry.findMany({ where });
+  // Quien se dio de baja no recibe más correos (ni aunque se seleccione a mano).
+  const entries = all.filter((e) => !e.unsubscribedAt);
+  const skipped = all.length - entries.length;
   let sent = 0;
   for (const entry of entries) {
-    const mail = waitlistInviteEmail({ lang: entry.language === "en" ? "en" : "es", origin, name: entry.name, registerUrl: `${origin}/admin/registro`, inviteCode });
-    const result = await sendEmail({ to: entry.email, ...mail });
+    const unsubscribeUrl = waitlistUnsubscribeUrl(origin, entry.id);
+    const mail = waitlistInviteEmail({ lang: entry.language === "en" ? "en" : "es", origin, name: entry.name, registerUrl: `${origin}/admin/registro`, inviteCode, unsubscribeUrl });
+    const result = await sendEmail({ to: entry.email, ...mail, headers: unsubscribeHeaders(unsubscribeUrl) });
     if (!result.sent) continue;
     sent += 1;
     await prismaRoot.waitlistEntry.update({ where: { id: entry.id }, data: { status: "invited", invitedAt: new Date() } });
   }
-  return NextResponse.json({ ok: true, sent, failed: entries.length - sent });
+  return NextResponse.json({ ok: true, sent, failed: entries.length - sent, skipped });
 }

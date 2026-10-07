@@ -12,6 +12,8 @@ const packageUpdateSchema = z.object({
   items: z.array(z.string().min(1)).min(1).optional(),
   itemsEn: z.array(z.string().min(1)).optional(),
   order: z.number().int().optional(),
+  priceFrom: z.number().int().min(0).max(1_000_000).nullable().optional(),
+  requestable: z.boolean().optional(),
 });
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -25,6 +27,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const data = { ...parsed.data };
   if (data.nameEn === "") data.nameEn = null;
+  if (data.priceFrom === 0) data.priceFrom = null;
 
   const pkg = await prisma.package.update({ where: { id }, data });
   return NextResponse.json(pkg);

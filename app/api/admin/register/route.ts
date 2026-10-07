@@ -19,6 +19,8 @@ const registerSchema = z.object({
   inviteCode: z.string().trim().optional(),
   /** Código del enlace de una embajadora (?ref=), si llegó por uno. */
   ref: z.string().trim().max(40).optional(),
+  /** Casilla del registro: tiene 18 años o más y acepta los términos y la privacidad. */
+  acceptedTerms: z.boolean().optional(),
 });
 
 export async function POST(request: Request) {
@@ -31,7 +33,13 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: validationMessage(t, parsed.error.issues[0]?.message) }, { status: 400 });
   }
-  const { name, slug, email, password, inviteCode, ref } = parsed.data;
+  const { name, slug, email, password, inviteCode, ref, acceptedTerms } = parsed.data;
+  if (!acceptedTerms) {
+    return NextResponse.json(
+      { error: t("Confirma que tienes 18 años o más y que aceptas los términos y la privacidad", "Confirm that you're 18 or older and that you accept the terms and privacy policy"), field: "acceptedTerms" },
+      { status: 400 }
+    );
+  }
   // El enlace de una embajadora activa funciona como invitación; si no, hace falta el código de invitación general.
   const referral = await incomingReferral(ref);
   if (!referral) {
@@ -49,6 +57,9 @@ export async function POST(request: Request) {
   }
 
   const { user } = await createCreatorAccount({ name, slug, email, password, language: lang });
+  await prismaRoot.adminUser
+    .update({ where: { id: user.id }, data: { termsAcceptedAt: new Date() } })
+    .catch((error) => console.error("No se pudo guardar la aceptación de los términos", error));
   // Enlace de una embajadora: invitación + referido. Enlace de una cuenta con mérito (G5): solo referido (no abre el registro).
   const merit = referral ? null : await incomingMeritReferral(ref);
   if (referral) await recordReferral(referral.referrerId, user.creatorId);

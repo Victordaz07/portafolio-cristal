@@ -45,6 +45,7 @@ export default async function LegalPageView({ id, lang, notice }: { id: LegalPag
     platformName: siteConfig.platformName,
     legalOwner: siteConfig.legalOwner,
     legalEmail: siteConfig.legalEmail,
+    postalAddress: siteConfig.legalPostalAddress,
     updatedAt: siteConfig.legalUpdatedAt,
   });
   const nav = NAV[locale];
@@ -95,6 +96,7 @@ export default async function LegalPageView({ id, lang, notice }: { id: LegalPag
           {page.sections.map((section) => (
             <section key={section.heading} className="mt-sp-6">
               <h2 className="font-fraunces text-xl font-semibold text-ink">{section.heading}</h2>
+              {section.lead && <p className="mt-sp-2 leading-relaxed text-ink/80">{linkify(section.lead)}</p>}
               {section.list && (
                 <ul className="mt-sp-2 flex list-disc flex-col gap-sp-2 pl-sp-5 leading-relaxed text-ink/80">
                   {section.list.map((item) => (

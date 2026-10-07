@@ -41,3 +41,11 @@ Modelo: por defecto `claude-sonnet-5-5` (la mitad de precio que Opus). Para camb
 ## Ya confirmado
 - `CRON_SECRET` y `TOKEN_ENCRYPTION_KEY` existen en Vercel.
 - La CI de GitHub (`.github/workflows/ci.yml`) corre lint, tipos, tests y build en cada PR.
+
+## Cumplimiento legal (auditoría del 7 de octubre)
+El código ya quedó listo; esto es lo que solo tú puedes hacer:
+1. **Dirección postal:** en Vercel agrega `LEGAL_POSTAL_ADDRESS` (una línea; sirve un PO Box, para no publicar la de tu casa) y vuelve a desplegar. Sale al pie de los correos y en `/terminos`.
+2. **Agente de derechos de autor (DMCA):** regístralo en https://dmca.copyright.gov (cuesta unos 6 dólares y se renueva cada 3 años) con el mismo correo de `LEGAL_CONTACT_EMAIL` y la misma dirección postal. Sin ese registro, la sección 9 de los términos no te da la protección de "puerto seguro".
+3. **Correo legal:** confirma que `LEGAL_CONTACT_EMAIL` está en Vercel y que alguien lee ese buzón (ahí llegan los avisos de derechos de autor y de privacidad).
+4. **Revisión de un abogado:** los textos de `/privacidad` y `/terminos` son una base razonable, no asesoría legal.
+5. **Cuando conectes Stripe con renovación automática:** antes de cobrar hay que mostrar precio, frecuencia y cómo cancelar junto al botón de pago, pedir consentimiento expreso y dejar cancelar en línea tan fácil como fue suscribirse. Hoy no aplica porque los pagos son manuales y no se renuevan solos.

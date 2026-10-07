@@ -15,6 +15,19 @@ y `lib/email-templates.ts` (plantillas con la marca, en HTML y texto plano).
 | **Ya estás en la lista** | Al anotarse en la lista de espera | La persona anotada |
 | **Tu invitación a Foliocrew** | Botón "Invitar por correo" en Lista de espera | Las personas seleccionadas (con link y código) |
 
+## Baja y dirección postal (CAN-SPAM)
+
+- Los dos correos de la **lista de espera** traen un enlace **"Darme de baja"** (y la cabecera `List-Unsubscribe`,
+  para que Gmail y Outlook muestren su propio botón). El enlace va firmado y llega a `/api/waitlist/unsubscribe`.
+  Quien se da de baja queda marcado como **Baja** en la Lista de espera y ya no recibe la invitación aunque lo
+  selecciones; si vuelve a anotarse en la página, vuelve a recibir correos.
+- Los demás correos son de la cuenta (confirmar correo, contraseña, pagos, avisos): no llevan baja porque no son publicidad.
+- `LEGAL_POSTAL_ADDRESS` (Vercel → Environment Variables): la dirección postal que sale al pie de **todos** los
+  correos y en la sección de derechos de autor de `/terminos`. Sirve un apartado postal (PO Box). Sin ella el pie
+  sale sin dirección.
+- Si algún día mandas un boletín o promociones a quienes ya tienen cuenta, ese correo también necesita su baja:
+  hay que agregarla antes de enviarlo.
+
 Sin `RESEND_API_KEY` la app funciona igual: los mensajes se guardan y nada falla, pero no sale ningún correo.
 
 ## Seguridad

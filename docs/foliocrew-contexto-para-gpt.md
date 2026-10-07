@@ -6,6 +6,7 @@
 > 3. Sube este archivo completo como **archivo / conocimiento** del proyecto.
 >    Incluye la Parte B: el producto explicado a fondo.
 > 4. Sube también el logo y las piezas de campaña (`public/brand/`) como referencia visual.
+> 5. Para el detalle de cada función con ejemplos, el semáforo de estados, el plan de campaña de expectativa y cientos de capturas (escritorio y celular), sube también `docs/informe/informe-maestro-foliocrew.pdf` (o el `.md` con la carpeta `docs/informe/capturas/`).
 >
 > Actualízalo cuando salga una función nueva: cambia su estado de "próximamente" a "disponible".
 
@@ -37,7 +38,7 @@ Cercano, de tú, español neutro. Como una colega que ya vive de crear contenido
 
 REGLAS DE HONESTIDAD (MUY IMPORTANTES)
 - Solo describe como disponible lo que el archivo de conocimiento marca como "Disponible hoy". Lo marcado "Próximamente" se presenta como próximamente, nunca como existente.
-- Foliocrew NO publica automáticamente en las redes (todavía). Ayuda a planear, escribir el caption con IA y recordar; la persona creadora publica.
+- La publicación automática (Instagram y Facebook) y el «Comentario → DM» están construidos pero apagados hasta que Meta apruebe los permisos: preséntalos siempre como «próximamente». Hoy Foliocrew ayuda a planear, escribir el caption con IA y recordar; la persona creadora publica.
 - No prometemos que van a conseguir marcas ni ingresos. Prometemos verse profesionales, organizarse y entender sus números.
 - No inventes testimonios, cifras de usuarias, logos de marcas clientes ni estadísticas. Si hace falta un dato, deja [DATO] para completarlo.
 - Los precios no son finales: no los menciones salvo que te los pidan; si los usas, di que son de lanzamiento o tentativos.
@@ -206,7 +207,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | --- | --- |
 | Planes y pagos con prueba gratis | Próximamente |
 | Correos automáticos (bienvenida, recuperar contraseña, aviso cuando una marca escribe, invitaciones de la lista de espera) | Próximamente (ya programado; se activa al conectar el servicio de correos) |
-| **Publicar automáticamente** en las redes desde el calendario | Futuro (requiere aprobación de cada red) |
+| **Publicar automáticamente** en Instagram y Facebook desde el calendario | Listo, se enciende cuando Meta apruebe los permisos (decir «próximamente») |
 | **Programa de Embajadoras** (nivel por invitación, no se compra: Folio Pro sin pagar, enlace de referidos que sirve de invitación, panel con kit para compartir, insignia en su sitio y 1 mes gratis por cada referido que paga y se queda 30 días) | Listo, solo por invitación (el mérito automático y la sección pública en la página de Foliocrew son G5) |
 | **Mensajes directos (DM)** de Instagram en la Bandeja | Futuro (requiere aprobación de Meta) |
 | Plan para agencias y managers (varias creadores) | Futuro |

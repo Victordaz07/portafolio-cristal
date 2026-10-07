@@ -163,6 +163,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Publicación automática:** tus piezas de Instagram y Facebook salen solas a la hora programada (cuando las redes aprueben el permiso), con aviso por correo si algo falla. Una pieza de marca no sale sin el aviso de publicidad.
 - **Bienestar:** te avisa si tienes demasiadas entregas en una semana, te deja tomar un descanso (mueve tus publicaciones programadas y, si quieres, las entregas, y puedes avisar a las marcas con un texto que tú revisas) y guarda ideas en un banco de contenido para las semanas flojas.
 - **Reciclar con IA:** pegas la transcripción de un video largo (o eliges una publicación que funcionó) y salen ganchos, textos para cada red y un carrusel, que puedes copiar o guardar en tu banco de contenido.
+- **Avisos en el celular:** instalas Foliocrew como app y te llegan avisos cortos cuando te pagan, vence una entrega, te comentan en Instagram o te responden en la comunidad.
 - **Bandeja:** en un solo lugar llegan los mensajes del formulario de tu sitio y los **comentarios de Instagram** (si conectaste tu cuenta).
   - Cada mensaje marca si está pendiente o respondido, y etiqueta como "Cliente" a las marcas de tu CRM.
   - Te avisa si un mensaje lleva más de 24 h sin respuesta.

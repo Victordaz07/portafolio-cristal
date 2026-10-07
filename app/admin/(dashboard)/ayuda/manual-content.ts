@@ -504,6 +504,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Avisos en el celular",
+    paragraphs: [
+      "Puedes instalar Foliocrew como una app en tu celular o computadora y recibir avisos cortos aunque no tengas el panel abierto: cuando te pagan, vence una entrega, te comentan en Instagram o te responden en la comunidad.",
+      "Entra a Ayuda → Avisos en el celular y toca \"Activar avisos\" en cada dispositivo donde los quieras; eliges qué temas recibir y puedes mandar un aviso de prueba. En iPhone, primero añade Foliocrew a la pantalla de inicio (Compartir → Añadir a pantalla de inicio) y actívalos desde la app instalada.",
+      "Los avisos no incluyen datos sensibles y los puedes apagar cuando quieras. Si no ves el botón, es porque Foliocrew todavía no tiene los avisos activos.",
+    ],
+  },
+  {
     title: "Reciclar con IA",
     paragraphs: [
       "En Contenido → Reciclar con IA pegas la transcripción o el guion de un video largo (o eliges una publicación tuya que funcionó) y te preparamos 5 ganchos, un texto para Instagram, TikTok, YouTube y Facebook, y un carrusel. Eliges el tono y el idioma.",
@@ -759,6 +767,14 @@ const guiaEn: ManualBlock[] = [
       "In Business → Brand reviews you see what other creators say about working with a brand: whether it pays on time, how many days it takes and what the deal is like. Everything is anonymous and a brand only shows up once it has reviews from at least 3 different creators.",
       "To review, you need a verified email and an account that's a few days old, and the brand must be in Brands with an active or completed deal. You say whether they paid you, how many days it took and how the deal went (1 to 5). The comment is optional: stick to facts, no insults or accusations, and no emails, phone numbers or links. The team reviews it before it's shown.",
       "You can fix or delete your review any time. If you're a brand and want to reply or correct something, there's a “Write to us” link on its card.",
+    ],
+  },
+  {
+    title: "Phone notices",
+    paragraphs: [
+      "You can install Foliocrew as an app on your phone or computer and get short notices even when the dashboard isn't open: when you get paid, a deliverable is due, someone comments on Instagram or replies in the community.",
+      "Go to Help → Phone notices and tap \"Turn on notices\" on each device where you want them; you choose which topics to get and can send a test notice. On iPhone, first add Foliocrew to your Home Screen (Share → Add to Home Screen) and turn them on from the installed app.",
+      "Notices don't include sensitive data and you can turn them off any time. If you don't see the button, Foliocrew doesn't have notices active yet.",
     ],
   },
   {

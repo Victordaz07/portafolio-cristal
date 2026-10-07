@@ -3,7 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getLocale } from "@/lib/locale";
 import { pick, type Locale } from "@/lib/i18n";
-import { engagementRate, formatCompact } from "@/lib/metrics";
+import { formatCompact } from "@/lib/metrics";
 import { getThumbnailUrl } from "@/lib/oembed";
 import type { Platform } from "@/lib/embeds";
 import { followerGrowth } from "@/lib/reports";

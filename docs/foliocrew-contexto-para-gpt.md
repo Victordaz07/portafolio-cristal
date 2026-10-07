@@ -106,7 +106,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 | **Testimonios** | Citas de marcas | Prueba social |
 | **FAQ** | Preguntas frecuentes | Ahorra mensajes |
 | **Contacto** | Formulario para marcas (nombre, marca, correo, tipo de colaboración, mensaje) y tus redes | Las marcas te escriben directo |
-| **Media kit público** | Página aparte (`/media-kit`), bilingüe, lista para mandar en un correo | Ya no tienes que actualizar un PDF |
+| **Media kit público** | Página aparte (`/media-kit`), bilingüe, lista para mandar en un correo | Ya no tienes que actualizar un PDF | Con sello «Datos verificados por Foliocrew» en los números que vienen de tus redes conectadas, y casos de éxito sacados de tus reportes de campaña
 | **Idiomas** | Español e inglés con un botón | Puedes trabajar con marcas de EE. UU. y de LatAm |
 | **Tu color** | 6 colores de acento: lila, rosa, terracota, salvia, azul y dorado | El sitio se siente tuyo |
 

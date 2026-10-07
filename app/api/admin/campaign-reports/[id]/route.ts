@@ -15,6 +15,8 @@ const schema = z.object({
   hidden: z.array(z.string().refine(isReportMetric)).max(10).optional(),
   /** Qué publicaciones entran (clave de la publicación → sí/no). */
   include: z.record(z.string().max(80), z.boolean()).optional(),
+  /** Sale como caso de éxito en el media kit público. */
+  inMediaKit: z.boolean().optional(),
   /** Vuelve a leer los números actuales (conserva qué publicaciones se dejaron fuera). */
   refresh: z.boolean().optional(),
 });
@@ -27,7 +29,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
   const report = await prisma.campaignReport.findUnique({ where: { id } });
   if (!report) return NextResponse.json({ error: t("Reporte no encontrado", "Report not found") }, { status: 404 });
-  const { title, intro, language, hidden, include, refresh } = parsed.data;
+  const { title, intro, language, hidden, include, refresh, inMediaKit } = parsed.data;
 
   let data = report.data as unknown as ReportData;
   if (refresh) data = await snapshotFor(report.brandId, data);
@@ -39,6 +41,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       ...(title !== undefined ? { title } : {}),
       ...(intro !== undefined ? { intro: intro || null } : {}),
       ...(language ? { language } : {}),
+      ...(inMediaKit !== undefined ? { inMediaKit } : {}),
       ...(hidden ? { hidden: Array.from(new Set(hidden)) } : {}),
       ...(refresh || include ? { data: data as object } : {}),
     },

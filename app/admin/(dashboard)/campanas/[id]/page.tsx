@@ -36,6 +36,7 @@ export default async function CampaignReportPage({ params }: { params: Promise<{
           intro: report.intro ?? "",
           language: report.language === "en" ? "en" : "es",
           hidden: report.hidden,
+          inMediaKit: report.inMediaKit,
           status: report.status === "sent" ? "sent" : "draft",
           sentAt: report.sentAt?.toISOString() ?? null,
           viewedAt: report.viewedAt?.toISOString() ?? null,

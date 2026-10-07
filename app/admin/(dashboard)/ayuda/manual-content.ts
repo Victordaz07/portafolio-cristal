@@ -504,6 +504,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Círculos y sesiones en vivo",
+    paragraphs: [
+      "En Comunidad → Círculos encuentras grupos más pequeños por nicho, red social o nivel. Te unes a los que te sirvan (hasta 20) y conversas solo con sus miembros. Cada círculo tiene moderadoras que pueden ocultar mensajes; sigue las reglas de la comunidad. Algunos círculos son exclusivos del plan Crew.",
+      "En Comunidad → Sesiones en vivo ves las charlas y mentorías en grupo con creadoras con experiencia. Reserva tu lugar: solo quien reserva recibe el enlace de la videollamada y puede añadirla a su calendario. Si ya no puedes ir, cancela tu lugar para que otra persona lo use.",
+      "Necesitas el correo verificado y haber aceptado las reglas de la comunidad para participar.",
+    ],
+  },
+  {
     title: "Tienda",
     paragraphs: [
       "En Negocio → Tienda puedes vender productos digitales (plantillas, presets, guías), asesorías por llamada y recomendar productos de afiliado, sin comisión de Foliocrew. Tu tienda pública está en tusitio/tienda y aparece como \"Mi tienda\" en tu Link en bio cuando tienes productos activos.",
@@ -775,6 +783,14 @@ const guiaEn: ManualBlock[] = [
       "In Business → Brand reviews you see what other creators say about working with a brand: whether it pays on time, how many days it takes and what the deal is like. Everything is anonymous and a brand only shows up once it has reviews from at least 3 different creators.",
       "To review, you need a verified email and an account that's a few days old, and the brand must be in Brands with an active or completed deal. You say whether they paid you, how many days it took and how the deal went (1 to 5). The comment is optional: stick to facts, no insults or accusations, and no emails, phone numbers or links. The team reviews it before it's shown.",
       "You can fix or delete your review any time. If you're a brand and want to reply or correct something, there's a “Write to us” link on its card.",
+    ],
+  },
+  {
+    title: "Circles and live sessions",
+    paragraphs: [
+      "In Community → Circles you'll find smaller groups by niche, social network or level. You join the ones that help you (up to 20) and chat only with their members. Each circle has moderators who can hide messages; follow the community rules. Some circles are exclusive to the Crew plan.",
+      "In Community → Live sessions you see group talks and mentoring with experienced creators. Book your spot: only people who book get the call link and can add it to their calendar. If you can't make it, cancel your spot so someone else can use it.",
+      "You need a verified email and to have accepted the community rules to take part.",
     ],
   },
   {

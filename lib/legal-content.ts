@@ -113,7 +113,7 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
       {
         heading: "7. Seguridad",
         paragraphs: [
-          "Usamos conexiones cifradas (HTTPS), tokens cifrados en la base de datos y acceso al panel con contraseña. Ningún sistema es 100% seguro, pero aplicamos medidas razonables para proteger la información.",
+          "Usamos conexiones cifradas (HTTPS), tokens cifrados en la base de datos y acceso al panel con contraseña, con verificación en dos pasos opcional y bloqueo temporal tras varios intentos fallidos. Ningún sistema es 100% seguro, pero aplicamos medidas razonables para proteger la información.",
         ],
       },
       {
@@ -315,7 +315,7 @@ const EN: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
       {
         heading: "7. Security",
         paragraphs: [
-          "We use encrypted connections (HTTPS), encrypted tokens in the database and password-protected dashboard access. No system is 100% secure, but we apply reasonable measures to protect your information.",
+          "We use encrypted connections (HTTPS), encrypted tokens in the database and password-protected dashboard access, with optional two-step verification and a temporary lock after several failed attempts. No system is 100% secure, but we apply reasonable measures to protect your information.",
         ],
       },
       {

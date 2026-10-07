@@ -49,3 +49,11 @@ El código ya quedó listo; esto es lo que solo tú puedes hacer:
 3. **Correo legal:** confirma que `LEGAL_CONTACT_EMAIL` está en Vercel y que alguien lee ese buzón (ahí llegan los avisos de derechos de autor y de privacidad).
 4. **Revisión de un abogado:** los textos de `/privacidad` y `/terminos` son una base razonable, no asesoría legal.
 5. **Cuando conectes Stripe con renovación automática:** antes de cobrar hay que mostrar precio, frecuencia y cómo cancelar junto al botón de pago, pedir consentimiento expreso y dejar cancelar en línea tan fácil como fue suscribirse. Hoy no aplica porque los pagos son manuales y no se renuevan solos.
+
+## Seguridad (7 de octubre)
+Guía completa y plan de respuesta a incidentes: `docs/seguridad.md`.
+1. **Activa tu verificación en dos pasos** en Mi cuenta y guarda los códigos de recuperación en tu gestor de contraseñas. Pídesela también a quien tenga rol en el equipo.
+2. **Dos pasos en las cuentas de fuera:** GitHub, Vercel, Neon, Resend, el registrador del dominio, las consolas de Meta/TikTok/Google, PayPal y tu correo de administración.
+3. **Neon:** confirma que la restauración a un punto en el tiempo está activa.
+4. **GitHub:** protege la rama `main`.
+

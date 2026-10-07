@@ -130,6 +130,10 @@ const es = {
     entrar: "Entrar",
     entrando: "Entrando...",
     error: "Correo o contraseña incorrectos",
+    codigo: "Código de verificación",
+    codigoAyuda: "Los 6 dígitos de tu app de autenticación, o uno de tus códigos de recuperación.",
+    verificar: "Verificar y entrar",
+    volver: "← Usar otra cuenta",
   },
 };
 
@@ -261,6 +265,10 @@ const en: typeof es = {
     entrar: "Log in",
     entrando: "Logging in...",
     error: "Incorrect email or password",
+    codigo: "Verification code",
+    codigoAyuda: "The 6 digits from your authenticator app, or one of your recovery codes.",
+    verificar: "Verify and log in",
+    volver: "← Use a different account",
   },
 };
 

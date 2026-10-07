@@ -65,7 +65,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
   const creator = await prismaRoot.creator.findUnique({
     where: { id },
     include: {
-      users: { orderBy: { createdAt: "asc" }, select: { email: true, name: true, role: true, emailVerifiedAt: true, lastLoginAt: true, createdAt: true } },
+      users: { orderBy: { createdAt: "asc" }, select: { email: true, name: true, role: true, emailVerifiedAt: true, lastLoginAt: true, createdAt: true, totpEnabledAt: true } },
       socialAccounts: { select: { platform: true, username: true, followers: true } },
       _count: { select: { contentCards: true, brands: true, contactMessages: true, scheduledPosts: true, goals: true } },
     },
@@ -126,6 +126,7 @@ export default async function PlatformAccountPage({ params }: { params: Promise<
         note={creator.adminNote ?? ""}
         isMine={isMine}
         siteUrl={siteUrl}
+        twoFactor={creator.users.some((u) => u.totpEnabledAt)}
       />
       <BillingCard
         creatorId={creator.id}

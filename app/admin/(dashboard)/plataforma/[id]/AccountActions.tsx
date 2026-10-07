@@ -15,6 +15,7 @@ export default function AccountActions({
   note,
   isMine,
   siteUrl,
+  twoFactor = false,
 }: {
   creatorId: string;
   name: string;
@@ -22,6 +23,8 @@ export default function AccountActions({
   note: string;
   isMine: boolean;
   siteUrl: string;
+  /** La cuenta tiene activa la verificación en dos pasos. */
+  twoFactor?: boolean;
 }) {
   const { t } = useT();
   const router = useRouter();
@@ -51,6 +54,29 @@ export default function AccountActions({
       return showToast("error", error);
     }
     router.push("/admin");
+    router.refresh();
+  }
+
+  async function resetTwoFactor() {
+    if (
+      !window.confirm(
+        t(
+          `¿Quitar la verificación en dos pasos de ${name}? Hazlo solo si confirmaste que es ella (por ejemplo, te escribe desde su correo de siempre). Queda registrado y le llega un aviso.`,
+          `Remove two-step verification from ${name}? Only do this if you've confirmed it's really them (for example, they write from their usual email). This is logged and they get a notice.`
+        )
+      )
+    )
+      return;
+    setBusy(true);
+    const response = await fetch(`/api/admin/platform/creators/${creatorId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ resetTwoFactor: true }),
+    });
+    setBusy(false);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) return showToast("error", data.error ?? t("No se pudo quitar", "Couldn't remove it"));
+    showToast("success", t("Verificación en dos pasos quitada", "Two-step verification removed"));
     router.refresh();
   }
 
@@ -96,6 +122,11 @@ export default function AccountActions({
             <button type="button" disabled={busy} onClick={toggle} className={secondaryButtonClass}>
               {status === "active" ? t("Pausar cuenta", "Pause account") : t("Reactivar cuenta", "Reactivate account")}
             </button>
+            {twoFactor && (
+              <button type="button" disabled={busy} onClick={resetTwoFactor} className={secondaryButtonClass}>
+                {t("Quitar verificación en dos pasos", "Remove two-step verification")}
+              </button>
+            )}
           </>
         )}
       </div>

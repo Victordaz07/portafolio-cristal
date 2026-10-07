@@ -11,6 +11,7 @@ import {
   SESSION_ACTOR_HEADER,
   SITE_SLUG_HEADER,
 } from "@/lib/tenant-headers";
+import { sameOrigin } from "@/lib/login-guard";
 
 // Páginas y APIs del panel que se pueden abrir sin sesión.
 const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/registro", "/admin/recuperar", "/admin/restablecer"];
@@ -90,6 +91,15 @@ export async function middleware(request: NextRequest) {
   if (isAdmin && !isApi && canonical && request.method === "GET") {
     const url = new URL(`${pathname}${request.nextUrl.search}`, canonical);
     return NextResponse.redirect(url, 308);
+  }
+
+  // Las APIs del panel solo aceptan cambios pedidos desde la misma dirección: otro sitio (u otro
+  // subdominio) no puede hacer que tu navegador mande una petición con tu sesión.
+  if (isApi && !["GET", "HEAD", "OPTIONS"].includes(request.method)) {
+    const hosts = [request.headers.get("x-forwarded-host"), request.headers.get("host"), request.nextUrl.host];
+    if (!sameOrigin(request.headers.get("origin"), hosts)) {
+      return NextResponse.json({ error: "Origen no permitido" }, { status: 403 });
+    }
   }
 
   if (isAdmin) {

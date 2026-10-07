@@ -519,6 +519,17 @@ model AdminUser {
   /// Cuándo confirmó, al registrarse, que tiene 18 años o más y aceptó los términos y la privacidad
   /// (null = cuenta anterior a esa casilla)
   termsAcceptedAt DateTime?
+  /// Verificación en dos pasos: clave de la app de autenticación, cifrada (lib/token-crypto.ts).
+  /// Con clave pero sin totpEnabledAt = la está configurando y todavía no confirmó el primer código.
+  totpSecret        String?
+  totpEnabledAt     DateTime?
+  /// Último intervalo de 30 s usado: un código no vale dos veces
+  totpLastStep      Int?
+  /// Hashes (SHA-256) de los códigos de recuperación que quedan sin usar
+  totpRecoveryCodes String[]  @default([])
+  /// Intentos fallidos seguidos de entrar, y hasta cuándo queda bloqueada (lib/login-guard.ts)
+  failedLogins      Int       @default(0)
+  lockedUntil       DateTime?
   createdAt       DateTime    @default(now())
   tokens          AuthToken[]
 

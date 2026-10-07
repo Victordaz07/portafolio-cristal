@@ -496,6 +496,14 @@ const guiaEs: ManualBlock[] = [
     ],
   },
   {
+    title: "Reseñas de marcas",
+    paragraphs: [
+      "En Negocio → Reseñas de marcas ves qué cuentan otras creadoras de trabajar con una marca: si paga a tiempo, cuántos días tarda y cómo es el trato. Todo es anónimo y una marca solo aparece cuando tiene reseñas de al menos 3 creadoras distintas.",
+      "Para reseñar, necesitas tener el correo verificado y una cuenta con unos días de antigüedad, y la marca tiene que estar en Marcas con un trato activo o completado. Escribes si te pagó, cuántos días tardó y cómo fue el trato (1 a 5). El comentario es opcional: cuenta solo hechos, sin insultos ni acusaciones y sin correos, teléfonos ni enlaces. El equipo lo revisa antes de mostrarlo.",
+      "Puedes corregir o borrar tu reseña cuando quieras. Si eres una marca y quieres responder o corregir algo, hay un enlace «Escríbenos» en su tarjeta.",
+    ],
+  },
+  {
     title: "Comentario → DM",
     paragraphs: [
       "En Negocio → Comentario → DM eliges una publicación de Instagram, una palabra (por ejemplo LINK) y un mensaje. Cuando alguien comenta esa palabra, Foliocrew le manda tu mensaje por DM, una sola vez por persona. Puedes usar {nombre} para poner su usuario.",
@@ -720,6 +728,14 @@ const guiaEn: ManualBlock[] = [
       "When you mark a deal as \"Completed\" in Brands, Foliocrew automatically puts together a draft campaign report with that brand's posts (the Feed posts linked to it and the deliverables already published with their link), their results and how they compare with your usual average. You can also create one by hand from the brand (\"Create campaign report\") and see them all in Business → Brand reports. In the report you can tick \"Show as a success story in my media kit\": once it has been sent, it appears in your public media kit with the metrics you left visible.",
       "You review it before sending: change the title and language (Spanish or English), write a message for the brand, leave out the posts you don't want and untick the metrics you don't want to show (views, likes, comparison, top comments…). Whatever you untick doesn't appear anywhere on the page. On the right you see a live preview, and \"↻ Update numbers\" re-reads your current numbers without losing what you left out.",
       "Tap \"Send to the brand\": they get an email with a link to a public page (no sign-in, and it doesn't show up on Google). We let you know when they open it. The page ends with a \"Shall we do it again?\" button that links to your packages, and the brand can save it as a PDF.",
+    ],
+  },
+  {
+    title: "Brand reviews",
+    paragraphs: [
+      "In Business → Brand reviews you see what other creators say about working with a brand: whether it pays on time, how many days it takes and what the deal is like. Everything is anonymous and a brand only shows up once it has reviews from at least 3 different creators.",
+      "To review, you need a verified email and an account that's a few days old, and the brand must be in Brands with an active or completed deal. You say whether they paid you, how many days it took and how the deal went (1 to 5). The comment is optional: stick to facts, no insults or accusations, and no emails, phone numbers or links. The team reviews it before it's shown.",
+      "You can fix or delete your review any time. If you're a brand and want to reply or correct something, there's a “Write to us” link on its card.",
     ],
   },
   {

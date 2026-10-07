@@ -159,6 +159,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Facturas:** creas facturas para tus marcas (completas, de anticipo o de saldo, en español o inglés) y las envías con un enlace. La marca la ve, la descarga en PDF y puede avisar "Ya pagamos". Te avisamos cuando la abre; si se atrasa, le recordamos con amabilidad el día que vence y a los 7 y 14 días. Ves cuánto tienes por cobrar, lo vencido y lo cobrado en el mes.
 - **Mis ingresos:** ves lo que ganaste y gastaste en el año (las facturas pagadas suman solas; lo demás lo anotas, con foto del recibo), cuánto apartar para impuestos (el % que elijas de tu ganancia), el recordatorio de pagos trimestrales de EE. UU. y un CSV para tu contador. No es asesoría fiscal.
 - **Comentario → DM:** eliges una publicación y una palabra (por ejemplo LINK); cuando alguien la comenta, le llega tu mensaje por DM, una sola vez por persona. Se activa cuando Instagram apruebe el permiso de mensajes.
+- **Reseñas de marcas:** otras creadoras cuentan, de forma anónima, si una marca paga a tiempo, cuánto tarda y cómo es el trato. Una marca solo aparece con reseñas de al menos 3 personas distintas, y los comentarios los revisa Comunidad antes de mostrarse.
 - **Bandeja:** en un solo lugar llegan los mensajes del formulario de tu sitio y los **comentarios de Instagram** (si conectaste tu cuenta).
   - Cada mensaje marca si está pendiente o respondido, y etiqueta como "Cliente" a las marcas de tu CRM.
   - Te avisa si un mensaje lleva más de 24 h sin respuesta.

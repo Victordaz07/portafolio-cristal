@@ -20,6 +20,7 @@ export default function RegisterForm({ rootDomain, refCode }: { rootDomain: stri
   const { t } = useT();
   const router = useRouter();
   const [values, setValues] = useState({ name: "", slug: "", email: "", password: "", inviteCode: "" });
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [slugEdited, setSlugEdited] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const [error, setError] = useState("");
@@ -39,7 +40,7 @@ export default function RegisterForm({ rootDomain, refCode }: { rootDomain: stri
     const response = await fetch("/api/admin/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...values, ...(refCode ? { ref: refCode } : {}) }),
+      body: JSON.stringify({ ...values, acceptedTerms, ...(refCode ? { ref: refCode } : {}) }),
     });
     if (response.ok) {
       router.push("/admin");
@@ -91,6 +92,20 @@ export default function RegisterForm({ rootDomain, refCode }: { rootDomain: stri
           <input required value={values.inviteCode} onChange={(e) => set("inviteCode", e.target.value)} className={inputClass} />
         </label>
       )}
+      <label className="flex items-start gap-sp-2 text-sm text-ink/80">
+        <input type="checkbox" required checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 shrink-0" />
+        <span>
+          {t("Tengo 18 años o más y acepto los", "I'm 18 or older and I accept the")}{" "}
+          <a href="/terminos" target="_blank" rel="noreferrer" className="font-medium text-coral underline">
+            {t("Términos", "Terms")}
+          </a>{" "}
+          {t("y la", "and the")}{" "}
+          <a href="/privacidad" target="_blank" rel="noreferrer" className="font-medium text-coral underline">
+            {t("Política de privacidad", "Privacy Policy")}
+          </a>
+          .
+        </span>
+      </label>
       {error && (
         <p role="alert" className="text-sm text-red-600">
           {error}

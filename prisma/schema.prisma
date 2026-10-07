@@ -516,6 +516,9 @@ model AdminUser {
   lastLoginAt     DateTime?
   /// Idioma del panel y de los correos: "es" | "en"
   language        String      @default("es")
+  /// Cuándo confirmó, al registrarse, que tiene 18 años o más y aceptó los términos y la privacidad
+  /// (null = cuenta anterior a esa casilla)
+  termsAcceptedAt DateTime?
   createdAt       DateTime    @default(now())
   tokens          AuthToken[]
 
@@ -741,6 +744,8 @@ model WaitlistEntry {
   /// Idioma de la página cuando se anotó ("es" | "en"): los correos le llegan en ese idioma
   language    String    @default("es")
   invitedAt   DateTime?
+  /// Cuándo pidió no recibir más correos (enlace de baja); null = sigue en la lista
+  unsubscribedAt DateTime?
   createdAt   DateTime  @default(now())
 
   @@index([createdAt])

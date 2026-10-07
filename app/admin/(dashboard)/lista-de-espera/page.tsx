@@ -63,6 +63,7 @@ export default async function WaitlistPage() {
           audience: e.audience,
           source: [e.utmSource, e.utmCampaign].filter(Boolean).join(" · "),
           status: e.status,
+          unsubscribed: Boolean(e.unsubscribedAt),
           createdAt: e.createdAt.toISOString(),
         }))}
         inviteCodeSet={Boolean(process.env.SIGNUP_INVITE_CODE)}

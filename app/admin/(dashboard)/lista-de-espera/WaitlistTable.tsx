@@ -16,6 +16,8 @@ interface Row {
   audience: string | null;
   source: string;
   status: string;
+  /** Pidió no recibir más correos (enlace de baja): no se le manda la invitación. */
+  unsubscribed: boolean;
   createdAt: string;
 }
 
@@ -58,12 +60,12 @@ export default function WaitlistTable({
       body: JSON.stringify({ ids: Array.from(selected), action }),
     });
     setBusy(false);
-    const body = (await response.json().catch(() => ({}))) as { error?: string; sent?: number; failed?: number };
+    const body = (await response.json().catch(() => ({}))) as { error?: string; sent?: number; failed?: number; skipped?: number };
     if (!response.ok) return showToast("error", body.error ?? t("No se pudo actualizar", "Couldn't update"));
     if (action === "email") {
       showToast(body.failed ? "error" : "success", t(
-          `Invitaciones enviadas: ${body.sent ?? 0}${body.failed ? ` · fallaron: ${body.failed}` : ""}`,
-          `Invites sent: ${body.sent ?? 0}${body.failed ? ` · failed: ${body.failed}` : ""}`
+          `Invitaciones enviadas: ${body.sent ?? 0}${body.failed ? ` · fallaron: ${body.failed}` : ""}${body.skipped ? ` · se dieron de baja: ${body.skipped}` : ""}`,
+          `Invites sent: ${body.sent ?? 0}${body.failed ? ` · failed: ${body.failed}` : ""}${body.skipped ? ` · unsubscribed: ${body.skipped}` : ""}`
         ));
     } else {
       showToast("success", action === "invited" ? t("Invitación marcada como enviada", "Invite marked as sent") : t("De vuelta en espera", "Back to waiting"));
@@ -172,6 +174,11 @@ export default function WaitlistTable({
                     <span className={`rounded-full px-[8px] py-0.5 font-mono text-[10px] uppercase ${STATUS[r.status]?.className ?? STATUS.waiting.className}`}>
                       {STATUS[r.status] ? pickLabel(lang, STATUS[r.status]) : r.status}
                     </span>
+                    {r.unsubscribed && (
+                      <span className="ml-1 rounded-full bg-red-50 px-[8px] py-0.5 font-mono text-[10px] uppercase text-red-700" title={t("Pidió no recibir más correos: no se le envía la invitación.", "Asked not to get more emails: the invite won't be sent.")}>
+                        {t("Baja", "Unsubscribed")}
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -59,6 +59,7 @@ export default function Composer({
   defaultDate,
   aiConfigured,
   timeZone,
+  autoPublishNetworks,
 }: {
   brands: { id: string; name: string }[];
   dealBrandIds: string[];
@@ -66,6 +67,8 @@ export default function Composer({
   defaultDate: string;
   aiConfigured: boolean;
   timeZone: string;
+  /** Redes con la publicación automática activa (vacío mientras Meta no apruebe los permisos). */
+  autoPublishNetworks: string[];
 }) {
   const { t, lang } = useT();
   const router = useRouter();
@@ -82,6 +85,7 @@ export default function Composer({
   const [mediaUrl, setMediaUrl] = useState(initial?.mediaUrl ?? "");
   const [date, setDate] = useState(initial?.dateKey ?? defaultDate);
   const [time, setTime] = useState(initial?.time ?? "18:00");
+  const [autoPublish, setAutoPublish] = useState(initial?.autoPublish ?? false);
   const [saving, setSaving] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -91,6 +95,7 @@ export default function Composer({
   const lastAnalyzed = useRef("");
 
   const brandName = brands.find((b) => b.id === brandId)?.name ?? null;
+  const autoPossible = networks.length > 0 && networks.every((n) => autoPublishNetworks.includes(n));
   const warnings = planWarnings(caption, contentType, networks, lang);
   const dealBrands = brands.filter((b) => dealBrandIds.includes(b.id));
   const otherBrands = brands.filter((b) => !dealBrandIds.includes(b.id));
@@ -161,6 +166,7 @@ export default function Composer({
       date,
       time,
       status,
+      autoPublish: autoPossible && autoPublish && status === "scheduled",
     };
     const response = await fetch(initial ? `/api/admin/posts/${initial.id}` : "/api/admin/posts", {
       method: initial ? "PATCH" : "POST",
@@ -352,6 +358,19 @@ export default function Composer({
               <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass} />
             </label>
           </div>
+          {autoPublishNetworks.length > 0 && (
+            <label className={`flex items-start gap-sp-2 text-[13px] ${autoPossible ? "text-ink" : "text-ink/40"}`}>
+              <input type="checkbox" className="mt-1" checked={autoPossible && autoPublish} disabled={!autoPossible} onChange={(e) => setAutoPublish(e.target.checked)} />
+              <span>
+                {t("Publicar sola a la hora programada", "Publish automatically at the scheduled time")}
+                <span className="block text-[11px] text-ink/50">
+                  {autoPossible
+                    ? t("Solo con foto o video del tipo correcto y, si es para una marca, con el aviso de publicidad.", "Only with a photo or video of the right type and, if it's for a brand, with the ad disclosure.")
+                    : t("Disponible solo si todas las redes elegidas se publican solas.", "Only available if all the chosen networks publish automatically.")}
+                </span>
+              </span>
+            </label>
+          )}
           <div className="flex flex-wrap gap-sp-3">
             <button type="button" onClick={() => save("scheduled")} disabled={saving} className={primaryButtonClass}>
               {saving
@@ -367,10 +386,15 @@ export default function Composer({
             </button>
           </div>
           <p className="text-[11px] text-ink/45">
-            {t(
-              "Por ahora no se publica sola: el día programado aparece en tu Calendario y en el Resumen para que la subas y la marques como publicada. La publicación automática llega cuando las redes aprueben la app.",
-              "For now it doesn't post on its own: on the scheduled day it shows up in your Calendar and Overview so you can upload it and mark it as published. Automatic publishing arrives once the networks approve the app."
-            )}
+            {autoPublishNetworks.length > 0
+              ? t(
+                  "Las redes con publicación automática salen solas; las demás aparecen en tu Calendario y en el Resumen el día programado para que las subas y las marques como publicadas.",
+                  "Networks with automatic publishing go out on their own; the others show up in your Calendar and Overview on the scheduled day so you can upload them and mark them as published."
+                )
+              : t(
+                  "Por ahora no se publica sola: el día programado aparece en tu Calendario y en el Resumen para que la subas y la marques como publicada. La publicación automática llega cuando las redes aprueben la app.",
+                  "For now it doesn't post on its own: on the scheduled day it shows up in your Calendar and Overview so you can upload it and mark it as published. Automatic publishing arrives once the networks approve the app."
+                )}
           </p>
         </div>
       </Card>

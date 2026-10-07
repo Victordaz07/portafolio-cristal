@@ -3,6 +3,7 @@ import PageHeader from "@/components/admin/PageHeader";
 import { appTimeZone, todayKey } from "@/lib/growth-server";
 import { isAiConfigured } from "@/lib/ai";
 import { toPostView } from "@/lib/posts-view";
+import { AUTO_NETWORKS, publishEnabled } from "@/lib/publish";
 import Composer from "./Composer";
 import { getT } from "@/lib/admin-lang-server";
 
@@ -37,6 +38,7 @@ export default async function AdminCreatePage({
         defaultDate={date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : todayKey()}
         aiConfigured={isAiConfigured()}
         timeZone={tz}
+        autoPublishNetworks={AUTO_NETWORKS.filter(publishEnabled)}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import { getT } from "@/lib/admin-lang-server";
 import { sendDealReminders } from "@/lib/deal-reminders";
 import { sendInvoiceReminders } from "@/lib/invoice-reminders";
 import { grantAmbassadorRewards } from "@/lib/ambassadors-server";
+import { publishDuePosts } from "@/lib/publish-server";
 
 export const dynamic = "force-dynamic";
 
@@ -30,5 +31,10 @@ export async function GET(request: Request) {
     console.error("Falló la recompensa de embajadoras", error);
     return null;
   });
-  return NextResponse.json({ ok: true, sent, deals, invoices, ambassadors });
+  // Red de seguridad de la publicación automática (la ruta /api/cron/publish la puede llamar un programador externo cada pocos minutos).
+  const publishing = await publishDuePosts().catch((error) => {
+    console.error("Falló la publicación automática", error);
+    return null;
+  });
+  return NextResponse.json({ ok: true, sent, deals, invoices, ambassadors, publishing });
 }

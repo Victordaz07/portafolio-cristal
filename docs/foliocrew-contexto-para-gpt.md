@@ -160,6 +160,7 @@ Cada cambio que haces en el panel se ve al instante en tu sitio. No hay que sabe
 - **Mis ingresos:** ves lo que ganaste y gastaste en el año (las facturas pagadas suman solas; lo demás lo anotas, con foto del recibo), cuánto apartar para impuestos (el % que elijas de tu ganancia), el recordatorio de pagos trimestrales de EE. UU. y un CSV para tu contador. No es asesoría fiscal.
 - **Comentario → DM:** eliges una publicación y una palabra (por ejemplo LINK); cuando alguien la comenta, le llega tu mensaje por DM, una sola vez por persona. Se activa cuando Instagram apruebe el permiso de mensajes.
 - **Reseñas de marcas:** otras creadoras cuentan, de forma anónima, si una marca paga a tiempo, cuánto tarda y cómo es el trato. Una marca solo aparece con reseñas de al menos 3 personas distintas, y los comentarios los revisa Comunidad antes de mostrarse.
+- **Publicación automática:** tus piezas de Instagram y Facebook salen solas a la hora programada (cuando las redes aprueben el permiso), con aviso por correo si algo falla. Una pieza de marca no sale sin el aviso de publicidad.
 - **Bandeja:** en un solo lugar llegan los mensajes del formulario de tu sitio y los **comentarios de Instagram** (si conectaste tu cuenta).
   - Cada mensaje marca si está pendiente o respondido, y etiqueta como "Cliente" a las marcas de tu CRM.
   - Te avisa si un mensaje lleva más de 24 h sin respuesta.

@@ -32,6 +32,7 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
       { href: "/admin/feed", label: t("Feed / Publicaciones", "Feed / Posts") },
       { href: "/admin/calendario", label: t("Calendario", "Calendar") },
       { href: "/admin/crear", label: t("Crear", "Create") },
+      { href: "/admin/reciclar", label: t("Reciclar con IA", "Recycle with AI") },
       { href: "/admin/bienestar", label: t("Bienestar", "Wellbeing") },
     ],
   },

@@ -42,7 +42,7 @@ Los hallazgos reales son P1/P2: controles ausentes o que no escalan, no brechas 
 | P1-1 | `/api/admin/ai/test` llamaba a Claude real sin tope ni atribución de costo | `app/api/admin/ai/test/route.ts` | **CORREGIDO** — ver abajo |
 | P1-2 | Tope mensual de IA con "contar → comparar → llamar → recién registrar" (no atómico); dos pedidos casi simultáneos podían superar el tope | `lib/ai.ts` | **CORREGIDO** — ver abajo |
 | P1-3 | Nunca se llamaba `del()` de Vercel Blob: reemplazar/borrar una foto, video o logo dejaba el archivo anterior huérfano para siempre | `app/api/admin/content-cards/[id]/route.ts`, `hero/route.ts` | **CORREGIDO** — ver abajo |
-| P1-4 | Ningún plan tiene cuota de almacenamiento ni límite de cantidad de piezas; `/api/admin/upload` no consulta plan/creadora antes de emitir el token de subida | `lib/plans.ts`, `app/api/admin/upload/route.ts` | PENDIENTE (no autorizado en esta ronda; requiere decisión de producto: ¿cuántas piezas/MB por plan?) |
+| P1-4 | Ningún plan tiene cuota de almacenamiento ni límite de cantidad de piezas; `/api/admin/upload` no consulta plan/creadora antes de emitir el token de subida | `lib/plans.ts`, `app/api/admin/upload/route.ts` | **CORREGIDO** — ver abajo |
 | P1-5 | `TENANT_MODELS` es una lista blanca manual; un modelo nuevo olvidado queda sin filtrar automáticamente | `lib/prisma.ts` | **PARCIALMENTE CORREGIDO** — se agregó `AiUsage` a la lista (ya estaba protegido a mano en todo el código existente, esto es una red de seguridad adicional sin cambio de comportamiento) |
 | P1-6 | Modelos de Comunidad (fuera del extension, por diseño) dependen de checks manuales por ruta; verificado en 6 de ~20 rutas | `app/api/admin/community/**` | PENDIENTE — requiere auditar las ~14 rutas restantes o construir un segundo helper reutilizable |
 | P1-7 | El limitador de intentos (`lib/rate-limit.ts`) usado en ~25 endpoints (login, registro, contacto, IA, comunidad…) es un `Map` en memoria de un solo proceso: en Vercel (múltiples instancias) el límite real es "N por instancia" | `lib/rate-limit.ts` | PENDIENTE — ya reconocido en `docs/pendientes.md` para login (propone Upstash Redis); requiere decidir si se contrata Redis compartido |
@@ -88,6 +88,51 @@ de diseño — esos flujos **no** se tocaron en esta ronda (quedan con el mismo 
 y rechaza cualquier dominio externo (incluyendo uno que *parece* nuestro dominio pero no lo es) — **PROBADO EN LOCAL**
 (función pura, sin red). El `build` completo de Next.js (`npm run build`) también se corrió y terminó sin errores con
 estos cambios.
+
+### Corrección P1-4: cuota de piezas propias por plan
+
+**Antes**: ningún plan tenía tope de cantidad ni de almacenamiento; `/api/admin/upload` emitía el
+token de subida sin consultar el plan de la cuenta.
+
+**Ahora** (`lib/storage-quota.ts`): se limita la **cantidad de piezas con archivo propio** (foto o
+video subido a Blob) por creadora, con el mismo patrón que el tope mensual de IA (`lib/ai.ts`):
+default en código, configurable sin tocar código vía `STORAGE_MAX_PIECES_FOLIO` / `_PRO` / `_CREW`
+en Vercel. **Un post solo enlazado (TikTok/Instagram/Facebook) nunca cuenta**: no ocupa nuestro
+almacenamiento, así que no tiene sentido limitarlo.
+
+Topes por defecto (ver justificación de "real y funcional, sin arriesgar el presupuesto" en
+`docs/finops/modelo-costos.md` sección 8):
+
+| Plan | Piezas propias | Peor caso de almacenamiento (todas video de 250MB) | Caso típico (~15MB promedio) |
+|---|---:|---:|---:|
+| Folio ($9) | 40 | 10 GB | ~0.4-0.6 GB |
+| Pro ($19) | 150 | 37.5 GB | ~1.5-2 GB |
+| Crew ($49) | 400 | 100 GB | ~4-6 GB |
+
+Se eligió un **límite de cantidad de piezas** (no de bytes exactos) porque el código no guarda hoy
+el tamaño real de cada archivo subido (el flujo de subida a Vercel Blob no persiste el `size` del
+blob en la base de datos) — agregar seguimiento de bytes exactos por pieza habría significado una
+migración más grande (nuevas columnas en varios modelos) para un beneficio marginal, dado que ya
+existe un tope de tamaño por archivo (`lib/upload-limits.ts`: 250MB video / 40MB foto). Combinando
+ambos topes (cantidad × tamaño máximo) se acota el peor caso de almacenamiento por cuenta sin
+necesitar esa migración. Si más adelante se quiere un tope en GB exactos, hay que agregar esa
+columna de tamaño primero (documentado aquí para no repetir el análisis).
+
+El tope se verifica en servidor en dos lugares: `POST /api/admin/content-cards` (pieza nueva) y
+`PATCH /api/admin/content-cards/[id]` (solo cuando una tarjeta que **no** tenía archivo propio pasa
+a tenerlo — reemplazar un archivo que ya existía no suma una pieza nueva). Se muestra en
+`/admin/plan` igual que la cuota de IA, en español e inglés, sin lenguaje técnico.
+
+**No es atómico** (a propósito): a diferencia de la cuota de IA, aquí no hay una llamada a un
+proveedor externo que cueste dinero en el momento — es una cuenta de filas en nuestra propia base.
+El peor caso de una carrera (dos pestañas guardando a la vez cerca del tope) es un puñado de
+archivos de más, no un gasto de terceros sin control; no se justificaba la complejidad de un
+advisory lock para este caso (si en el futuro se vuelve un problema real, se puede aplicar el mismo
+patrón de `reserveAiUsage`).
+
+**Validado**: `tests/storage-quota.test.ts` confirma contra Postgres real que un post solo
+enlazado no cuenta, que el tope se respeta exactamente, y que `mediaPieceLimit` responde bien a la
+variable de entorno — **PROBADO EN LOCAL**. `npm run build` completo sin errores.
 
 ## 3. Hallazgos P2 (relevantes, escalan mal, no corregidos en esta ronda — requieren más alcance/decisión)
 

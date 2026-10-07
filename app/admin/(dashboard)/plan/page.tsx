@@ -16,6 +16,7 @@ import {
 import { dateLocale, plural, type AdminLang } from "@/lib/admin-lang";
 import PayForm from "./PayForm";
 import { aiQuota } from "@/lib/ai";
+import { mediaQuota } from "@/lib/storage-quota";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
@@ -41,6 +42,7 @@ export default async function PlanPage() {
   ]);
   if (!creator) return null;
   const ai = await aiQuota().catch(() => null);
+  const storage = await mediaQuota().catch(() => null);
   const { state, until, daysLeft } = billingState(creator);
   const plan = getPlan(creator.plan);
   const instructions = paymentInstructions();
@@ -105,6 +107,21 @@ export default async function PlanPage() {
           </p>
           <div className="mt-sp-2 h-2 overflow-hidden rounded-full bg-cream" aria-hidden>
             <div className="h-full rounded-full bg-coral" style={{ width: `${Math.min(100, Math.round((ai.used / ai.limit) * 100))}%` }} />
+          </div>
+        </Card>
+      )}
+      {storage && (
+        <Card>
+          <p className="mb-sp-2 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Fotos y videos propios en tu Feed", "Photos and videos in your Feed")}</p>
+          <p className="text-sm text-ink">
+            <strong>{storage.used}</strong>{" "}
+            {t(
+              `de ${storage.limit} · solo cuentan las fotos/videos que subes (un post enlazado de TikTok/Instagram no ocupa espacio).`,
+              `of ${storage.limit} · only files you upload count (a linked TikTok/Instagram post doesn't take up space).`
+            )}
+          </p>
+          <div className="mt-sp-2 h-2 overflow-hidden rounded-full bg-cream" aria-hidden>
+            <div className="h-full rounded-full bg-coral" style={{ width: `${Math.min(100, Math.round((storage.used / storage.limit) * 100))}%` }} />
           </div>
         </Card>
       )}

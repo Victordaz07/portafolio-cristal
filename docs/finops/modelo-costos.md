@@ -147,7 +147,33 @@ Ejemplo de costo (perfil "normal" × 3 espacios, asumiendo que la función ya ex
   costo de bandwidth de esa pieza cada vez que se reproduce — reforzando que el límite de 250MB/video
   actual (`lib/upload-limits.ts`) es generoso comparado con el tamaño típico de un clip UGC vertical.
 
-## 7. Cómo recalcular
+## 8. Cuota de almacenamiento elegida (implementada)
+
+Usando las tarifas de la sección 1 (Blob storage $0.023/GB-mes, bandwidth $0.05/GB de excedente) y
+el peor caso de la cuota implementada en `lib/storage-quota.ts` (ver
+`docs/finops/auditoria-foliocrew.md`, corrección P1-4):
+
+| Plan | Piezas | Peor caso (GB) | Costo de storage del peor caso | Caso típico (GB) | Costo de storage típico |
+|---|---:|---:|---:|---:|---:|
+| Folio ($9/mes) | 40 | 10 GB | $0.23/mes | ~0.5 GB | ~$0.01/mes |
+| Pro ($19/mes) | 150 | 37.5 GB | $0.86/mes | ~1.8 GB | ~$0.04/mes |
+| Crew ($49/mes) | 400 | 100 GB | $2.30/mes | ~5 GB | ~$0.12/mes |
+
+El costo de **storage** del peor caso es pequeño frente al precio del plan incluso en el escenario
+más pesimista (Folio: $0.23 de $9 = 2.6%; Crew: $2.30 de $49 = 4.7%). El riesgo real no es el
+storage sino el **bandwidth** si esas piezas se reproducen mucho (ver sección 6, sensibilidad
+"cuentas virales") — eso no se limita con un tope de piezas, sino que queda como hallazgo P2
+pendiente (bandwidth de video propio compartido, sin namespacing por creadora). La cuota de piezas
+sí cumple su objetivo principal: **ninguna cuenta puede acumular almacenamiento sin límite**, que
+era el hallazgo P1-4 original.
+
+Los números de "piezas" (40/150/400) son generosos para el uso típico de un portafolio UGC real
+(decenas de piezas, no cientos, según los perfiles de la sección 2) y a la vez ponen un techo
+duro — es la combinación que pediste: "real y funcional, pero que no deje en banca rota". Son
+configurables sin desplegar código nuevo (`STORAGE_MAX_PIECES_FOLIO/_PRO/_CREW` en Vercel) por si
+la realidad de uso pide ajustarlos para arriba o para abajo.
+
+## 9. Cómo recalcular
 
 ```bash
 node scripts/finops/cost-model.mjs

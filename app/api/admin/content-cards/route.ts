@@ -3,6 +3,7 @@ import { z } from "zod";
 import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "@/lib/social/thumbnail";
+import { assertMediaQuota, StorageQuotaError, storageQuotaErrorMessage } from "@/lib/storage-quota";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
@@ -36,11 +37,23 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   const body = await request.json().catch(() => null);
   const parsed = contentCardSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });
+  }
+
+  // Cuota de almacenamiento: un post solo enlazado (postUrl) no cuenta, no ocupa nuestro Blob.
+  if (parsed.data.photoUrl || parsed.data.videoUrl) {
+    try {
+      await assertMediaQuota();
+    } catch (error) {
+      if (error instanceof StorageQuotaError) {
+        return NextResponse.json({ error: storageQuotaErrorMessage(error, lang) }, { status: 429 });
+      }
+      throw error;
+    }
   }
 
   // Red de seguridad: si llega un link de miniatura temporal de Meta (p. ej. pegado a mano), se resube a Blob antes de guardarlo.

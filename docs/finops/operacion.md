@@ -47,7 +47,31 @@ toca datos existentes ni cambia el esquema.
 - **Si falla el borrado**: se registra con `console.error` y la operación del usuario (guardar/borrar) ya se completó
   de todas formas — nunca bloquea ni revierte el cambio en la base de datos.
 
-### 3. `AiUsage` agregado a `TENANT_MODELS` (`lib/prisma.ts`)
+### 3. Cuota de piezas propias por plan (`lib/storage-quota.ts`)
+
+- **Qué hace**: antes de crear una tarjeta del Feed con foto/video propio (o de agregarle uno a una
+  que antes solo tenía un post enlazado), cuenta cuántas piezas con archivo propio ya tiene la
+  creadora y la compara contra el tope de su plan. Un post solo enlazado (TikTok/Instagram/Facebook)
+  nunca cuenta.
+- **Topes por defecto**: Folio 40, Pro 150, Crew 400 piezas. Ver `docs/finops/modelo-costos.md`
+  sección 8 para la justificación en dólares.
+- **Variables de entorno** (opcionales, mismo patrón que `AI_MONTHLY_LIMIT_*`): `STORAGE_MAX_PIECES_FOLIO`,
+  `STORAGE_MAX_PIECES_PRO`, `STORAGE_MAX_PIECES_CREW`. Sin configurarlas, usa los valores por
+  defecto de arriba.
+- **Dónde se ve**: tarjeta nueva en `/admin/plan`, igual que la cuota de IA ("X de Y piezas").
+- **Cómo verificarlo**: en una cuenta de prueba, bajar el tope (`STORAGE_MAX_PIECES_FOLIO=2` en un
+  preview) y confirmar que la tercera foto/video propio se rechaza con un mensaje claro, pero un
+  post enlazado (sin archivo) se puede seguir agregando sin límite.
+- **Alcance**: limita *cantidad de piezas*, no bytes exactos (el código no guarda el tamaño real de
+  cada archivo subido hoy). Combinado con el límite de tamaño por archivo ya existente
+  (`lib/upload-limits.ts`: 250MB video / 40MB foto), acota el peor caso de almacenamiento por cuenta
+  sin necesitar una migración para guardar bytes por pieza. Si se quiere un tope en GB exactos más
+  adelante, hay que agregar esa columna primero (ver detalle en la auditoría, corrección P1-4).
+- **No es atómico a propósito**: a diferencia de la cuota de IA, aquí no hay gasto a un proveedor
+  externo en el momento — es solo un conteo de filas propias. El peor caso de una carrera (dos
+  pestañas guardando a la vez) es un puñado de piezas de más, no un gasto sin control.
+
+### 4. `AiUsage` agregado a `TENANT_MODELS` (`lib/prisma.ts`)
 
 - Cambio de una línea, sin efecto de comportamiento hoy (todo el código que toca `AiUsage` ya usaba `prismaRoot` con
   filtro manual). Es una red de seguridad para si en el futuro alguien escribe `prisma.aiUsage.algo()` en vez de
@@ -56,8 +80,6 @@ toca datos existentes ni cambia el esquema.
 
 ## Qué sigue sin freno duro (para la próxima ronda, no autorizado todavía)
 
-- **Cuota de almacenamiento por plan** (P1-4): cualquier cuenta puede subir fotos/video sin tope de cantidad ni de
-  acumulado. Requiere decidir un número por plan antes de poder implementarlo (producto, no solo código).
 - **Rate-limit distribuido** (P1-7): `lib/rate-limit.ts` sigue siendo un `Map` en memoria de proceso. En Vercel con
   varias instancias, el freno de ráfaga (login, IA, comunidad, formularios) es "N por instancia", no "N total". El
   propio equipo ya lo documentó como pendiente para login (`docs/pendientes.md`, propone Upstash Redis) — la cuota

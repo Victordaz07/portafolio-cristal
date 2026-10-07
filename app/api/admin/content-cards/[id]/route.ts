@@ -4,6 +4,7 @@ import { httpUrl } from "@/lib/validators";
 import { prisma } from "@/lib/prisma";
 import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "@/lib/social/thumbnail";
 import { cleanupBlobUrls } from "@/lib/blob-cleanup";
+import { assertMediaQuota, StorageQuotaError, storageQuotaErrorMessage } from "@/lib/storage-quota";
 import { getT } from "@/lib/admin-lang-server";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +43,7 @@ const contentCardUpdateSchema = z
   );
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { t } = await getT();
+  const { t, lang } = await getT();
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const parsed = contentCardUpdateSchema.safeParse(body);
@@ -67,6 +68,23 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     where: { id },
     select: { platform: true, photoUrl: true, videoUrl: true, thumbnailUrl: true },
   });
+
+  // Cuota de almacenamiento: solo cuenta si la tarjeta pasa de "sin media propia" a "con media
+  // propia" (ej. era solo un post enlazado y ahora se le sube un archivo). Reemplazar un archivo
+  // que ya tenía no suma una pieza nueva.
+  const hadOwnMedia = Boolean(existing?.photoUrl || existing?.videoUrl);
+  const finalPhoto = data.photoUrl !== undefined ? data.photoUrl : existing?.photoUrl;
+  const finalVideo = data.videoUrl !== undefined ? data.videoUrl : existing?.videoUrl;
+  if (!hadOwnMedia && (finalPhoto || finalVideo)) {
+    try {
+      await assertMediaQuota();
+    } catch (error) {
+      if (error instanceof StorageQuotaError) {
+        return NextResponse.json({ error: storageQuotaErrorMessage(error, lang) }, { status: 429 });
+      }
+      throw error;
+    }
+  }
 
   // Red de seguridad: si llega un link de miniatura temporal de Meta (p. ej. pegado a mano), se resube a Blob antes de guardarlo.
   if (data.thumbnailUrl && isEphemeralCdnUrl(data.thumbnailUrl)) {

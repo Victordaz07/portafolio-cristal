@@ -46,7 +46,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 - [x] D3. Buscar colaboradores
 
 **E. Lo que nadie más tiene**
-- [ ] E1. Reseñas anónimas de marcas entre creadores
+- [x] E1. Reseñas anónimas de marcas entre creadores
 - [ ] E2. Publicación automática desde el calendario
 - [ ] E3. Bienestar: banco de contenido y modo descanso
 - [ ] E4. Reciclaje de contenido con IA
@@ -294,6 +294,7 @@ Ver `docs/plan-comunidad.md`, sección 8. En resumen:
 - **E1. Reseñas anónimas de marcas:** "¿Paga a tiempo? ¿Cuánto pagó? ¿Cómo fue el trato?". Solo creadores con cuenta verificada.
   Se muestra con un mínimo de 3 reseñas por marca para proteger el anonimato. Se une a la calculadora (B1) y a la Inteligencia por nicho.
   Riesgo legal: reseñas de hechos, sin insultos ni acusaciones. Moderación con el rol `community` y un botón de "derecho de respuesta" para la marca.
+  - **Cómo quedó:** migración `20261007240000_resenas_de_marcas` (`BrandReview`, `BrandReviewReply`; son de toda la plataforma, **no** van en `TENANT_MODELS` y se leen con `prismaRoot`). `lib/brand-reviews.ts` (pura, con pruebas): la marca se identifica por `normalizeBrandKey` (sin acentos, mayúsculas ni signos, así «Sol Skincare» y «SOL skincare!» son la misma); una reseña por persona y marca (`@@unique`); **mínimo 3 personas distintas** para mostrar cualquier cosa de una marca (con menos no se muestra ni cuántas hay); resumen = promedio, % a tiempo / tarde / no pagó y mediana de días; los comentarios salen **sin autor ni fecha y en orden alfabético** (el orden no delata quién llegó primero). Quién puede reseñar (`canReview`): cuenta activa, correo verificado, al menos 7 días de antigüedad y sin pausa de moderación; solo a marcas propias con trato **activo o completado**; máx. 10 reseñas nuevas por día. Los comentarios rechazan correos, teléfonos y enlaces, tienen tope de 500 caracteres y quedan **pendientes hasta que Comunidad los aprueba** (si se edita el comentario vuelve a revisión). Panel `/admin/resenas-marcas` (Negocio) con buscador y formulario; moderación en `/admin/equipo/resenas-marcas` (rol `community`): aprobar/ocultar y **derecho de respuesta** (el texto lo agrega Comunidad cuando la marca lo pide por correo; la página tiene un enlace «Escríbenos»). Entra en la copia de datos solo con las reseñas de esa persona. **Pendiente a propósito:** unir el resumen con la calculadora (B1) y con la Inteligencia por nicho; un botón «reportar» en cada comentario (hoy Comunidad puede ocultarlos).
 - **E2. Publicación automática:** el calendario publica en Instagram (permiso `instagram_business_content_publish`), en Facebook Pages y en YouTube (subida por API).
   TikTok se suma cuando aprueben la app. Cada red puede pedir revisión: **confirmar con el dueño antes de enviarla**.
 - **E3. Bienestar:**

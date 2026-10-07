@@ -68,6 +68,7 @@ const navGroups = (t: T, ambassador = false): NavGroup[] => [
       { href: "/admin/facturas", label: t("Facturas", "Invoices") },
       { href: "/admin/ingresos", label: t("Mis ingresos", "My income") },
       { href: "/admin/comentario-dm", label: t("Comentario → DM", "Comment → DM") },
+      { href: "/admin/resenas-marcas", label: t("Reseñas de marcas", "Brand reviews") },
       { href: "/admin/campanas", label: t("Reportes a marcas", "Brand reports") },
       { href: "/admin/reportes", label: t("Reportes", "Reports") },
       { href: "/admin/conectar", label: t("Conectar cuentas", "Connect accounts") },
@@ -107,6 +108,7 @@ function departmentItems(team: { owner: boolean; roles: string[] } | null, t: T)
   if (has("growth")) items.push({ href: "/admin/equipo/ideas", label: t("Centro de sugerencias", "Suggestions center") });
   if (has("data")) items.push({ href: "/admin/equipo/datos", label: t("Recuperación de datos", "Data recovery") });
   if (has("community")) items.push({ href: "/admin/equipo/comunidad", label: t("Comunidad", "Community"), badgeKey: "reports" });
+  if (has("community")) items.push({ href: "/admin/equipo/resenas-marcas", label: t("Reseñas de marcas", "Brand reviews") });
   if (team.owner) items.push({ href: "/admin/equipo/personas", label: t("Personas del equipo", "Team members") });
   return items;
 }

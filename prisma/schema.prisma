@@ -83,6 +83,7 @@ model Creator {
   expenses            Expense[]
   commentTriggers     CommentTrigger[]
   commentTriggerHits  CommentTriggerHit[]
+  brandReviews        BrandReview[]
   referralsAsReferrer Referral[]        @relation("referrer")
   referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
@@ -1262,4 +1263,42 @@ model CommentTriggerHit {
 
   @@unique([triggerId, commenterId])
   @@index([creatorId, createdAt])
+}
+
+/// Reseña anónima de una marca (E1). Es de toda la plataforma (no es por cuenta): quien la escribió (`reviewerId`)
+/// solo se guarda para que no haya dos reseñas de la misma persona y para moderar; nunca se muestra.
+model BrandReview {
+  id            String   @id @default(cuid())
+  /// Nombre de la marca en minúsculas, sin acentos ni signos (lib/brand-reviews.ts → normalizeBrandKey)
+  brandKey      String
+  brandName     String
+  reviewerId    String
+  reviewer      Creator  @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
+  /// on_time | late | unpaid
+  payment       String
+  /// Días que tardó en llegar el pago (si se pagó)
+  payDays       Int?
+  /// Cómo fue el trato, de 1 a 5
+  rating        Int
+  comment       String   @default("")
+  /// none | pending | approved | hidden (el comentario lo aprueba el equipo de Comunidad antes de verse)
+  commentStatus String   @default("none")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([brandKey, reviewerId])
+  @@index([brandKey])
+  @@index([commentStatus])
+}
+
+/// Derecho de respuesta de la marca (E1): la agrega el equipo de Comunidad cuando la marca lo pide.
+model BrandReviewReply {
+  id        String   @id @default(cuid())
+  brandKey  String   @unique
+  brandName String
+  text      String
+  /// Persona del equipo que la agregó
+  addedById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

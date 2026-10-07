@@ -443,6 +443,11 @@ model Package {
   items     String[]
   itemsEn   String[]
   order     Int      @default(0)
+  /// Precio «desde» en dólares, sin decimales (null = no se muestra precio)
+  priceFrom Int?
+  currency  String   @default("USD")
+  /// Las marcas pueden solicitar este paquete desde el sitio público (C2). Los paquetes que ya existían quedan apagados.
+  requestable Boolean @default(false)
 
   @@index([creatorId])
 }

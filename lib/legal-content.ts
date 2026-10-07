@@ -42,7 +42,7 @@ const ES: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
       {
         heading: "1. Datos que tratamos",
         list: [
-          "Visitantes del portafolio: si usas el formulario de contacto, guardamos tu nombre, marca, correo, tipo de colaboración y mensaje.",
+          "Visitantes del portafolio: si usas el formulario de contacto o solicitas un paquete, guardamos tu nombre, marca, correo, tipo de colaboración o paquete, fechas y presupuesto aproximado (si los pones) y tu mensaje.",
           "Personas que usan el panel: correo de acceso y el contenido que cargan (textos, fotos, videos, marcas, notas de tratos).",
           "Cuentas de redes sociales conectadas (Instagram, Facebook, TikTok, YouTube), solo si la persona usuaria decide conectarlas: identificador de la cuenta, nombre de usuario, foto de perfil, número de seguidores, publicaciones y sus métricas (vistas, likes, comentarios) y los tokens de acceso que entrega cada red.",
           "Acuerdos con marcas: cuando una marca acepta un acuerdo en línea, guardamos su nombre, correo, fecha, hora y dirección IP como constancia de que lo aceptó, y se la mostramos a la persona creadora y a la marca.",
@@ -214,7 +214,7 @@ const EN: Record<LegalPageId, (ctx: LegalContext) => LegalPage> = {
       {
         heading: "1. Data we process",
         list: [
-          "Portfolio visitors: if you use the contact form, we store your name, brand, email, collaboration type and message.",
+          "Portfolio visitors: if you use the contact form or request a package, we store your name, brand, email, collaboration type or package, dates and approximate budget (if you add them) and your message.",
           "Creators using the dashboard: login email and the content they upload (texts, photos, videos, brands, deal notes).",
           "Connected social media accounts (Instagram, Facebook, TikTok, YouTube), only if the creator chooses to connect them: account ID, username, profile picture, follower count, posts and their metrics (views, likes, comments) and the access tokens issued by each network.",
           "Agreements with brands: when a brand accepts an agreement online, we store its name, email, date, time and IP address as proof of acceptance, and show it to the creator and the brand.",

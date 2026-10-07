@@ -34,7 +34,7 @@ Resumen de los datos al final, en **Anexo: por qué este orden**.
 
 **C. Conseguir más tratos**
 - [x] C1. Propuestas a marcas escritas con IA
-- [ ] C2. Página "Trabaja conmigo" (solicitar un paquete)
+- [x] C2. Página "Trabaja conmigo" (solicitar un paquete)
 - [ ] C3. Reporte de campaña para la marca
 - [ ] C4. Media kit verificado
 - [ ] C5. Ingresos e impuestos
@@ -233,6 +233,8 @@ El CRM de marcas ya existe: modelo `Brand` (campos `dealStatus`, `dealValue`, `c
 - **Datos:** agrega a `Package`: `priceFrom Int?`, `currency String @default("USD")`, `requestable Boolean @default(true)`.
   Reutiliza `ContactMessage` o crea `PackageRequest`. Revisa el flujo actual de Contacto antes de decidir.
 - **Seguridad:** límite de envíos por IP y un campo oculto anti-bots, como el formulario de contacto actual.
+
+- **Cómo quedó:** `Package` gana `priceFrom Int?`, `currency` y `requestable` (migración `20261007140000_paquetes_solicitables`). **Desviación del plan:** `requestable` nace en `false` para los paquetes que ya existían (así los sitios públicos no cambian solos); un paquete nuevo creado desde el panel nace activado. En «Paquetes» cada fila tiene «Desde US$» y «Permitir solicitudes» con botón Guardar. En el sitio público la tarjeta muestra «Desde US$500» / «From US$500» (`formatPriceFrom`) y el botón «Solicitar este paquete» (`components/PackageRequest.tsx`, ventana montada dentro del contenedor `.site` para heredar los colores de la creadora): marca, nombre, correo, fechas, presupuesto aproximado y brief. Se envía a `/api/package-request` (también `/s/<slug>/api/package-request`). **Se reutilizó el flujo de Contacto** en vez de crear `PackageRequest`: la solicitud queda en la Bandeja (`ContactMessage`, tipo «Paquete: …») y le llega el mismo correo de aviso, **y además** se crea la marca en el CRM como `negotiating`, **oculta del sitio público** (`active: false`), con notas (resumen + brief), `packageDetail`, evento «Solicitó el paquete «X»» (con `creatorId`) y próxima acción «Responder la solicitud del paquete» en 2 días. Si la misma marca y correo ya existen, se reutiliza (un trato en curso conserva su estado; prospecto o terminado pasa a negociación); con otro correo se crea otra marca. **Antiabuso:** campo trampa oculto, 3 solicitudes por IP cada 10 min, la misma persona pidiendo el mismo paquete el mismo día cuenta una vez, y tope de 30 solicitudes por cuenta cada 24 h. El brief se guarda como texto y se escapa en el correo. Política de privacidad y manual (ES/EN) actualizados.
 
 ### C3. Reporte de campaña para la marca
 - **Qué es:** al marcar un trato como "completado", Foliocrew arma una página pública `app/r/[token]` con:

@@ -81,6 +81,8 @@ model Creator {
   campaignReports     CampaignReport[]
   incomeEntries       IncomeEntry[]
   expenses            Expense[]
+  commentTriggers     CommentTrigger[]
+  commentTriggerHits  CommentTriggerHit[]
   referralsAsReferrer Referral[]        @relation("referrer")
   referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
@@ -1218,4 +1220,46 @@ model Expense {
   createdAt   DateTime @default(now())
 
   @@index([creatorId, date])
+}
+
+/// «Comenta una palabra → te mando un DM» (C6). Una regla por publicación y palabra.
+model CommentTrigger {
+  id         String              @id @default(cuid())
+  creatorId  String              @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator    Creator             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// Id de la publicación de Instagram
+  mediaId    String
+  /// Texto corto de la publicación, solo para reconocerla en el panel
+  mediaLabel String              @default("")
+  /// Palabra clave en minúsculas y sin acentos
+  keyword    String
+  /// Mensaje que se manda por DM (máx. 900 caracteres)
+  message    String
+  active     Boolean             @default(true)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  hits       CommentTriggerHit[]
+
+  @@unique([creatorId, mediaId, keyword])
+  @@index([mediaId, active])
+}
+
+/// Cada persona que activó una regla (para no mandarle el mismo DM dos veces).
+model CommentTriggerHit {
+  id          String         @id @default(cuid())
+  creatorId   String         @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  triggerId   String
+  trigger     CommentTrigger @relation(fields: [triggerId], references: [id], onDelete: Cascade)
+  /// Id de la persona que comentó (en Instagram)
+  commenterId String
+  /// Id del comentario: Meta solo deja una respuesta privada por comentario
+  commentId   String         @unique
+  /// sent | failed | skipped (la regla se activó pero el permiso de mensajes aún no está activo)
+  status      String
+  error       String?
+  createdAt   DateTime       @default(now())
+
+  @@unique([triggerId, commenterId])
+  @@index([creatorId, createdAt])
 }

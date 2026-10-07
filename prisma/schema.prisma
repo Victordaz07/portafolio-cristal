@@ -84,6 +84,9 @@ model Creator {
   commentTriggers     CommentTrigger[]
   commentTriggerHits  CommentTriggerHit[]
   brandReviews        BrandReview[]
+  contentBank         ContentBankItem[]
+  restPeriods         RestPeriod[]
+  wellbeing           WellbeingSettings?
   referralsAsReferrer Referral[]        @relation("referrer")
   referral            Referral?         @relation("referred")
   communityProfile    CommunityProfile?
@@ -1306,5 +1309,52 @@ model BrandReviewReply {
   /// Persona del equipo que la agregó
   addedById String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Banco de contenido (E3): ideas y piezas listas para las semanas flojas.
+model ContentBankItem {
+  id          String    @id @default(cuid())
+  creatorId   String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator     Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  title       String
+  caption     String    @default("")
+  contentType String    @default("reel")
+  networks    String[]  @default([])
+  mediaUrl    String?
+  mediaType   String?
+  /// Última vez que se programó desde el banco
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([creatorId])
+}
+
+/// Modo descanso (E3): un periodo sin publicar. Guarda lo que se movió para poder deshacerlo.
+model RestPeriod {
+  id         String    @id @default(cuid())
+  creatorId  String    @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator    Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// "YYYY-MM-DD" (inclusive)
+  startDate  String
+  endDate    String
+  note       String    @default("")
+  /// [{ type: "post" | "deliverable", id, from: ISO, to: ISO }]
+  moved      Json
+  /// Marcas con entregas dentro del descanso: [{ brandId, brandName, email, titles: [] }]
+  brands     Json
+  undoneAt   DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([creatorId, startDate])
+}
+
+/// Ajustes de bienestar (E3): cuántas entregas en 7 días son demasiadas para esta persona.
+model WellbeingSettings {
+  id        String   @id @default(cuid())
+  creatorId String   @unique @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  loadLimit Int      @default(6)
   updatedAt DateTime @updatedAt
 }

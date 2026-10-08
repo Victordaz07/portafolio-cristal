@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { logPlatformAction, platformAdminUser } from "@/lib/platform-admin";
 import { getT } from "@/lib/admin-lang-server";
-import { RELEASE_LEVELS, RELEASE_MODULES, levelLabel } from "@/lib/releases";
+import { RELEASE_LEVELS, RELEASE_MODULES, levelLabel, releaseModule } from "@/lib/releases";
 import { setReleaseLevels } from "@/lib/releases-server";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +24,7 @@ export async function PATCH(request: Request) {
   const { ids, level } = parsed.data;
   const changed = await setReleaseLevels(Array.from(new Set(ids)), level, admin.email);
   if (changed.length) {
-    const detail = changed.map((c) => `${c.id}: ${levelLabel(c.from)} → ${levelLabel(level)}`).join(", ");
+    const detail = changed.map((c) => `${releaseModule(c.id)?.name ?? c.id}: ${levelLabel(c.from)} → ${levelLabel(level)}`).join(", ");
     await logPlatformAction(admin.email, "release", null, detail);
   }
   return NextResponse.json({ ok: true, changed: changed.map((c) => c.id) });

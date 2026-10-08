@@ -5,6 +5,7 @@ import { isAiConfigured } from "@/lib/ai";
 import { toPostView } from "@/lib/posts-view";
 import { AUTO_NETWORKS, publishEnabled } from "@/lib/publish";
 import Composer from "./Composer";
+import { canUseModule } from "@/lib/releases-server";
 import { getT } from "@/lib/admin-lang-server";
 
 export default async function AdminCreatePage({
@@ -15,7 +16,7 @@ export default async function AdminCreatePage({
   const { id, date } = await searchParams;
   const { t } = await getT();
   const tz = appTimeZone();
-  const [brands, post] = await Promise.all([
+  const [brands, post, autoPublishOpen] = await Promise.all([
     // Primero las marcas con trato abierto: son las más probables para una publicación.
     prisma.brand.findMany({
       where: { OR: [{ dealStatus: { in: ["active", "negotiating", "prospect"] } }, { active: true }] },
@@ -23,6 +24,7 @@ export default async function AdminCreatePage({
       select: { id: true, name: true, dealStatus: true },
     }),
     id ? prisma.scheduledPost.findUnique({ where: { id }, include: { brand: { select: { name: true } } } }) : null,
+    canUseModule("autopublicar"),
   ]);
   const dealBrands = brands.filter((b) => b.dealStatus && b.dealStatus !== "completed");
   const otherBrands = brands.filter((b) => !dealBrands.includes(b));
@@ -38,7 +40,7 @@ export default async function AdminCreatePage({
         defaultDate={date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : todayKey()}
         aiConfigured={isAiConfigured()}
         timeZone={tz}
-        autoPublishNetworks={AUTO_NETWORKS.filter(publishEnabled)}
+        autoPublishNetworks={autoPublishOpen ? AUTO_NETWORKS.filter(publishEnabled) : []}
       />
     </div>
   );

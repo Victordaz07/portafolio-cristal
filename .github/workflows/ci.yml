@@ -31,6 +31,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx tsc --noEmit
+      # Las pruebas de cuota (IA y almacenamiento) usan la base de verdad: necesitan las tablas creadas antes.
+      - run: npx prisma migrate deploy
       - run: npm test
       # Aplica todas las migraciones en una base vacía y compila: detecta migraciones rotas antes de producción.
       - run: npm run build

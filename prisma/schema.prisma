@@ -1515,3 +1515,16 @@ model SessionRsvp {
   @@unique([sessionId, creatorId])
   @@index([creatorId])
 }
+
+/// Lanzamiento por temporadas (Centro de mando → Lanzamientos): quién ve cada módulo del panel.
+/// Global (no es de una cuenta): no va en TENANT_MODELS. Un módulo sin fila usa su posición por defecto (lib/releases.ts).
+model FeatureRelease {
+  /// Id del módulo en lib/releases.ts (por ejemplo "tienda")
+  id        String    @id
+  /// off | amb | all
+  level     String
+  /// Cuándo pasó a «Todos» (etiqueta «Nuevo» durante NEW_BADGE_DAYS)
+  publicAt  DateTime?
+  updatedBy String?
+  updatedAt DateTime  @updatedAt
+}

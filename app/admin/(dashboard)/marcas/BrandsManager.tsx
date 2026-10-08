@@ -108,7 +108,10 @@ function BrandLogo({ brand, size = "h-10 w-10" }: { brand: BrandCrm; size?: stri
   );
 }
 
-export default function BrandsManager({ initialBrands }: { initialBrands: BrandCrm[] }) {
+/** Funciones de otros módulos dentro de Marcas que pueden estar cerradas (lanzamiento por temporadas). */
+export type BrandFeatures = { pitch: boolean; reports: boolean };
+
+export default function BrandsManager({ initialBrands, features = { pitch: true, reports: true } }: { initialBrands: BrandCrm[]; features?: BrandFeatures }) {
   const { showToast } = useToast();
   const { t, lang } = useT();
   const [brands, setBrands] = useState(initialBrands);
@@ -243,7 +246,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-sp-2">
-          <PitchWriter onSaved={handlePitchSaved} className="rounded-full border border-line bg-white px-sp-4 py-2.5 text-sm font-semibold text-ink hover:border-coral" />
+          {features.pitch && <PitchWriter onSaved={handlePitchSaved} className="rounded-full border border-line bg-white px-sp-4 py-2.5 text-sm font-semibold text-ink hover:border-coral" />}
           <button
             type="button"
             onClick={() => {
@@ -421,6 +424,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
                       brand={selected}
                       onEdit={() => setEditing(true)}
                       onPitchSaved={handlePitchSaved}
+                      features={features}
                       onPatch={patchSelected}
                       onRequest={async (url, method, body) => {
                         const updated = await request(url, method, body);
@@ -456,6 +460,7 @@ function BrandDetail({
   onPatch,
   onAddEvent,
   onRequest,
+  features,
 }: {
   brand: BrandCrm;
   onEdit: () => void;
@@ -463,6 +468,7 @@ function BrandDetail({
   onPatch: (body: Record<string, unknown>, successMessage: string) => Promise<boolean>;
   onAddEvent: (note: string, date: string) => Promise<boolean>;
   onRequest: (url: string, method: string, body?: unknown) => Promise<boolean>;
+  features: BrandFeatures;
 }) {
   const { t, lang } = useT();
   const [notes, setNotes] = useState(brand.notes ?? "");
@@ -598,9 +604,9 @@ function BrandDetail({
         </ul>
       )}
 
-      <PitchSection brand={brand} onRequest={onRequest} onSaved={onPitchSaved} />
+      {features.pitch && <PitchSection brand={brand} onRequest={onRequest} onSaved={onPitchSaved} />}
 
-      {hasDeal && <ReportSection brandId={brand.id} reports={brand.campaignReports} completed={brand.dealStatus === "completed"} />}
+      {hasDeal && features.reports && <ReportSection brandId={brand.id} reports={brand.campaignReports} completed={brand.dealStatus === "completed"} />}
 
       {hasDeal && <DeliverablesSection brandId={brand.id} deliverables={brand.deliverables} onRequest={onRequest} />}
 

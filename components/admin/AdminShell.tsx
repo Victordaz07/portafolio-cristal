@@ -9,6 +9,7 @@ import type { T } from "@/lib/admin-lang";
 import { useT } from "./AdminLang";
 import LangSwitch from "./LangSwitch";
 import CommandPalette from "./CommandPalette";
+import type { NavTag } from "@/lib/releases";
 
 type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports" | "community" | "connections" | "messages"; exact?: boolean };
 export type NavGroup = { id: string; title: string; items: NavItem[] };
@@ -165,6 +166,7 @@ export default function AdminShell({
   unreadDms = 0,
   ambassador = false,
   ambassadorMerit = false,
+  navAccess = {},
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -186,13 +188,19 @@ export default function AdminShell({
   ambassador?: boolean;
   /** Mérito automático prendido y la cuenta aún no es embajadora: ve «Invita y gana». */
   ambassadorMerit?: boolean;
+  /** Lanzamiento por temporadas: entradas escondidas y su etiqueta (Acceso anticipado, Nuevo, Apagado). */
+  navAccess?: Record<string, { hidden: boolean; tag: NavTag }>;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useT();
   const NAV_GROUPS = navGroups(t, ambassador, ambassadorMerit);
   const extraGroup = foliocrewGroup(platformAdmin, team, t);
-  const allGroups = [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])];
+  const allGroups = [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])]
+    .map((group) => ({ ...group, items: group.items.filter((item) => !navAccess[item.href]?.hidden) }))
+    .filter((group) => group.items.length > 0);
+  const tagLabel = (tag: NavTag) =>
+    tag === "early" ? t("Anticipado", "Early") : tag === "new" ? t("Nuevo", "New") : tag === "off" ? t("Apagado", "Off") : null;
   const [mobileOpen, setMobileOpen] = useState(false);
   // Lista ordenada por apertura (el último en abrirse queda al final); como mucho MAX_OPEN_GROUPS
   // a la vez. De entrada solo se abre el grupo de la página en la que estás, no los 7-8 de golpe.
@@ -316,6 +324,7 @@ export default function AdminShell({
                     {group.items.map((item) => {
                       const active = isActive(pathname, item.href, item.exact);
                       const badge = item.badgeKey ? badges[item.badgeKey] : 0;
+                      const tag = tagLabel(navAccess[item.href]?.tag ?? null);
                       return (
                         <Link
                           key={item.href}
@@ -325,7 +334,18 @@ export default function AdminShell({
                             active ? "bg-coral text-white" : "text-cream/85 hover:bg-cream/10"
                           }`}
                         >
-                          <span className="truncate">{item.label}</span>
+                          <span className="flex min-w-0 items-center gap-1.5">
+                            <span className="truncate">{item.label}</span>
+                            {tag && (
+                              <span
+                                className={`shrink-0 rounded-full px-1.5 py-px font-mono text-[9px] font-bold uppercase tracking-wide ${
+                                  active ? "bg-white/20 text-white" : navAccess[item.href]?.tag === "off" ? "bg-cream/10 text-cream/60" : "bg-lime/20 text-lime"
+                                }`}
+                              >
+                                {tag}
+                              </span>
+                            )}
+                          </span>
                           {badge > 0 && (
                             <span
                               className={`rounded-full px-[7px] py-px font-mono text-[10px] font-bold ${

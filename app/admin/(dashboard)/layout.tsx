@@ -19,6 +19,8 @@ import { newRepliesCount } from "@/lib/community-moderation";
 import { pendingIncomingCount } from "@/lib/community-connections";
 import { unreadConversationsCount } from "@/lib/community-messages";
 import { meritEnabled } from "@/lib/ambassadors";
+import { navAccess } from "@/lib/releases-server";
+import { RELEASE_MODULES } from "@/lib/releases";
 
 // El panel lee siempre el estado más reciente de la base de datos: nunca debe
 // servirse una versión prerenderizada en build.
@@ -42,7 +44,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     teamUser(),
     prisma.supportTicket.count({ where: { unreadByCustomer: true } }).catch(() => 0),
   ]);
-  const [openTickets, openReports, communityNew, connectionRequests, unreadDms] = await Promise.all([
+  const [openTickets, openReports, communityNew, connectionRequests, unreadDms, access] = await Promise.all([
     hasRole(team, "support") ? prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0,
     // Contenidos distintos con reportes abiertos (no el número de reportes).
     hasRole(team, "community")
@@ -51,6 +53,8 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
     session && !session.actorId ? newRepliesCount(session.creatorId).catch(() => 0) : 0,
     session && !session.actorId ? pendingIncomingCount(session.creatorId).catch(() => 0) : 0,
     session && !session.actorId ? unreadConversationsCount(session.creatorId).catch(() => 0) : 0,
+    // Lanzamiento por temporadas: qué entradas del menú ve esta cuenta y con qué etiqueta.
+    navAccess([...RELEASE_MODULES.flatMap((m) => m.hrefs), "/admin/comunidad/perfil"]),
   ]);
   const { t, lang } = await getT();
   const days = (n: number) => plural(lang, n, ["día", "días"], ["day", "days"]);
@@ -77,6 +81,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         unreadDms={unreadDms}
         ambassador={Boolean(creator?.ambassador)}
         ambassadorMerit={meritEnabled() && !creator?.ambassador}
+        navAccess={access}
       >
         {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
         {billingNotice && (

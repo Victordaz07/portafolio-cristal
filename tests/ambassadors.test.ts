@@ -107,7 +107,6 @@ describe("decisión de la recompensa", () => {
 });
 
 import { meritProgress, shouldPromote } from "../lib/ambassadors";
-import { earlyFeaturesFor, hasEarlyAccess, type EarlyFeature } from "../lib/early-access";
 
 describe("mérito automático (G5)", () => {
   it("calcula el avance hacia los 5 referidos", () => {
@@ -124,18 +123,5 @@ describe("mérito automático (G5)", () => {
     assert.equal(shouldPromote({ ...base, enabled: false }), false);
     assert.equal(shouldPromote({ ...base, ambassador: true }), false);
     assert.equal(shouldPromote({ ...base, active: false }), false);
-  });
-});
-
-describe("acceso anticipado (G5)", () => {
-  const features: EarlyFeature[] = [{ id: "nueva", label: "Nueva", labelEn: "New", description: "", descriptionEn: "" }];
-  it("lo anticipado es solo para embajadoras; lo demás, para todas", () => {
-    assert.equal(hasEarlyAccess("nueva", { ambassador: true }, features), true);
-    assert.equal(hasEarlyAccess("nueva", { ambassador: false }, features), false);
-    assert.equal(hasEarlyAccess("otra", { ambassador: false }, features), true);
-  });
-  it("lista lo que puede probar antes", () => {
-    assert.equal(earlyFeaturesFor({ ambassador: true }, features).length, 1);
-    assert.equal(earlyFeaturesFor({ ambassador: false }, features).length, 0);
   });
 });

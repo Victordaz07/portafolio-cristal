@@ -9,12 +9,14 @@ import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import PostCard from "@/components/community/PostCard";
 import NewPostForm from "./NewPostForm";
+import { requireModule } from "@/lib/releases-server";
 
 export const dynamic = "force-dynamic";
 
 type Params = { tab?: string; tipo?: string; tema?: string; creador?: string; n?: string };
 
 export default async function CommunityWallPage({ searchParams }: { searchParams: Promise<Params> }) {
+  await requireModule("muro");
   const { t, lang } = await getT();
   const session = await getSession();
   if (!session) return null;

@@ -14,6 +14,9 @@ import PendingPayments from "./PendingPayments";
 import LeaderboardTable from "./LeaderboardTable";
 import IntelligenceSection from "./IntelligenceSection";
 import DepartmentsSection from "./DepartmentsSection";
+import ReleasesManager from "./ReleasesManager";
+import { getReleases } from "@/lib/releases-server";
+import { RELEASE_MODULES, RELEASE_SEASONS, isNewRelease } from "@/lib/releases";
 import { BarList, EngagementHeatmap, PlatformTabs, Stat, WeeklyBars, compact, eyebrowClass } from "./charts";
 import { billingLabel, billingState, formatMoney, getPlan, paymentMethodLabel } from "@/lib/billing";
 import { reportWord } from "@/lib/reports";
@@ -23,7 +26,7 @@ import { getT } from "@/lib/admin-lang-server";
 export const dynamic = "force-dynamic";
 
 const DAY = 86_400_000;
-const VIEWS = ["resumen", "creadores", "contenido", "nichos", "inteligencia", "cuentas", "departamentos"];
+const VIEWS = ["resumen", "creadores", "contenido", "nichos", "inteligencia", "cuentas", "lanzamientos", "departamentos"];
 const networkLabel = (key: string) => (key in NETWORK_META ? NETWORK_META[key as keyof typeof NETWORK_META].label : key);
 
 export default async function PlatformPage({ searchParams }: { searchParams: Promise<{ vista?: string; nicho?: string }> }) {
@@ -50,8 +53,53 @@ export default async function PlatformPage({ searchParams }: { searchParams: Pro
       {vista === "nichos" && <NichosView />}
       {vista === "inteligencia" && <IntelligenceSection />}
       {vista === "cuentas" && <CuentasView adminCreatorId={admin.creatorId} />}
+      {vista === "lanzamientos" && <LanzamientosView />}
       {vista === "departamentos" && <DepartmentsSection />}
     </div>
+  );
+}
+
+// ─── Lanzamientos ───
+
+async function LanzamientosView() {
+  const { t, lang } = await getT();
+  const [map, history] = await Promise.all([
+    getReleases(),
+    prismaRoot.platformAction.findMany({ where: { action: "release" }, orderBy: { createdAt: "desc" }, take: 10 }),
+  ]);
+  const en = lang === "en";
+  return (
+    <>
+    <ReleasesManager
+      seasons={RELEASE_SEASONS.map((s) => ({ id: s.id, name: en ? s.nameEn : s.name, description: en ? s.descriptionEn : s.description }))}
+      modules={RELEASE_MODULES.map((m) => ({
+        id: m.id,
+        season: m.season,
+        name: en ? m.nameEn : m.name,
+        description: en ? m.descriptionEn : m.description,
+        note: (en ? m.noteEn : m.note) ?? null,
+        level: map[m.id].level,
+        isNew: isNewRelease(map[m.id]),
+      }))}
+    />
+    <Card>
+      <p className={eyebrowClass}>{t("Últimos cambios", "Latest changes")}</p>
+      {history.length === 0 ? (
+        <p className="mt-sp-2 text-sm text-ink/60">{t("Todavía no has cambiado nada: todo está en su posición inicial.", "You haven't changed anything yet: everything is in its starting position.")}</p>
+      ) : (
+        <ul className="mt-sp-2 flex flex-col gap-sp-2 text-sm">
+          {history.map((h) => (
+            <li key={h.id} className="flex flex-wrap justify-between gap-x-sp-3 border-b border-line/60 pb-sp-2 last:border-0">
+              <span className="min-w-0 text-ink/80">{h.detail}</span>
+              <span className="shrink-0 text-xs text-ink/50">
+                {h.createdAt.toLocaleString(en ? "en-US" : "es", { dateStyle: "medium", timeStyle: "short", timeZone: process.env.APP_TIMEZONE || "America/New_York" })} · {h.actorEmail}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+    </>
   );
 }
 

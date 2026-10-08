@@ -3,6 +3,7 @@ import { z } from "zod";
 import { savePitch } from "@/lib/pitch-server";
 import { httpUrl } from "@/lib/validators";
 import { getT } from "@/lib/admin-lang-server";
+import { moduleBlockedResponse } from "@/lib/releases-server";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,8 @@ const schema = z.object({
 
 /** «Guardar en el CRM»: la marca queda como prospecto y el seguimiento cuenta desde hoy. */
 export async function POST(request: Request) {
+  const blocked = await moduleBlockedResponse("propuestas");
+  if (blocked) return blocked;
   const { t } = await getT();
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: t("Datos inválidos", "Invalid data") }, { status: 400 });

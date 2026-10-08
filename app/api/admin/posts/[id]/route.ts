@@ -4,6 +4,7 @@ import { postUpdateSchema, toPostData } from "@/lib/posts-server";
 import { getT } from "@/lib/admin-lang-server";
 import { validationMessage } from "@/lib/admin-lang";
 import { canAutoPublish, parseResults } from "@/lib/publish";
+import { canUseModule } from "@/lib/releases-server";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (!current) return NextResponse.json({ error: t("No se encontró la publicación", "Post not found") }, { status: 404 });
   const finalNetworks = rest.networks ?? current.networks;
   const finalStatus = rest.status ?? current.status;
-  if (rest.autoPublish && !canAutoPublish(finalNetworks)) {
+  if (rest.autoPublish && (!canAutoPublish(finalNetworks) || !(await canUseModule("autopublicar")))) {
     return NextResponse.json({ error: t("La publicación automática solo funciona con Instagram y Facebook", "Automatic publishing only works with Instagram and Facebook") }, { status: 400 });
   }
   // Si cambian las redes o deja de estar programada, la publicación automática se apaga sola.

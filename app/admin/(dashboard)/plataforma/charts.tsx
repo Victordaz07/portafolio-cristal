@@ -14,6 +14,7 @@ const TABS = [
   { id: "nichos", label: "Nichos", labelEn: "Niches" },
   { id: "inteligencia", label: "Inteligencia", labelEn: "Intelligence" },
   { id: "cuentas", label: "Cuentas", labelEn: "Accounts" },
+  { id: "lanzamientos", label: "Lanzamientos", labelEn: "Releases" },
   { id: "departamentos", label: "Departamentos", labelEn: "Departments" },
 ];
 

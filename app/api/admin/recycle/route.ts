@@ -5,6 +5,7 @@ import { suggestRecycle } from "@/lib/ai-recycle";
 import { RECYCLE_TONES, SOURCE_MAX, isUsableSource } from "@/lib/recycle";
 import { prisma } from "@/lib/prisma";
 import { getT } from "@/lib/admin-lang-server";
+import { moduleBlockedResponse } from "@/lib/releases-server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -21,6 +22,8 @@ const schema = z.object({
 
 /** Reutiliza un contenido ya hecho: versiones por red, ganchos y un carrusel. No publica nada. */
 export async function POST(request: Request) {
+  const blocked = await moduleBlockedResponse("reciclar");
+  if (blocked) return blocked;
   const { t, lang } = await getT();
   if (!isAiConfigured()) {
     return NextResponse.json({ error: t("Falta ANTHROPIC_API_KEY (Conectar cuentas → IA)", "ANTHROPIC_API_KEY is missing (Connect accounts → AI)") }, { status: 400 });

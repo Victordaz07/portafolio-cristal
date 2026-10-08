@@ -5,10 +5,15 @@ import PageHeader from "@/components/admin/PageHeader";
 import BrandsManager, { type BrandCrm } from "./BrandsManager";
 import { getT } from "@/lib/admin-lang-server";
 import RateCalculator from "@/components/admin/RateCalculator";
+import { canUseModule } from "@/lib/releases-server";
 
 export default async function AdminBrandsPage() {
   const { t } = await getT();
-  const brands = await prisma.brand.findMany({ orderBy: { order: "asc" }, include: brandCrmInclude });
+  const [brands, pitch, reports] = await Promise.all([
+    prisma.brand.findMany({ orderBy: { order: "asc" }, include: brandCrmInclude }),
+    canUseModule("propuestas"),
+    canUseModule("campanas"),
+  ]);
   const deals = brands.filter((brand) => isDealStatus(brand.dealStatus)).length;
 
   return (
@@ -20,7 +25,7 @@ export default async function AdminBrandsPage() {
         action={<RateCalculator className="rounded-full border border-line bg-white px-sp-4 py-sp-2 text-sm font-semibold text-ink hover:border-coral" />}
       />
       {/* JSON round-trip: el cliente recibe las fechas como string, igual que desde la API. */}
-      <BrandsManager initialBrands={JSON.parse(JSON.stringify(brands)) as BrandCrm[]} />
+      <BrandsManager initialBrands={JSON.parse(JSON.stringify(brands)) as BrandCrm[]} features={{ pitch, reports }} />
     </div>
   );
 }

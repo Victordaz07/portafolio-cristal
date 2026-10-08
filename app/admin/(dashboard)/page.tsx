@@ -23,6 +23,7 @@ import { daysFromNow, usageRightsEnd } from "@/lib/deliverables";
 import { isUnanswered, pitchState } from "@/lib/pitch";
 import { workload } from "@/lib/wellbeing";
 import { getLoadLimit, pendingDeliverableDates } from "@/lib/wellbeing-server";
+import { canUseModule } from "@/lib/releases-server";
 
 // Iniciales y color por red, igual que en el diseño del panel v2.
 const PLATFORM_META: Record<string, { initials: string; className: string }> = {
@@ -123,7 +124,14 @@ export default async function AdminHomePage() {
     }),
   ]);
   // Carga de trabajo (E3): ¿hay una semana con demasiadas entregas?
-  const [loadLimit, loadDates] = await Promise.all([getLoadLimit(), pendingDeliverableDates()]);
+  const [loadLimit, loadDates, wellbeingOpen, pitchOpen, goalsOpen] = await Promise.all([
+    getLoadLimit(),
+    pendingDeliverableDates(),
+    // Lanzamiento por temporadas: los avisos de módulos cerrados no salen en el Resumen.
+    canUseModule("bienestar"),
+    canUseModule("propuestas"),
+    canUseModule("metas"),
+  ]);
   const load = workload(loadDates, todayKey(), 4, loadLimit);
   const unansweredPitches = pitchBrands
     .filter((b) => isUnanswered(b))
@@ -238,7 +246,7 @@ export default async function AdminHomePage() {
             )}
           </Card>
 
-          {load.over && (
+          {wellbeingOpen && load.over && (
             <Card className="border-coral/40">
               <SectionTitle>{t("Tu carga de trabajo está alta", "Your workload is high")}</SectionTitle>
               <p className="text-sm text-ink/70">
@@ -253,7 +261,7 @@ export default async function AdminHomePage() {
             </Card>
           )}
 
-          {unansweredPitches.length > 0 && (
+          {pitchOpen && unansweredPitches.length > 0 && (
             <Card>
               <SectionTitle>
                 {t(
@@ -444,24 +452,26 @@ export default async function AdminHomePage() {
         </div>
 
         <div className="flex flex-col gap-sp-4">
-          <Link href="/admin/metas" className="rounded-[18px] bg-ink p-sp-5 text-cream transition hover:opacity-95">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-lime">{t("Racha y plan de la semana", "Streak & weekly plan")}</p>
-            {weekActions.length === 0 ? (
-              <p className="mt-sp-3 font-fraunces text-xl font-semibold">{t("Arma tu plan de esta semana →", "Build this week's plan →")}</p>
-            ) : (
-              <>
-                <p className="mt-sp-3 font-fraunces text-2xl font-semibold">
-                  {weekDone} / {weekActions.length} {t("tareas del plan listas", "plan tasks done")}
-                </p>
-                <div className="mt-sp-3 h-1.5 overflow-hidden rounded-full bg-cream/15">
-                  <div className="h-full rounded-full bg-lime" style={{ width: `${weekPct}%` }} />
-                </div>
-              </>
-            )}
-            <p className="mt-sp-3 text-xs text-cream/70">
-              {streak > 0 ? t(`${streak} ${streak === 1 ? "día" : "días"} seguidos activa`, `${streak}-day active streak`) : t("Empieza tu racha hoy", "Start your streak today")}
-            </p>
-          </Link>
+          {goalsOpen && (
+            <Link href="/admin/metas" className="rounded-[18px] bg-ink p-sp-5 text-cream transition hover:opacity-95">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-lime">{t("Racha y plan de la semana", "Streak & weekly plan")}</p>
+              {weekActions.length === 0 ? (
+                <p className="mt-sp-3 font-fraunces text-xl font-semibold">{t("Arma tu plan de esta semana →", "Build this week's plan →")}</p>
+              ) : (
+                <>
+                  <p className="mt-sp-3 font-fraunces text-2xl font-semibold">
+                    {weekDone} / {weekActions.length} {t("tareas del plan listas", "plan tasks done")}
+                  </p>
+                  <div className="mt-sp-3 h-1.5 overflow-hidden rounded-full bg-cream/15">
+                    <div className="h-full rounded-full bg-lime" style={{ width: `${weekPct}%` }} />
+                  </div>
+                </>
+              )}
+              <p className="mt-sp-3 text-xs text-cream/70">
+                {streak > 0 ? t(`${streak} ${streak === 1 ? "día" : "días"} seguidos activa`, `${streak}-day active streak`) : t("Empieza tu racha hoy", "Start your streak today")}
+              </p>
+            </Link>
+          )}
 
           <Link
             href="/admin/media-kit"

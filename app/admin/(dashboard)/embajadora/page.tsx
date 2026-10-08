@@ -8,7 +8,7 @@ import { platformOrigin } from "@/lib/site-url";
 import { referralLink } from "@/lib/ambassadors";
 import { ensureReferralCode, meritFor, referralStats } from "@/lib/ambassadors-server";
 import { meritEnabled } from "@/lib/ambassadors";
-import { earlyFeaturesFor } from "@/lib/early-access";
+import { earlyModules } from "@/lib/releases-server";
 import { kitTexts, programRules } from "@/lib/ambassador-kit";
 import AmbassadorPanel from "./AmbassadorPanel";
 import MeritPanel from "./MeritPanel";
@@ -58,7 +58,7 @@ export default async function AmbassadorPage() {
     );
   }
 
-  const [stats, origin] = await Promise.all([referralStats(session!.creatorId), platformOrigin()]);
+  const [stats, origin, early] = await Promise.all([referralStats(session!.creatorId), platformOrigin(), earlyModules()]);
   const link = referralLink(origin, creator.referralCode);
 
   return (
@@ -76,7 +76,7 @@ export default async function AmbassadorPage() {
         code={creator.referralCode}
         badge={creator.ambassadorBadge}
         listed={creator.ambassadorPublic}
-        early={earlyFeaturesFor({ ambassador: true }).map((f) => ({ id: f.id, label: lang === "en" ? f.labelEn : f.label, description: lang === "en" ? f.descriptionEn : f.description }))}
+        early={early.map((m) => ({ id: m.id, label: lang === "en" ? m.nameEn : m.name, description: lang === "en" ? m.descriptionEn : m.description }))}
         stats={{ registered: stats.registered, paying: stats.paying, months: stats.monthsEarned }}
         kit={kitTexts(link, lang)}
         rules={programRules(lang)}

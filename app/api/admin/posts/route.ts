@@ -4,6 +4,7 @@ import { postSchema, toPostData } from "@/lib/posts-server";
 import { getT } from "@/lib/admin-lang-server";
 import { validationMessage } from "@/lib/admin-lang";
 import { canAutoPublish } from "@/lib/publish";
+import { canUseModule } from "@/lib/releases-server";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: validationMessage(t, parsed.error.issues[0]?.message) }, { status: 400 });
   }
-  if (parsed.data.autoPublish && !canAutoPublish(parsed.data.networks)) {
+  if (parsed.data.autoPublish && (!canAutoPublish(parsed.data.networks) || !(await canUseModule("autopublicar")))) {
     return NextResponse.json({ error: t("La publicación automática solo funciona con Instagram y Facebook", "Automatic publishing only works with Instagram and Facebook") }, { status: 400 });
   }
   const data = toPostData({ ...parsed.data, autoPublish: Boolean(parsed.data.autoPublish) && parsed.data.status === "scheduled" });

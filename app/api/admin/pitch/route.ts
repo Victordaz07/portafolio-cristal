@@ -5,6 +5,7 @@ import { PITCH_TONES, suggestPitch } from "@/lib/ai-pitch";
 import { prisma } from "@/lib/prisma";
 import { sessionCreatorSite } from "@/lib/site-url";
 import { getT } from "@/lib/admin-lang-server";
+import { moduleBlockedResponse } from "@/lib/releases-server";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,8 @@ const schema = z.object({
 
 /** Escribe una propuesta (o un seguimiento) a una marca con Claude. No envía nada: la persona lo manda desde su correo. */
 export async function POST(request: Request) {
+  const blocked = await moduleBlockedResponse("propuestas");
+  if (blocked) return blocked;
   const { t, lang } = await getT();
   if (!isAiConfigured()) {
     return NextResponse.json({ error: t("Falta ANTHROPIC_API_KEY (Conectar cuentas → IA)", "ANTHROPIC_API_KEY is missing (Connect accounts → AI)") }, { status: 400 });

@@ -15,6 +15,7 @@ import AgencyPendingPayments from "./AgencyPendingPayments";
 import LeaderboardTable from "./LeaderboardTable";
 import IntelligenceSection from "./IntelligenceSection";
 import DepartmentsSection from "./DepartmentsSection";
+import InviteCodesManager from "./InviteCodesManager";
 import { BarList, EngagementHeatmap, PlatformTabs, Stat, WeeklyBars, compact, eyebrowClass } from "./charts";
 import { billingLabel, billingState, formatMoney, getPlan, paymentMethodLabel } from "@/lib/billing";
 import { reportWord } from "@/lib/reports";
@@ -24,7 +25,7 @@ import { getT } from "@/lib/admin-lang-server";
 export const dynamic = "force-dynamic";
 
 const DAY = 86_400_000;
-const VIEWS = ["resumen", "creadores", "contenido", "nichos", "inteligencia", "cuentas", "departamentos"];
+const VIEWS = ["resumen", "creadores", "contenido", "nichos", "inteligencia", "cuentas", "departamentos", "invitaciones"];
 const networkLabel = (key: string) => (key in NETWORK_META ? NETWORK_META[key as keyof typeof NETWORK_META].label : key);
 
 export default async function PlatformPage({ searchParams }: { searchParams: Promise<{ vista?: string; nicho?: string }> }) {
@@ -52,7 +53,28 @@ export default async function PlatformPage({ searchParams }: { searchParams: Pro
       {vista === "inteligencia" && <IntelligenceSection />}
       {vista === "cuentas" && <CuentasView adminCreatorId={admin.creatorId} />}
       {vista === "departamentos" && <DepartmentsSection />}
+      {vista === "invitaciones" && <InvitacionesView />}
     </div>
+  );
+}
+
+// ─── Invitaciones ───
+
+async function InvitacionesView() {
+  const codes = await prismaRoot.inviteCode.findMany({ orderBy: { createdAt: "desc" } });
+  return (
+    <InviteCodesManager
+      codes={codes.map((c) => ({
+        id: c.id,
+        code: c.code,
+        label: c.label,
+        maxUses: c.maxUses,
+        usedCount: c.usedCount,
+        active: c.active,
+        expiresAt: c.expiresAt?.toISOString() ?? null,
+        createdAt: c.createdAt.toISOString(),
+      }))}
+    />
   );
 }
 

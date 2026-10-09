@@ -8,6 +8,7 @@ import { getT } from "@/lib/admin-lang-server";
 import { validationMessage } from "@/lib/admin-lang";
 import { incomingMeritReferral, incomingReferral, recordReferral } from "@/lib/ambassadors-server";
 import { REF_COOKIE } from "@/lib/ambassadors";
+import { hasActiveInviteCodes, redeemInviteCode } from "@/lib/invite-codes";
 
 export const dynamic = "force-dynamic";
 
@@ -43,10 +44,12 @@ export async function POST(request: Request) {
   // El enlace de una embajadora activa funciona como invitación; si no, hace falta el código de invitación general.
   const referral = await incomingReferral(ref);
   if (!referral) {
-    if (signupMode() === "closed") {
+    if (signupMode() === "closed" && !(await hasActiveInviteCodes())) {
       return NextResponse.json({ error: t("El registro todavía no está abierto", "Sign-up isn't open yet") }, { status: 403 });
     }
-    if (inviteCode !== process.env.SIGNUP_INVITE_CODE) {
+    // El código único de Vercel (SIGNUP_INVITE_CODE) y los códigos de /admin/plataforma sirven los dos.
+    const validEnvCode = Boolean(process.env.SIGNUP_INVITE_CODE) && inviteCode === process.env.SIGNUP_INVITE_CODE;
+    if (!validEnvCode && !(inviteCode && (await redeemInviteCode(inviteCode)))) {
       return NextResponse.json({ error: t("El código de invitación no es válido", "The invite code isn't valid") }, { status: 403 });
     }
   }

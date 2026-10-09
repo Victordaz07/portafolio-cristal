@@ -6,6 +6,7 @@ import { prismaRoot } from "./prisma-root";
 import { createSessionToken, sessionCookieOptions, SESSION_COOKIE } from "./auth";
 import { RESERVED_SLUGS } from "./tenant-headers";
 import { defaultCreatorSlug } from "./tenant";
+import { generateAccessCode } from "./access-code";
 
 /** ¿Está abierto el registro? Mientras Foliocrew no abra al público, pide un código de invitación. */
 export function signupMode(): "invite" | "closed" {
@@ -116,7 +117,9 @@ export async function withSession(
   response: NextResponse,
   user: { id: string; email: string; creatorId: string; sessionVersion?: number },
   /** Quien administra Foliocrew, si entra "como" esta cuenta. */
-  actorId?: string
+  actorId?: string,
+  /** "code" si entró con el código de acceso de su agencia. */
+  via?: "code"
 ) {
   const token = await createSessionToken({
     userId: user.id,
@@ -124,7 +127,31 @@ export async function withSession(
     email: user.email,
     sv: user.sessionVersion ?? 0,
     ...(actorId ? { actorId } : {}),
+    ...(via ? { via } : {}),
   });
   response.cookies.set(SESSION_COOKIE, token, sessionCookieOptions);
   return response;
+}
+
+/**
+ * Busca a la creadora por correo y código de acceso (plan Crew: entra desde la landing de su
+ * agencia sin contraseña). Solo funciona si esa creadora está en la cartera de una agencia —
+ * el código no sirve para entrar a una cuenta independiente.
+ */
+export async function authenticateByCode(email: string, code: string, agencyId: string) {
+  const normalized = email.toLowerCase();
+  const user = await prismaRoot.adminUser.findUnique({
+    where: { email: normalized },
+    select: { id: true, email: true, creatorId: true, sessionVersion: true, accessCodeHash: true, creator: { select: { agencyId: true } } },
+  });
+  if (!user?.accessCodeHash || user.creator.agencyId !== agencyId) return null;
+  return (await bcrypt.compare(code, user.accessCodeHash)) ? user : null;
+}
+
+/** Genera (o rota) el código de acceso de un AdminUser y devuelve el código en claro (solo aquí se ve). */
+export async function rotateAccessCode(userId: string) {
+  const code = generateAccessCode();
+  const accessCodeHash = await bcrypt.hash(code, 10);
+  await prismaRoot.adminUser.update({ where: { id: userId }, data: { accessCodeHash, accessCodeUpdatedAt: new Date() } });
+  return code;
 }

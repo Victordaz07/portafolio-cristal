@@ -50,6 +50,11 @@ model Creator {
   shareInsightsAt        DateTime?
   /// Cómo trabaja con marcas: "contenido" (publica en sus redes) | "ugc" (crea para que la marca publique) | "ambos"
   creatorKind            String    @default("contenido")
+  /// Agencia (plan Crew) que administra esta cuenta; null = creadora independiente.
+  /// Mientras esté puesto, su propia facturación (trialEndsAt/paidUntil/billingReminder) no se usa
+  /// — ver lib/billing.ts — y plan queda en "crew" (lo pone la agencia al agregarla a su cartera).
+  agencyId               String?
+  agency                 Agency?   @relation(fields: [agencyId], references: [id], onDelete: SetNull)
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
@@ -107,6 +112,8 @@ model Creator {
   invoices            Invoice[]
   billingProfile      BillingProfile?
   contracts           Contract[]
+
+  @@index([agencyId])
 }
 
 model Hero {
@@ -530,10 +537,20 @@ model AdminUser {
   /// Intentos fallidos seguidos de entrar, y hasta cuándo queda bloqueada (lib/login-guard.ts)
   failedLogins      Int       @default(0)
   lockedUntil       DateTime?
+  /// Agencia (plan Crew) de la que es dueña o miembro (community manager); null = cuenta normal
+  agencyId          String?
+  agency            Agency?   @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  /// "owner" | "cm" — solo tiene sentido junto con agencyId
+  agencyRole        String?
+  /// Código de acceso (hash bcrypt, como passwordHash) para creadoras de una agencia que entran
+  /// desde la landing de esa agencia sin contraseña (lib/access-code.ts). No reemplaza passwordHash.
+  accessCodeHash      String?
+  accessCodeUpdatedAt DateTime?
   createdAt       DateTime    @default(now())
   tokens          AuthToken[]
 
   @@index([creatorId])
+  @@index([agencyId])
 }
 
 /// Enlaces de un solo uso que se mandan por correo (restablecer contraseña, confirmar correo).
@@ -1514,4 +1531,86 @@ model SessionRsvp {
 
   @@unique([sessionId, creatorId])
   @@index([creatorId])
+}
+
+// ─── Plan Crew: una agencia/manager administra varias creadoras, con una sola factura ───
+
+model Agency {
+  id   String @id @default(cuid())
+  name String
+  /// Subdominio provisional: <slug>.foliocrew.pro (igual que Creator.slug)
+  slug String @unique
+  /// Dominio propio de la agencia (igual que Creator.customDomain)
+  customDomain           String?   @unique
+  customDomainVerifiedAt DateTime?
+  /// Cuántas creadoras puede tener en su cartera (Crew es a la medida, no autopagable; lib/billing.ts)
+  maxCreators     Int       @default(5)
+  status          String    @default("active") // "active" | "paused"
+  /// Cuenta de cortesía: no paga ni vence
+  comp            Boolean   @default(false)
+  trialEndsAt     DateTime?
+  paidUntil       DateTime?
+  billingReminder String?
+  createdAt       DateTime  @default(now())
+
+  publicSettings AgencyPublicSettings?
+  members        AdminUser[]
+  creators       Creator[]
+  payments       AgencyPayment[]
+  actions        AgencyAction[]
+}
+
+/// Landing pública de la agencia: qué hace, a quién administra, ejemplos. Separado de
+/// SiteSettings/Hero a propósito — una agencia no tiene portafolio personal.
+model AgencyPublicSettings {
+  id              String   @id @default(cuid())
+  agencyId        String   @unique
+  agency          Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  tagline         String   @default("")
+  description     String   @default("")
+  logoUrl         String?
+  contactEmail    String?
+  contactWhatsapp String?
+  /// [{ title, description }]
+  services        Json     @default("[]")
+  /// ids de Creator de su cartera que aceptaron aparecer en la landing (opt-in explícito, nunca
+  /// automático — mismo patrón que Creator.ambassadorPublic)
+  showcaseCreatorIds String[] @default([])
+  updatedAt       DateTime @updatedAt
+}
+
+/// Mismo campo a campo que Payment, pero la cuenta que paga es la agencia, no una creadora.
+model AgencyPayment {
+  id          String    @id @default(cuid())
+  agencyId    String
+  agency      Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  plan        String    @default("crew")
+  months      Int       @default(1)
+  amountCents Int
+  currency    String    @default("USD")
+  method      String // "paypal" | "transfer" | "other"
+  reference   String?
+  note        String?
+  status      String    @default("reported") // "reported" | "confirmed" | "rejected"
+  periodEnd   DateTime?
+  confirmedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([agencyId, createdAt])
+  @@index([status])
+}
+
+/// Mismo patrón que PlatformAction, pero para auditar lo que hace una agencia en su cartera
+/// (entrar a una cuenta, agregar/quitar una creadora, cambiar roles).
+model AgencyAction {
+  id         String   @id @default(cuid())
+  agencyId   String
+  agency     Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  actorEmail String
+  action     String // "add_client" | "remove_client" | "enter_as" | "role_change" | "code_login"
+  creatorId  String?
+  detail     String?
+  createdAt  DateTime @default(now())
+
+  @@index([agencyId, createdAt])
 }

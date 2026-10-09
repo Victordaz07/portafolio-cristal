@@ -34,18 +34,29 @@ export function isApexDomain(domain: string) {
   return labels.length === 3 && SECOND_LEVEL.has(labels.slice(1).join("."));
 }
 
-/** Mensaje si el dominio no se puede usar, o null si está bien. */
-export async function domainProblem(domain: string, creatorId: string) {
+/**
+ * Mensaje si el dominio no se puede usar, o null si está bien. `ownerKind` dice si `ownerId` es
+ * una creadora o una agencia (plan Crew) — un dominio no puede estar conectado a las dos a la vez,
+ * así que se chequea unicidad contra ambas tablas sin importar quién lo está pidiendo.
+ */
+export async function domainProblem(domain: string, ownerId: string, ownerKind: "creator" | "agency" = "creator") {
   if (!DOMAIN_PATTERN.test(domain)) return "Escribe un dominio válido, por ejemplo crisliaugc.com";
   const root = (process.env.PLATFORM_ROOT_DOMAIN || "foliocrew.pro").toLowerCase().split(":")[0];
   if (domain === root || domain.endsWith(`.${root}`)) return "Ese ya es tu dirección de Foliocrew; aquí va un dominio tuyo";
   if (domain.endsWith(".vercel.app") || domain.endsWith("localhost")) return "Ese dominio no se puede usar";
   const bare = domain.replace(/^www\./, "");
-  const owner = await prismaRoot.creator.findFirst({
-    where: { customDomain: { in: [domain, bare, `www.${bare}`] }, id: { not: creatorId } },
-    select: { id: true },
-  });
-  if (owner) return "Ese dominio ya está conectado a otra cuenta";
+  const hosts = [domain, bare, `www.${bare}`];
+  const [creatorOwner, agencyOwner] = await Promise.all([
+    prismaRoot.creator.findFirst({
+      where: { customDomain: { in: hosts }, id: ownerKind === "creator" ? { not: ownerId } : undefined },
+      select: { id: true },
+    }),
+    prismaRoot.agency.findFirst({
+      where: { customDomain: { in: hosts }, id: ownerKind === "agency" ? { not: ownerId } : undefined },
+      select: { id: true },
+    }),
+  ]);
+  if (creatorOwner || agencyOwner) return "Ese dominio ya está conectado a otra cuenta";
   return null;
 }
 

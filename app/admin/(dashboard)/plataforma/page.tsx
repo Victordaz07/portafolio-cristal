@@ -11,6 +11,7 @@ import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
 import AccountsTable from "./AccountsTable";
 import PendingPayments from "./PendingPayments";
+import AgencyPendingPayments from "./AgencyPendingPayments";
 import LeaderboardTable from "./LeaderboardTable";
 import IntelligenceSection from "./IntelligenceSection";
 import DepartmentsSection from "./DepartmentsSection";
@@ -60,7 +61,7 @@ export default async function PlatformPage({ searchParams }: { searchParams: Pro
 async function ResumenView() {
   const { t, lang } = await getT();
   const w = (word: string) => reportWord(lang, word);
-  const [accounts, waitlist, aiTokens, pending, collected, weeks, leaderboard, content] = await Promise.all([
+  const [accounts, waitlist, aiTokens, pending, agencyPending, collected, weeks, leaderboard, content] = await Promise.all([
     platformAccounts(),
     prismaRoot.waitlistEntry.groupBy({ by: ["status"], _count: { _all: true } }),
     prismaRoot.aiUsage.aggregate({
@@ -72,6 +73,11 @@ async function ResumenView() {
       where: { status: "reported" },
       orderBy: { createdAt: "asc" },
       include: { creator: { select: { id: true, name: true, slug: true } } },
+    }),
+    prismaRoot.agencyPayment.findMany({
+      where: { status: "reported" },
+      orderBy: { createdAt: "asc" },
+      include: { agency: { select: { id: true, name: true } } },
     }),
     prismaRoot.payment.aggregate({
       where: { status: "confirmed", confirmedAt: { gte: startOfMonth() } },
@@ -129,6 +135,16 @@ async function ResumenView() {
           method: paymentMethodLabel(p.method, lang),
           reference: p.reference,
           note: p.note,
+          createdAt: p.createdAt.toISOString(),
+        }))}
+      />
+      <AgencyPendingPayments
+        payments={agencyPending.map((p) => ({
+          id: p.id,
+          agencyName: p.agency.name,
+          amount: formatMoney(p.amountCents, p.currency),
+          method: paymentMethodLabel(p.method, lang),
+          reference: p.reference,
           createdAt: p.createdAt.toISOString(),
         }))}
       />

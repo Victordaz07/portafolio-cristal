@@ -55,7 +55,7 @@ export interface BillingFields {
   paidUntil: Date | null;
 }
 
-export type BillingState = "comp" | "ambassador" | "active" | "trial" | "expired" | "none";
+export type BillingState = "comp" | "ambassador" | "active" | "trial" | "expired" | "none" | "agency";
 
 export const BILLING_LABEL: Record<BillingState, string> = {
   comp: "Cortesía",
@@ -64,6 +64,7 @@ export const BILLING_LABEL: Record<BillingState, string> = {
   trial: "Prueba gratis",
   expired: "Vencido",
   none: "Sin plan",
+  agency: "Administrada por tu agencia",
 };
 
 export const BILLING_LABEL_EN: Record<BillingState, string> = {
@@ -73,10 +74,20 @@ export const BILLING_LABEL_EN: Record<BillingState, string> = {
   trial: "Free trial",
   expired: "Expired",
   none: "No plan",
+  agency: "Managed by your agency",
 };
 
 /** Estado del plan en el idioma del panel. */
 export const billingLabel = (state: BillingState, lang: "es" | "en" = "es") => (lang === "en" ? BILLING_LABEL_EN : BILLING_LABEL)[state];
+
+/**
+ * Estado del plan de una creadora, mirando primero si la administra una agencia (plan Crew): ahí
+ * su propia facturación (trialEndsAt/paidUntil/comp) no se usa — paga la agencia, una sola vez.
+ */
+export function creatorBillingState(c: BillingFields & { agencyId?: string | null }, now = new Date()) {
+  if (c.agencyId) return { state: "agency" as BillingState, until: null, daysLeft: null };
+  return billingState(c, now);
+}
 
 /** Estado del plan hoy y hasta cuándo dura. */
 export function billingState(c: BillingFields, now = new Date()) {

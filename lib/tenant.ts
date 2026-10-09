@@ -9,6 +9,7 @@ import {
   SESSION_USER_HEADER,
   SESSION_VERSION_HEADER,
   SESSION_ACTOR_HEADER,
+  SESSION_VIA_HEADER,
   SITE_SLUG_HEADER,
 } from "./tenant-headers";
 
@@ -59,12 +60,13 @@ export async function getSession() {
   const userId = h.get(SESSION_USER_HEADER);
   if (!creatorId || !userId) return null;
   const actorId = h.get(SESSION_ACTOR_HEADER) || null;
+  const via = h.get(SESSION_VIA_HEADER) === "code" ? ("code" as const) : null;
   const state = await sessionState(userId);
   // Contraseña cambiada (versión vieja), cuenta borrada o de otra creadora: la sesión ya no vale.
   if (state.version !== Number(h.get(SESSION_VERSION_HEADER) || 0) || state.creatorId !== creatorId) return null;
   // Cuenta pausada: solo quien administra Foliocrew puede verla ("Entrar como").
   if (state.creatorStatus !== "active" && !actorId) return null;
-  return { creatorId, userId, actorId };
+  return { creatorId, userId, actorId, via };
 }
 
 // Estado de cada usuario (caché corta): versión de sesión y estado de su cuenta. Al cambiar la
@@ -127,6 +129,63 @@ async function creatorIdForHost(hostname: string): Promise<string | null | undef
   }
   if (id) hostCache.set(hostname, { id, expires: Date.now() + HOST_CACHE_MS });
   return id;
+}
+
+// Caché corta de dominio → agencia (mismo patrón que creatorIdForHost).
+const agencyHostCache = new Map<string, { id: string | null; expires: number }>();
+
+async function agencyIdForHost(hostname: string): Promise<string | null | undefined> {
+  const cached = agencyHostCache.get(hostname);
+  if (cached && cached.expires > Date.now()) return cached.id;
+
+  const root = platformRootDomain().split(":")[0];
+  let id: string | null | undefined;
+  if (hostname.endsWith(`.${root}`)) {
+    const slug = hostname.slice(0, -root.length - 1);
+    if (slug.includes(".") || RESERVED_SLUGS.has(slug)) {
+      id = undefined; // dominio de la plataforma: no es de una agencia
+    } else {
+      const agency = await prismaRoot.agency.findUnique({ where: { slug }, select: { id: true, status: true } });
+      id = agency && agency.status === "active" ? agency.id : null;
+    }
+  } else {
+    const bare = hostname.replace(/^www\./, "");
+    const agency = await prismaRoot.agency.findFirst({
+      where: { customDomain: { in: [hostname, bare, `www.${bare}`] } },
+      select: { id: true, status: true },
+    });
+    id = agency ? (agency.status === "active" ? agency.id : null) : undefined;
+  }
+  if (id) agencyHostCache.set(hostname, { id, expires: Date.now() + HOST_CACHE_MS });
+  return id;
+}
+
+/**
+ * La agencia cuya landing corresponde a esta petición (null si es el sitio de una creadora o de
+ * la plataforma). Solo tiene sentido en el sitio público: en /admin la cuenta se decide por la
+ * sesión, no por el dominio — ver currentCreatorId().
+ */
+export async function currentAgencyId(): Promise<string | null> {
+  const h = await requestHeaders();
+  if (h.get(SCOPE_HEADER) === "admin") return null;
+  if (h.get(SITE_SLUG_HEADER)) return null; // /s/<slug> es siempre de una creadora
+  const hostname = (h.get("x-forwarded-host") || h.get("host") || "").split(":")[0].toLowerCase();
+  return (await agencyIdForHost(hostname)) || null;
+}
+
+/** La agencia de esta petición (para la landing pública), o null. */
+export async function currentAgency() {
+  const id = await currentAgencyId();
+  if (!id) return null;
+  return prismaRoot.agency.findUnique({
+    where: { id },
+    select: { id: true, name: true, slug: true, customDomain: true, publicSettings: true },
+  });
+}
+
+/** Para borrar la caché cuando cambia el dominio o el slug de una agencia. */
+export function forgetAgencyHost(hostname: string) {
+  agencyHostCache.delete(hostname.toLowerCase());
 }
 
 let defaultCreatorId: { id: string; expires: number } | null = null;

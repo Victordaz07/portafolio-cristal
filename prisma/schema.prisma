@@ -753,6 +753,22 @@ model FollowerSnapshot {
   @@unique([creatorId, platform, date])
 }
 
+/// Códigos de invitación para registrarse, manejables desde /admin/plataforma — alternativa a
+/// SIGNUP_INVITE_CODE (el código único de Vercel, que sigue funcionando igual). Puede ser de un
+/// solo uso (maxUses=1), reutilizable con tope (maxUses=N) o sin tope (maxUses=null).
+model InviteCode {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  /// Para quién es o para qué (visible solo en el panel), p. ej. "Para Juan" o "Lanzamiento marzo"
+  label     String?
+  maxUses   Int?
+  usedCount Int       @default(0)
+  active    Boolean   @default(true)
+  expiresAt DateTime?
+  createdBy String
+  createdAt DateTime  @default(now())
+}
+
 // ─── Foliocrew: lista de espera de la plataforma (no pertenece a una creadora) ───
 
 model WaitlistEntry {

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { platformRootDomain } from "@/lib/tenant";
 import { signupMode } from "@/lib/creators";
 import { incomingReferral } from "@/lib/ambassadors-server";
+import { hasActiveInviteCodes } from "@/lib/invite-codes";
 import LangSwitch from "@/components/admin/LangSwitch";
 import { getT } from "@/lib/admin-lang-server";
 import RegisterForm from "./RegisterForm";
@@ -13,7 +14,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
   const { ref } = await searchParams;
   // Si llegó por el enlace de una embajadora activa, el enlace hace de invitación.
   const referral = await incomingReferral(ref);
-  const open = Boolean(referral) || signupMode() !== "closed";
+  const open = Boolean(referral) || signupMode() !== "closed" || (await hasActiveInviteCodes());
   const { t } = await getT();
   return (
     <main className="flex min-h-screen items-center justify-center bg-cream px-sp-4 py-sp-6">

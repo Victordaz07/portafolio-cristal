@@ -10,6 +10,7 @@ import { hasRole, teamUser } from "@/lib/team";
 import { emailConfigured } from "@/lib/email";
 import EmailVerifyNotice from "@/components/admin/EmailVerifyNotice";
 import ImpersonationBanner from "@/components/admin/ImpersonationBanner";
+import AgencyEnterBanner from "@/components/admin/AgencyEnterBanner";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { billingState } from "@/lib/billing";
@@ -30,18 +31,21 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
   const session = await getSession();
   // Sesión vencida o cerrada desde otro equipo (cambio de contraseña): de vuelta al login.
   if (!session) redirect("/admin/login");
-  const [unreadMessages, creator, site, platformAdmin, user, team, supportUnread] = await Promise.all([
+  const [unreadMessages, creator, site, platformAdmin, user, team, supportUnread, actor] = await Promise.all([
     prisma.contactMessage.count({ where: { read: false } }),
     prismaRoot.creator.findUnique({
       where: { id: session.creatorId },
-      select: { name: true, plan: true, comp: true, ambassador: true, trialEndsAt: true, paidUntil: true },
+      select: { name: true, plan: true, comp: true, ambassador: true, trialEndsAt: true, paidUntil: true, agencyId: true },
     }),
     sessionCreatorSite(),
     isPlatformAdmin(),
     prismaRoot.adminUser.findUnique({ where: { id: session.userId }, select: { email: true, emailVerifiedAt: true } }),
     teamUser(),
     prisma.supportTicket.count({ where: { unreadByCustomer: true } }).catch(() => 0),
+    session.actorId ? prismaRoot.adminUser.findUnique({ where: { id: session.actorId }, select: { agencyId: true } }) : null,
   ]);
+  // "Entrar como" puede venir del soporte de Foliocrew o de una agencia (plan Crew): distinto banner.
+  const enteredByAgency = Boolean(session.actorId && actor?.agencyId);
   const [openTickets, openReports, communityNew, connectionRequests, unreadDms] = await Promise.all([
     hasRole(team, "support") ? prismaRoot.supportTicket.count({ where: { status: "open" } }) : 0,
     // Contenidos distintos con reportes abiertos (no el número de reportes).
@@ -77,8 +81,9 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
         unreadDms={unreadDms}
         ambassador={Boolean(creator?.ambassador)}
         ambassadorMerit={meritEnabled() && !creator?.ambassador}
+        viaCode={session.via === "code"}
       >
-        {session.actorId && <ImpersonationBanner creatorName={creator?.name ?? ""} />}
+        {session.actorId && (enteredByAgency ? <AgencyEnterBanner creatorName={creator?.name ?? ""} /> : <ImpersonationBanner creatorName={creator?.name ?? ""} />)}
         {billingNotice && (
           <div role="status" className="mb-sp-4 flex flex-wrap items-center justify-between gap-sp-3 rounded-[14px] border border-coral/30 bg-coral/5 px-sp-4 py-sp-3 text-sm text-ink">
             <p>

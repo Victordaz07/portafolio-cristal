@@ -17,6 +17,8 @@ export interface SessionPayload {
   sv?: number;
   /** Quien administra Foliocrew y entró "como" esta cuenta para dar soporte (su userId). */
   actorId?: string;
+  /** "code" si entró con el código de acceso de su agencia en vez de su contraseña. */
+  via?: "code";
 }
 
 export async function createSessionToken(session: SessionPayload) {

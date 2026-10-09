@@ -13,10 +13,21 @@ export const SESSION_VERSION_HEADER = "x-fc-sv";
 /** Quien administra Foliocrew y está viendo esta cuenta con "Entrar como" (su userId). */
 export const SESSION_ACTOR_HEADER = "x-fc-actor";
 
+/** Cómo entró: "code" si fue con el código de acceso de su agencia (ver lib/access-code.ts). Vacío = correo+contraseña de siempre. */
+export const SESSION_VIA_HEADER = "x-fc-via";
+
 /** Sitio pedido por la dirección provisional /s/<slug> (sin dominio propio ni subdominio). */
 export const SITE_SLUG_HEADER = "x-fc-site";
 
-export const INTERNAL_HEADERS = [SCOPE_HEADER, SESSION_CREATOR_HEADER, SESSION_USER_HEADER, SESSION_VERSION_HEADER, SESSION_ACTOR_HEADER, SITE_SLUG_HEADER];
+export const INTERNAL_HEADERS = [
+  SCOPE_HEADER,
+  SESSION_CREATOR_HEADER,
+  SESSION_USER_HEADER,
+  SESSION_VERSION_HEADER,
+  SESSION_ACTOR_HEADER,
+  SESSION_VIA_HEADER,
+  SITE_SLUG_HEADER,
+];
 
 /** Subdominios que no pueden ser el nombre del sitio de una creadora. */
 export const RESERVED_SLUGS = new Set([

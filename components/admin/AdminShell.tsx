@@ -150,6 +150,15 @@ function isActive(pathname: string, href: string, exact = false) {
   return href === "/admin" || exact ? pathname === href : pathname.startsWith(href);
 }
 
+/** Lo único que ve una creadora de una agencia al entrar con su código de acceso (ver lib/access-code.ts):
+ * revisar/aprobar su calendario, firmar o ver sus contratos y facturas, y sus reportes. Nada de
+ * editar su marca personal (Hero, media kit, enlaces, tienda, apariencia, servicios, paquetes). */
+const VIA_CODE_HREFS = new Set(["/admin/calendario", "/admin/contratos", "/admin/facturas", "/admin/reportes"]);
+
+function filterForCode(groups: NavGroup[]): NavGroup[] {
+  return groups.map((g) => ({ ...g, items: g.items.filter((item) => VIA_CODE_HREFS.has(item.href)) })).filter((g) => g.items.length > 0);
+}
+
 export default function AdminShell({
   children,
   unreadMessages = 0,
@@ -165,6 +174,7 @@ export default function AdminShell({
   unreadDms = 0,
   ambassador = false,
   ambassadorMerit = false,
+  viaCode = false,
 }: {
   children: ReactNode;
   unreadMessages?: number;
@@ -186,13 +196,15 @@ export default function AdminShell({
   ambassador?: boolean;
   /** Mérito automático prendido y la cuenta aún no es embajadora: ve «Invita y gana». */
   ambassadorMerit?: boolean;
+  /** Entró con el código de acceso de su agencia (plan Crew): menú recortado, ver filterForCode(). */
+  viaCode?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useT();
   const NAV_GROUPS = navGroups(t, ambassador, ambassadorMerit);
   const extraGroup = foliocrewGroup(platformAdmin, team, t);
-  const allGroups = [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])];
+  const allGroups = viaCode ? filterForCode(NAV_GROUPS) : [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])];
   const [mobileOpen, setMobileOpen] = useState(false);
   // Lista ordenada por apertura (el último en abrirse queda al final); como mucho MAX_OPEN_GROUPS
   // a la vez. De entrada solo se abre el grupo de la página en la que estás, no los 7-8 de golpe.

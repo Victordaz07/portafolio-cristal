@@ -34,11 +34,14 @@ export default function DomainManager({
   subdomain,
   subdomainLive,
   previewPath,
+  apiBase = "/api/admin/domain",
 }: {
   officialUrl: string;
   subdomain: string;
   subdomainLive: boolean;
   previewPath: string;
+  /** La agencia (plan Crew) reutiliza este mismo componente contra /api/admin/agency/domain. */
+  apiBase?: string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -49,7 +52,7 @@ export default function DomainManager({
   const [confirmRemove, setConfirmRemove] = useState(false);
 
   async function call(method: "GET" | "PUT" | "DELETE", body?: object) {
-    const response = await fetch("/api/admin/domain", {
+    const response = await fetch(apiBase, {
       method,
       headers: body ? { "Content-Type": "application/json" } : undefined,
       body: body ? JSON.stringify(body) : undefined,

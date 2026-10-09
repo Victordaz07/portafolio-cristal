@@ -31,6 +31,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx tsc --noEmit
+      # Antes de las pruebas: varias (ai-quota, storage-quota, agency-access...) crean filas reales
+      # y necesitan que las tablas ya existan. Correr esto después (como hacía antes, solo dentro de
+      # `npm run build`) deja la base vacía durante `npm test` y esas pruebas fallan con
+      # "relation ... does not exist" — no es nada del código, es el orden de los pasos.
+      - run: npx prisma migrate deploy
       - run: npm test
-      # Aplica todas las migraciones en una base vacía y compila: detecta migraciones rotas antes de producción.
+      # Vuelve a aplicar las migraciones (no-op si ya están) y compila: detecta migraciones rotas antes de producción.
       - run: npm run build

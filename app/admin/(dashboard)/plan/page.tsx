@@ -6,7 +6,7 @@ import {
   billingLabel,
   paymentMethodLabel,
   PAYABLE_PLANS,
-  billingState,
+  creatorBillingState,
   formatMoney,
   getPlan,
   paymentInstructions,
@@ -35,7 +35,7 @@ export default async function PlanPage() {
     session
       ? prismaRoot.creator.findUnique({
           where: { id: session.creatorId },
-          select: { slug: true, plan: true, comp: true, ambassador: true, trialEndsAt: true, paidUntil: true },
+          select: { slug: true, plan: true, comp: true, ambassador: true, trialEndsAt: true, paidUntil: true, agencyId: true, agency: { select: { name: true } } },
         })
       : null,
     prisma.payment.findMany({ orderBy: { createdAt: "desc" }, take: 20 }),
@@ -43,7 +43,7 @@ export default async function PlanPage() {
   if (!creator) return null;
   const ai = await aiQuota().catch(() => null);
   const storage = await mediaQuota().catch(() => null);
-  const { state, until, daysLeft } = billingState(creator);
+  const { state, until, daysLeft } = creatorBillingState(creator);
   const plan = getPlan(creator.plan);
   const instructions = paymentInstructions();
   const reference = paymentReference(creator.slug);
@@ -51,7 +51,9 @@ export default async function PlanPage() {
   const fmt = (d: Date) => fmtDate(d, lang);
 
   const headline =
-    state === "comp"
+    state === "agency"
+      ? t(`Tu cuenta la administra ${creator.agency?.name ?? "tu agencia"}. No tienes que pagar nada aquí.`, `Your account is managed by ${creator.agency?.name ?? "your agency"}. You don't have to pay anything here.`)
+      : state === "comp"
       ? t("Tu cuenta es de cortesía: no tienes que pagar nada. 💜", "Your account is complimentary: you don't have to pay anything. 💜")
       : state === "ambassador"
         ? t("Eres embajadora de Foliocrew: tienes Folio Pro sin pagar y sin vencimiento. 💜", "You're a Foliocrew ambassador: you have Folio Pro with nothing to pay and no expiry. 💜")
@@ -82,7 +84,9 @@ export default async function PlanPage() {
           >
             {billingLabel(state, lang)}
           </span>
-          <span className="font-semibold text-ink">{state === "comp" ? t("Cortesía", "Complimentary") : state === "ambassador" ? t("Embajadora · Folio Pro", "Ambassador · Folio Pro") : plan.name}</span>
+          <span className="font-semibold text-ink">
+            {state === "agency" ? creator.agency?.name ?? t("Tu agencia", "Your agency") : state === "comp" ? t("Cortesía", "Complimentary") : state === "ambassador" ? t("Embajadora · Folio Pro", "Ambassador · Folio Pro") : plan.name}
+          </span>
         </div>
         <p className="mt-sp-2 text-ink">{headline}</p>
         {pending && (
@@ -126,7 +130,7 @@ export default async function PlanPage() {
         </Card>
       )}
 
-      {state !== "comp" && state !== "ambassador" && (
+      {state !== "comp" && state !== "ambassador" && state !== "agency" && (
         <>
           <div className="grid gap-sp-4 md:grid-cols-2">
             {PAYABLE_PLANS.map((p) => (

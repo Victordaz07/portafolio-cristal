@@ -3,7 +3,8 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { currentCreator, defaultCreatorSlug, sitePathPrefix } from "@/lib/tenant";
+import { currentAgency, currentCreator, defaultCreatorSlug, sitePathPrefix } from "@/lib/tenant";
+import AgencyLanding from "@/components/agency/AgencyLanding";
 import type { Platform, ContentType } from "@/lib/embeds";
 import SiteHero from "@/components/site/SiteHero";
 import SiteFrame from "@/components/site/SiteFrame";
@@ -48,6 +49,11 @@ export const dynamic = "force-dynamic";
 const PHOTO_PLACEHOLDER = "/images/placeholder-creadora.svg";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const agency = await currentAgency();
+  if (agency) {
+    const title = agency.publicSettings?.tagline ? `${agency.name} — ${agency.publicSettings.tagline}` : agency.name;
+    return { title, description: agency.publicSettings?.description || undefined };
+  }
   const hero = await prisma.hero.findFirst({ select: { name: true, niche: true, description: true, updatedAt: true } });
   if (!hero) return {};
   const title = `${hero.name} — ${hero.niche || "Creación de contenido"}`;
@@ -87,6 +93,11 @@ function MadeWithFoliocrew({ locale, ambassadorLink }: { locale: string; ambassa
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<{ disenio?: string }> }) {
   const { disenio } = await searchParams;
+
+  // Dominio/subdominio de una agencia (plan Crew): su landing, no el portafolio de una creadora.
+  const agency = await currentAgency();
+  if (agency) return <AgencyLanding agency={agency} settings={agency.publicSettings} />;
+
   const locale = await getLocale();
   const copy = t(locale);
   // El sitio de Cristal (la creadora original) conserva el crédito de su diseñador.

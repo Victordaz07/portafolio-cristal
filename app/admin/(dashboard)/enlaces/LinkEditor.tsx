@@ -228,7 +228,7 @@ export default function LinkEditor({
   const customGroups = groups.filter((g) => g.kind === "custom");
 
   return (
-    <div className="grid items-start gap-sp-4 xl:grid-cols-[minmax(0,1fr)_420px]">
+    <div className="grid grid-cols-1 items-start gap-sp-4 xl:grid-cols-[minmax(0,1fr)_420px]">
       <div className="flex min-w-0 flex-col gap-sp-3">
         <Card className="flex flex-wrap items-center gap-sp-3">
           <div className="min-w-0 flex-1">

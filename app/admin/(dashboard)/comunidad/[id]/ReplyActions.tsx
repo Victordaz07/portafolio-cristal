@@ -51,7 +51,7 @@ export default function ReplyActions({
 
   return (
     <>
-      <span className="ml-auto flex flex-wrap gap-sp-3 text-xs font-semibold">
+      <span className="flex flex-wrap gap-sp-3 text-xs font-semibold sm:ml-auto">
         {canPickBest && (
           <button type="button" disabled={busy} onClick={pickBest} className="text-moss hover:underline">
             {isBest ? t("Quitar mejor respuesta", "Unmark best answer") : t("✓ Mejor respuesta", "✓ Best answer")}

@@ -101,7 +101,7 @@ export default async function CommunityPostPage({ params }: { params: Promise<{ 
           <span>
             💬 {post.replyCount} {post.replyCount === 1 ? t("respuesta", "reply") : t("respuestas", "replies")}
           </span>
-          {!isMine && !readOnly && <ReportButton targetType="post" targetId={post.id} className="ml-auto" />}
+          {!isMine && !readOnly && <ReportButton targetType="post" targetId={post.id} className="sm:ml-auto" />}
           {isMine && (
             <PostOwnerActions
               postId={post.id}

@@ -121,7 +121,7 @@ export default function HeroForm({ initialHero }: { initialHero: Hero | null }) 
   }
 
   return (
-    <div className="grid gap-sp-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+    <div className="grid grid-cols-1 gap-sp-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
       <form onSubmit={handleSubmit} className={`${cardClass} flex flex-col gap-sp-5`}>
         <div className="grid gap-sp-4 sm:grid-cols-2">
         <label className={labelClass}>

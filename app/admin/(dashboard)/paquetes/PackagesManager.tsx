@@ -138,7 +138,7 @@ export default function PackagesManager({ initialPackages }: { initialPackages: 
       </ul>
 
       <form onSubmit={handleAdd} className={`${cardClass} mt-sp-6 flex flex-col gap-sp-4 max-w-lg`}>
-        <div className="grid gap-sp-4 sm:grid-cols-[80px_1fr]">
+        <div className="grid grid-cols-1 gap-sp-4 sm:grid-cols-[80px_1fr]">
           <label className="flex flex-col gap-sp-1">
             <span className="text-sm font-medium text-ink">Emoji</span>
             <input

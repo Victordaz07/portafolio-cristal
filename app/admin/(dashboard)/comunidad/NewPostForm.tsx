@@ -85,7 +85,7 @@ export default function NewPostForm({ editing, onDone }: { editing?: { id: strin
           </div>
           <p className="mt-sp-2 text-xs text-ink/55">{lang === "en" ? kind.hintEn : kind.hint}</p>
         </div>
-        <div className="grid gap-sp-4 sm:grid-cols-[1fr_220px]">
+        <div className="grid grid-cols-1 gap-sp-4 sm:grid-cols-[1fr_220px]">
           <label className={labelClass}>
             <span className="text-sm font-medium text-ink">{t("Título", "Title")}</span>
             <input

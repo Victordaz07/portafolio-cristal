@@ -351,7 +351,7 @@ export default function GoalsManager({
           )}
         </Card>
       ) : (
-        <div className="grid gap-sp-4 sm:grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
+        <div className="grid grid-cols-1 gap-sp-4 sm:grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
           {goals.map((goal) => {
             const pct = goalPercent(goal.current, goal.target);
             const auto = goal.source !== "manual";

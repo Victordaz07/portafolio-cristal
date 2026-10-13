@@ -334,7 +334,7 @@ export default function LinkEditor({
               onEnChange={(v) => setPage((p) => ({ ...p, linksHeroTitleEn: v }))}
             />
           </div>
-          <div className="grid gap-sp-4 sm:grid-cols-[180px_1fr]">
+          <div className="grid grid-cols-1 gap-sp-4 sm:grid-cols-[180px_1fr]">
             <ImageUploadField
               label={t("Imagen de fondo", "Background image")}
               value={page.linksHeroImage}
@@ -796,7 +796,7 @@ function LinkForm({
         <input required type="url" value={form.url} onChange={(e) => set("url", e.target.value)} className={inputClass} placeholder="https://" />
       </label>
       <p className="-mt-sp-3 text-xs text-ink/50">{t("PayPal, tiendas, redes y correo llevan su ícono solo si no subes imagen.", "PayPal, stores, socials and email get their own icon automatically if you don't upload an image.")}</p>
-      <div className="grid gap-sp-4 sm:grid-cols-[170px_1fr]">
+      <div className="grid grid-cols-1 gap-sp-4 sm:grid-cols-[170px_1fr]">
         <ImageUploadField
           label={t("Imagen o logo", "Image or logo")}
           value={form.imageUrl}

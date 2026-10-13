@@ -35,7 +35,7 @@ export default function NewTicketForm() {
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-sp-3">
-      <div className="grid gap-sp-3 md:grid-cols-[2fr_1fr]">
+      <div className="grid grid-cols-1 gap-sp-3 md:grid-cols-[2fr_1fr]">
         <label className={labelClass}>
           <span className="text-sm font-semibold text-ink">{t("Asunto", "Subject")}</span>
           <input className={inputClass} required minLength={3} maxLength={140} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder={t("Ej.: No puedo conectar mi Instagram", "E.g.: I can't connect my Instagram")} />

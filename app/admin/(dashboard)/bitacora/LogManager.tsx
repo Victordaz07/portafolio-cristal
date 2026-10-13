@@ -96,7 +96,7 @@ export default function LogManager({
         {form.id ? t("Editar", "Edit") : t("Nueva entrada", "New entry")} · {logKindLabel(form.kind, lang)}
       </p>
       <form onSubmit={save} className="flex flex-col gap-sp-4">
-        <div className="grid gap-sp-4 sm:grid-cols-[1fr_180px]">
+        <div className="grid grid-cols-1 gap-sp-4 sm:grid-cols-[1fr_180px]">
           <label className="flex flex-col gap-sp-1">
             <span className="text-sm font-medium text-ink">{t("Título", "Title")}</span>
             <input

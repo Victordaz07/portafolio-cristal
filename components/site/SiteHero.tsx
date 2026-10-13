@@ -318,7 +318,7 @@ function MagazineHero(p: SiteHeroProps) {
         <h1 className="mt-sp-4 break-words font-fraunces text-[clamp(3.2rem,12.5vw,9.5rem)] font-semibold uppercase leading-[0.88] tracking-[-0.035em] text-ink">
           {p.name}
         </h1>
-        <div className="mt-sp-6 grid items-end gap-sp-7 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="mt-sp-6 grid grid-cols-1 items-end gap-sp-7 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div className="relative mr-sp-3 mb-sp-3">
             <span aria-hidden="true" className="r-lg absolute inset-0 translate-x-sp-3 translate-y-sp-3 border-2 border-coral" />
             {/* eslint-disable-next-line @next/next/no-img-element */}

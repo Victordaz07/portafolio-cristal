@@ -58,7 +58,7 @@ export default function ContractEditor({ contractId, initial, brands }: { contra
   const legend = "font-mono text-[11px] uppercase tracking-[0.16em] text-coral";
 
   return (
-    <div className="grid gap-sp-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <div className="grid grid-cols-1 gap-sp-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <form onSubmit={save} className="flex min-w-0 flex-col gap-sp-5">
         <div className={group}>
           <label className={label}>

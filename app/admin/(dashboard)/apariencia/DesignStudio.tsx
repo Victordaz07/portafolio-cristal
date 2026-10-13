@@ -129,7 +129,7 @@ export default function DesignStudio({
   const custom = design.customAccent ? paletteFromHex(design.customAccent) : null;
 
   return (
-    <div className="grid items-start gap-sp-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+    <div className="grid grid-cols-1 items-start gap-sp-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
       <div className="flex flex-col gap-sp-4">
         <Card className="flex flex-col gap-sp-3">
           <div className="flex flex-wrap items-center justify-between gap-sp-3">
@@ -395,7 +395,7 @@ export default function DesignStudio({
 
         <Card className="flex flex-col gap-sp-4">
           <p className={eyebrow}>{t("Tu perfil", "Your profile")}</p>
-          <div className="grid gap-sp-4 sm:grid-cols-[160px_1fr]">
+          <div className="grid grid-cols-1 gap-sp-4 sm:grid-cols-[160px_1fr]">
             <ImageUploadField
               label={t("Foto de perfil", "Profile photo")}
               value={profile.photoUrl}

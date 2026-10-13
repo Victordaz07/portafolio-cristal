@@ -69,7 +69,7 @@ export default async function ContractPage({ params }: { params: Promise<{ id: s
           />
         </Card>
       ) : (
-        <div className="grid gap-sp-5 lg:grid-cols-[1fr_260px]">
+        <div className="grid grid-cols-1 gap-sp-5 lg:grid-cols-[1fr_260px]">
           <ContractDocument
             bodyText={contract.bodyText}
             language={contract.language}

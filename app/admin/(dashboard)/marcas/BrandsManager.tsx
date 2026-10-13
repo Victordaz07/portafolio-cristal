@@ -332,7 +332,7 @@ export default function BrandsManager({ initialBrands }: { initialBrands: BrandC
             ))}
           </div>
 
-          <div className="grid items-start gap-sp-4 lg:grid-cols-[320px_1fr]">
+          <div className="grid grid-cols-1 items-start gap-sp-4 lg:grid-cols-[320px_1fr]">
             <ul className="flex flex-col gap-2.5">
               {visibleBrands.length === 0 && (
                 <Card className="text-sm text-ink/60">

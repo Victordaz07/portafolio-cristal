@@ -189,7 +189,7 @@ export default async function AdminHomePage() {
         ))}
       </div>
 
-      <div className="mt-sp-5 grid gap-sp-4 lg:grid-cols-[1.3fr_1fr]">
+      <div className="mt-sp-5 grid grid-cols-1 gap-sp-4 lg:grid-cols-[1.3fr_1fr]">
         <div className="flex flex-col gap-sp-4">
           <Card>
             <SectionTitle

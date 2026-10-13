@@ -445,18 +445,20 @@ export default function DesignStudio({
         </Card>
 
         <div className="sticky bottom-sp-3 z-10 flex flex-wrap items-center gap-sp-3 rounded-[16px] border border-line bg-white/95 p-sp-3 shadow-lg backdrop-blur">
-          <button type="button" onClick={save} disabled={saving || !dirty || !profile.name.trim()} className={primaryButtonClass}>
-            {saving ? t("Guardando…", "Saving…") : dirty ? t("Guardar diseño", "Save design") : t("Guardado", "Saved")}
-          </button>
-          <button
-            type="button"
-            onClick={() => setDesign((d) => ({ ...DEFAULT_DESIGN, sections: d.sections }))}
-            className={secondaryButtonClass}
-          >
-            {t("Volver al original", "Back to original")}
-          </button>
-          {dirty && <span className="text-xs text-ink/55">{t("Tienes cambios sin guardar.", "You have unsaved changes.")}</span>}
-          <a href={siteUrl} target="_blank" rel="noreferrer" className="ml-auto text-sm font-semibold text-coral hover:underline">
+          <div className="flex flex-wrap items-center gap-sp-3">
+            <button type="button" onClick={save} disabled={saving || !dirty || !profile.name.trim()} className={primaryButtonClass}>
+              {saving ? t("Guardando…", "Saving…") : dirty ? t("Guardar diseño", "Save design") : t("Guardado", "Saved")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setDesign((d) => ({ ...DEFAULT_DESIGN, sections: d.sections }))}
+              className={secondaryButtonClass}
+            >
+              {t("Volver al original", "Back to original")}
+            </button>
+            {dirty && <span className="text-xs text-ink/55">{t("Tienes cambios sin guardar.", "You have unsaved changes.")}</span>}
+          </div>
+          <a href={siteUrl} target="_blank" rel="noreferrer" className="text-sm font-semibold text-coral hover:underline sm:ml-auto">
             {t("Ver mi sitio ↗", "View my site ↗")}
           </a>
         </div>

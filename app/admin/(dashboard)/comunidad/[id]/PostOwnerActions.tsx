@@ -27,7 +27,7 @@ export default function PostOwnerActions({ postId, canEdit, values }: { postId: 
 
   return (
     <>
-      <span className="ml-auto flex gap-sp-3 font-semibold">
+      <span className="flex flex-wrap gap-sp-3 font-semibold sm:ml-auto">
         {canEdit && (
           <button type="button" onClick={() => setEditing(true)} className="text-coral hover:underline">
             {t("Editar", "Edit")}

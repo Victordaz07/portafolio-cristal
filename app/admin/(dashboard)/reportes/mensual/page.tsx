@@ -115,32 +115,34 @@ export default async function MonthlyReportPage({ searchParams }: { searchParams
           {topCards.length === 0 ? (
             <p className="text-sm text-ink/60">{t("Sin publicaciones registradas este mes.", "No posts recorded this month.")}</p>
           ) : (
-            <table className="w-full text-left text-sm">
-              <thead className="text-[11px] uppercase text-ink/50">
-                <tr>
-                  <th className="pb-1 font-medium">{t("Publicación", "Post")}</th>
-                  <th className="pb-1 text-right font-medium">{t("Vistas", "Views")}</th>
-                  <th className="pb-1 text-right font-medium">Likes</th>
-                  <th className="pb-1 text-right font-medium">Engag.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topCards.map((c) => {
-                  const rate = engagementRate(c);
-                  return (
-                    <tr key={c.id} className="border-t border-line">
-                      <td className="py-1.5 pr-sp-2 text-ink">
-                        {(lang === "en" && c.captionEn) || c.caption}
-                        {c.brand && <span className="text-ink/55"> · {c.brand.name}</span>}
-                      </td>
-                      <td className="py-1.5 text-right">{formatCompact(c.views)}</td>
-                      <td className="py-1.5 text-right">{formatCompact(c.likes)}</td>
-                      <td className="py-1.5 text-right">{rate == null ? "—" : `${rate}%`}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[420px] text-left text-sm">
+                <thead className="text-[11px] uppercase text-ink/50">
+                  <tr>
+                    <th className="pb-1 font-medium">{t("Publicación", "Post")}</th>
+                    <th className="pb-1 text-right font-medium">{t("Vistas", "Views")}</th>
+                    <th className="pb-1 text-right font-medium">Likes</th>
+                    <th className="pb-1 text-right font-medium">Engag.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topCards.map((c) => {
+                    const rate = engagementRate(c);
+                    return (
+                      <tr key={c.id} className="border-t border-line">
+                        <td className="py-1.5 pr-sp-2 text-ink">
+                          {(lang === "en" && c.captionEn) || c.caption}
+                          {c.brand && <span className="text-ink/55"> · {c.brand.name}</span>}
+                        </td>
+                        <td className="py-1.5 text-right">{formatCompact(c.views)}</td>
+                        <td className="py-1.5 text-right">{formatCompact(c.likes)}</td>
+                        <td className="py-1.5 text-right">{rate == null ? "—" : `${rate}%`}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </Section>
 

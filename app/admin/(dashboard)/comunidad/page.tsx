@@ -116,17 +116,19 @@ export default async function CommunityWallPage({ searchParams }: { searchParams
 
       <div className="flex flex-col gap-sp-3">
         <div className="flex flex-wrap items-center gap-sp-2">
-          <Link href={href({ tab: "recientes" })} className={chip(tab === "recientes")}>
-            {t("🕒 Recientes", "🕒 Latest")}
-          </Link>
-          <Link href={href({ tab: "destacadas" })} className={chip(tab === "destacadas")}>
-            {t("🔥 Destacadas", "🔥 Top")}
-          </Link>
-          <Link href="/admin/comunidad/reglas" className="text-xs text-ink/50 hover:text-coral">
-            {t("Reglas", "Rules")}
-          </Link>
+          <div className="flex flex-wrap items-center gap-sp-2">
+            <Link href={href({ tab: "recientes" })} className={chip(tab === "recientes")}>
+              {t("🕒 Recientes", "🕒 Latest")}
+            </Link>
+            <Link href={href({ tab: "destacadas" })} className={chip(tab === "destacadas")}>
+              {t("🔥 Destacadas", "🔥 Top")}
+            </Link>
+            <Link href="/admin/comunidad/reglas" className="text-xs text-ink/50 hover:text-coral">
+              {t("Reglas", "Rules")}
+            </Link>
+          </div>
           {filtered && (
-            <Link href={href({ tipo: undefined, tema: undefined, creador: undefined })} className="ml-auto text-xs font-semibold text-coral hover:underline">
+            <Link href={href({ tipo: undefined, tema: undefined, creador: undefined })} className="text-xs font-semibold text-coral hover:underline sm:ml-auto">
               {t("Quitar filtros", "Clear filters")}
             </Link>
           )}

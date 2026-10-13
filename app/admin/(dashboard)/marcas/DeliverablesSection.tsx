@@ -92,8 +92,8 @@ export default function DeliverablesSection({
                       )}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <button type="button" disabled={i === 0} onClick={() => patch(d.id, { move: "up" })} aria-label={t("Subir", "Move up")} className="px-1 text-ink/40 hover:text-ink disabled:opacity-20">
+                  <div className="flex items-center gap-0.5">
+                    <button type="button" disabled={i === 0} onClick={() => patch(d.id, { move: "up" })} aria-label={t("Subir", "Move up")} className="rounded px-2 py-1.5 text-ink/40 hover:text-ink disabled:opacity-20">
                       ↑
                     </button>
                     <button
@@ -101,25 +101,27 @@ export default function DeliverablesSection({
                       disabled={i === deliverables.length - 1}
                       onClick={() => patch(d.id, { move: "down" })}
                       aria-label={t("Bajar", "Move down")}
-                      className="px-1 text-ink/40 hover:text-ink disabled:opacity-20"
+                      className="rounded px-2 py-1.5 text-ink/40 hover:text-ink disabled:opacity-20"
                     >
                       ↓
                     </button>
                   </div>
                 </div>
-                <div className="mt-sp-2 flex flex-wrap items-center gap-1.5">
-                  {DELIVERABLE_STATUSES.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => s !== status && patch(d.id, { status: s })}
-                      aria-pressed={s === status}
-                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${s === status ? `${DELIVERABLE_STATUS_META[s].className} ring-1 ring-current` : "text-ink/45 hover:text-ink"}`}
-                    >
-                      {pickLabel(lang, DELIVERABLE_STATUS_META[s])}
-                    </button>
-                  ))}
-                  <span className="ml-auto flex items-center gap-sp-3 text-[11px]">
+                <div className="mt-sp-2 flex flex-wrap items-center gap-x-sp-3 gap-y-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {DELIVERABLE_STATUSES.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => s !== status && patch(d.id, { status: s })}
+                        aria-pressed={s === status}
+                        className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${s === status ? `${DELIVERABLE_STATUS_META[s].className} ring-1 ring-current` : "text-ink/45 hover:text-ink"}`}
+                      >
+                        {pickLabel(lang, DELIVERABLE_STATUS_META[s])}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-sp-3 text-[11px] sm:ml-auto">
                     <label className="flex items-center gap-1 text-ink/50">
                       📅
                       <input
@@ -127,7 +129,7 @@ export default function DeliverablesSection({
                         value={dateToInput(d.dueAt)}
                         onChange={(e) => patch(d.id, { dueAt: e.target.value || null })}
                         aria-label={t("Fecha de entrega", "Due date")}
-                        className="rounded border border-line bg-white px-1 py-0.5 text-[11px] text-ink"
+                        className="rounded border border-line bg-white px-1 py-1.5 text-[11px] text-ink"
                       />
                     </label>
                     <button
@@ -136,7 +138,7 @@ export default function DeliverablesSection({
                         setEditingProof(editingProof === d.id ? null : d.id);
                         setProof(d.proofUrl ?? "");
                       }}
-                      className="font-semibold text-ink/50 hover:text-coral"
+                      className="rounded px-1.5 py-1.5 font-semibold text-ink/50 hover:text-coral"
                     >
                       {t("Enlace", "Link")}
                     </button>
@@ -145,11 +147,11 @@ export default function DeliverablesSection({
                       onClick={() => {
                         if (window.confirm(t(`¿Borrar «${d.title}»?`, `Delete “${d.title}”?`))) onRequest(`/api/admin/deliverables/${d.id}`, "DELETE");
                       }}
-                      className="text-ink/40 hover:text-red-600"
+                      className="rounded px-1.5 py-1.5 text-ink/40 hover:text-red-600"
                     >
                       {t("Borrar", "Delete")}
                     </button>
-                  </span>
+                  </div>
                 </div>
                 {editingProof === d.id && (
                   <form

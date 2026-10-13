@@ -181,7 +181,8 @@ export default function BillingCard({
       )}
 
       {payments.length > 0 && (
-        <table className="mt-sp-4 w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="mt-sp-4 w-full min-w-[480px] text-sm">
           <thead className="font-mono text-[10px] uppercase text-ink/50">
             <tr>
               <th className="py-1 text-left">{t("Fecha", "Date")}</th>
@@ -217,6 +218,7 @@ export default function BillingCard({
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </Card>
   );

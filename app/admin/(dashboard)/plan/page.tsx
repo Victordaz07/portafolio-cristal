@@ -185,33 +185,35 @@ export default async function PlanPage() {
       {payments.length > 0 && (
         <Card>
           <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Tus pagos", "Your payments")}</p>
-          <table className="w-full text-sm">
-            <thead className="font-mono text-[10px] uppercase text-ink/50">
-              <tr>
-                <th className="py-1 text-left">{t("Fecha", "Date")}</th>
-                <th className="py-1 text-left">{t("Plan", "Plan")}</th>
-                <th className="py-1 text-left">{t("Monto", "Amount")}</th>
-                <th className="py-1 text-left">{t("Método", "Method")}</th>
-                <th className="py-1 text-left">{t("Estado", "Status")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {payments.map((p) => (
-                <tr key={p.id} className="border-t border-line">
-                  <td className="py-1.5">{fmt(p.createdAt)}</td>
-                  <td className="py-1.5">
-                    {getPlan(p.plan).name} · {plural(lang, p.months, ["mes", "meses"], ["month", "months"])}
-                  </td>
-                  <td className="py-1.5 font-mono">{formatMoney(p.amountCents, p.currency)}</td>
-                  <td className="py-1.5">{paymentMethodLabel(p.method, lang)}</td>
-                  <td className="py-1.5">
-                    {STATUS[p.status] ? t(...STATUS[p.status]) : p.status}
-                    {p.status === "confirmed" && p.periodEnd ? ` · ${t("hasta", "until")} ${fmt(p.periodEnd)}` : ""}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[480px] text-sm">
+              <thead className="font-mono text-[10px] uppercase text-ink/50">
+                <tr>
+                  <th className="py-1 text-left">{t("Fecha", "Date")}</th>
+                  <th className="py-1 text-left">{t("Plan", "Plan")}</th>
+                  <th className="py-1 text-left">{t("Monto", "Amount")}</th>
+                  <th className="py-1 text-left">{t("Método", "Method")}</th>
+                  <th className="py-1 text-left">{t("Estado", "Status")}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {payments.map((p) => (
+                  <tr key={p.id} className="border-t border-line">
+                    <td className="py-1.5">{fmt(p.createdAt)}</td>
+                    <td className="py-1.5">
+                      {getPlan(p.plan).name} · {plural(lang, p.months, ["mes", "meses"], ["month", "months"])}
+                    </td>
+                    <td className="py-1.5 font-mono">{formatMoney(p.amountCents, p.currency)}</td>
+                    <td className="py-1.5">{paymentMethodLabel(p.method, lang)}</td>
+                    <td className="py-1.5">
+                      {STATUS[p.status] ? t(...STATUS[p.status]) : p.status}
+                      {p.status === "confirmed" && p.periodEnd ? ` · ${t("hasta", "until")} ${fmt(p.periodEnd)}` : ""}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Card>
       )}
     </div>

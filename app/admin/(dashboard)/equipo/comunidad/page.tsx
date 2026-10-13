@@ -75,16 +75,18 @@ export default async function CommunityModerationPage() {
         return (
           <Card key={first.id} className={`flex flex-col gap-sp-3 ${scam ? "border-red-300" : ""}`}>
             <div className="flex flex-wrap items-center gap-sp-2 text-xs">
-              <span className="rounded-full bg-ink px-sp-2 py-0.5 font-mono uppercase text-cream">{type(first.targetType)}</span>
-              <span className="rounded-full bg-coral/15 px-sp-2 py-0.5 font-semibold text-coral">
-                {reports.length} {reports.length === 1 ? t("reporte", "report") : t("reportes", "reports")}
-              </span>
-              {scam && <span className="rounded-full bg-red-100 px-sp-2 py-0.5 font-semibold text-red-700">{t("⚠ Posible estafa", "⚠ Possible scam")}</span>}
-              {target?.hidden && <span className="rounded-full bg-cream px-sp-2 py-0.5 text-ink/60">{t("Oculto", "Hidden")}</span>}
-              {author?.communityProfile?.mutedUntil && author.communityProfile.mutedUntil > new Date() && (
-                <span className="rounded-full bg-cream px-sp-2 py-0.5 text-ink/60">{t("Cuenta en pausa", "Account paused")}</span>
-              )}
-              <span className="ml-auto text-ink/45">{timeAgo(first.createdAt, lang)}</span>
+              <div className="flex flex-wrap items-center gap-sp-2">
+                <span className="rounded-full bg-ink px-sp-2 py-0.5 font-mono uppercase text-cream">{type(first.targetType)}</span>
+                <span className="rounded-full bg-coral/15 px-sp-2 py-0.5 font-semibold text-coral">
+                  {reports.length} {reports.length === 1 ? t("reporte", "report") : t("reportes", "reports")}
+                </span>
+                {scam && <span className="rounded-full bg-red-100 px-sp-2 py-0.5 font-semibold text-red-700">{t("⚠ Posible estafa", "⚠ Possible scam")}</span>}
+                {target?.hidden && <span className="rounded-full bg-cream px-sp-2 py-0.5 text-ink/60">{t("Oculto", "Hidden")}</span>}
+                {author?.communityProfile?.mutedUntil && author.communityProfile.mutedUntil > new Date() && (
+                  <span className="rounded-full bg-cream px-sp-2 py-0.5 text-ink/60">{t("Cuenta en pausa", "Account paused")}</span>
+                )}
+              </div>
+              <span className="text-ink/45 sm:ml-auto">{timeAgo(first.createdAt, lang)}</span>
             </div>
             {target ? (
               <>

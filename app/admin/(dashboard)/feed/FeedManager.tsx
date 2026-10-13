@@ -345,38 +345,40 @@ export default function FeedManager({
               )}
 
               <div className="flex flex-wrap items-center gap-sp-3 border-t border-line pt-sp-2 text-sm">
-                {!filtering && (
-                  <ReorderButtons
-                    onUp={() => handleMove(index, "up")}
-                    onDown={() => handleMove(index, "down")}
-                    disableUp={index === 0}
-                    disableDown={index === cards.length - 1}
-                  />
-                )}
-                <button type="button" onClick={() => setEditingId(card.id)} className={accentLinkClass}>
-                  {t("Editar", "Edit")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMetricsFor(metricsFor === card.id ? null : card.id)}
-                  className={accentLinkClass}
-                >
-                  {t("Métricas", "Metrics")}
-                </button>
-                {card.brandId && (
+                <div className="flex flex-wrap items-center gap-sp-3">
+                  {!filtering && (
+                    <ReorderButtons
+                      onUp={() => handleMove(index, "up")}
+                      onDown={() => handleMove(index, "down")}
+                      disableUp={index === 0}
+                      disableDown={index === cards.length - 1}
+                    />
+                  )}
+                  <button type="button" onClick={() => setEditingId(card.id)} className={accentLinkClass}>
+                    {t("Editar", "Edit")}
+                  </button>
                   <button
                     type="button"
-                    onClick={async () => {
-                      if (await saveMetrics(card.id, { featured: !card.featured })) {
-                        showToast("success", card.featured ? t("Ya no está destacada", "No longer featured") : t("Destacada en Colaboraciones", "Featured in Collaborations"));
-                      }
-                    }}
-                    className="text-sm font-medium text-ink/60 hover:text-ink"
+                    onClick={() => setMetricsFor(metricsFor === card.id ? null : card.id)}
+                    className={accentLinkClass}
                   >
-                    {card.featured ? t("★ Destacada", "★ Featured") : t("☆ Destacar", "☆ Feature")}
+                    {t("Métricas", "Metrics")}
                   </button>
-                )}
-                <button type="button" onClick={() => setPendingDelete(card)} className={`${dangerLinkClass} ml-auto`}>
+                  {card.brandId && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (await saveMetrics(card.id, { featured: !card.featured })) {
+                          showToast("success", card.featured ? t("Ya no está destacada", "No longer featured") : t("Destacada en Colaboraciones", "Featured in Collaborations"));
+                        }
+                      }}
+                      className="text-sm font-medium text-ink/60 hover:text-ink"
+                    >
+                      {card.featured ? t("★ Destacada", "★ Featured") : t("☆ Destacar", "☆ Feature")}
+                    </button>
+                  )}
+                </div>
+                <button type="button" onClick={() => setPendingDelete(card)} className={`${dangerLinkClass} sm:ml-auto`}>
                   {t("Eliminar", "Delete")}
                 </button>
               </div>

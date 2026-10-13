@@ -58,7 +58,7 @@ export default function ProfileForm({ initial, firstTime }: { initial: Values; f
   return (
     <form onSubmit={save} className="flex flex-col gap-sp-4">
       <Card className="flex flex-col gap-sp-4">
-        <div className="grid gap-sp-4 sm:grid-cols-[150px_1fr]">
+        <div className="grid grid-cols-1 gap-sp-4 sm:grid-cols-[150px_1fr]">
           <ImageUploadField
             label={t("Foto", "Photo")}
             value={v.avatarUrl}

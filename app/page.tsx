@@ -551,7 +551,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               </p>
             </div>
 
-            <div className="mt-sp-8 grid gap-sp-8 md:grid-cols-[1fr,1fr] md:items-start">
+            <div className="mt-sp-8 grid grid-cols-1 gap-sp-8 md:grid-cols-[1fr,1fr] md:items-start">
               <ContactForm locale={locale} endpoint={`${sitePrefix}/api/contact`} />
 
               <div>

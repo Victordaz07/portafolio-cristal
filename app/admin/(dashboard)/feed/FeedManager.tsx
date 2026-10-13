@@ -469,7 +469,7 @@ function MetricsEditor({
           </label>
         ))}
       </div>
-      <div className="grid gap-sp-2 sm:grid-cols-[1fr_1fr_180px]">
+      <div className="grid grid-cols-1 gap-sp-2 sm:grid-cols-[1fr_1fr_180px]">
         <label className="flex flex-col gap-1">
           <span className="text-[11px] font-medium text-ink/70">{t("Lo que dicen (comentario destacado)", "What people say (featured comment)")}</span>
           <input value={topComment} onChange={(e) => setTopComment(e.target.value)} className={inputClass} placeholder={t("¿Qué base usaste? La necesito ya 😍", "What foundation did you use? I need it now 😍")} />

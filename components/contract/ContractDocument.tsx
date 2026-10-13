@@ -61,7 +61,7 @@ export default function ContractDocument({
       {acceptance && (
         <section className="mt-sp-6 rounded-[14px] border border-moss/40 bg-lime/15 p-sp-4 text-sm print:border-ink/30 print:bg-transparent">
           <h2 className="font-mono text-[11px] uppercase tracking-[0.16em] text-moss">{c.record}</h2>
-          <dl className="mt-sp-2 grid gap-x-sp-4 gap-y-1 sm:grid-cols-[170px_1fr]">
+          <dl className="mt-sp-2 grid grid-cols-1 gap-x-sp-4 gap-y-1 sm:grid-cols-[170px_1fr]">
             <dt className="text-ink/55">{c.by}</dt>
             <dd className="break-words font-semibold">
               {acceptance.name} · {acceptance.email}

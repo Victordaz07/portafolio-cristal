@@ -165,7 +165,7 @@ export default async function DepartmentsSection() {
               ))}
             </div>
 
-            <div className="mt-sp-5 grid gap-sp-5 md:grid-cols-[2fr_1fr]">
+            <div className="mt-sp-5 grid grid-cols-1 gap-sp-5 md:grid-cols-[2fr_1fr]">
               <div>
                 <p className={`${eyebrowClass} mb-sp-2`}>{t("Para atender", "To handle")}</p>
                 {d.items.length === 0 ? (

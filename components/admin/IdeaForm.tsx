@@ -38,7 +38,7 @@ export default function IdeaForm({ url, submitLabel, placeholder }: { url: strin
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-sp-3">
-      <div className="grid gap-sp-3 md:grid-cols-[2fr_1fr]">
+      <div className="grid grid-cols-1 gap-sp-3 md:grid-cols-[2fr_1fr]">
         <label className={labelClass}>
           <span className="text-sm font-semibold text-ink">{t("Tu idea en una frase", "Your idea in one sentence")}</span>
           <input className={inputClass} required minLength={3} maxLength={140} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={placeholder} />

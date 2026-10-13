@@ -47,7 +47,7 @@ export default async function TeamTicketPage({ params }: { params: Promise<{ id:
           </Link>
         }
       />
-      <div className="grid gap-sp-5 lg:grid-cols-[2fr_1fr]">
+      <div className="grid grid-cols-1 gap-sp-5 lg:grid-cols-[2fr_1fr]">
         <div className="flex flex-col gap-sp-5">
           <Card>
             <SupportThread messages={ticket.messages} viewer="team" lang={lang} />

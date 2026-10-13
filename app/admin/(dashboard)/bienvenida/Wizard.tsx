@@ -357,7 +357,7 @@ export default function Wizard({ niches, initial }: { niches: Niche[]; initial: 
             {v.pieces.map((piece, i) => {
               const platform = piece.url.trim() ? parseEmbedUrl(piece.url.trim()).platform : null;
               return (
-                <div key={i} className="grid gap-sp-2 rounded-[14px] border border-line p-sp-3 sm:grid-cols-[1.3fr_1fr]">
+                <div key={i} className="grid grid-cols-1 gap-sp-2 rounded-[14px] border border-line p-sp-3 sm:grid-cols-[1.3fr_1fr]">
                   <label className={labelClass}>
                     <span className="flex items-center justify-between text-xs font-medium text-ink">
                       Link {i + 1}

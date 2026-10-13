@@ -124,7 +124,7 @@ export default function ReportActions({
             {refreshing ? t("Actualizando…", "Updating…") : t("↻ Actualizar desde redes conectadas", "↻ Update from connected networks")}
           </button>
         </div>
-        <form onSubmit={saveManual} className="mt-sp-3 grid gap-sp-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
+        <form onSubmit={saveManual} className="mt-sp-3 grid grid-cols-1 gap-sp-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
           <select
             value={manual.platform}
             onChange={(e) => setManual((m) => ({ ...m, platform: e.target.value }))}

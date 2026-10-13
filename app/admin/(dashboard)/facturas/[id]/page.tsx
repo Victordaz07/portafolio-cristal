@@ -82,7 +82,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
         </Card>
       )}
 
-      <div className="grid gap-sp-5 lg:grid-cols-[1fr_260px]">
+      <div className="grid grid-cols-1 gap-sp-5 lg:grid-cols-[1fr_260px]">
         <InvoiceDocument invoice={invoice} status={status} />
         <Card className="h-fit">
           <p className="mb-sp-3 font-mono text-[11px] uppercase tracking-[0.16em] text-coral">{t("Historial", "History")}</p>

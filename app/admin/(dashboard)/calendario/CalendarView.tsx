@@ -201,7 +201,7 @@ export default function CalendarView({
         </Card>
       )}
 
-      <div className="grid items-start gap-sp-4 lg:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 items-start gap-sp-4 lg:grid-cols-[1.4fr_1fr]">
         <Card>
           <div className="mb-sp-4 flex items-center justify-between gap-sp-3">
             <Link href={`/admin/calendario?month=${prevMonth}`} className="rounded-full border border-line px-3 py-1 text-sm hover:border-coral" aria-label={t("Mes anterior", "Previous month")}>

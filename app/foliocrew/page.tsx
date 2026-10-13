@@ -194,7 +194,7 @@ export default async function FoliocrewHome({
 
       {/* Portada */}
       <section id="inicio" className="relative overflow-hidden">
-        <div className="mx-auto grid max-w-6xl items-center gap-sp-6 px-sp-5 py-sp-6 md:grid-cols-[1.15fr_1fr] md:py-20">
+        <div className="mx-auto grid grid-cols-1 max-w-6xl items-center gap-sp-6 px-sp-5 py-sp-6 md:grid-cols-[1.15fr_1fr] md:py-20">
           <div>
             <span className="inline-block rounded-full bg-[#B692E7]/25 px-sp-3 py-1 font-mono text-[11px] uppercase tracking-widest text-[#7F207B]">
               {t("Para creadores de contenido y UGC · Lanzamiento por invitación", "For content & UGC creators · Invite-only launch")}

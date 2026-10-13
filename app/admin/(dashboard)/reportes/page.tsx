@@ -194,7 +194,7 @@ export default async function AdminReportsPage() {
         </Card>
       </div>
 
-      <div className="grid gap-sp-4 xl:grid-cols-[1.2fr_1fr]">
+      <div className="grid grid-cols-1 gap-sp-4 xl:grid-cols-[1.2fr_1fr]">
         <Card>
           <p className={eyebrowClass}>{t("Ingresos por marca", "Revenue by brand")}</p>
           {revenue.rows.length === 0 ? (

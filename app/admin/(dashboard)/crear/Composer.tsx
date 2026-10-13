@@ -182,7 +182,7 @@ export default function Composer({
   }
 
   return (
-    <div className="grid items-start gap-sp-4 xl:grid-cols-[1.35fr_1fr] [&>*]:min-w-0">
+    <div className="grid grid-cols-1 items-start gap-sp-4 xl:grid-cols-[1.35fr_1fr] [&>*]:min-w-0">
       <Card className="flex flex-col gap-sp-5 p-sp-5 sm:p-sp-6">
         <div>
           <p className={eyebrowClass}>{t("Tipo de publicación", "Post type")}</p>

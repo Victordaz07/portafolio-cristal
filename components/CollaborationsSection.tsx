@@ -48,7 +48,7 @@ export default function CollaborationsSection({ brands, locale }: { brands: Coll
             </div>
           );
           return (
-            <div key={brand.name} className="grid items-center gap-sp-4 sm:grid-cols-[150px_1fr] sm:gap-sp-5">
+            <div key={brand.name} className="grid grid-cols-1 items-center gap-sp-4 sm:grid-cols-[150px_1fr] sm:gap-sp-5">
               <div className="flex items-center gap-sp-3 sm:flex-col sm:text-center">
                 {brand.websiteUrl ? (
                   <a href={safeHref(brand.websiteUrl)} target="_blank" rel="noreferrer">

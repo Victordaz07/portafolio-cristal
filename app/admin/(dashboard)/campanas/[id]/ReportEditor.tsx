@@ -118,7 +118,7 @@ export default function ReportEditor({ report, brand, creatorName, link, readOnl
   const togglePost = (key: string) => setData((d) => ({ ...d, posts: d.posts.map((p) => (p.key === key ? { ...p, include: !p.include } : p)) }));
 
   return (
-    <div className="grid gap-sp-5 lg:grid-cols-[minmax(0,420px)_1fr]">
+    <div className="grid grid-cols-1 gap-sp-5 lg:grid-cols-[minmax(0,420px)_1fr]">
       <div className="flex flex-col gap-sp-4">
         <Card>
           <div className="flex flex-wrap items-center gap-sp-2">

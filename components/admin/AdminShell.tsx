@@ -10,7 +10,14 @@ import { useT } from "./AdminLang";
 import LangSwitch from "./LangSwitch";
 import CommandPalette from "./CommandPalette";
 
-type NavItem = { href: string; label: string; badgeKey?: "unread" | "support" | "tickets" | "reports" | "community" | "connections" | "messages"; exact?: boolean };
+type NavItem = {
+  href: string;
+  label: string;
+  badgeKey?: "unread" | "support" | "tickets" | "reports" | "community" | "connections" | "messages";
+  exact?: boolean;
+  /** Etiqueta de texto junto al nombre (ej. "CREW"), distinta del badge numérico de pendientes. */
+  tag?: string;
+};
 export type NavGroup = { id: string; title: string; items: NavItem[] };
 
 // Navegación agrupada del panel v2. Cada grupo es colapsable; las secciones
@@ -141,6 +148,26 @@ function foliocrewGroup(platformAdmin: boolean, team: { owner: boolean; roles: s
   return { id: "equipo", title: t("Equipo Foliocrew", "Foliocrew team"), items: [{ href: "/admin/equipo", label: t("Centro del equipo", "Team hub"), exact: true }, ...departments] };
 }
 
+/**
+ * Accesos del plan Crew (panel de agencia), visibles solo para el Dueño de Foliocrew: entra a una
+ * agencia de prueba sin salir de su cuenta (ver agencyUser() en lib/agency.ts), para ver y probar
+ * cómo es el panel que usa una agencia cliente real.
+ */
+function crewPreviewGroup(platformAdmin: boolean, t: T): NavGroup | null {
+  if (!platformAdmin) return null;
+  return {
+    id: "crew-preview",
+    title: t("Crew · modo prueba", "Crew · preview"),
+    items: [
+      { href: "/admin/agencia", label: t("Resumen de agencia", "Agency overview"), exact: true, tag: "CREW" },
+      { href: "/admin/agencia/clientes", label: t("Cartera de clientes", "Client roster"), tag: "CREW" },
+      { href: "/admin/agencia/equipo", label: t("Equipo de agencia", "Agency team"), tag: "CREW" },
+      { href: "/admin/agencia/dominio", label: t("Dominio de agencia", "Agency domain"), tag: "CREW" },
+      { href: "/admin/agencia/facturacion", label: t("Facturación de agencia", "Agency billing"), tag: "CREW" },
+    ],
+  };
+}
+
 const OPEN_GROUPS_KEY = "admin-nav-open-groups";
 // Como mucho esta cantidad de grupos abiertos a la vez: con 7-8 grupos, dejar todo abierto
 // abrumaba. Al abrir uno nuevo que pasa el límite, se cierra solo el que llevaba más tiempo abierto.
@@ -204,7 +231,10 @@ export default function AdminShell({
   const { t } = useT();
   const NAV_GROUPS = navGroups(t, ambassador, ambassadorMerit);
   const extraGroup = foliocrewGroup(platformAdmin, team, t);
-  const allGroups = viaCode ? filterForCode(NAV_GROUPS) : [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : [])];
+  const crewGroup = crewPreviewGroup(platformAdmin, t);
+  const allGroups = viaCode
+    ? filterForCode(NAV_GROUPS)
+    : [...NAV_GROUPS, ...(extraGroup ? [extraGroup] : []), ...(crewGroup ? [crewGroup] : [])];
   const [mobileOpen, setMobileOpen] = useState(false);
   // Lista ordenada por apertura (el último en abrirse queda al final); como mucho MAX_OPEN_GROUPS
   // a la vez. De entrada solo se abre el grupo de la página en la que estás, no los 7-8 de golpe.
@@ -337,7 +367,18 @@ export default function AdminShell({
                             active ? "bg-coral text-white" : "text-cream/85 hover:bg-cream/10"
                           }`}
                         >
-                          <span className="truncate">{item.label}</span>
+                          <span className="flex min-w-0 items-center gap-1.5">
+                            <span className="truncate">{item.label}</span>
+                            {item.tag && (
+                              <span
+                                className={`shrink-0 rounded-full border px-[6px] py-px font-mono text-[9px] font-bold tracking-wide ${
+                                  active ? "border-white/60 text-white" : "border-lime/50 text-lime"
+                                }`}
+                              >
+                                {item.tag}
+                              </span>
+                            )}
+                          </span>
                           {badge > 0 && (
                             <span
                               className={`rounded-full px-[7px] py-px font-mono text-[10px] font-bold ${

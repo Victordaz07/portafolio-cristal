@@ -33,6 +33,9 @@ export default function AgencyShell({ children, agencyName }: { children: ReactN
     <div className="min-h-screen bg-cream">
       <header className="flex items-center justify-between border-b border-line bg-white px-sp-5 py-sp-3">
         <div className="flex items-center gap-sp-6">
+          <Link href="/admin" className="text-sm text-ink/50 hover:text-coral" title="Volver a mi panel">
+            ←
+          </Link>
           <span className="font-fraunces italic text-lg font-semibold text-ink">{agencyName}</span>
           <nav className="hidden gap-sp-4 md:flex">
             {NAV.map((item) => (

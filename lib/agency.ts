@@ -1,5 +1,6 @@
 import { prismaRoot } from "./prisma-root";
 import { getSession } from "./tenant";
+import { isPlatformAdminEmail } from "./platform-admin";
 
 // Agencia de Foliocrew (plan Crew): una cuenta que administra una cartera de creadoras, con una
 // sola factura. Quien la administra entra con su correo+contraseña de siempre (su AdminUser), pero
@@ -17,9 +18,32 @@ export interface AgencyUser {
   role: AgencyRole;
 }
 
+// Slug de la demo completa que crea scripts/seed-agency-demo.ts. Si ya se corrió ese script, el
+// Dueño de Foliocrew ve esos datos de ejemplo (más ricos); si no, ve una agencia vacía que se crea
+// sola la primera vez. Ninguna de las dos es una agencia real de cliente.
+const DEMO_AGENCY_SLUG = "vibe-creators";
+const SANDBOX_AGENCY_SLUG = "crew-sandbox";
+
+/** La agencia que ve el Dueño al probar el plan Crew desde su propio menú (ver §AdminShell). */
+async function previewAgencyId() {
+  const demo = await prismaRoot.agency.findUnique({ where: { slug: DEMO_AGENCY_SLUG }, select: { id: true } });
+  if (demo) return demo.id;
+  const sandbox = await prismaRoot.agency.upsert({
+    where: { slug: SANDBOX_AGENCY_SLUG },
+    update: {},
+    create: { name: "Crew (modo prueba)", slug: SANDBOX_AGENCY_SLUG, maxCreators: 5, status: "active", comp: true },
+    select: { id: true },
+  });
+  return sandbox.id;
+}
+
 /**
  * La persona de agencia con sesión iniciada (null si no lo es). No cuenta mientras está
  * "entrando como" una de sus creadoras: ahí ve el panel de esa cuenta, no el de su agencia.
+ *
+ * El Dueño de Foliocrew (o cualquier correo en PLATFORM_ADMIN_EMAILS) que no tenga una agencia
+ * propia entra automáticamente a una agencia de prueba: así puede ver y probar el panel de Crew
+ * sin salir de su cuenta ni crear una agencia real (ver previewAgencyId()).
  */
 export async function agencyUser(): Promise<AgencyUser | null> {
   const session = await getSession();
@@ -28,8 +52,14 @@ export async function agencyUser(): Promise<AgencyUser | null> {
     where: { id: session.userId },
     select: { id: true, email: true, name: true, agencyId: true, agencyRole: true },
   });
-  if (!user?.agencyId || (user.agencyRole !== "owner" && user.agencyRole !== "cm")) return null;
-  return { id: user.id, email: user.email, name: user.name, agencyId: user.agencyId, owner: user.agencyRole === "owner", role: user.agencyRole };
+  if (!user) return null;
+  if (user.agencyId && (user.agencyRole === "owner" || user.agencyRole === "cm")) {
+    return { id: user.id, email: user.email, name: user.name, agencyId: user.agencyId, owner: user.agencyRole === "owner", role: user.agencyRole };
+  }
+  if (isPlatformAdminEmail(user.email)) {
+    return { id: user.id, email: user.email, name: user.name, agencyId: await previewAgencyId(), owner: true, role: "owner" };
+  }
+  return null;
 }
 
 /** La agencia de quien tiene sesión iniciada, o null. */

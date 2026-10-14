@@ -306,7 +306,8 @@ const tiktok: SocialProvider = {
     const posting = tiktokPostingFlags();
     return [
       "Leer tu perfil, seguidores y likes totales",
-      "Listar tus videos con vistas, likes y comentarios",
+      // Sin video.list (Sandbox de la demo) no se listan videos: no se promete.
+      ...(tiktokScopes().includes("video.list") ? ["Listar tus videos con vistas, likes y comentarios"] : []),
       ...(posting.draft ? ["Mandar un video como borrador a la app de TikTok para agregarle sonido y publicarlo allá"] : []),
       ...(posting.direct ? [posting.audited ? "Publicar videos directo en TikTok" : "Publicar videos directo en TikTok (solo en privado hasta pasar la auditoría)"] : []),
     ];
@@ -383,6 +384,8 @@ const tiktok: SocialProvider = {
     };
   },
   async fetchRecent({ accessToken }, limit = 6) {
+    // Sin el permiso video.list (Sandbox de la demo) no se piden los videos: la prueba muestra solo el perfil.
+    if (!tiktokScopes().includes("video.list")) return [];
     const data = await fetchJson<{ data?: { videos?: Json[] } }>(
       `https://open.tiktokapis.com/v2/video/list/?fields=${[
         "id",

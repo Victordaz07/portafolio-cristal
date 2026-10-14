@@ -36,16 +36,19 @@ const instagram: SocialProvider = {
     return [
       "Leer tu perfil, seguidores y publicaciones con sus likes y comentarios",
       "Leer, responder, ocultar y borrar comentarios",
-      ...(flag("INSTAGRAM_DM_ENABLED") ? ["Leer y responder DMs (hasta 24 h después del último mensaje de la persona)"] : []),
-      ...(flag("PUBLISH_INSTAGRAM_ENABLED") ? ["Publicar fotos, carruseles, Reels e Historias (hasta 100 por día)"] : []),
+      ...(flag("INSTAGRAM_DM_ENABLED") ? ["Mandar un DM automático a quien comente una palabra clave en tu publicación (una vez por persona)"] : []),
+      ...(flag("PUBLISH_INSTAGRAM_ENABLED") ? ["Publicar fotos, Reels e Historias desde el calendario (hasta 100 por día)"] : []),
     ];
   },
   get later() {
     return [
       {
         items: [
-          ...(flag("INSTAGRAM_DM_ENABLED") ? [] : ["Leer y responder DMs (hasta 24 h después del último mensaje de la persona)"]),
-          ...(flag("PUBLISH_INSTAGRAM_ENABLED") ? [] : ["Publicar fotos, carruseles, Reels e Historias (hasta 100 por día)"]),
+          ...(flag("INSTAGRAM_DM_ENABLED") ? [] : ["Mandar un DM automático a quien comente una palabra clave en tu publicación (una vez por persona)"]),
+          ...(flag("PUBLISH_INSTAGRAM_ENABLED") ? [] : ["Publicar fotos, Reels e Historias desde el calendario (hasta 100 por día)"]),
+          // La API lo permite, pero el panel aún no tiene bandeja de DMs ni publica carruseles.
+          "Leer y responder tus DMs desde el panel (hasta 24 h después del último mensaje de la persona)",
+          "Publicar carruseles",
           "Métricas avanzadas: alcance, vistas, guardados, compartidos y público por edad, país y género",
           "Ver cuándo otras cuentas te mencionan",
         ],

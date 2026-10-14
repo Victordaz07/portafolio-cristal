@@ -6,8 +6,10 @@ const EN: Record<string, string> = {
   // Instagram
   "Leer tu perfil, seguidores y publicaciones con sus likes y comentarios": "Read your profile, followers and posts with their likes and comments",
   "Leer, responder, ocultar y borrar comentarios": "Read, reply to, hide and delete comments",
-  "Leer y responder DMs (hasta 24 h después del último mensaje de la persona)": "Read and reply to DMs (up to 24 h after the person's last message)",
-  "Publicar fotos, carruseles, Reels e Historias (hasta 100 por día)": "Publish photos, carousels, Reels and Stories (up to 100 per day)",
+  "Mandar un DM automático a quien comente una palabra clave en tu publicación (una vez por persona)": "Send an automatic DM to whoever comments a keyword on your post (once per person)",
+  "Leer y responder tus DMs desde el panel (hasta 24 h después del último mensaje de la persona)": "Read and reply to your DMs from the dashboard (up to 24 h after the person's last message)",
+  "Publicar fotos, Reels e Historias desde el calendario (hasta 100 por día)": "Publish photos, Reels and Stories from the calendar (up to 100 per day)",
+  "Publicar carruseles": "Publish carousels",
   "Métricas avanzadas: alcance, vistas, guardados, compartidos y público por edad, país y género": "Advanced insights: reach, views, saves, shares and audience by age, country and gender",
   "Ver cuándo otras cuentas te mencionan": "See when other accounts mention you",
   "Usar la música de Instagram (el audio va dentro del video)": "Use Instagram music (the audio must be inside the video)",

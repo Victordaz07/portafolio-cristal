@@ -111,18 +111,21 @@ describe("Instagram y Facebook: lo activado pasa a «Ya funciona»", () => {
   });
   const laterItems = (id: "instagram" | "facebook") => PROVIDERS[id].later.flatMap((g) => g.items);
   it("apagado: publicar y DMs siguen en «más adelante»", () => {
-    assert.ok(laterItems("instagram").some((l) => l.startsWith("Publicar")));
-    assert.ok(laterItems("instagram").some((l) => l.includes("DMs")));
+    assert.ok(laterItems("instagram").some((l) => l.startsWith("Publicar fotos")));
+    assert.ok(laterItems("instagram").some((l) => l.startsWith("Mandar un DM automático")));
     assert.ok(laterItems("facebook").some((l) => l.startsWith("Publicar")));
   });
   it("encendido: se mueven a «Ya funciona»", () => {
     process.env.PUBLISH_INSTAGRAM_ENABLED = "1";
     process.env.PUBLISH_FACEBOOK_ENABLED = "1";
     process.env.INSTAGRAM_DM_ENABLED = "1";
-    assert.ok(PROVIDERS.instagram.can.some((l) => l.startsWith("Publicar")));
-    assert.ok(PROVIDERS.instagram.can.some((l) => l.includes("DMs")));
+    assert.ok(PROVIDERS.instagram.can.some((l) => l.startsWith("Publicar fotos")));
+    assert.ok(PROVIDERS.instagram.can.some((l) => l.startsWith("Mandar un DM automático")));
     assert.ok(PROVIDERS.facebook.can.some((l) => l.startsWith("Publicar")));
-    assert.ok(!laterItems("instagram").some((l) => l.startsWith("Publicar") || l.includes("DMs")));
+    assert.ok(!laterItems("instagram").some((l) => l.startsWith("Publicar fotos") || l.startsWith("Mandar un DM automático")));
+    // Lo que el panel no hace todavía se queda en «más adelante» aunque el permiso esté activo.
+    assert.ok(laterItems("instagram").includes("Publicar carruseles"));
+    assert.ok(!PROVIDERS.instagram.can.some((l) => /carrusel/i.test(l) || l.startsWith("Leer y responder tus DMs")));
     assert.ok(!laterItems("facebook").some((l) => l.startsWith("Publicar")));
   });
 });

@@ -6,6 +6,7 @@ import {
   buildDirectPostBody,
   initDirectPost,
   initDraftUpload,
+  planChunks,
   queryCreatorInfo,
   tiktokPostingFlags,
   uploadVideoChunks,
@@ -54,12 +55,21 @@ export async function POST(request: Request) {
   try {
     const video = await openBlobVideo(input.videoUrl);
     let init;
-    if (input.mode === "draft") {
-      init = await initDraftUpload(accessToken, video.size);
-    } else {
-      const creator = await queryCreatorInfo(accessToken);
-      const body = buildDirectPostBody({ ...input, videoSize: video.size }, creator, { audited: tiktokPostingFlags().audited });
-      init = await initDirectPost(accessToken, body);
+    try {
+      if (input.mode === "draft") {
+        init = await initDraftUpload(accessToken, video.size);
+      } else {
+        const creator = await queryCreatorInfo(accessToken);
+        const body = buildDirectPostBody({ ...input, videoSize: video.size }, creator, { audited: tiktokPostingFlags().audited });
+        init = await initDirectPost(accessToken, body);
+      }
+    } catch (error) {
+      // Si TikTok rechaza los números de la subida, el mensaje dice con qué tamaño y partes se pidió.
+      if (error instanceof Error && /invalid_params/.test(error.message)) {
+        const plan = planChunks(video.size);
+        throw new Error(`${error.message} [video_size=${video.size}, chunk_size=${plan.chunkSize}, total_chunk_count=${plan.totalChunkCount}]`);
+      }
+      throw error;
     }
     await uploadVideoChunks(init.uploadUrl, video.size, video.contentType, video.readRange);
     return NextResponse.json({ ok: true, publishId: init.publishId });

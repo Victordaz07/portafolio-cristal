@@ -17,7 +17,7 @@ import {
 import type { StoredTokens } from "../lib/social/types";
 
 const tiktok = PROVIDERS.tiktok;
-const MB = 1024 * 1024;
+const MB = 1_000_000;
 const realFetch = globalThis.fetch;
 const FLAGS = ["TIKTOK_POSTING_DRAFT_ENABLED", "TIKTOK_POSTING_DIRECT_ENABLED", "TIKTOK_POSTING_AUDITED"] as const;
 
@@ -230,31 +230,34 @@ describe("Content Posting: partes del archivo", () => {
   it("menos de 5 MB: una sola parte del tamaño del archivo", () => {
     assert.deepEqual(planChunks(3 * MB), { chunkSize: 3 * MB, totalChunkCount: 1, ranges: [{ start: 0, end: 3 * MB - 1 }] });
   });
-  it("la última parte absorbe el sobrante", () => {
-    const plan = planChunks(25 * MB + 123);
+  it("hasta 64 MB: una sola parte (un video corto de celular)", () => {
+    for (const size of [7 * MB, 25 * MB + 123, 64 * MB]) {
+      assert.deepEqual(planChunks(size), { chunkSize: size, totalChunkCount: 1, ranges: [{ start: 0, end: size - 1 }] });
+    }
+  });
+  it("más de 64 MB: partes de 10 MB y la última absorbe el sobrante", () => {
+    const plan = planChunks(85 * MB + 123);
     assert.equal(plan.chunkSize, 10 * MB);
-    assert.equal(plan.totalChunkCount, 2);
-    assert.deepEqual(plan.ranges, [
-      { start: 0, end: 10 * MB - 1 },
-      { start: 10 * MB, end: 25 * MB + 122 },
-    ]);
+    assert.equal(plan.totalChunkCount, 8);
+    assert.deepEqual(plan.ranges[0], { start: 0, end: 10 * MB - 1 });
+    assert.deepEqual(plan.ranges[7], { start: 70 * MB, end: 85 * MB + 122 });
   });
   it("rechaza archivos vacíos o de más de 4 GB", () => {
     assert.throws(() => planChunks(0), TikTokPostingError);
-    assert.throws(() => planChunks(4 * 1024 * MB + 1), TikTokPostingError);
+    assert.throws(() => planChunks(4_000 * MB + 1), TikTokPostingError);
   });
   it("borrador: solo source_info", () => {
     assert.deepEqual(buildDraftBody(3 * MB), { source_info: { source: "FILE_UPLOAD", video_size: 3 * MB, chunk_size: 3 * MB, total_chunk_count: 1 } });
   });
   it("sube las partes en orden con Content-Range", async () => {
-    mockFetch(new Response(null, { status: 206 }), new Response(null, { status: 201 }));
-    const size = 25 * MB;
+    const size = 75 * MB;
+    mockFetch(...Array.from({ length: 6 }, () => new Response(null, { status: 206 })), new Response(null, { status: 201 }));
     await uploadVideoChunks("https://upload.tiktok/x?y=1", size, "video/mp4", async (start, end) => new Uint8Array(end - start + 1));
-    assert.equal(calls.length, 2);
+    assert.equal(calls.length, 7);
     const headers = calls.map((c) => c.init?.headers as Record<string, string>);
     assert.equal(headers[0]["Content-Range"], `bytes 0-${10 * MB - 1}/${size}`);
-    assert.equal(headers[1]["Content-Range"], `bytes ${10 * MB}-${size - 1}/${size}`);
-    assert.equal(headers[1]["Content-Length"], String(15 * MB));
+    assert.equal(headers[6]["Content-Range"], `bytes ${60 * MB}-${size - 1}/${size}`);
+    assert.equal(headers[6]["Content-Length"], String(15 * MB));
     assert.equal(calls[0].init?.method, "PUT");
   });
   it("falla claro si TikTok rechaza una parte", async () => {

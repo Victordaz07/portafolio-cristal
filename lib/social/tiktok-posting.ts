@@ -88,11 +88,14 @@ export function allowedPrivacyOptions(creator: Pick<CreatorInfo, "privacyLevelOp
 
 // ─── Subida del archivo por partes (FILE_UPLOAD) ───
 
-const MB = 1024 * 1024;
-/** Por debajo de 5 MB el archivo va en una sola parte; cada parte normal mide entre 5 y 64 MB. */
-export const MIN_CHUNK_BYTES = 5 * MB;
+// TikTok mide en MB decimales (su ejemplo usa partes de 10.000.000 bytes): se usan valores redondos
+// para no quedar justo en un límite.
+const MB = 1_000_000;
+/** Hasta 64 MB el archivo va entero en una sola parte (chunk_size = tamaño del video). */
+export const SINGLE_CHUNK_MAX_BYTES = 64 * MB;
+/** Más grande: partes de 10 MB (TikTok pide entre 5 y 64 MB por parte). */
 export const DEFAULT_CHUNK_BYTES = 10 * MB;
-export const MAX_VIDEO_BYTES_TIKTOK = 4 * 1024 * MB;
+export const MAX_VIDEO_BYTES_TIKTOK = 4_000 * MB;
 
 export interface ChunkPlan {
   chunkSize: number;
@@ -101,13 +104,14 @@ export interface ChunkPlan {
 }
 
 /**
- * Partes según la guía de TikTok: total = tamaño / parte (redondeado hacia abajo) y la última parte
- * absorbe el sobrante (puede medir hasta 128 MB). Con partes de 10 MB la última nunca pasa de 20 MB.
+ * Partes según la guía de TikTok: hasta 64 MB, una sola parte del tamaño del archivo. Si es más grande,
+ * total = tamaño / parte (redondeado hacia abajo) y la última parte absorbe el sobrante (puede medir
+ * hasta 128 MB). Con partes de 10 MB la última nunca pasa de 20 MB.
  */
 export function planChunks(videoSize: number, chunkSize = DEFAULT_CHUNK_BYTES): ChunkPlan {
   if (!Number.isInteger(videoSize) || videoSize <= 0) throw new TikTokPostingError("video_size");
   if (videoSize > MAX_VIDEO_BYTES_TIKTOK) throw new TikTokPostingError("video_size");
-  if (videoSize <= chunkSize) return { chunkSize: videoSize, totalChunkCount: 1, ranges: [{ start: 0, end: videoSize - 1 }] };
+  if (videoSize <= SINGLE_CHUNK_MAX_BYTES) return { chunkSize: videoSize, totalChunkCount: 1, ranges: [{ start: 0, end: videoSize - 1 }] };
   const totalChunkCount = Math.floor(videoSize / chunkSize);
   const ranges = Array.from({ length: totalChunkCount }, (_, i) => ({
     start: i * chunkSize,

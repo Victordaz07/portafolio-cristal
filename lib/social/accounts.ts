@@ -4,6 +4,7 @@ import { currentCreatorId } from "@/lib/tenant";
 import { decryptToken, encryptToken } from "@/lib/token-crypto";
 import { PROVIDERS } from "./providers";
 import { recordFollowerSnapshot } from "@/lib/reports";
+import { ReconnectRequiredError, describeAccountError, renewTokens } from "./token-refresh";
 import type { PlatformId, RecentItem, SocialProfile, StoredTokens, TokenSet } from "./types";
 
 /**
@@ -59,24 +60,47 @@ export async function saveConnection(platform: PlatformId, tokens: TokenSet, pro
   return account;
 }
 
-/** Descifra los tokens de la cuenta y los renueva si están por vencer (guardando los nuevos). */
+/** Guarda el error en la cuenta (lo muestra la tarjeta de /admin/conectar). Nunca tapa el error original. */
+async function saveAccountError(accountId: string, message: string) {
+  await prisma.socialAccount
+    .update({ where: { id: accountId }, data: { lastError: message.slice(0, 500) } })
+    .catch((error) => console.error("No se pudo guardar el error de la cuenta", error));
+}
+
+/**
+ * Para los `catch` de quien llama a una red: guarda el error en la tarjeta (si el token ya no sirve,
+ * con el aviso de volver a conectar) y devuelve el mensaje.
+ */
+export async function reportAccountError(account: Pick<SocialAccount, "id" | "platform">, error: unknown) {
+  const message = describeAccountError(PROVIDERS[account.platform as PlatformId].label, error);
+  await saveAccountError(account.id, message);
+  return message;
+}
+
+/**
+ * Descifra los tokens de la cuenta y los renueva si están por vencer (guardando los nuevos).
+ * Se llama antes de CADA llamada a la red (Probar, Feed, seguidores, comentarios, publicar, cron diario).
+ * Si la renovación falla sin remedio, deja en la tarjeta el aviso de volver a conectar y lanza el error.
+ */
 export async function getFreshTokens(account: SocialAccount) {
   const provider = PROVIDERS[account.platform as PlatformId];
-  let tokens = storedTokens(account);
-  const renewed = provider.refresh ? await provider.refresh(tokens) : null;
+  let result: Awaited<ReturnType<typeof renewTokens>>;
+  try {
+    result = await renewTokens(provider, storedTokens(account));
+  } catch (error) {
+    if (error instanceof ReconnectRequiredError) await saveAccountError(account.id, error.message);
+    throw error;
+  }
+  const { tokens, renewed } = result;
   if (!renewed) return { tokens, refreshed: false };
-  tokens = {
-    ...tokens,
-    accessToken: renewed.accessToken,
-    refreshToken: renewed.refreshToken ?? tokens.refreshToken,
-    expiresAt: renewed.expiresAt ?? null,
-  };
   await prisma.socialAccount.update({
     where: { id: account.id },
     data: {
       accessToken: encryptToken(tokens.accessToken),
       refreshToken: tokens.refreshToken ? encryptToken(tokens.refreshToken) : null,
       expiresAt: tokens.expiresAt,
+      // TikTok devuelve los permisos vigentes al renovar; las demás redes, nada.
+      ...(renewed.scopes.length ? { scopes: renewed.scopes } : {}),
     },
   });
   return { tokens, refreshed: true };
@@ -111,8 +135,6 @@ export async function testConnection(platform: PlatformId): Promise<ConnectionTe
     await recordFollowerSnapshot(platform, profile.followers);
     return { ok: true, refreshed, profile, recent };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
-    await prisma.socialAccount.update({ where: { id: account.id }, data: { lastError: message.slice(0, 500) } });
-    return { ok: false, refreshed, error: message };
+    return { ok: false, refreshed, error: await reportAccountError(account, error) };
   }
 }

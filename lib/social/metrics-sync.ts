@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { prismaRoot } from "@/lib/prisma-root";
 import { runAsCreator } from "@/lib/tenant";
 import { PROVIDERS } from "./providers";
-import { getFreshTokens } from "./accounts";
+import { getFreshTokens, reportAccountError } from "./accounts";
 import { ensurePermanentThumbnail, isEphemeralCdnUrl } from "./thumbnail";
 import type { PlatformId, RecentItem } from "./types";
 
@@ -85,13 +85,11 @@ export async function syncFeedMetrics(): Promise<{ results: SyncResult[]; update
       }
       updated += matched;
       results.push({ platform, matched, checked: platformCards.length });
+      // La red respondió bien: si la tarjeta tenía un error viejo, se limpia.
+      if (account.lastError) await prisma.socialAccount.update({ where: { id: account.id }, data: { lastError: null, lastSyncAt: new Date() } });
     } catch (error) {
-      results.push({
-        platform,
-        matched: 0,
-        checked: platformCards.length,
-        error: error instanceof Error ? error.message : "Error desconocido",
-      });
+      // También desde el cron diario: así la tarjeta avisa si hay que volver a conectar.
+      results.push({ platform, matched: 0, checked: platformCards.length, error: await reportAccountError(account, error) });
     }
   }
   return { results, updated };

@@ -8,7 +8,8 @@ import { isTokenEncryptionConfigured } from "@/lib/token-crypto";
 import { isAiConfigured, AI_MODEL } from "@/lib/ai";
 import { siteConfig } from "@/lib/site-config";
 import ConnectManager, { type PlatformCard, type SetupItem } from "./ConnectManager";
-import { socialCopyList } from "@/lib/social/copy-en";
+import { socialCopy, socialCopyList } from "@/lib/social/copy-en";
+import { tiktokPostingEnabled } from "@/lib/social/tiktok-posting";
 import { getT } from "@/lib/admin-lang-server";
 
 export default async function AdminConnectPage({
@@ -51,10 +52,16 @@ export default async function AdminConnectPage({
       redirectUri: getRedirectUri(id, requestUrl),
       consoleUrl: provider.consoleUrl,
       scopes: provider.scopes,
+      autoRenews: !!provider.refresh,
       can: socialCopyList(lang, provider.can),
-      later: socialCopyList(lang, provider.later),
+      later: provider.later.map((group) => ({
+        blocker: group.blocker ? socialCopy(lang, group.blocker) : null,
+        items: socialCopyList(lang, group.items),
+      })),
       cannot: socialCopyList(lang, provider.cannot),
       account: account && JSON.parse(JSON.stringify(account)),
+      // Pantalla «Publicar en TikTok»: solo existe con TIKTOK_POSTING_DRAFT_ENABLED o TIKTOK_POSTING_DIRECT_ENABLED.
+      postHref: id === "tiktok" && account && tiktokPostingEnabled() ? "/admin/conectar/tiktok" : null,
     };
   });
 

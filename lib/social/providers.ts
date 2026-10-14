@@ -1,5 +1,6 @@
 import type { PlatformId, SocialProvider, StoredTokens, TokenSet } from "./types";
 import { env, fetchJson, formBody, secondsFromNow } from "./http";
+import { tiktokPostingFlags, tiktokScopes } from "./tiktok-posting";
 
 // Versión de la Graph API de Meta usada en las llamadas de Instagram y Facebook.
 const META_GRAPH_VERSION = process.env.META_GRAPH_VERSION || "v25.0";
@@ -16,6 +17,8 @@ function num(value: unknown) {
   return value == null || !Number.isFinite(n) ? null : n;
 }
 
+const flag = (name: string) => process.env[name] === "1";
+
 // ─── Instagram (Instagram API con Instagram Login, cuentas Business o Creator) ───
 
 const instagram: SocialProvider = {
@@ -25,18 +28,30 @@ const instagram: SocialProvider = {
   // Solo lo que la app usa hoy: Meta rechaza en la revisión los permisos que no se usan.
   // El permiso de mensajes (C6, «comenta una palabra → DM») solo se pide cuando el dueño confirma que Meta ya lo aprobó
   // (INSTAGRAM_DM_ENABLED=1): pedirlo antes haría fallar la conexión de las cuentas que no son testers.
-  scopes: ["instagram_business_basic", "instagram_business_manage_comments", ...(process.env.INSTAGRAM_DM_ENABLED === "1" ? ["instagram_business_manage_messages"] : []), ...(process.env.PUBLISH_INSTAGRAM_ENABLED === "1" ? ["instagram_business_content_publish"] : [])],
+  scopes: ["instagram_business_basic", "instagram_business_manage_comments", ...(flag("INSTAGRAM_DM_ENABLED") ? ["instagram_business_manage_messages"] : []), ...(flag("PUBLISH_INSTAGRAM_ENABLED") ? ["instagram_business_content_publish"] : [])],
   consoleUrl: "https://developers.facebook.com/apps/",
-  can: [
-    "Leer tu perfil, seguidores y publicaciones con sus likes y comentarios",
-    "Leer, responder, ocultar y borrar comentarios",
-  ],
-  later: [
-    "Leer y responder DMs (hasta 24 h después del último mensaje de la persona)",
-    "Publicar fotos, carruseles, Reels e Historias (hasta 100 por día)",
-    "Métricas avanzadas: alcance, vistas, guardados, compartidos y público por edad, país y género",
-    "Ver cuándo otras cuentas te mencionan",
-  ],
+  // «Ya funciona» y «Posible más adelante» se calculan al pedirlos: lo que el dueño activa
+  // (DMs, publicar) pasa de una lista a la otra.
+  get can() {
+    return [
+      "Leer tu perfil, seguidores y publicaciones con sus likes y comentarios",
+      "Leer, responder, ocultar y borrar comentarios",
+      ...(flag("INSTAGRAM_DM_ENABLED") ? ["Leer y responder DMs (hasta 24 h después del último mensaje de la persona)"] : []),
+      ...(flag("PUBLISH_INSTAGRAM_ENABLED") ? ["Publicar fotos, carruseles, Reels e Historias (hasta 100 por día)"] : []),
+    ];
+  },
+  get later() {
+    return [
+      {
+        items: [
+          ...(flag("INSTAGRAM_DM_ENABLED") ? [] : ["Leer y responder DMs (hasta 24 h después del último mensaje de la persona)"]),
+          ...(flag("PUBLISH_INSTAGRAM_ENABLED") ? [] : ["Publicar fotos, carruseles, Reels e Historias (hasta 100 por día)"]),
+          "Métricas avanzadas: alcance, vistas, guardados, compartidos y público por edad, país y género",
+          "Ver cuándo otras cuentas te mencionan",
+        ],
+      },
+    ];
+  },
   cannot: [
     "Usar la música de Instagram (el audio va dentro del video)",
     "Editar el texto o la foto de algo ya publicado",
@@ -151,15 +166,27 @@ const facebook: SocialProvider = {
   envKeys: ["FACEBOOK_APP_ID", "FACEBOOK_APP_SECRET"],
   // pages_manage_posts (E2, publicar en la página) solo se pide cuando el dueño activa PUBLISH_FACEBOOK_ENABLED=1,
   // porque pedir un permiso que Meta aún no aprobó haría fallar la conexión de cuentas que no son testers.
-  scopes: ["pages_show_list", "pages_read_engagement", ...(process.env.PUBLISH_FACEBOOK_ENABLED === "1" ? ["pages_manage_posts"] : [])],
+  scopes: ["pages_show_list", "pages_read_engagement", ...(flag("PUBLISH_FACEBOOK_ENABLED") ? ["pages_manage_posts"] : [])],
   consoleUrl: "https://developers.facebook.com/apps/",
-  can: ["Listar tus páginas de Facebook y sus seguidores", "Leer las publicaciones recientes de tu página"],
-  later: [
-    "Publicar y programar posts, fotos, videos y Reels en la página",
-    "Métricas de la página: alcance, interacciones y seguidores",
-    "Responder y ocultar comentarios",
-    "Responder mensajes de Messenger (hasta 24 h después del último mensaje)",
-  ],
+  get can() {
+    return [
+      "Listar tus páginas de Facebook y sus seguidores",
+      "Leer las publicaciones recientes de tu página",
+      ...(flag("PUBLISH_FACEBOOK_ENABLED") ? ["Publicar y programar posts, fotos, videos y Reels en la página"] : []),
+    ];
+  },
+  get later() {
+    return [
+      {
+        items: [
+          ...(flag("PUBLISH_FACEBOOK_ENABLED") ? [] : ["Publicar y programar posts, fotos, videos y Reels en la página"]),
+          "Métricas de la página: alcance, interacciones y seguidores",
+          "Responder y ocultar comentarios",
+          "Responder mensajes de Messenger (hasta 24 h después del último mensaje)",
+        ],
+      },
+    ];
+  },
   cannot: [
     "Publicar o leer un perfil personal (solo páginas)",
     "Usar la música de Facebook",
@@ -266,20 +293,37 @@ const tiktok: SocialProvider = {
   id: "tiktok",
   label: "TikTok",
   envKeys: ["TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET"],
-  scopes: ["user.info.basic", "user.info.profile", "user.info.stats", "video.list"],
+  // Los 4 permisos aprobados; video.upload y video.publish solo con TIKTOK_POSTING_DRAFT_ENABLED /
+  // TIKTOK_POSTING_DIRECT_ENABLED = "1" (ver lib/social/tiktok-posting.ts).
+  get scopes() {
+    return tiktokScopes();
+  },
   consoleUrl: "https://developers.tiktok.com/apps/",
-  can: ["Leer tu perfil, seguidores y likes totales", "Listar tus videos con vistas, likes y comentarios"],
-  later: [
-    "Publicar videos y fotos (en privado hasta que TikTok apruebe la app)",
-    "Mandar un video como borrador a la app de TikTok para agregarle sonido y publicarlo allá",
-    "Solo con cuenta Business y aprobación de TikTok for Business: leer y responder comentarios y ver métricas avanzadas",
-  ],
+  get can() {
+    const posting = tiktokPostingFlags();
+    return [
+      "Leer tu perfil, seguidores y likes totales",
+      "Listar tus videos con vistas, likes y comentarios",
+      ...(posting.draft ? ["Mandar un video como borrador a la app de TikTok para agregarle sonido y publicarlo allá"] : []),
+      ...(posting.direct ? [posting.audited ? "Publicar videos directo en TikTok" : "Publicar videos directo en TikTok (solo en privado hasta pasar la auditoría)"] : []),
+    ];
+  },
+  get later() {
+    const posting = tiktokPostingFlags();
+    const contentPosting = [
+      ...(posting.direct ? [] : ["Publicar videos directo en TikTok (en privado hasta pasar la auditoría)"]),
+      ...(posting.draft ? [] : ["Mandar un video como borrador a la app de TikTok para agregarle sonido y publicarlo allá"]),
+    ];
+    return [
+      ...(contentPosting.length ? [{ blocker: "Requiere aprobación de TikTok (Content Posting API)", items: contentPosting }] : []),
+      { blocker: "Requiere cuenta Business + TikTok for Business", items: ["Leer y responder comentarios", "Métricas avanzadas"] },
+    ];
+  },
   cannot: [
     "Leer ni responder DMs (TikTok no los ofrece a creadores)",
     "Responder comentarios con cuenta Creator (solo con cuenta Business)",
     "Usar la música de TikTok desde la API",
     "Publicar más de ~15 veces al día",
-    "Usarse con otras cuentas mientras la app esté en Sandbox (solo cuentas de prueba)",
   ],
   authorizeUrl(redirectUri, state) {
     const params = new URLSearchParams({
@@ -377,7 +421,8 @@ const tiktok: SocialProvider = {
         refresh_token: refreshToken,
       })
     );
-    return tiktokTokens(data, this.scopes);
+    // Sin `scope` en la respuesta no se asume nada: se conservan los permisos guardados.
+    return tiktokTokens(data, []);
   },
 };
 
@@ -393,10 +438,14 @@ const youtube: SocialProvider = {
   consoleUrl: "https://console.cloud.google.com/apis/credentials",
   can: ["Leer tu canal, suscriptores y total de vistas", "Listar tus videos recientes con vistas, likes y comentarios"],
   later: [
-    "Subir y programar videos y Shorts (en privado hasta que Google apruebe la app)",
-    "Editar título, descripción, miniatura y listas de reproducción",
-    "Responder y moderar comentarios",
-    "Estadísticas avanzadas: tiempo de visualización, retención, público y ganancias",
+    {
+      items: [
+        "Subir y programar videos y Shorts (en privado hasta que Google apruebe la app)",
+        "Editar título, descripción, miniatura y listas de reproducción",
+        "Responder y moderar comentarios",
+        "Estadísticas avanzadas: tiempo de visualización, retención, público y ganancias",
+      ],
+    },
   ],
   cannot: [
     "Publicaciones de comunidad ni DMs (YouTube no tiene)",

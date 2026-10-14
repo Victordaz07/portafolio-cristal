@@ -26,6 +26,8 @@ function extractError(data: unknown): string | null {
       // Meta: token inválido, vencido o revocado.
       return `El token ya no es válido; vuelve a conectar la cuenta (Meta, código 190: ${e.message ?? "sin detalle"})`;
     }
+    // TikTok: se agrega el código (p. ej. access_token_invalid) para reconocer cuándo hay que volver a conectar.
+    if (typeof e.code === "string" && e.code) return e.message ? `${e.message} (${e.code})` : e.code;
     return String(e.message ?? e.code ?? "Error de la API");
   }
   if (typeof d.error === "string") {

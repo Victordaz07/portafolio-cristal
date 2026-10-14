@@ -28,14 +28,18 @@ const EN: Record<string, string> = {
   // TikTok
   "Leer tu perfil, seguidores y likes totales": "Read your profile, followers and total likes",
   "Listar tus videos con vistas, likes y comentarios": "List your videos with views, likes and comments",
-  "Publicar videos y fotos (en privado hasta que TikTok apruebe la app)": "Publish videos and photos (private until TikTok approves the app)",
+  "Publicar videos directo en TikTok": "Publish videos straight to TikTok",
+  "Publicar videos directo en TikTok (solo en privado hasta pasar la auditoría)": "Publish videos straight to TikTok (private only until the audit is passed)",
+  "Publicar videos directo en TikTok (en privado hasta pasar la auditoría)": "Publish videos straight to TikTok (private until the audit is passed)",
   "Mandar un video como borrador a la app de TikTok para agregarle sonido y publicarlo allá": "Send a video as a draft to the TikTok app to add sound and publish it there",
-  "Solo con cuenta Business y aprobación de TikTok for Business: leer y responder comentarios y ver métricas avanzadas": "Business accounts with TikTok for Business approval only: read and reply to comments and see advanced insights",
+  "Requiere aprobación de TikTok (Content Posting API)": "Requires TikTok approval (Content Posting API)",
+  "Requiere cuenta Business + TikTok for Business": "Requires a Business account + TikTok for Business",
+  "Leer y responder comentarios": "Read and reply to comments",
+  "Métricas avanzadas": "Advanced insights",
   "Leer ni responder DMs (TikTok no los ofrece a creadores)": "Read or reply to DMs (TikTok doesn't offer them to creators)",
   "Responder comentarios con cuenta Creator (solo con cuenta Business)": "Reply to comments with a Creator account (Business accounts only)",
   "Usar la música de TikTok desde la API": "Use TikTok music through the API",
   "Publicar más de ~15 veces al día": "Publish more than ~15 times a day",
-  "Usarse con otras cuentas mientras la app esté en Sandbox (solo cuentas de prueba)": "Be used with other accounts while the app is in Sandbox (test accounts only)",
   // YouTube
   "Leer tu canal, suscriptores y total de vistas": "Read your channel, subscribers and total views",
   "Listar tus videos recientes con vistas, likes y comentarios": "List your recent videos with views, likes and comments",
@@ -74,6 +78,8 @@ export function socialCopyList(lang: AdminLang, list: string[]) {
 /** Errores guardados de las redes (lastError) en el idioma del panel. */
 const ERROR_PATTERNS: [RegExp, string][] = [
   [/^El token ya no es válido; vuelve a conectar la cuenta \(Meta, código 190: (.*)\)$/, "The token is no longer valid; reconnect the account (Meta, code 190: $1)"],
+  [/^(.+) ya no acepta la conexión guardada; vuelve a conectar la cuenta \((.*)\)$/, "$1 no longer accepts the saved connection; reconnect the account ($2)"],
+  [/^(.+) ya no acepta la conexión guardada; vuelve a conectar la cuenta$/, "$1 no longer accepts the saved connection; reconnect the account"],
   [/^Falta la variable de entorno (.*)$/, "The environment variable $1 is missing"],
   [/^Error de la API$/, "API error"],
   [/^sin detalle$/, "no details"],

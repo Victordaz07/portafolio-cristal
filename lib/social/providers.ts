@@ -306,7 +306,8 @@ const tiktok: SocialProvider = {
     const posting = tiktokPostingFlags();
     return [
       "Leer tu perfil, seguidores y likes totales",
-      "Listar tus videos con vistas, likes y comentarios",
+      // Sin video.list (Sandbox de la demo) no se listan videos: no se promete.
+      ...(tiktokScopes().includes("video.list") ? ["Listar tus videos con vistas, likes y comentarios"] : []),
       ...(posting.draft ? ["Mandar un video como borrador a la app de TikTok para agregarle sonido y publicarlo allá"] : []),
       ...(posting.direct ? [posting.audited ? "Publicar videos directo en TikTok" : "Publicar videos directo en TikTok (solo en privado hasta pasar la auditoría)"] : []),
     ];

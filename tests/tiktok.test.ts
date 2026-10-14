@@ -85,6 +85,8 @@ describe("TikTok: permisos que pide el login", () => {
     process.env.TIKTOK_POSTING_DIRECT_ENABLED = "1";
     try {
       assert.equal(requested(), ["user.info.basic", "user.info.profile", "user.info.stats", "video.upload", "video.publish"].join(","));
+      // La tarjeta no promete listar videos si no se pide video.list.
+      assert.ok(!tiktok.can.some((line) => line.startsWith("Listar tus videos")));
     } finally {
       delete process.env.TIKTOK_VIDEO_LIST_DISABLED;
     }

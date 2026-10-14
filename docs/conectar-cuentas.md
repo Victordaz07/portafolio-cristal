@@ -148,15 +148,44 @@ En modo desarrollo funciona con las personas que tienen un rol en la app (admini
 3. Agrega el producto **Login Kit**. En su configuración, en **Redirect URI → Web**, pega la URL de
    redirección de TikTok que muestra el panel. TikTok exige `https` y no acepta `localhost`.
 4. En **Scopes** agrega: `user.info.basic`, `user.info.profile`, `user.info.stats` y `video.list`.
-5. Usa el modo **Sandbox** para probar sin revisión:
-   - Crea un sandbox desde la app.
-   - En **Target users** agrega la cuenta de TikTok de Cristal.
-6. Copia el **Client key** y el **Client secret** (los del sandbox si estás probando ahí).
-7. En Vercel agrega `TIKTOK_CLIENT_KEY` y `TIKTOK_CLIENT_SECRET` y vuelve a desplegar.
-8. En el panel: **Conectar TikTok** → **Probar**.
+5. Copia el **Client key** y el **Client secret** de **Production**.
+6. En Vercel agrega `TIKTOK_CLIENT_KEY` y `TIKTOK_CLIENT_SECRET` y vuelve a desplegar.
+7. En el panel: **Conectar TikTok** → **Probar**.
+
+**Estado:** TikTok aprobó la app el 7 de octubre de 2026 (Login Kit con esos 4 scopes). Ya está en
+**Production**: cualquier cuenta de TikTok puede conectarse, sin target users ni Sandbox.
+
+**Token:** el access token dura 24 h. El panel lo renueva solo, con el refresh token (dura 365 días),
+antes de **cada** llamada a TikTok: al probar, al sincronizar el Feed (también en la tarea diaria), al
+actualizar seguidores y al publicar. Si TikTok rechaza la renovación (por ejemplo, porque la persona
+quitó el permiso desde la app de TikTok o pasó un año), la tarjeta se marca **Volver a conectar** con
+un mensaje claro y basta con tocar ese botón.
 
 **Qué no se puede con TikTok:** leer o responder DMs, y responder comentarios. TikTok no ofrece eso a
-apps de terceros. El token dura 24 h, pero el panel lo renueva solo al probar (el permiso dura 365 días).
+apps de terceros.
+
+### 4.1 Content Posting API (publicar y mandar borradores) — apagada
+
+El código ya está, pero **no se piden sus permisos** hasta que TikTok los apruebe: pedir un scope que
+la app no tiene aprobado rompe el login de **todas** las cuentas. Cada permiso tiene su variable en
+Vercel y solo se pide cuando vale `1`:
+
+| Variable | Agrega el scope | Qué activa |
+| --- | --- | --- |
+| `TIKTOK_POSTING_DRAFT_ENABLED` | `video.upload` | Mandar el video como **borrador** a la bandeja de la app de TikTok |
+| `TIKTOK_POSTING_DIRECT_ENABLED` | `video.publish` | **Publicar directo** (consulta antes `creator_info`) |
+| `TIKTOK_POSTING_AUDITED` | — | Ponla en `1` solo cuando TikTok apruebe la **auditoría** de publicación directa: habilita publicar en público |
+
+Con alguna de las dos primeras en `1`, la tarjeta de TikTok muestra **Publicar en TikTok**
+(`/admin/conectar/tiktok`) y cada creadora tiene que **volver a conectar** TikTok para autorizar el
+permiso nuevo. Sin ellas, esa pantalla y las rutas `/api/admin/tiktok/*` responden 404.
+
+**Hasta pasar la auditoría** (regla de TikTok): las publicaciones directas solo pueden ser privadas
+(«Solo yo» / `SELF_ONLY`), la cuenta de TikTok tiene que estar en **privado** y como mucho 5 cuentas
+pueden publicar cada 24 h. El panel ya lo respeta: sin `TIKTOK_POSTING_AUDITED=1` solo ofrece «Solo yo».
+
+El video se sube **por partes desde el servidor** (`FILE_UPLOAD`), así que no hace falta verificar
+ningún dominio en TikTok.
 
 ---
 
@@ -186,9 +215,9 @@ de Google.
 
 | Red | Ya funciona en el panel | Posible más adelante | No se puede |
 | --- | --- | --- | --- |
-| **Instagram** | Perfil, seguidores, publicaciones con likes y comentarios; leer y responder comentarios y DMs | Publicar fotos, carruseles, Reels e Historias (hasta 100 por día); métricas avanzadas (alcance, guardados, compartidos, público); menciones | Música de Instagram; editar lo ya publicado; lista de seguidores; escribir primero por DM; responder DMs pasadas 24 h |
+| **Instagram** | Perfil, seguidores, publicaciones con likes y comentarios; leer y responder comentarios. Con `INSTAGRAM_DM_ENABLED=1`: DM automático a quien comente una palabra clave. Con `PUBLISH_INSTAGRAM_ENABLED=1`: publicar fotos, Reels e Historias desde el calendario | Lo anterior mientras esté apagado; bandeja de DMs en el panel; carruseles; métricas avanzadas (alcance, guardados, compartidos, público); menciones | Música de Instagram; editar lo ya publicado; lista de seguidores; escribir primero por DM; responder DMs pasadas 24 h |
 | **Facebook** | Páginas, seguidores y publicaciones recientes | Publicar y programar posts, fotos, videos y Reels; métricas; responder comentarios; Messenger (24 h) | Perfiles personales; música de Facebook; escribir primero por Messenger |
-| **TikTok** | Perfil, seguidores, likes y videos con vistas, likes y comentarios | Publicar videos y fotos (privados hasta la auditoría); mandar borradores a la app; con **cuenta Business** + TikTok for Business: comentarios y métricas avanzadas | DMs; responder comentarios con cuenta Creator; música de TikTok; más de ~15 publicaciones por día |
+| **TikTok** | Perfil, seguidores, likes y videos con vistas, likes y comentarios | Con aprobación de la **Content Posting API**: publicar videos (privados hasta la auditoría) y mandar borradores a la app. Con **cuenta Business** + TikTok for Business: comentarios y métricas avanzadas | DMs; responder comentarios con cuenta Creator; música de TikTok; más de ~15 publicaciones por día |
 | **YouTube** | Canal, suscriptores, vistas y videos con sus métricas | Subir y programar videos y Shorts (privados hasta la auditoría); editar títulos y miniaturas; responder comentarios; estadísticas avanzadas y ganancias | Publicaciones de comunidad; DMs; música de YouTube |
 
 **Aprobaciones** (solo hacen falta para que otras creadoras usen la plataforma; para probar con la
@@ -197,7 +226,8 @@ verificación de Google + auditoría de YouTube (2 a 8 semanas). Son tiempos apr
 
 ## 7. Qué hace el botón "Probar"
 
-1. Si el token está por vencer, lo renueva (Instagram, TikTok, YouTube).
+1. Si el token está por vencer, lo renueva (Instagram, TikTok, YouTube). No hace falta tocar "Probar"
+   para eso: la renovación ocurre antes de cualquier llamada a la red.
 2. Pide a la API el **perfil**: seguidores y datos extra de cada red.
 3. Pide las **6 publicaciones más recientes**, con sus métricas.
 4. Muestra el resultado o el error exacto que devolvió la red, y lo guarda como "último error".
@@ -214,8 +244,10 @@ navegador ni se muestran en el sitio público.
 | `redirect_uri` no coincide / *"URL blocked"* | La URL registrada en la consola no es exactamente la que usa el panel | Copia la URL con el botón **Copiar** del panel y revisa que `APP_URL` sea la misma URL desde la que entras al panel |
 | `Invalid platform app` (Instagram) | Se usó el ID de la app de Meta en vez del ID de la app de **Instagram** | Usa el ID y la clave de la sección "API con inicio de sesión de Instagram" |
 | `código 190` (Meta) | Token vencido, revocado o inválido | **Volver a conectar** |
-| `Insufficient developer role` / no deja entrar | La cuenta no es tester de la app | Agrégala como tester (Meta) o target user (TikTok sandbox) y acepta la invitación |
-| `scope_not_authorized` (TikTok) | Falta agregar un permiso a la app | Agrega los 4 scopes del paso 4 |
+| `Insufficient developer role` / no deja entrar | La cuenta no es tester de la app | Agrégala como tester (Meta) y acepta la invitación |
+| `scope_not_authorized` (TikTok) | El login pidió un permiso que la app no tiene aprobado, o la cuenta no lo autorizó | Revisa que `TIKTOK_POSTING_DRAFT_ENABLED` / `TIKTOK_POSTING_DIRECT_ENABLED` estén vacías si TikTok no aprobó la Content Posting API; si sí, **Volver a conectar** |
+| "TikTok ya no acepta la conexión guardada" | TikTok rechazó la renovación del token (permiso quitado o vencido) | **Volver a conectar** |
+| `unaudited_client_can_only_post_to_private_accounts` | Se intentó publicar en una cuenta pública antes de la auditoría | Pon la cuenta de TikTok en privado mientras no haya auditoría |
 | `access_denied` (Google) | El Gmail no está en usuarios de prueba | Agrégalo en Google Auth Platform → Público |
 | `Esta cuenta de Google no tiene un canal de YouTube` | Iniciaste sesión con otro Gmail | Conecta con el Gmail dueño del canal |
 | `La sesión de conexión expiró` | Pasaron más de 10 minutos en la pantalla de login | Vuelve a tocar **Conectar** |

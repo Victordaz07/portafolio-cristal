@@ -44,6 +44,12 @@ export interface StoredTokens {
   connectedAt: Date;
 }
 
+/** Un grupo de cosas posibles más adelante, con lo que las bloquea (sin título si no hace falta). */
+export interface LaterGroup {
+  blocker?: string;
+  items: string[];
+}
+
 export interface SocialProvider {
   id: PlatformId;
   label: string;
@@ -53,8 +59,8 @@ export interface SocialProvider {
   consoleUrl: string;
   /** Lo que hace esta conexión con los permisos que pide hoy. */
   can: string[];
-  /** Lo que la API permite pero necesita más permisos o la aprobación de la red. */
-  later: string[];
+  /** Lo que la API permite pero necesita más permisos o la aprobación de la red, agrupado por lo que lo bloquea. */
+  later: LaterGroup[];
   cannot: string[];
   authorizeUrl(redirectUri: string, state: string): string;
   exchangeCode(code: string, redirectUri: string): Promise<TokenSet>;

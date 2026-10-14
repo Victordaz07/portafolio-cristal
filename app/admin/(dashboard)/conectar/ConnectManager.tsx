@@ -9,6 +9,7 @@ import { primaryButtonClass, secondaryButtonClass } from "@/lib/admin-ui";
 import { formatShortDate, daysUntil } from "@/lib/crm";
 import type { PlatformId, RecentItem, SocialProfile } from "@/lib/social/types";
 import { socialCopy, socialError } from "@/lib/social/copy-en";
+import { needsReconnect } from "@/lib/social/token-refresh";
 import { dateLocale, type AdminLang } from "@/lib/admin-lang";
 import { useT } from "@/components/admin/AdminLang";
 
@@ -21,9 +22,13 @@ export interface PlatformCard {
   redirectUri: string;
   consoleUrl: string;
   scopes: string[];
+  /** La red renueva el token sola antes de cada llamada (Instagram, TikTok, YouTube). */
+  autoRenews: boolean;
   can: string[];
-  later: string[];
+  later: { blocker: string | null; items: string[] }[];
   cannot: string[];
+  /** Enlace a la pantalla de publicar (solo TikTok, con la Content Posting API activada). */
+  postHref: string | null;
   account: {
     username: string | null;
     displayName: string | null;
@@ -100,6 +105,13 @@ function CopyButton({ value }: { value: string }) {
 function StatusPill({ card }: { card: PlatformCard }) {
   const { t } = useT();
   if (card.account) {
+    if (needsReconnect(card.account.lastError)) {
+      return (
+        <span className="rounded-full bg-coral px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-white">
+          {t("Volver a conectar", "Reconnect")}
+        </span>
+      );
+    }
     return card.account.lastError ? (
       <span className="rounded-full bg-coral/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-coral">
         {t("Con error", "Error")}
@@ -276,6 +288,15 @@ export default function ConnectManager({
           const result = results[card.id];
           const account = card.account;
           const expiresIn = account?.expiresAt ? daysUntil(account.expiresAt) : null;
+          const reconnect = needsReconnect(account?.lastError);
+          const tokenNote =
+            expiresIn == null
+              ? null
+              : card.autoRenews && expiresIn <= 1
+                ? t("token se renueva solo", "token renews automatically")
+                : expiresIn <= 0
+                  ? t("token vencido", "token expired")
+                  : t(`token vence en ${expiresIn}d`, `token expires in ${expiresIn}d`);
           return (
             <Card key={card.id} className="flex flex-col gap-sp-4">
               <div className="flex items-start justify-between gap-sp-3">
@@ -308,13 +329,26 @@ export default function ConnectManager({
                     </p>
                     <p className="text-xs text-ink/60">
                       {formatCount(account.followers, lang)} {t("seguidores", "followers")} · {t("conectada el", "connected on")} {formatShortDate(account.connectedAt, lang)}
-                      {expiresIn != null &&
-                        ` · ${t("token vence", "token expires")} ${expiresIn <= 0 ? t("ya (se renueva al probar)", "now (renews when you test)") : t(`en ${expiresIn}d`, `in ${expiresIn}d`)}`}
+                      {tokenNote && ` · ${tokenNote}`}
                     </p>
-                    {account.lastError && <p className="mt-1 text-xs font-semibold text-coral">{t("Último error:", "Last error:")} {socialError(lang, account.lastError)}</p>}
+                    {account.lastError && !reconnect && <p className="mt-1 text-xs font-semibold text-coral">{t("Último error:", "Last error:")} {socialError(lang, account.lastError)}</p>}
                   </div>
                 </div>
-              ) : !card.configured ? (
+              ) : null}
+
+              {account && reconnect && (
+                <div role="alert" className="rounded-[14px] bg-coral/15 px-sp-4 py-sp-3 text-sm text-moss">
+                  <p className="font-semibold">
+                    {t(
+                      `${card.label} cerró la conexión con Foliocrew. Toca “Volver a conectar” e inicia sesión otra vez: tus datos guardados no se pierden.`,
+                      `${card.label} closed the connection with Foliocrew. Tap “Reconnect” and sign in again: your saved data isn't lost.`
+                    )}
+                  </p>
+                  <p className="mt-1 break-words font-mono text-[11px] text-ink/60">{socialError(lang, account.lastError ?? "")}</p>
+                </div>
+              )}
+
+              {account ? null : !card.configured ? (
                 <div className="rounded-[14px] bg-cream px-sp-4 py-sp-3 text-[13px] text-ink/70">
                   {t("Faltan estas variables de entorno:", "These environment variables are missing:")}{" "}
                   {card.missingEnv.map((key) => (
@@ -352,11 +386,18 @@ export default function ConnectManager({
                 </div>
                 <div>
                   <p className={eyebrowClass}>{t("Posible más adelante", "Possible later")}</p>
-                  <ul className="mt-sp-1 flex flex-col gap-1 text-[13px] text-ink/70">
-                    {card.later.map((line) => (
-                      <li key={line}>◷ {line}</li>
+                  <div className="mt-sp-1 flex flex-col gap-sp-2">
+                    {card.later.map((group, index) => (
+                      <div key={group.blocker ?? index}>
+                        {group.blocker && <p className="text-[11px] font-semibold text-ink/55">{group.blocker}</p>}
+                        <ul className="flex flex-col gap-1 text-[13px] text-ink/70">
+                          {group.items.map((line) => (
+                            <li key={line}>◷ {line}</li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
                 <div>
                   <p className={eyebrowClass}>{t("No se puede", "Not possible")}</p>
@@ -371,7 +412,7 @@ export default function ConnectManager({
               <div className="mt-auto flex flex-wrap gap-sp-2">
                 {card.configured && encryptionReady ? (
                   // Navegación completa (no fetch): la red muestra su propia pantalla de login.
-                  <a href={`/api/admin/connect/${card.id}/start`} className={account ? secondaryButtonClass : primaryButtonClass}>
+                  <a href={`/api/admin/connect/${card.id}/start`} className={account && !reconnect ? secondaryButtonClass : primaryButtonClass}>
                     {account ? t("Volver a conectar", "Reconnect") : t(`Conectar ${card.label}`, `Connect ${card.label}`)}
                   </a>
                 ) : (
@@ -379,13 +420,18 @@ export default function ConnectManager({
                     {card.configured ? t("Falta TOKEN_ENCRYPTION_KEY", "TOKEN_ENCRYPTION_KEY is missing") : t("Configura las variables primero", "Set up the variables first")}
                   </span>
                 )}
+                {card.postHref && !reconnect && (
+                  <a href={card.postHref} className={secondaryButtonClass}>
+                    {t("Publicar en TikTok", "Post to TikTok")}
+                  </a>
+                )}
                 {account && (
                   <>
                     <button
                       type="button"
                       onClick={() => runTest(card)}
                       disabled={testing === card.id}
-                      className={primaryButtonClass}
+                      className={reconnect ? secondaryButtonClass : primaryButtonClass}
                     >
                       {testing === card.id ? t("Probando…", "Testing…") : t("Probar", "Test")}
                     </button>
@@ -473,7 +519,11 @@ function TestResultView({ result }: { result: TestResult }) {
   if (!result.ok) {
     return (
       <div className="rounded-[14px] bg-coral/15 px-sp-4 py-sp-3 text-sm text-moss">
-        <p className="font-semibold">{t("La API respondió con error", "The API returned an error")}</p>
+        <p className="font-semibold">
+          {needsReconnect(result.error)
+            ? t("Hay que volver a conectar la cuenta", "The account needs to be reconnected")
+            : t("La API respondió con error", "The API returned an error")}
+        </p>
         <p className="mt-1 break-words font-mono text-xs">{result.error && socialError(lang, result.error)}</p>
       </div>
     );

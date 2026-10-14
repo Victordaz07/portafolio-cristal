@@ -10,9 +10,13 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
+// NOINDEX=1 (p. ej. en demo.foliocrew.pro): ningún buscador indexa ni sigue nada de este entorno.
+// Se lee al construir, así que cambiarla requiere volver a desplegar (como cualquier variable en Vercel).
+const noindexHeaders = process.env.NOINDEX === "1" ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] : [];
+
 const nextConfig = {
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [{ source: "/:path*", headers: [...securityHeaders, ...noindexHeaders] }];
   },
 };
 

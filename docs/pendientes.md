@@ -26,7 +26,12 @@ Es suficiente mientras solo tú abras los previews. Cuando entre más gente al e
 6. **Comentario → DM (C6):** el código ya está, pero apagado. Cuando Meta apruebe el permiso `instagram_business_manage_messages` (va en la misma revisión de la app; no se envía sin tu confirmación): en Vercel agrega `INSTAGRAM_DM_ENABLED=1` y `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` (un texto que inventes; sin mostrarlo), registra en Meta el webhook de Instagram `https://foliocrew.pro/api/social/instagram/webhook` con ese mismo texto y suscribe el campo `comments`; luego reconecta Instagram para autorizar mensajes.
 
 ## 3. TikTok
-Cuando TikTok apruebe la app (está "In review"): en Vercel cambia `TIKTOK_CLIENT_KEY` y `TIKTOK_CLIENT_SECRET` de las llaves **Sandbox** a las de **Production** y vuelve a desplegar.
+Login Kit + Display API **aprobados el 7 oct 2026** y en producción (scopes `user.info.basic`, `user.info.profile`, `user.info.stats`, `video.list`). Ya no hay Sandbox.
+
+Pendiente: **Content Posting API** (publicar y mandar borradores). El código está listo y apagado (ver `docs/conectar-cuentas.md` §4.1). Pasos:
+1. En el portal de TikTok, agregar el producto **Content Posting API** con los scopes `video.upload` y `video.publish` y enviar la revisión **cuando tú lo confirmes**.
+2. Cuando TikTok lo apruebe: en Vercel `TIKTOK_POSTING_DRAFT_ENABLED=1` (si aprobó `video.upload`) y/o `TIKTOK_POSTING_DIRECT_ENABLED=1` (si aprobó `video.publish`), redeploy y reconectar TikTok. **No las actives antes**: pedir un scope no aprobado rompe el login de todas las cuentas.
+3. Después, pedir la **auditoría** de publicación directa (para publicar en público). Al aprobarla: `TIKTOK_POSTING_AUDITED=1`.
 
 ## 4. Límite mensual de IA (opcional)
 Ya funciona con estos topes: Folio 60, Pro 300, Crew/cortesía 1000 sugerencias al mes.

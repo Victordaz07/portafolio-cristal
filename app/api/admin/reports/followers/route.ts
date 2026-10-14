@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { PROVIDERS } from "@/lib/social/providers";
-import { getFreshTokens } from "@/lib/social/accounts";
+import { getFreshTokens, reportAccountError } from "@/lib/social/accounts";
 import { isPlatformId } from "@/lib/social/types";
 import { recordFollowerSnapshot } from "@/lib/reports";
 import { getT } from "@/lib/admin-lang-server";
@@ -25,7 +25,7 @@ export async function POST() {
       await recordFollowerSnapshot(account.platform, profile.followers);
       results.push({ platform: account.platform, followers: profile.followers });
     } catch (error) {
-      results.push({ platform: account.platform, error: error instanceof Error ? error.message : "Error" });
+      results.push({ platform: account.platform, error: await reportAccountError(account, error) });
     }
   }
   return NextResponse.json({ results });

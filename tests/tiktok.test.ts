@@ -79,6 +79,16 @@ describe("TikTok: permisos que pide el login", () => {
     process.env.TIKTOK_POSTING_DIRECT_ENABLED = "1";
     assert.equal(requested(), [...BASE, "video.upload", "video.publish"].join(","));
   });
+  it("Sandbox de la demo sin video.list: lo quita y mantiene el resto", () => {
+    process.env.TIKTOK_VIDEO_LIST_DISABLED = "1";
+    process.env.TIKTOK_POSTING_DRAFT_ENABLED = "1";
+    process.env.TIKTOK_POSTING_DIRECT_ENABLED = "1";
+    try {
+      assert.equal(requested(), ["user.info.basic", "user.info.profile", "user.info.stats", "video.upload", "video.publish"].join(","));
+    } finally {
+      delete process.env.TIKTOK_VIDEO_LIST_DISABLED;
+    }
+  });
   it("solo \"1\" activa: otros valores no piden permisos de más", () => {
     process.env.TIKTOK_POSTING_DRAFT_ENABLED = "true";
     process.env.TIKTOK_POSTING_DIRECT_ENABLED = "0";

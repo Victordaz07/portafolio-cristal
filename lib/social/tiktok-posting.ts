@@ -29,7 +29,10 @@ export function tiktokPostingFlags(env: Env = process.env) {
 /** Permisos que se piden al conectar TikTok, según las variables activas. */
 export function tiktokScopes(env: Env = process.env): string[] {
   const flags = tiktokPostingFlags(env);
-  return [...TIKTOK_BASE_SCOPES, ...(flags.draft ? [TIKTOK_DRAFT_SCOPE] : []), ...(flags.direct ? [TIKTOK_DIRECT_SCOPE] : [])];
+  // TIKTOK_VIDEO_LIST_DISABLED=1 solo para el Sandbox de la demo, donde TikTok no deja agregar video.list:
+  // pedir un permiso que la app no tiene hace fallar el login. En producción queda vacía.
+  const base = env.TIKTOK_VIDEO_LIST_DISABLED === "1" ? TIKTOK_BASE_SCOPES.filter((s) => s !== "video.list") : [...TIKTOK_BASE_SCOPES];
+  return [...base, ...(flags.draft ? [TIKTOK_DRAFT_SCOPE] : []), ...(flags.direct ? [TIKTOK_DIRECT_SCOPE] : [])];
 }
 
 export const tiktokPostingEnabled = (env: Env = process.env) => {

@@ -7,6 +7,7 @@ import { INVOICE_STATUS_META, displayStatus, formatCents, parseParty } from "@/l
 import { getBillingProfile } from "@/lib/invoices-server";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
+import EmptyState from "@/components/admin/EmptyState";
 import BillingProfileForm from "./BillingProfileForm";
 
 export const dynamic = "force-dynamic";
@@ -57,15 +58,17 @@ export default async function InvoicesPage() {
         </p>
       )}
 
-      <div className="grid grid-cols-1 gap-sp-3 sm:grid-cols-3">
-        {kpis.map((k) => (
-          <Card key={k.label}>
-            <p className={`font-fraunces text-3xl font-semibold ${k.alert ? "text-coral" : "text-ink"}`}>{k.value}</p>
-            <p className="mt-1 text-sm text-ink/70">{k.label}</p>
-            <p className="text-xs text-ink/45">{k.sub}</p>
-          </Card>
-        ))}
-      </div>
+      {withStatus.length > 0 && (
+        <div className="grid grid-cols-1 gap-sp-3 sm:grid-cols-3">
+          {kpis.map((k) => (
+            <Card key={k.label}>
+              <p className={`font-fraunces text-3xl font-semibold ${k.alert ? "text-coral" : "text-ink"}`}>{k.value}</p>
+              <p className="mt-1 text-sm text-ink/70">{k.label}</p>
+              <p className="text-xs text-ink/45">{k.sub}</p>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {claimed.length > 0 && (
         <Card className="border-moss/40">
@@ -87,13 +90,23 @@ export default async function InvoicesPage() {
 
       <div className="overflow-hidden rounded-[18px] border border-line bg-white shadow-[0_1px_2px_rgba(36,18,39,0.04)]">
         {withStatus.length === 0 ? (
-          <p className="p-sp-5 text-sm text-ink/60">
-            {t("Todavía no tienes facturas. Crea una desde aquí o desde un trato en ", "No invoices yet. Create one here or from a deal in ")}
-            <Link href="/admin/marcas" className="font-semibold text-coral hover:underline">
-              {t("Marcas", "Brands")}
-            </Link>
-            .
-          </p>
+          <EmptyState
+            title={t("Todavía no creaste ninguna factura", "No invoices yet")}
+            description={t(
+              "Cuando cierres un trato, manda la factura con un enlace: te avisamos cuando la marca la ve, y le recordamos con amabilidad si se atrasa.",
+              "Once you close a deal, send the invoice with a link: we'll let you know when the brand views it, and kindly remind them if it's late."
+            )}
+            action={{ href: "/admin/facturas/nueva", label: t("+ Nueva factura", "+ New invoice") }}
+            secondary={
+              <>
+                {t("O créala desde un trato en ", "Or create one from a deal in ")}
+                <Link href="/admin/marcas" className="font-semibold text-coral hover:underline">
+                  {t("Marcas", "Brands")}
+                </Link>
+                .
+              </>
+            }
+          />
         ) : (
           <ul className="divide-y divide-line">
             {withStatus.map((i) => {

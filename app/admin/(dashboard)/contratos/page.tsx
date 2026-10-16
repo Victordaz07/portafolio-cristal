@@ -6,6 +6,7 @@ import { formatShortDate } from "@/lib/crm";
 import { CONTRACT_STATUS_META, CONTRACT_TEMPLATES, type ContractStatus } from "@/lib/contracts";
 import PageHeader from "@/components/admin/PageHeader";
 import Card from "@/components/admin/Card";
+import EmptyState from "@/components/admin/EmptyState";
 
 export const dynamic = "force-dynamic";
 
@@ -36,13 +37,23 @@ export default async function ContractsPage() {
       )}
       <div className="overflow-hidden rounded-[18px] border border-line bg-white shadow-[0_1px_2px_rgba(36,18,39,0.04)]">
         {contracts.length === 0 ? (
-          <p className="p-sp-5 text-sm text-ink/60">
-            {t("Todavía no tienes acuerdos. Crea uno desde aquí o desde un trato en ", "No agreements yet. Create one here or from a deal in ")}
-            <Link href="/admin/marcas" className="font-semibold text-coral hover:underline">
-              {t("Marcas", "Brands")}
-            </Link>
-            .
-          </p>
+          <EmptyState
+            title={t("Todavía no creaste ningún acuerdo", "No agreements yet")}
+            description={t(
+              "Antes de empezar un trabajo, manda un acuerdo simple: la marca lo acepta en línea y los dos quedan con todo por escrito.",
+              "Before starting a project, send a simple agreement: the brand accepts it online and you both have everything in writing."
+            )}
+            action={{ href: "/admin/contratos/nueva", label: t("+ Nuevo acuerdo", "+ New agreement") }}
+            secondary={
+              <>
+                {t("O créalo desde un trato en ", "Or create one from a deal in ")}
+                <Link href="/admin/marcas" className="font-semibold text-coral hover:underline">
+                  {t("Marcas", "Brands")}
+                </Link>
+                .
+              </>
+            }
+          />
         ) : (
           <ul className="divide-y divide-line">
             {contracts.map((c) => {

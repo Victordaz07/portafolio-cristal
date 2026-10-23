@@ -16,6 +16,8 @@ import LeaderboardTable from "./LeaderboardTable";
 import IntelligenceSection from "./IntelligenceSection";
 import DepartmentsSection from "./DepartmentsSection";
 import InviteCodesManager from "./InviteCodesManager";
+import ModuleFlagsManager from "./ModuleFlagsManager";
+import { MODULE_KEYS, MODULE_LABELS, allModuleStages } from "@/lib/module-flags";
 import { BarList, EngagementHeatmap, PlatformTabs, Stat, WeeklyBars, compact, eyebrowClass } from "./charts";
 import { billingLabel, billingState, formatMoney, getPlan, paymentMethodLabel } from "@/lib/billing";
 import { reportWord } from "@/lib/reports";
@@ -25,7 +27,7 @@ import { getT } from "@/lib/admin-lang-server";
 export const dynamic = "force-dynamic";
 
 const DAY = 86_400_000;
-const VIEWS = ["resumen", "creadores", "contenido", "nichos", "inteligencia", "cuentas", "departamentos", "invitaciones"];
+const VIEWS = ["resumen", "creadores", "contenido", "nichos", "inteligencia", "cuentas", "departamentos", "invitaciones", "modulos"];
 const networkLabel = (key: string) => (key in NETWORK_META ? NETWORK_META[key as keyof typeof NETWORK_META].label : key);
 
 export default async function PlatformPage({ searchParams }: { searchParams: Promise<{ vista?: string; nicho?: string }> }) {
@@ -54,7 +56,20 @@ export default async function PlatformPage({ searchParams }: { searchParams: Pro
       {vista === "cuentas" && <CuentasView adminCreatorId={admin.creatorId} />}
       {vista === "departamentos" && <DepartmentsSection />}
       {vista === "invitaciones" && <InvitacionesView />}
+      {vista === "modulos" && <ModulosView />}
     </div>
+  );
+}
+
+// ─── Módulos (Mercado de creadores) ───
+
+async function ModulosView() {
+  const { lang } = await getT();
+  const stages = await allModuleStages();
+  return (
+    <ModuleFlagsManager
+      modules={MODULE_KEYS.map((key) => ({ key, label: lang === "en" ? MODULE_LABELS[key].en : MODULE_LABELS[key].es, stage: stages[key] }))}
+    />
   );
 }
 

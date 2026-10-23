@@ -14,6 +14,7 @@ const TENANT_MODELS = new Set<string>([
   "LogEntry", "ScheduledPost", "FollowerSnapshot", "Payment", "BioLink", "BioLinkGroup", "InboxReply", "SupportTicket", "DataRequest",
   "Deliverable", "Invoice", "BillingProfile", "Contract", "AiUsage", "CampaignReport", "IncomeEntry", "Expense",
   "CommentTrigger", "CommentTriggerHit", "ContentBankItem", "RestPeriod", "WellbeingSettings", "PushSubscription", "Product",
+  "CreatorMarketProfile",
 ]);
 
 /** Modelos que apuntan a una Brand: el brandId tiene que ser de la misma creadora. */

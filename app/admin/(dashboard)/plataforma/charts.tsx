@@ -16,6 +16,7 @@ const TABS = [
   { id: "cuentas", label: "Cuentas", labelEn: "Accounts" },
   { id: "departamentos", label: "Departamentos", labelEn: "Departments" },
   { id: "invitaciones", label: "Invitaciones", labelEn: "Invites" },
+  { id: "modulos", label: "Módulos", labelEn: "Modules" },
 ];
 
 export async function PlatformTabs({ active }: { active: string }) {

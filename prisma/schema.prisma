@@ -112,6 +112,7 @@ model Creator {
   invoices            Invoice[]
   billingProfile      BillingProfile?
   contracts           Contract[]
+  marketProfile       CreatorMarketProfile?
 
   @@index([agencyId])
 }
@@ -1629,4 +1630,98 @@ model AgencyAction {
   createdAt  DateTime @default(now())
 
   @@index([agencyId, createdAt])
+}
+
+// ─── Mercado de creadores (Fase 1) — cimientos: cuenta de marca, opt-in de la creadora y el
+// sistema de módulos por etapas que libera cada pieza desde el Centro de mando. Cada módulo nuevo
+// (bandeja, directorio, registro de marcas) se construye en su propio cambio, detrás de su flag
+// — ver docs/plan-mercado.md. ───
+
+/// Una marca es un tipo de cuenta aparte de AdminUser/Creator: no tiene ni necesita una creadora
+/// detrás, así que NO entra en TENANT_MODELS (lib/prisma.ts) ni usa el `prisma` con alcance de
+/// creadora — siempre `prismaRoot`, igual que Agency. Tiene su propia sesión (lib/brand-auth.ts,
+/// cookie `brand_session`), separada por completo de admin_session para no tocar getSession()/
+/// currentCreatorId(), que todo el panel de creadoras da por hecho que siempre hay una Creator.
+model BrandAccount {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String
+  name            String
+  website         String?
+  country         String?
+  category        String?
+  emailVerifiedAt DateTime?
+  /// "pendiente" (sin red conectada) | "conectada" (esperando revisión) | "verificada" (aprobada,
+  /// puede contactar) | "rechazada" | "suspendida" (por reportes o admin)
+  verification    String    @default("pendiente")
+  /// Señales automáticas que ayudan a decidir (dominio del correo, historial de la cuenta, etc.)
+  trustSignals    Json?
+  trustScore      Int?
+  reviewNote      String?
+  verifiedAt      DateTime?
+  /// Sube al cambiar la contraseña: invalida sesiones viejas (mismo patrón que AdminUser.sessionVersion)
+  sessionVersion  Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  socialConnections BrandSocialConnection[]
+
+  @@index([verification])
+}
+
+/// Red social que conectó una marca para verificarse — siempre de solo lectura de perfil, nunca
+/// permiso de publicación (a diferencia de SocialAccount, que sí puede pedirlo para una creadora).
+model BrandSocialConnection {
+  id              String       @id @default(cuid())
+  brandId         String
+  brand           BrandAccount @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  platform        String // "instagram" | "tiktok"
+  externalId      String
+  username        String?
+  displayName     String?
+  avatarUrl       String?
+  followers       Int?
+  isVerifiedBadge Boolean      @default(false)
+  /// Cifrado (lib/token-crypto.ts); nunca se manda al navegador.
+  accessToken     String
+  expiresAt       DateTime?
+  scopes          String[]     @default([])
+  connectedAt     DateTime     @default(now())
+  lastSyncAt      DateTime?
+  lastError       String?
+
+  @@unique([brandId, platform])
+}
+
+/// Opt-in de una creadora al directorio del mercado. Aparte de Creator para no seguir acumulando
+/// campos ahí (mismo motivo que Hero/SiteSettings/WellbeingSettings). Pertenece a una creadora
+/// (TENANT_MODELS, lib/prisma.ts) — se lee/escribe con el `prisma` de alcance normal.
+model CreatorMarketProfile {
+  id                String   @id @default(cuid())
+  creatorId         String   @unique @default("") // lo llena lib/prisma.ts; "" rompe la FK a propósito
+  creator           Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  isListed          Boolean  @default(false)
+  isAdult           Boolean  @default(false)
+  hispanicAudience  Boolean  @default(false)
+  niches            String[] @default([])
+  contentLanguages  String[] @default([])
+  audienceCountries String[] @default([])
+  /// Qué métricas se muestran públicamente, ej. {"followers": true, "engagement": false}
+  publicMetrics     Json     @default("{}")
+  /// El admin la retiró del mercado (queda oculta aunque isListed siga en true)
+  removedByAdmin    Boolean  @default(false)
+  updatedAt         DateTime @updatedAt
+
+  @@index([isListed])
+}
+
+/// Cada pieza del mercado se libera por etapas desde el Centro de mando: "off" (nadie la ve),
+/// "ambassadors" (solo cuentas embajadoras, para probarla primero) o "public" (todo el mundo).
+/// Ver lib/module-flags.ts — no existía ningún sistema así antes de esta fase.
+model ModuleFlag {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  stage     String   @default("off") // "off" | "ambassadors" | "public"
+  updatedBy String?
+  updatedAt DateTime @updatedAt
 }
